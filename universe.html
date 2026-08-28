@@ -110,11 +110,12 @@ input[type=range]{ width:100%; accent-color:var(--gold); height:8px; margin:1rem
 .grow-icon{ transition:font-size .25s ease; }
 
 /* distance slider visual */
-.distance-track-wrap{ position:relative; height:120px; margin:.6rem 0; border-radius:16px; overflow:hidden; }
+.distance-track-wrap{ position:relative; height:130px; margin:.6rem 0 .3rem; border-radius:16px; overflow:hidden; }
 .distance-bg{ position:absolute; inset:0; transition:background 0.3s; }
-.distance-star{ position:absolute; left:8px; top:38%; transform:translateY(-50%); font-size:2.2rem; }
-.distance-planet{ position:absolute; top:32%; transform:translate(-50%,-50%); font-size:2rem; transition:left .05s linear; z-index:3; }
-.real-planet-marker{ position:absolute; bottom:6px; transform:translateX(-50%); text-align:center; font-size:1.05rem; opacity:.85; }
+.distance-star{ position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:3.4rem; }
+.distance-planet{ position:absolute; top:50%; transform:translate(-50%,-50%); font-size:2.6rem; transition:left .05s linear, font-size .2s; z-index:3; }
+.real-planet-strip{ position:relative; height:44px; margin-bottom:.4rem; }
+.real-planet-marker{ position:absolute; top:0; transform:translateX(-50%); text-align:center; font-size:1.05rem; opacity:.85; }
 .real-planet-marker .rp-label{ display:block; font-size:.58rem; font-family:var(--font-display); color:var(--ink-soft); margin-top:-2px; }
 
 /* sun */
@@ -218,10 +219,11 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">🌠 The Beginning · 3 of 5</div>
       <div class="card">
         <h2>3... 2... 1... BOOM! 💥</h2>
-        <p class="big-text">13.8 billion years ago, everything was squeezed into a tiny dot. Tap it to set off the Big Bang!</p>
+        <p class="big-text">About 13.8 billion years ago, EVERYTHING that exists — every star, every planet, and space itself — was packed into a spot smaller than a grain of sand. Tap it to set off the Big Bang!</p>
         <div class="ring-field" id="bangField" onclick="triggerBang()" style="cursor:pointer">
           <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; z-index:2" id="bangDot">💫</div>
         </div>
+        <div class="reveal" id="bangReveal">That's the Big Bang! It wasn't an explosion INTO space, like a firework going off in a room. Space itself was being born and stretching outward — everywhere, all at once. As it expanded, it cooled down, and the very first tiny particles began to form.</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -311,10 +313,14 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 4 of 6</div>
       <div class="card">
         <h2>Drag Me Near or Far!</h2>
-        <p class="big-text">Drag the rocky test-planet toward or away from the star — and see which REAL planets it passes along the way!</p>
+        <p class="big-text">Drag the rocky test-planet toward or away from the star!</p>
         <div class="distance-track-wrap" id="distanceBg">
           <div class="distance-bg" id="distanceGradient"></div>
           <div class="distance-star">☀️</div>
+          <div class="distance-planet" id="distancePlanet" style="left:20%">🪨</div>
+        </div>
+        <input type="range" id="distanceSlider" min="0" max="100" value="10" oninput="updateDistance(this.value)">
+        <div class="real-planet-strip">
           <div class="real-planet-marker" style="left:22%">☄️<span class="rp-label">Mercury</span></div>
           <div class="real-planet-marker" style="left:34%">🟠<span class="rp-label">Venus</span></div>
           <div class="real-planet-marker" style="left:46%">🌍<span class="rp-label">Earth</span></div>
@@ -322,9 +328,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
           <div class="real-planet-marker" style="left:72%">🟤<span class="rp-label">Jupiter</span></div>
           <div class="real-planet-marker" style="left:84%">🪐<span class="rp-label">Saturn</span></div>
           <div class="real-planet-marker" style="left:94%">🔵<span class="rp-label">Uranus</span></div>
-          <div class="distance-planet" id="distancePlanet" style="left:20%">🪨</div>
         </div>
-        <input type="range" id="distanceSlider" min="0" max="100" value="10" oninput="updateDistance(this.value)">
         <div class="stage-desc" id="distanceDesc">Close to the star — too hot for ice. Only rock and metal survive here!</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
@@ -437,6 +441,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
             </div>
           </div>
         </div>
+        <div class="tap-hint" id="sunProgress" style="min-height:1.3em"></div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -465,14 +470,14 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">☀️ Our Solar System · 3 of 4</div>
       <div class="card">
         <h2>What Keeps a Planet Orbiting?</h2>
-        <p class="big-text">Gravity pulls a planet inward while its own motion carries it forward — together, they curve into an orbit! Drag to change the speed.</p>
+        <p class="big-text">Gravity pulls a planet inward while its own motion carries it forward — together, they curve into an orbit!</p>
         <div class="orbit-wrap" id="orbitWrap">
           <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.3rem;">☀️</div>
           <div class="orbit-ring"></div>
           <div class="orbit-planet" id="orbitPlanet"></div>
         </div>
         <input type="range" id="orbitSpeed" min="1" max="8" value="4" oninput="setOrbitSpeed(this.value)">
-        <div class="stage-desc">👆 Drag to speed up or slow down the orbit!</div>
+        <div class="stage-desc">🌍 This starts at Earth's real orbit: one full lap here stands for a whole year (365 days)! We've sped it way up so you can actually watch it happen. Now try dragging the slider to make it faster or slower.</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('galaxies')">Next Cluster ▶</button></div>
     </section>
@@ -854,6 +859,7 @@ function triggerBang(){
   }
   burst('bangField', ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6'], 18);
   setTimeout(()=>{ document.getElementById('bangDot').textContent = '🌌'; }, 600);
+  document.getElementById('bangReveal').classList.add('shown');
 }
 
 // ---- Cluster 1: everywhere-at-once ambient rings ----
@@ -935,15 +941,15 @@ function updateDistance(v){
   const descEl = document.getElementById('distanceDesc');
   if(pct < 45){
     planetEl.textContent = '🪨';
-    planetEl.style.fontSize = '1.6rem';
+    planetEl.style.fontSize = '2.1rem';
     descEl.textContent = 'Close to the star — too hot for ice. Only rock and metal survive here! This is about where Mercury, Venus, Earth, and Mars orbit.';
   } else if(pct < 65){
     planetEl.textContent = '🌍';
-    planetEl.style.fontSize = '2rem';
+    planetEl.style.fontSize = '2.6rem';
     descEl.textContent = "Still fairly close — this is near the \"frost line,\" the boundary where it starts getting cold enough for ice.";
   } else {
     planetEl.textContent = '🪐';
-    planetEl.style.fontSize = '2.6rem';
+    planetEl.style.fontSize = '3.4rem';
     descEl.textContent = 'Far away — cold enough for ice, so it grabs huge amounts of gas and becomes a giant! This is about where Jupiter, Saturn, Uranus, and Neptune orbit.';
   }
 }
@@ -1016,6 +1022,8 @@ function makeItRain(){
 
 // ---- Cluster 4: Sun facts ----
 let sunIdx = -1;
+const sunSeen = new Set();
+let sunCompleteShown = false;
 const SUN_FACTS = [
   "Its core reaches about 15 MILLION degrees! (Look — the white-hot center!)",
   "The Sun holds more than 99.8% of everything in our whole solar system with its gravity — it's HUGE compared to planets!",
@@ -1071,6 +1079,11 @@ function cycleSunFact(){
   const sun = document.getElementById('sunTap');
   sun.style.transform = 'scale(1.15)';
   setTimeout(()=> sun.style.transform = 'scale(1)', 200);
+  sunSeen.add(sunIdx);
+  if(sunSeen.size === SUN_FACTS.length && !sunCompleteShown){
+    sunCompleteShown = true;
+    document.getElementById('sunProgress').textContent = "✅ You've seen every Sun fact! Keep tapping to see them again.";
+  }
 }
 
 // ---- Cluster 4: planet facts ----
