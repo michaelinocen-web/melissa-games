@@ -99,7 +99,37 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .exp-ring{ position:absolute; width:20px; height:20px; border:4px solid var(--gold); border-radius:50%; animation:expandRing 2s ease-out infinite; }
 
 /* ---------- sliders ---------- */
-input[type=range]{ width:100%; accent-color:var(--gold); height:8px; margin:1rem 0 .4rem; }
+/* ---------- kid-friendly slider: big glowing thumb, colorful track ---------- */
+input[type=range]{
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:40px; background:transparent;
+  margin:1.1rem 0 .5rem; cursor:pointer; touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:12px; border-radius:999px;
+  background:linear-gradient(90deg, var(--teal), var(--gold), var(--pink));
+}
+input[type=range]::-moz-range-track{
+  height:12px; border-radius:999px;
+  background:linear-gradient(90deg, var(--teal), var(--gold), var(--pink));
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; margin-top:-14px;
+  width:40px; height:40px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--gold) 55%, #C99A2E 100%);
+  border:3px solid #fff;
+  box-shadow:0 3px 8px rgba(0,0,0,.4), 0 0 0 6px rgba(255,209,102,.3);
+  cursor:pointer; transition:transform .15s ease;
+}
+input[type=range]::-moz-range-thumb{
+  width:40px; height:40px; border-radius:50%; border:3px solid #fff;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--gold) 55%, #C99A2E 100%);
+  box-shadow:0 3px 8px rgba(0,0,0,.4), 0 0 0 6px rgba(255,209,102,.3);
+  cursor:pointer; transition:transform .15s ease;
+}
+input[type=range]:active::-webkit-slider-thumb{ transform:scale(1.2); }
+input[type=range]:active::-moz-range-thumb{ transform:scale(1.2); }
+input[type=range]:focus{ outline:none; }
 .stage-label{ font-family:var(--font-display); font-weight:800; font-size:1.15rem; color:var(--gold); margin-top:.3rem; }
 .stage-desc{ font-size:.95rem; color:var(--ink-soft); min-height:2.4em; }
 .milestone-row{ display:flex; justify-content:space-between; font-size:1.4rem; margin-top:.3rem; opacity:.5; }
@@ -156,7 +186,7 @@ input[type=range]{ width:100%; accent-color:var(--gold); height:8px; margin:1rem
 .quiz-btn:disabled{ cursor:default; }
 .result-emoji{ font-size:2.6rem; margin:.5rem 0; }
 
-.planet-row{ display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin:1rem 0; }
+.planet-row{ display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin:1rem 0; position:relative; }
 .planet-btn{ font-size:1.7rem; background:none; border:none; cursor:pointer; padding:.3rem; border-radius:50%; animation:bobPlanet 2.4s infinite ease-in-out; }
 .planet-btn:nth-child(2n){ animation-delay:.4s; }
 .planet-btn:nth-child(3n){ animation-delay:.8s; }
@@ -196,7 +226,9 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="card">
         <h2>Everything, Everywhere ✨</h2>
         <p class="big-text">The universe is EVERYTHING there is. Tap anywhere in the sky below to fill it with stars!</p>
-        <div class="discover-zone" id="starTapZone" onclick="addTapStar(event)" style="background:radial-gradient(circle at 50% 30%, #1C2158, #0B0F2E); cursor:pointer;"></div>
+        <div class="discover-zone" id="starTapZone" onclick="addTapStar(event)" style="background:radial-gradient(circle at 50% 30%, #1C2158, #0B0F2E); cursor:pointer;">
+          <div class="finger-hint" id="starFinger" style="top:38%; left:50%;">👆</div>
+        </div>
         <div class="tap-hint" id="starTapCount">Stars found: 0</div>
       </div>
       <div class="card-nav"><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
@@ -222,6 +254,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <p class="big-text">About 13.8 billion years ago, EVERYTHING that exists — every star, every planet, and space itself — was packed into a spot smaller than a grain of sand. Tap it to set off the Big Bang!</p>
         <div class="ring-field" id="bangField" onclick="triggerBang()" style="cursor:pointer">
           <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; z-index:2" id="bangDot">💫</div>
+          <div class="finger-hint" id="bangFinger" style="top:12%; left:50%;">👆</div>
         </div>
         <div class="reveal" id="bangReveal">That's the Big Bang! It wasn't an explosion INTO space, like a firework going off in a room. Space itself was being born and stretching outward — everywhere, all at once. As it expanded, it cooled down, and the very first tiny particles began to form.</div>
       </div>
@@ -252,8 +285,11 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">🌠 The Beginning · 5 of 5</div>
       <div class="card">
         <h2>It Happened EVERYWHERE at Once</h2>
-        <p class="big-text">The Big Bang wasn't one firework in a dark room — it happened at every point, all at the same time!</p>
-        <div class="ring-field" id="everywhereField"></div>
+        <p class="big-text">The Big Bang wasn't one firework in a dark room — it happened at every point, all at the same time! Try tapping a few different spots below, all at once if you can.</p>
+        <div class="ring-field" id="everywhereField" onclick="addManualRing(event)" style="cursor:pointer">
+          <div class="finger-hint" id="everywhereFinger" style="top:40%; left:30%;">👆</div>
+        </div>
+        <div class="tap-hint" id="everywhereCount">Expansions you've started: 0</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('starsplanets')">Next Cluster ▶</button></div>
     </section>
@@ -271,7 +307,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
           <div id="heatMeter" style="height:100%; width:0%; background:linear-gradient(90deg,#5DE0C6,#FFD166,#FF6B5B); transition:width .3s"></div>
         </div>
         <div class="stage-desc" id="squeezeDesc">A cool, thin cloud of gas, floating quietly in space.</div>
-        <button class="action-btn" onclick="squeezeCloud()">👆 Squeeze!</button>
+        <span style="position:relative; display:inline-block;">
+          <button class="action-btn" onclick="squeezeCloud()">👆 Squeeze!</button>
+          <div class="finger-hint" id="squeezeFinger" style="top:-24px; left:50%;">👆</div>
+        </span>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -280,15 +319,19 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 2 of 6</div>
       <div class="card">
         <h2>Spinning Space Dough 🍕</h2>
-        <p class="big-text">Leftover gas and dust around a new star spins and flattens into a disk — just like pizza dough tossed in the air!</p>
-        <svg viewBox="0 0 200 200" width="180" height="180">
-          <g class="disk-spin">
-            <ellipse cx="100" cy="100" rx="90" ry="26" fill="none" stroke="#8B7FFF" stroke-width="4" opacity="0.5"/>
-            <ellipse cx="100" cy="100" rx="65" ry="19" fill="none" stroke="#5DE0C6" stroke-width="4" opacity="0.6"/>
-            <ellipse cx="100" cy="100" rx="40" ry="12" fill="none" stroke="#FFD166" stroke-width="4" opacity="0.7"/>
-          </g>
-          <circle cx="100" cy="100" r="16" fill="#FFD166"/>
-        </svg>
+        <p class="big-text">Leftover gas and dust around a new star spins and flattens into a disk — just like pizza dough tossed in the air! Tap the disk to toss in more dust.</p>
+        <div class="tap-circle" id="diskTapZone" onclick="addDustToDisk()" style="position:relative">
+          <svg viewBox="0 0 200 200" width="180" height="180" id="diskSvg">
+            <g class="disk-spin" id="diskSpinGroup">
+              <ellipse cx="100" cy="100" rx="90" ry="26" fill="none" stroke="#8B7FFF" stroke-width="4" opacity="0.5"/>
+              <ellipse cx="100" cy="100" rx="65" ry="19" fill="none" stroke="#5DE0C6" stroke-width="4" opacity="0.6"/>
+              <ellipse cx="100" cy="100" rx="40" ry="12" fill="none" stroke="#FFD166" stroke-width="4" opacity="0.7"/>
+            </g>
+            <circle cx="100" cy="100" r="16" fill="#FFD166"/>
+          </svg>
+          <div class="finger-hint" id="diskFinger" style="top:8%; left:50%;">👆</div>
+        </div>
+        <div class="tap-hint" id="diskProgress">Dust clumps tossed in: 0</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -342,7 +385,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <div class="discover-zone" id="planetPopZone" style="background:radial-gradient(circle at 50% 50%, #1C2158, #0B0F2E)">
           <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem">☀️</div>
         </div>
-        <button class="action-btn" onclick="popPlanets()">👆 Tap to form planets!</button>
+        <span style="position:relative; display:inline-block;">
+          <button class="action-btn" onclick="popPlanets()">👆 Tap to form planets!</button>
+          <div class="finger-hint" id="popFinger" style="top:-24px; left:50%;">👆</div>
+        </span>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('earth')">Next Cluster ▶</button></div>
     </section>
@@ -354,19 +400,25 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">🌍 Earth's Wild Story · 1 of 5</div>
       <div class="card">
         <h2>A Ball of Melted Rock</h2>
-        <p class="big-text">4.5 billion years ago, baby Earth glowed like lava — completely melted, everywhere!</p>
-        <svg class="molten" viewBox="0 0 200 200" width="160" height="160">
-          <defs>
-            <radialGradient id="moltenGrad" cx="45%" cy="40%">
-              <stop offset="0%" stop-color="#FFD166"/>
-              <stop offset="45%" stop-color="#FF6B5B"/>
-              <stop offset="100%" stop-color="#7A1E12"/>
-            </radialGradient>
-          </defs>
-          <circle cx="100" cy="100" r="85" fill="url(#moltenGrad)"/>
-          <path d="M40 90 Q100 70 160 100" stroke="#FFD166" stroke-width="4" fill="none" opacity="0.7"/>
-          <path d="M50 130 Q100 150 150 125" stroke="#FFD166" stroke-width="3" fill="none" opacity="0.5"/>
-        </svg>
+        <p class="big-text" id="moltenText">4.5 billion years ago, baby Earth glowed like lava — completely melted, everywhere! Tap it to watch it cool down.</p>
+        <div class="tap-circle" id="moltenTapZone" onclick="coolEarth()" style="position:relative; display:inline-block">
+          <svg class="molten" id="moltenSvg" viewBox="0 0 200 200" width="160" height="160">
+            <defs>
+              <radialGradient id="moltenGrad" cx="45%" cy="40%">
+                <stop offset="0%" stop-color="#FFD166"/>
+                <stop offset="45%" stop-color="#FF6B5B"/>
+                <stop offset="100%" stop-color="#7A1E12"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="85" fill="url(#moltenGrad)"/>
+            <path d="M40 90 Q100 70 160 100" stroke="#FFD166" stroke-width="4" fill="none" opacity="0.7"/>
+            <path d="M50 130 Q100 150 150 125" stroke="#FFD166" stroke-width="3" fill="none" opacity="0.5"/>
+            <circle id="crustOverlay" cx="100" cy="100" r="85" fill="#232733" opacity="0"/>
+            <path id="crack1" d="M60 55 L90 95 L70 140" stroke="#0B0F2E" stroke-width="3" fill="none" opacity="0"/>
+            <path id="crack2" d="M140 60 L110 100 L135 150" stroke="#0B0F2E" stroke-width="3" fill="none" opacity="0"/>
+          </svg>
+          <div class="finger-hint" id="moltenFinger" style="top:0; left:50%;">👆</div>
+        </div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -395,7 +447,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <h2>CRASH! The Moon Is Born 🌙</h2>
         <p class="big-text">Scientists think a space rock the size of Mars — nicknamed "Theia" — smashed into baby Earth! Tap to trigger the impact.</p>
         <div class="particle-wrap" id="moonWrap" style="font-size:3rem">🌎</div>
-        <button class="action-btn" onclick="moonImpact()">💥 Trigger the impact!</button>
+        <span style="position:relative; display:inline-block;">
+          <button class="action-btn" onclick="moonImpact()">💥 Trigger the impact!</button>
+          <div class="finger-hint" id="moonFinger" style="top:-24px; left:50%;">👆</div>
+        </span>
         <div class="reveal" id="moonReveal">The crash threw a huge amount of melted, glowing-hot rock into orbit around Earth. Over time, that swirling debris clumped together — the same way dust clumps into planets! — and formed the Moon. 🌙</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
@@ -409,7 +464,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <div style="position:relative; height:110px; background:linear-gradient(180deg,#171B4D,#0B0F2E); border-radius:16px; overflow:hidden" id="rainZone">
           <div class="ocean-fill" id="oceanFill" style="height:0%"></div>
         </div>
-        <button class="action-btn" onclick="makeItRain()">🌧️ Make it rain!</button>
+        <span style="position:relative; display:inline-block;">
+          <button class="action-btn" onclick="makeItRain()">🌧️ Make it rain!</button>
+          <div class="finger-hint" id="rainFinger" style="top:-24px; left:50%;">👆</div>
+        </span>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('solarsystem')">Next Cluster ▶</button></div>
     </section>
@@ -424,6 +482,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <p class="big-text" id="sunFactText">👇 Tap the glowing Sun below for amazing facts — watch it change each time!</p>
         <div style="position:relative; display:inline-block; margin-top:.5rem">
           <div class="tap-ring" style="width:110px; height:110px; top:5px; left:5px;"></div>
+          <div class="finger-hint" id="sunFinger" style="top:-20px; left:50%;">👆</div>
           <div class="sun-wrap" id="sunTap" onclick="cycleSunFact()">
             <div id="sunVisual">
               <svg width="120" height="120" viewBox="0 0 120 120">
@@ -452,6 +511,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <h2>Meet the 8 Planets</h2>
         <p class="big-text">Tap a planet to learn something about it!</p>
         <div class="planet-row">
+          <div class="finger-hint" id="planetFinger" style="top:-26px; left:16%;">👆</div>
           <button class="planet-btn" onclick="showPlanetFact(this,'mercury')">☄️</button>
           <button class="planet-btn" onclick="showPlanetFact(this,'venus')">🟠</button>
           <button class="planet-btn" onclick="showPlanetFact(this,'earth')">🌍</button>
@@ -489,15 +549,19 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="section-badge">🌌 Galaxies &amp; Stardust · 1 of 5</div>
       <div class="card">
         <h2>Our Home: The Milky Way</h2>
-        <p class="big-text">Our Sun and all 8 planets live inside a huge spinning galaxy with 100 to 400 BILLION stars!</p>
-        <svg width="180" height="180" viewBox="0 0 200 200">
-          <g class="galaxy-spin">
-            <path d="M100 100 C 60 60, 40 40, 100 20 C 160 40, 180 60, 100 100 Z" fill="#8B7FFF" opacity="0.55"/>
-            <path d="M100 100 C 140 140, 160 160, 100 180 C 40 160, 20 140, 100 100 Z" fill="#5DE0C6" opacity="0.5"/>
-            <path d="M100 100 C 60 140, 40 160, 20 100 C 40 40, 60 60, 100 100 Z" fill="#FF7FB0" opacity="0.5"/>
-            <circle cx="100" cy="100" r="12" fill="#FFD166"/>
-          </g>
-        </svg>
+        <p class="big-text">Our Sun and all 8 planets live inside a huge spinning galaxy with 100 to 400 BILLION stars! Tap it to zoom through!</p>
+        <div class="particle-wrap tap-circle" id="milkyWrap" onclick="boostGalaxy()" style="position:relative">
+          <svg width="180" height="180" viewBox="0 0 200 200" id="milkyWaySvg">
+            <g class="galaxy-spin" id="galaxySpinGroup">
+              <path d="M100 100 C 60 60, 40 40, 100 20 C 160 40, 180 60, 100 100 Z" fill="#8B7FFF" opacity="0.55"/>
+              <path d="M100 100 C 140 140, 160 160, 100 180 C 40 160, 20 140, 100 100 Z" fill="#5DE0C6" opacity="0.5"/>
+              <path d="M100 100 C 60 140, 40 160, 20 100 C 40 40, 60 60, 100 100 Z" fill="#FF7FB0" opacity="0.5"/>
+              <circle cx="100" cy="100" r="12" fill="#FFD166"/>
+            </g>
+          </svg>
+          <div class="finger-hint" id="galaxySpinFinger" style="top:2%; left:50%;">👆</div>
+        </div>
+        <div class="tap-hint" id="galaxyBoostText">Tap the galaxy for a speed boost!</div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
     </section>
@@ -512,7 +576,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
           <div class="stage-label" id="galaxyName" style="font-size:1rem">Tap below to discover your first galaxy!</div>
           <div style="font-size:.85rem; color:var(--ink-soft); padding:0 .5rem" id="galaxyFact"></div>
         </div>
-        <button class="action-btn" onclick="discoverGalaxy()">🔭 Discover a galaxy!</button>
+        <span style="position:relative; display:inline-block;">
+          <button class="action-btn" onclick="discoverGalaxy()">🔭 Discover a galaxy!</button>
+          <div class="finger-hint" id="galaxyFinger" style="top:-24px; left:50%;">👆</div>
+        </span>
         <div class="tap-hint" id="galaxyCount">Galaxies discovered: 0 / 8</div>
         <div id="galaxyCollection" style="display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.7rem"></div>
       </div>
@@ -524,9 +591,10 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
       <div class="card">
         <h2>Every Star Runs Out of Fuel</h2>
         <p class="big-text">What happens next depends on the star's size. Tap one to find out!</p>
-        <div>
+        <div style="position:relative">
           <button class="action-btn" onclick="starDeath('small')">⭐ Small star</button>
           <button class="action-btn" onclick="starDeath('big')">💥 Giant star</button>
+          <div class="finger-hint" id="deathFinger" style="top:-24px; left:50%;">👆</div>
         </div>
         <div class="particle-wrap" id="deathWrap" style="min-height:60px; margin-top:.6rem"></div>
         <div class="reveal" id="deathReveal"></div>
@@ -540,6 +608,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(-
         <h2>You Are Made of Stardust ✨</h2>
         <p class="big-text">Every heavy atom in your body was forged inside a star! Tap each glowing part of the body to find out which one.</p>
         <div class="particle-wrap" id="bodyWrap">
+          <div class="finger-hint" id="bodyFinger" style="top:30%; left:50%;">👆</div>
           <svg viewBox="0 0 160 230" width="160" height="220">
             <circle cx="80" cy="28" r="18" fill="#4A5568"/>
             <rect id="bodyTorso" class="tap-circle" x="55" y="48" width="50" height="78" rx="18" fill="#4A5568" onclick="revealElement('oxygen', this)"/>
@@ -809,6 +878,7 @@ function burst(wrapId, colors, count){
 // ---- Cluster 1: tap to add stars ----
 let starCount = 0;
 function addTapStar(e){
+  document.getElementById('starFinger')?.remove();
   const zone = document.getElementById('starTapZone');
   const rect = zone.getBoundingClientRect();
   const x = e.clientX - rect.left, y = e.clientY - rect.top;
@@ -845,6 +915,7 @@ function updateHuge(v){
 
 // ---- Cluster 1: Big Bang ----
 function triggerBang(){
+  document.getElementById('bangFinger')?.remove();
   document.getElementById('bangDot').textContent = '💥';
   const field = document.getElementById('bangField');
   for(let i=0;i<3;i++){
@@ -880,6 +951,23 @@ function triggerBang(){
   });
 })();
 
+let manualRingCount = 0;
+function addManualRing(e){
+  document.getElementById('everywhereFinger')?.remove();
+  const field = document.getElementById('everywhereField');
+  const rect = field.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const ring = document.createElement('div');
+  ring.className = 'exp-ring';
+  ring.style.top = y+'px'; ring.style.left = x+'px';
+  ring.style.animationIterationCount = '1';
+  ring.style.borderColor = ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6','#FF6B5B'][Math.floor(Math.random()*5)];
+  field.appendChild(ring);
+  setTimeout(()=>ring.remove(), 2000);
+  manualRingCount++;
+  document.getElementById('everywhereCount').textContent = `Expansions you've started: ${manualRingCount}`;
+}
+
 // ---- Cluster 1: balloon inflate via slider ----
 function inflateBalloon(v){
   const scale = v / 100;
@@ -888,6 +976,29 @@ function inflateBalloon(v){
   if(v < 125){ desc.textContent = "This is space, just after the Big Bang — everything is close together."; }
   else if(v < 160){ desc.textContent = "Space is stretching! Watch the dots (galaxies) drift apart from EVERY other dot."; }
   else { desc.textContent = "No matter which dot you pick, every OTHER dot looks like it's moving away. That's exactly what we see in real space — no galaxy is the \"center\"!"; }
+}
+
+// ---- Cluster 2: spinning disk — tap to toss in dust ----
+let diskTaps = 0;
+function addDustToDisk(){
+  document.getElementById('diskFinger')?.remove();
+  diskTaps++;
+  const g = document.getElementById('diskSpinGroup');
+  const radii = [{rx:90, ry:26}, {rx:65, ry:19}, {rx:40, ry:12}];
+  const ring = radii[Math.floor(Math.random()*radii.length)];
+  const angle = Math.random()*2*Math.PI;
+  const cx = 100 + Math.cos(angle)*ring.rx;
+  const cy = 100 + Math.sin(angle)*ring.ry;
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', '3.5');
+  dot.setAttribute('fill', ['#FFD166','#fff','#FF7FB0'][Math.floor(Math.random()*3)]);
+  g.appendChild(dot);
+  const progress = document.getElementById('diskProgress');
+  if(diskTaps < 6){
+    progress.textContent = `Dust clumps tossed in: ${diskTaps} — keep tapping!`;
+  } else {
+    progress.textContent = "🎉 Enough dust has gathered — a planet is starting to form!";
+  }
 }
 
 // ---- Cluster 2: squeeze cloud ----
@@ -900,6 +1011,7 @@ const SQUEEZE_DESCS = [
   "It's now millions of degrees in the center — hot enough for hydrogen atoms to FUSE together. A star is born! ✨"
 ];
 function squeezeCloud(){
+  document.getElementById('squeezeFinger')?.remove();
   squeezeCount = Math.min(squeezeCount+1, 3);
   document.getElementById('squeezeIcon').textContent = SQUEEZE_STAGES[squeezeCount];
   document.getElementById('heatMeter').style.width = (squeezeCount/3*100)+'%';
@@ -957,6 +1069,7 @@ updateDistance(10);
 
 // ---- Cluster 2: pop planets ----
 function popPlanets(){
+  document.getElementById('popFinger')?.remove();
   const zone = document.getElementById('planetPopZone');
   const planets = ['☄️','🟠','🌍','🔴','🟤','🪐','🔵','🔷'];
   planets.forEach((p,i)=>{
@@ -976,6 +1089,28 @@ function popPlanets(){
   });
 }
 
+// ---- Cluster 3: molten Earth — tap to cool it down ----
+let earthCoolStage = 0;
+const EARTH_COOL_TEXTS = [
+  "4.5 billion years ago, baby Earth glowed like lava — completely melted, everywhere! Tap it to watch it cool down.",
+  "Slowly, the surface starts to cool down...",
+  "A thin, dark crust begins to crack across the surface...",
+  "The outside has hardened into solid rock — though it's still blazing hot underneath! This crust is the very beginning of the ground we stand on today."
+];
+function coolEarth(){
+  document.getElementById('moltenFinger')?.remove();
+  earthCoolStage = Math.min(earthCoolStage+1, 3);
+  document.getElementById('moltenText').textContent = EARTH_COOL_TEXTS[earthCoolStage];
+  document.getElementById('crustOverlay').setAttribute('opacity', (earthCoolStage*0.22).toFixed(2));
+  if(earthCoolStage >= 2){
+    document.getElementById('crack1').setAttribute('opacity', '0.8');
+  }
+  if(earthCoolStage >= 3){
+    document.getElementById('crack2').setAttribute('opacity', '0.8');
+    document.getElementById('moltenSvg').classList.remove('molten');
+  }
+}
+
 // ---- Cluster 3: Earth layers (with finger hint) ----
 const EARTH_LAYERS = {
   crust: "🌎 <strong>Crust</strong> — the thin, cool outer shell we live on.",
@@ -992,6 +1127,7 @@ function showEarthLayer(layer, el){
 
 // ---- Cluster 3: moon impact ----
 function moonImpact(){
+  document.getElementById('moonFinger')?.remove();
   const card = document.getElementById('moonCard');
   card.classList.add('shaking');
   setTimeout(()=>card.classList.remove('shaking'), 400);
@@ -1004,6 +1140,7 @@ function moonImpact(){
 
 // ---- Cluster 3: rain ----
 function makeItRain(){
+  document.getElementById('rainFinger')?.remove();
   const zone = document.getElementById('rainZone');
   for(let i=0;i<16;i++){
     setTimeout(()=>{
@@ -1073,6 +1210,7 @@ const SUN_VISUALS = [
    </svg>`
 ];
 function cycleSunFact(){
+  document.getElementById('sunFinger')?.remove();
   sunIdx = (sunIdx+1) % SUN_FACTS.length;
   document.getElementById('sunFactText').textContent = SUN_FACTS[sunIdx];
   document.getElementById('sunVisual').innerHTML = SUN_VISUALS[sunIdx];
@@ -1098,6 +1236,7 @@ const PLANET_FACTS = {
   neptune: "🔷 <strong>Neptune</strong> — the farthest planet, with the fastest winds in the solar system."
 };
 function showPlanetFact(btn, key){
+  document.getElementById('planetFinger')?.remove();
   document.querySelectorAll('.planet-btn').forEach(b=>b.classList.remove('picked'));
   btn.classList.add('picked');
   const box = document.getElementById('planetFactBox');
@@ -1109,6 +1248,18 @@ function showPlanetFact(btn, key){
 function setOrbitSpeed(v){
   const duration = 9 - v; // higher slider value = faster (shorter duration)
   document.getElementById('orbitPlanet').style.animationDuration = duration+'s';
+}
+
+// ---- Cluster 5: Milky Way — tap for a spin boost ----
+let galaxyBoosts = 0;
+function boostGalaxy(){
+  document.getElementById('galaxySpinFinger')?.remove();
+  galaxyBoosts++;
+  const g = document.getElementById('galaxySpinGroup');
+  g.style.animationDuration = '2.5s';
+  setTimeout(()=>{ g.style.animationDuration = '20s'; }, 1400);
+  burst('milkyWrap', ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6','#fff'], 10);
+  document.getElementById('galaxyBoostText').textContent = `🌀 Zoom! You've boosted the galaxy ${galaxyBoosts} time${galaxyBoosts>1?'s':''}!`;
 }
 
 // ---- Cluster 5: discover REAL galaxies ----
@@ -1124,6 +1275,7 @@ const REAL_GALAXIES = [
 ];
 let galaxyCount = 0;
 function discoverGalaxy(){
+  document.getElementById('galaxyFinger')?.remove();
   if(galaxyCount >= REAL_GALAXIES.length){
     document.getElementById('galaxyCount').textContent = `You've discovered all ${REAL_GALAXIES.length}! And there could be up to 2 TRILLION more out there!`;
     return;
@@ -1143,6 +1295,7 @@ function discoverGalaxy(){
 
 // ---- Cluster 5: star death ----
 function starDeath(type){
+  document.getElementById('deathFinger')?.remove();
   const reveal = document.getElementById('deathReveal');
   if(type==='small'){
     document.getElementById('deathWrap').innerHTML = '<div style="font-size:2.5rem">⭐ ➜ 🔴 ➜ ⚪</div>';
@@ -1166,6 +1319,7 @@ const BODY_ELEMENTS = {
 let elementsFound = 0;
 const foundSet = new Set();
 function revealElement(key, el){
+  document.getElementById('bodyFinger')?.remove();
   const info = BODY_ELEMENTS[key];
   el.setAttribute('fill', info.color);
   el.classList.add('pulse');
