@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melissa's Flags Around the World! 🌍💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#FFDCEC;
+  --sun:#FFC93C;
+  --grass:#8FCB6B;
+  --lava:#FF7A45;
+  --ocean:#E8558B;
+  --ocean-shadow:#B23A67;
+  --ink:#33313C;
+  --card:#FFFFFF;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+  --c-africa:#E86A33; --c-asia:#D64550; --c-europe:#3B82C4;
+  --c-namerica:#4CAF7D; --c-samerica:#9B59B6; --c-oceania:#17A2A2;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--sky); font-family:var(--font-body); color:var(--ink); font-size:19px; line-height:1.5; overflow-x:hidden; }
+h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
+.big-text{ font-size:1.2rem; font-weight:600; }
+.flag-emoji{ font-size:6rem; line-height:1; margin:.2rem 0; }
+
+.deck-viewport{ max-width:720px; margin:0 auto; padding:2.2rem 1.3rem 3rem; perspective:1400px; min-height:100vh; }
+.session{ display:none; text-align:center; }
+.session.active{ display:block; }
+@keyframes flipOutLeft{ to{ transform:rotateY(-95deg); opacity:0; } }
+@keyframes flipOutRight{ to{ transform:rotateY(95deg); opacity:0; } }
+@keyframes flipInRight{ from{ transform:rotateY(95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+@keyframes flipInLeft{ from{ transform:rotateY(-95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+.leaving-next{ animation:flipOutLeft .24s ease-in forwards; }
+.leaving-prev{ animation:flipOutRight .24s ease-in forwards; }
+.entering-next{ animation:flipInRight .24s ease-out forwards; }
+.entering-prev{ animation:flipInLeft .24s ease-out forwards; }
+
+.hero{ background:linear-gradient(180deg, var(--sky), #FFF0F6); border-radius:28px; padding:2.6rem 1.3rem; }
+.hi-name{ font-family:var(--font-display); font-weight:800; color:var(--ocean); font-size:1.4rem; margin-bottom:.3rem; }
+.hero h1{ font-size:clamp(1.8rem,7vw,2.6rem); color:var(--ocean); }
+.hero p{ font-size:1.15rem; max-width:520px; margin:0 auto; }
+.badge{ display:inline-block; background:var(--sun); color:#7A5200; font-family:var(--font-display); font-weight:700; padding:.4em 1em; border-radius:999px; margin-bottom:1rem; font-size:1rem; }
+.finale{ background:var(--sun); border-radius:28px; padding:2.6rem 1.3rem; }
+.finale h2{ color:#7A5200; font-size:1.9rem; }
+
+.card{ background:var(--card); border-radius:28px; padding:1.8rem 1.4rem; box-shadow:0 6px 0 rgba(0,0,0,.06); margin:1.2rem 0; }
+.level-badge{ font-family:var(--font-display); font-size:.85rem; color:var(--ocean); background:#FFF0F6; display:inline-block; padding:.3rem .9rem; border-radius:999px; margin-bottom:.6rem; }
+.continent-pill{ font-family:var(--font-display); font-size:.78rem; color:#fff; display:inline-block; padding:.25rem .8rem; border-radius:999px; margin:.3rem 0 .8rem; }
+.fact-line{ font-size:1.05rem; margin:.35rem 0; text-align:left; padding-left:.2rem; }
+.fact-line b{ color:var(--ocean); }
+.tap-hint{ font-family:var(--font-display); font-size:.9rem; color:var(--ocean); margin-top:.5rem; cursor:pointer; }
+.reveal{ display:none; margin-top:.8rem; font-size:1.02rem; background:#FFF6DE; border-radius:16px; padding:.9rem; text-align:left; }
+.reveal.shown{ display:block; }
+
+.quiz-opts{ display:flex; flex-direction:column; gap:.6rem; margin-top:1rem; }
+.quiz-btn{ font-family:var(--font-display); font-size:1.1rem; background:var(--card); border:3px solid var(--sky); border-radius:16px; padding:.7rem 1rem; cursor:pointer; }
+.quiz-btn.yes{ border-color:var(--grass); background:#E9F8E0; }
+.quiz-btn.no{ border-color:var(--lava); background:#FFEBE3; }
+.quiz-btn:disabled{ cursor:default; }
+
+.card-nav{ display:flex; justify-content:center; gap:1rem; margin-top:1.6rem; flex-wrap:wrap; }
+.nav-btn{ font-family:var(--font-display); font-size:1.02rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.7rem 1.4rem; cursor:pointer; box-shadow:0 4px 0 var(--ocean-shadow); }
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ocean-shadow); }
+.nav-btn:disabled{ opacity:.35; cursor:default; box-shadow:none; }
+.nav-btn.back-btn{ background:#fff; color:var(--ocean); border:2px solid var(--ocean); box-shadow:0 4px 0 var(--sky); }
+.nav-btn.back-btn:active{ box-shadow:0 1px 0 var(--sky); }
+.action-btn{ font-family:var(--font-display); font-size:1.1rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.7rem 1.3rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--ocean-shadow); }
+.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--ocean-shadow); }
+
+.progress-pill{ position:fixed; top:.8rem; right:1rem; font-family:var(--font-display); background:#fff; border-radius:999px; padding:.3rem .8rem; font-size:.85rem; color:var(--ocean); box-shadow:0 3px 0 rgba(0,0,0,.06); z-index:50; }
+.exit-btn{
+  position:fixed; top:.8rem; left:1rem; font-family:var(--font-display); font-weight:700;
+  background:#fff; color:var(--ocean-shadow); border:2px solid var(--ocean);
+  border-radius:999px; padding:.35rem .9rem; font-size:.85rem; text-decoration:none;
+  box-shadow:0 3px 0 var(--sky); z-index:50;
+}
+.exit-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--sky); }
+.deck-dots{ display:flex; justify-content:center; gap:.25rem; flex-wrap:wrap; margin-top:1.2rem; max-width:640px; margin-left:auto; margin-right:auto; }
+.deck-dot{ width:7px; height:7px; border-radius:50%; background:var(--sky); border:none; padding:0; cursor:pointer; }
+.deck-dot.active-dot{ background:var(--ocean); transform:scale(1.5); }
+.result-emoji{ font-size:2.6rem; margin:.5rem 0; }
+
+.level-pick-card{
+  background:var(--card); border-radius:20px; padding:1rem 1.2rem; margin:.7rem 0;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem; cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.06); text-align:left; border:none; width:100%; font-family:var(--font-body);
+}
+.level-pick-card:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.06); }
+.level-pick-name{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:var(--ink); }
+.level-pick-sub{ font-size:.82rem; color:#7a7570; }
+.level-pick-score{ font-family:var(--font-display); font-size:.85rem; color:var(--ocean); background:#FFF0F6; padding:.35rem .8rem; border-radius:999px; white-space:nowrap; }
+.home-btn{ background:#fff; color:var(--ocean-shadow); border:2px dashed var(--ocean); }
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c5650; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="exit-btn">🚪 Exit</a>
+<div class="progress-pill" id="counter">1 / 1</div>
+<div class="deck-viewport">
+  <div id="deck">
+    <section class="session hero active" data-index="0">
+      <div class="badge">🌍 A Round-the-World Adventure 💗</div>
+      <div class="hi-name">Hi Melissa! 👋</div>
+      <h1>Countries &amp; Flags!</h1>
+      <p>Learn about countries from every continent, then test yourself with a flag quiz! Pick a level below to jump right in.</p>
+      <div id="levelPicker"></div>
+      <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Start from the beginning ▶</button></div>
+    </section>
+
+    <section class="session finale" id="finaleCard">
+      <h2>You explored the whole world! 🌍🏆</h2>
+      <p class="big-text" id="finalScoreText">Loading your final score...</p>
+      <div class="result-emoji">🎉🗺️🎉</div>
+      <div class="card-nav">
+        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
+        <button class="nav-btn" onclick="restartEverything()">Play Again From Start 🔁</button>
+      </div>
+    </section>
+  </div>
+  <div class="deck-dots" id="deckDots"></div>
+</div>
+
+<footer>Made with 💗 for Melissa. Facts checked for accuracy — ask a grown-up if you want to learn even more!</footer>
+
+<script>
+// ================= COUNTRY DATA (verified) =================
+const CONTINENT_COLOR = {
+  "Africa":"var(--c-africa)", "Asia":"var(--c-asia)", "Europe":"var(--c-europe)",
+  "North America":"var(--c-namerica)", "South America":"var(--c-samerica)", "Oceania":"var(--c-oceania)"
+};
+
+const LEVELS = [
+{ name:"Easy", emoji:"🟢", countries:[
+  {name:"United States", continent:"North America", flag:"🇺🇸", established:"Declared independence July 4, 1776", language:"English (most common; no official federal language)", food:"Hamburgers & apple pie", culture:"Baseball is called \"America's pastime,\" and the Statue of Liberty was a gift from France in 1886."},
+  {name:"Brazil", continent:"South America", flag:"🇧🇷", established:"Independence on September 7, 1822", language:"Portuguese", food:"Feijoada (black bean & pork stew)", culture:"Home of Carnival, the world's biggest party, and more soccer World Cup wins than any other country."},
+  {name:"France", continent:"Europe", flag:"🇫🇷", established:"Became a republic in 1792 (roots over 1,000 years old)", language:"French", food:"Croissants & baguettes", culture:"The Eiffel Tower was built in 1889 and was only meant to stand for 20 years!"},
+  {name:"Japan", continent:"Asia", flag:"🇯🇵", established:"One of the world's oldest monarchies, over 1,000 years old", language:"Japanese", food:"Sushi", culture:"Cherry blossom season (sakura) is celebrated every spring with picnics under the trees."},
+  {name:"Canada", continent:"North America", flag:"🇨🇦", established:"Became a country July 1, 1867", language:"English & French", food:"Poutine (fries, cheese curds & gravy)", culture:"Canada has more lakes than the rest of the world combined!"},
+  {name:"United Kingdom", continent:"Europe", flag:"🇬🇧", established:"Formed by the Acts of Union in 1707", language:"English", food:"Fish and chips", culture:"Home to Big Ben, and afternoon tea is a cherished daily tradition."},
+  {name:"Germany", continent:"Europe", flag:"🇩🇪", established:"Reunified October 3, 1990", language:"German", food:"Bratwurst & pretzels", culture:"Oktoberfest in Munich is the world's largest folk festival, with millions of visitors every year."},
+  {name:"Italy", continent:"Europe", flag:"🇮🇹", established:"Unified as one country in 1861", language:"Italian", food:"Pizza & pasta", culture:"Home of the Colosseum, built almost 2,000 years ago in Ancient Rome."},
+  {name:"China", continent:"Asia", flag:"🇨🇳", established:"Modern nation founded 1949 (civilization over 3,500 years old)", language:"Mandarin Chinese", food:"Dumplings & noodles", culture:"The Great Wall of China stretches over 13,000 miles!"},
+  {name:"Mexico", continent:"North America", flag:"🇲🇽", established:"Independence declared September 16, 1810", language:"Spanish", food:"Tacos", culture:"Día de los Muertos (Day of the Dead) honors loved ones who have passed away with colorful altars."}
+]},
+{ name:"Intermediate", emoji:"🔵", countries:[
+  {name:"Spain", continent:"Europe", flag:"🇪🇸", established:"United as a kingdom in 1479", language:"Spanish", food:"Paella", culture:"Flamenco dancing began in Andalusia and combines singing, guitar, and rhythmic clapping."},
+  {name:"India", continent:"Asia", flag:"🇮🇳", established:"Independence on August 15, 1947", language:"Hindi & English (plus 21 other official languages!)", food:"Curry", culture:"Diwali, the festival of lights, fills homes and streets with lamps, fireworks, and sweets."},
+  {name:"Australia", continent:"Oceania", flag:"🇦🇺", established:"Became one federation January 1, 1901", language:"English", food:"Meat pie", culture:"Home to kangaroos, koalas, and more venomous animals than anywhere else on Earth!"},
+  {name:"Egypt", continent:"Africa", flag:"🇪🇬", established:"One of the world's oldest civilizations, over 5,000 years old", language:"Arabic", food:"Koshari (rice, lentils & pasta)", culture:"The Great Pyramid of Giza was the tallest man-made structure on Earth for almost 4,000 years."},
+  {name:"South Korea", continent:"Asia", flag:"🇰🇷", established:"Republic established August 15, 1948", language:"Korean", food:"Kimchi", culture:"Taekwondo, a martial art now practiced worldwide, was developed in Korea."},
+  {name:"Russia", continent:"Europe", flag:"🇷🇺", established:"Modern nation formed in 1991", language:"Russian", food:"Borscht (beet soup)", culture:"Russia is so big it spans 11 time zones — more than any other country!"},
+  {name:"Argentina", continent:"South America", flag:"🇦🇷", established:"Independence on July 9, 1816", language:"Spanish", food:"Asado (barbecue)", culture:"Tango, a passionate partner dance, was born in the streets of Buenos Aires."},
+  {name:"South Africa", continent:"Africa", flag:"🇿🇦", established:"Full democracy achieved in 1994", language:"11 official languages!", food:"Bobotie (spiced meat bake)", culture:"Nicknamed the \"Rainbow Nation\" for its incredible mix of cultures and languages."},
+  {name:"Netherlands", continent:"Europe", flag:"🇳🇱", established:"Independence recognized in 1648", language:"Dutch", food:"Stroopwafels", culture:"Famous for tulip fields, windmills, and more bicycles than people!"},
+  {name:"Switzerland", continent:"Europe", flag:"🇨🇭", established:"Founded in 1291", language:"German, French, Italian & Romansh", food:"Cheese fondue", culture:"Known worldwide for chocolate, mountains, and staying neutral in wars for over 200 years."}
+]},
+{ name:"Hard", emoji:"🟠", countries:[
+  {name:"Sweden", continent:"Europe", flag:"🇸🇪", established:"One of the oldest states in Europe, unified around 1000 AD", language:"Swedish", food:"Meatballs (köttbullar)", culture:"Celebrates Midsummer with flower crowns and dancing around a maypole."},
+  {name:"Greece", continent:"Europe", flag:"🇬🇷", established:"Independence in 1830", language:"Greek", food:"Moussaka", culture:"The birthplace of the very first Olympic Games, held in 776 BC!"},
+  {name:"Turkey", continent:"Europe", flag:"🇹🇷", established:"Republic founded October 29, 1923", language:"Turkish", food:"Kebabs & baklava", culture:"The only country in the world that sits on two continents — Europe and Asia — at once."},
+  {name:"Kenya", continent:"Africa", flag:"🇰🇪", established:"Independence December 12, 1963", language:"Swahili & English", food:"Ugali (cornmeal)", culture:"Home to the Maasai people and some of the world's greatest long-distance runners."},
+  {name:"Thailand", continent:"Asia", flag:"🇹🇭", established:"Never colonized; current dynasty began in 1782", language:"Thai", food:"Pad Thai", culture:"The only Southeast Asian country never ruled by a European power."},
+  {name:"Portugal", continent:"Europe", flag:"🇵🇹", established:"Founded as a kingdom in 1143", language:"Portuguese", food:"Bacalhau (salted cod)", culture:"Portuguese explorers like Vasco da Gama helped map much of the world in the 1400s."},
+  {name:"Norway", continent:"Europe", flag:"🇳🇴", established:"Full independence in 1905", language:"Norwegian", food:"Salmon", culture:"Descendants of the Vikings, and home to the magical Northern Lights."},
+  {name:"Peru", continent:"South America", flag:"🇵🇪", established:"Independence on July 28, 1821", language:"Spanish, Quechua & Aymara", food:"Ceviche", culture:"Home to Machu Picchu, the mountaintop city built by the Inca over 500 years ago."},
+  {name:"Nigeria", continent:"Africa", flag:"🇳🇬", established:"Independence October 1, 1960", language:"English (plus over 500 local languages!)", food:"Jollof rice", culture:"Nollywood, Nigeria's film industry, makes more movies per year than Hollywood."},
+  {name:"New Zealand", continent:"Oceania", flag:"🇳🇿", established:"Became fully independent in 1947", language:"English & Māori", food:"Pavlova (meringue dessert)", culture:"The Māori haka is a powerful ceremonial dance now famous worldwide through rugby."}
+]},
+{ name:"Extremely Hard", emoji:"🔴", countries:[
+  {name:"Morocco", continent:"Africa", flag:"🇲🇦", established:"Independence March 2, 1956", language:"Arabic & Berber", food:"Couscous & tagine", culture:"Famous for colorful outdoor markets called souks and the vast Sahara Desert."},
+  {name:"Vietnam", continent:"Asia", flag:"🇻🇳", established:"Independence declared September 2, 1945", language:"Vietnamese", food:"Pho (noodle soup)", culture:"The áo dài, a flowing traditional dress, is still worn for special occasions today."},
+  {name:"Colombia", continent:"South America", flag:"🇨🇴", established:"Independence declared July 20, 1810", language:"Spanish", food:"Arepas (corn cakes)", culture:"One of the world's top coffee producers, grown in its misty mountain regions."},
+  {name:"Finland", continent:"Europe", flag:"🇫🇮", established:"Independence December 6, 1917", language:"Finnish & Swedish", food:"Salmon soup", culture:"Finland invented the sauna — there are more saunas than cars in the country!"},
+  {name:"Iceland", continent:"Europe", flag:"🇮🇸", established:"Independence June 17, 1944", language:"Icelandic", food:"Skyr (creamy yogurt)", culture:"Settled by Vikings around 874 AD, it has active volcanoes AND glaciers."},
+  {name:"Philippines", continent:"Asia", flag:"🇵🇭", established:"Independence declared June 12, 1898", language:"Filipino & English", food:"Adobo", culture:"Made up of over 7,000 islands — more than any country except Indonesia."},
+  {name:"Chile", continent:"South America", flag:"🇨🇱", established:"Independence declared September 18, 1810", language:"Spanish", food:"Empanadas", culture:"One of the longest, skinniest countries on Earth — stretching over 2,600 miles!"},
+  {name:"Poland", continent:"Europe", flag:"🇵🇱", established:"Statehood traced back to 966 AD", language:"Polish", food:"Pierogi (filled dumplings)", culture:"Home of composer Frédéric Chopin and famous for beautiful amber jewelry."},
+  {name:"Indonesia", continent:"Asia", flag:"🇮🇩", established:"Independence August 17, 1945", language:"Bahasa Indonesia", food:"Nasi goreng (fried rice)", culture:"The world's largest archipelago, with over 17,000 islands, and home to real Komodo dragons!"},
+  {name:"Ghana", continent:"Africa", flag:"🇬🇭", established:"Independence March 6, 1957", language:"English", food:"Jollof rice & fufu", culture:"The first country in sub-Saharan Africa to gain independence from colonial rule."}
+]},
+{ name:"Legendary", emoji:"🏆", countries:[
+  {name:"Bhutan", continent:"Asia", flag:"🇧🇹", established:"Unified in 1616; modern monarchy since 1907", language:"Dzongkha", food:"Ema datshi (chili & cheese stew)", culture:"Measures success using \"Gross National Happiness\" instead of just money."},
+  {name:"Nepal", continent:"Asia", flag:"🇳🇵", established:"Unified in 1768", language:"Nepali", food:"Dal bhat (lentils & rice)", culture:"Home to Mount Everest, and the only country with a flag that isn't a rectangle!"},
+  {name:"Mongolia", continent:"Asia", flag:"🇲🇳", established:"Empire founded 1206 by Genghis Khan; modern republic 1924", language:"Mongolian", food:"Buuz (steamed dumplings)", culture:"Many families still live in traditional round tents called gers and herd animals across the grasslands."},
+  {name:"Madagascar", continent:"Africa", flag:"🇲🇬", established:"Independence June 26, 1960", language:"Malagasy & French", food:"Romazava (meat & vegetable stew)", culture:"Home to lemurs and thousands of plants and animals found nowhere else on Earth."},
+  {name:"Uruguay", continent:"South America", flag:"🇺🇾", established:"Independence August 25, 1825", language:"Spanish", food:"Chivito (steak sandwich)", culture:"The first country ever to host and win the FIFA World Cup, back in 1930."},
+  {name:"Fiji", continent:"Oceania", flag:"🇫🇯", established:"Independence October 10, 1970", language:"English, Fijian & Fiji Hindi", food:"Kokoda (coconut fish)", culture:"Made up of over 300 islands surrounded by colorful coral reefs."},
+  {name:"Estonia", continent:"Europe", flag:"🇪🇪", established:"Independence February 24, 1918", language:"Estonian", food:"Rye bread & sprats", culture:"One of the most digital countries on Earth — you can even vote online!"},
+  {name:"Jamaica", continent:"North America", flag:"🇯🇲", established:"Independence August 6, 1962", language:"English & Jamaican Patois", food:"Jerk chicken", culture:"Birthplace of reggae music and home to some of the fastest sprinters ever."},
+  {name:"Ethiopia", continent:"Africa", flag:"🇪🇹", established:"Never colonized; history over 2,000 years old", language:"Amharic", food:"Injera with wat (spicy stew)", culture:"Uses its own unique calendar — Ethiopia is currently a few years \"behind\" the rest of the world!"},
+  {name:"Bolivia", continent:"South America", flag:"🇧🇴", established:"Independence August 6, 1825", language:"Spanish + 36 official Indigenous languages (a world record!)", food:"Salteñas (savory pastry)", culture:"Has two capital cities and is home to the world's largest salt flat."}
+]}
+];
+
+// ================= SCORE PERSISTENCE (localStorage — real site, not a sandboxed preview) =================
+const STORAGE_KEY = 'melissaFlagsLastScores_v1';
+function loadLastScores(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if(Array.isArray(parsed) && parsed.length === LEVELS.length) return parsed;
+  }catch(e){ /* localStorage unavailable — fall back below */ }
+  return LEVELS.map(()=>null); // null = not played yet
+}
+function saveLastScore(li, score){
+  lastScores[li] = score;
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(lastScores)); }catch(e){ /* ignore */ }
+  renderLevelPicker();
+}
+let lastScores = loadLastScores();
+
+// ================= BUILD THE DECK =================
+const deckEl = document.getElementById('deck');
+const finaleEl = document.getElementById('finaleCard');
+const levelScores = LEVELS.map(()=>0);
+
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
+
+function makeSession(innerHTML, extraClass){
+  const s = document.createElement('section');
+  s.className = 'session' + (extraClass ? ' '+extraClass : '');
+  s.innerHTML = innerHTML;
+  return s;
+}
+
+LEVELS.forEach((level, li)=>{
+  // --- level intro card ---
+  const introHTML = `
+    <div class="level-badge">${level.emoji} Level ${li+1} of 5 — ${level.name}</div>
+    <h2>${level.name} Flags</h2>
+    <div class="card"><p class="big-text">Get ready to learn 10 countries, then guess their flags! ${level.countries.map(c=>c.flag).join(' ')}</p></div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
+      <button class="nav-btn" onclick="nextCard()">Start Learning ▶</button>
+    </div>`;
+  deckEl.insertBefore(makeSession(introHTML, 'level-intro'), finaleEl);
+
+  // --- fact cards ---
+  level.countries.forEach((c, ci)=>{
+    const color = CONTINENT_COLOR[c.continent] || 'var(--ocean)';
+    const factHTML = `
+      <div class="level-badge">${level.emoji} ${level.name} — Country ${ci+1} of 10</div>
+      <div class="card">
+        <div class="flag-emoji">${c.flag}</div>
+        <h2>${c.name}</h2>
+        <div class="continent-pill" style="background:${color}">${c.continent}</div>
+        <p class="fact-line">📅 <b>Established:</b> ${c.established}</p>
+        <p class="fact-line">🗣️ <b>Language:</b> ${c.language}</p>
+        <p class="fact-line">🍽️ <b>Favorite food:</b> ${c.food}</p>
+        <div class="tap-hint" onclick="this.nextElementSibling.classList.toggle('shown')">👆 Tap for a fun cultural fact!</div>
+        <div class="reveal">${c.culture}</div>
+      </div>
+      <div class="card-nav">
+        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
+        <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      </div>`;
+    deckEl.insertBefore(makeSession(factHTML, 'fact-card'), finaleEl);
+  });
+
+  // --- quiz cards ---
+  level.countries.forEach((c, ci)=>{
+    const others = level.countries.filter(x=>x.name!==c.name);
+    const distractors = shuffle(others).slice(0,3);
+    const options = shuffle([{name:c.name, correct:true}, ...distractors.map(d=>({name:d.name, correct:false}))]);
+    const optsHTML = options.map(o=>`<button class="quiz-btn" onclick="answerQuiz(this, ${o.correct}, ${li})">${o.name}</button>`).join('');
+    const quizHTML = `
+      <div class="level-badge">${level.emoji} ${level.name} Quiz — Flag ${ci+1} of 10</div>
+      <div class="card">
+        <p class="big-text">Which country does this flag belong to?</p>
+        <div class="flag-emoji">${c.flag}</div>
+        <div class="quiz-opts">${optsHTML}</div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav">
+        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
+        <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      </div>`;
+    deckEl.insertBefore(makeSession(quizHTML, 'quiz-card'), finaleEl);
+  });
+
+  // --- level result card ---
+  const resultHTML = `
+    <h2>${level.name} Results!</h2>
+    <div class="card">
+      <p class="big-text" id="levelResultText-${li}">Let's see how you did!</p>
+      <div class="result-emoji" id="levelResultEmoji-${li}">🌟</div>
+      <button class="action-btn" onclick="retryLevel(${li})">Try This Level Again 🔄</button>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
+      <button class="nav-btn" onclick="nextCard()">${li < LEVELS.length-1 ? 'Next Level ▶' : 'Finish ▶'}</button>
+    </div>`;
+  deckEl.insertBefore(makeSession(resultHTML, 'level-result'), finaleEl);
+});
+
+// ================= LEVEL PICKER (home screen) =================
+function levelIntroIndex(li){
+  let idx = 1; // 0 = hero
+  for(let i=0;i<li;i++){ idx += 1 + 10 + 10 + 1; } // intro + facts + quiz + result per level
+  return idx;
+}
+function renderLevelPicker(){
+  const wrap = document.getElementById('levelPicker');
+  wrap.innerHTML = LEVELS.map((level, li)=>{
+    const score = lastScores[li];
+    const scoreLabel = (score === null || score === undefined) ? 'Not played yet' : `Last score: ${score} / 10`;
+    return `<button class="level-pick-card" onclick="goToLevel(${li})">
+      <span><span class="level-pick-name">${level.emoji} ${level.name}</span><br><span class="level-pick-sub">10 flags</span></span>
+      <span class="level-pick-score">${scoreLabel}</span>
+    </button>`;
+  }).join('');
+}
+renderLevelPicker();
+
+function goHome(){ goTo(0); }
+function goToLevel(li){ goTo(levelIntroIndex(li)); }
+
+// ================= DECK NAVIGATION =================
+const sessions = Array.from(document.querySelectorAll('.session'));
+let current = 0;
+const dotsWrap = document.getElementById('deckDots');
+sessions.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.className = 'deck-dot' + (i===0 ? ' active-dot':'');
+  dot.onclick = ()=> goTo(i);
+  dotsWrap.appendChild(dot);
+});
+const dots = Array.from(dotsWrap.children);
+
+function updateNav(){
+  document.getElementById('counter').textContent = (current+1) + ' / ' + sessions.length;
+  dots.forEach((d,i)=> d.classList.toggle('active-dot', i===current));
+}
+function goTo(idx){
+  if(idx < 0 || idx >= sessions.length || idx === current) return;
+  const dir = idx > current ? 'next' : 'prev';
+  const curEl = sessions[current];
+  const nextEl = sessions[idx];
+  curEl.classList.add(dir === 'next' ? 'leaving-next' : 'leaving-prev');
+  setTimeout(()=>{
+    curEl.classList.remove('active','leaving-next','leaving-prev');
+    nextEl.classList.add('active', dir === 'next' ? 'entering-next' : 'entering-prev');
+    setTimeout(()=> nextEl.classList.remove('entering-next','entering-prev'), 260);
+    current = idx;
+    updateNav();
+    window.scrollTo({top:0, behavior:'auto'});
+    if(nextEl.classList.contains('level-result')) updateLevelResult(nextEl);
+    if(nextEl.id === 'finaleCard') updateFinalScore();
+  }, 240);
+}
+function nextCard(){ goTo(current+1); }
+function prevCard(){ goTo(current-1); }
+updateNav();
+
+let touchStartX = 0;
+document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{ touchStartX = e.changedTouches[0].screenX; }, {passive:true});
+document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if(dx < -50) nextCard();
+  else if(dx > 50) prevCard();
+}, {passive:true});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+});
+
+// ================= QUIZ LOGIC =================
+function answerQuiz(btn, correct, levelIndex){
+  const card = btn.closest('.card');
+  const session = btn.closest('.session');
+  const reveal = card.querySelector('.reveal');
+  const btns = card.querySelectorAll('.quiz-btn');
+  if(btns[0].disabled) return;
+  btns.forEach(b=>b.disabled=true);
+  if(correct){
+    btn.classList.add('yes');
+    reveal.textContent = "Yes! That's right! 🎉";
+    levelScores[levelIndex]++;
+  } else {
+    btn.classList.add('no');
+    btns.forEach(b=>{ if(b.getAttribute('onclick').includes('true')) b.classList.add('yes'); });
+    reveal.textContent = "Not quite — the correct flag's country is highlighted in green.";
+  }
+  reveal.classList.add('shown');
+  const nextBtn = session.querySelector('.next-btn');
+  if(nextBtn) nextBtn.disabled = false;
+}
+
+function updateLevelResult(sessionEl){
+  const li = sessions.indexOf(sessionEl) ;
+  // figure out which level this result belongs to by matching the text node ids present in it
+  const textEl = sessionEl.querySelector('[id^="levelResultText-"]');
+  const emojiEl = sessionEl.querySelector('[id^="levelResultEmoji-"]');
+  const idx = parseInt(textEl.id.split('-')[1],10);
+  const score = levelScores[idx];
+  let phrase, emoji;
+  if(score === 10){ phrase = "Excellent, Melissa"; emoji = "🏆🌟🏆"; }
+  else if(score >= 6){ phrase = "Good job, Melissa"; emoji = "👍✨"; }
+  else { phrase = "Nice try, Melissa — keep exploring"; emoji = "💪🙂"; }
+  textEl.textContent = `${phrase}! You got ${score} out of 10 flags right in ${LEVELS[idx].name}!`;
+  emojiEl.textContent = emoji;
+  saveLastScore(idx, score);
+}
+
+function retryLevel(li){
+  levelScores[li] = 0;
+  // reset all quiz cards whose onclick references this level index
+  document.querySelectorAll('.quiz-card').forEach(session=>{
+    const btns = session.querySelectorAll('.quiz-btn');
+    if(btns.length && btns[0].getAttribute('onclick').includes(', ' + li + ')')){
+      btns.forEach(b=>{ b.disabled=false; b.classList.remove('yes','no'); });
+      session.querySelector('.reveal').classList.remove('shown');
+      session.querySelector('.reveal').textContent='';
+      session.querySelector('.next-btn').disabled = true;
+    }
+  });
+  // jump to first quiz card of this level
+  goTo(levelIntroIndex(li) + 1 + 10);
+}
+
+function updateFinalScore(){
+  const total = levelScores.reduce((a,b)=>a+b,0);
+  const max = LEVELS.length*10;
+  document.getElementById('finalScoreText').textContent = `Melissa, you scored ${total} out of ${max} across all 5 levels! You explored countries on every continent!`;
+}
+
+function restartEverything(){
+  levelScores.fill(0);
+  document.querySelectorAll('.quiz-btn').forEach(b=>{ b.disabled=false; b.classList.remove('yes','no'); });
+  document.querySelectorAll('.quiz-card .reveal').forEach(r=>{ r.classList.remove('shown'); r.textContent=''; });
+  document.querySelectorAll('.quiz-card .next-btn').forEach(b=> b.disabled = true);
+  goTo(0);
+}
+</script>
+</body>
+</html>

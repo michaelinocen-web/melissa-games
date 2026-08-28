@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melissa's Game Hub 🎮💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#FFDCEC;
+  --sun:#FFC93C;
+  --grass:#8FCB6B;
+  --ocean:#E8558B;
+  --ocean-shadow:#B23A67;
+  --ink:#33313C;
+  --card:#FFFFFF;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body{
+  margin:0; min-height:100vh;
+  background:linear-gradient(180deg, var(--sky), #FFF0F6);
+  font-family:var(--font-body); color:var(--ink); font-size:19px; line-height:1.5;
+}
+.wrap{ max-width:880px; margin:0 auto; padding:2.6rem 1.3rem 3rem; text-align:center; }
+h1{ font-family:var(--font-display); font-weight:900; font-size:clamp(2rem,7vw,2.8rem); color:var(--ocean); margin:0 0 .2em; }
+.hi-name{ font-family:var(--font-display); font-weight:800; color:var(--ocean); font-size:1.3rem; margin-bottom:.2rem; }
+.sub{ font-size:1.15rem; color:#5c5650; max-width:520px; margin:0 auto 2.2rem; }
+
+.game-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:1.4rem; text-align:left; }
+
+.game-card{
+  background:var(--card); border-radius:26px; padding:1.6rem 1.5rem;
+  box-shadow:0 6px 0 rgba(0,0,0,.06); display:flex; flex-direction:column;
+  text-decoration:none; color:var(--ink); transition:transform .15s ease;
+}
+.game-card:active{ transform:scale(.98); }
+.game-icon{ font-size:3rem; line-height:1; margin-bottom:.5rem; }
+.game-title{ font-family:var(--font-display); font-weight:800; font-size:1.25rem; margin-bottom:.3rem; }
+.game-desc{ font-size:.95rem; color:#5c5650; flex-grow:1; margin-bottom:1rem; }
+.game-progress{
+  font-family:var(--font-display); font-size:.78rem; color:var(--ocean);
+  background:#FFF0F6; display:inline-block; padding:.3rem .8rem; border-radius:999px; margin-bottom:.8rem; align-self:flex-start;
+}
+.play-btn{
+  font-family:var(--font-display); font-size:1.05rem; font-weight:700; color:#fff;
+  background:var(--ocean); border:none; border-radius:999px; padding:.7rem 1.3rem;
+  text-align:center; box-shadow:0 4px 0 var(--ocean-shadow);
+}
+
+.game-card.coming-soon{ opacity:.6; cursor:default; }
+.game-card.coming-soon .play-btn{ background:#B4B2A9; box-shadow:0 4px 0 #8f8d85; }
+
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c5650; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hi-name">Hi Melissa! 👋💗</div>
+  <h1>Your Game Hub 🎮</h1>
+  <p class="sub">Pick a game below to start playing and learning!</p>
+
+  <div class="game-grid" id="gameGrid"></div>
+</div>
+
+<footer>New games get added here over time — check back soon! 🌟</footer>
+
+<script>
+// ============================================================
+// To add a new game later: just add another object to this array.
+// "progressKey" (optional) reads a localStorage key written by that
+// game's own page, so its saved progress can show up here too.
+// ============================================================
+const GAMES = [
+  {
+    icon: "🌍",
+    title: "Wiggly Earth",
+    desc: "Discover why the ground moves — puzzle pieces, volcanoes, earthquake-proof buildings, and dinosaurs!",
+    href: "kids.html",
+    progressKey: null
+  },
+  {
+    icon: "🏳️",
+    title: "Flags Around the World",
+    desc: "Learn countries, flags, languages, and fun facts across 5 levels — from Easy to Legendary!",
+    href: "countries-flags.html",
+    progressKey: "melissaFlagsLastScores_v1"
+  },
+  {
+    icon: "🌌",
+    title: "The Universe & Planets",
+    desc: "Explore the Big Bang, birth of stars and planets, Earth's wild beginning, and why you're made of stardust!",
+    href: "universe.html",
+    progressKey: null
+  },
+  {
+    icon: "✨",
+    title: "More coming soon!",
+    desc: "New games get added to the hub as they're made. Check back soon!",
+    href: null,
+    progressKey: null
+  }
+];
+
+function renderProgress(key){
+  if(!key) return "";
+  try{
+    const raw = localStorage.getItem(key);
+    const scores = raw ? JSON.parse(raw) : null;
+    if(!Array.isArray(scores)) return "";
+    const played = scores.filter(s => s !== null && s !== undefined).length;
+    if(played === 0) return `<div class="game-progress">Not played yet</div>`;
+    const total = scores.reduce((a,b)=> a + (b||0), 0);
+    return `<div class="game-progress">${played}/${scores.length} levels played · ${total} pts total</div>`;
+  }catch(e){ return ""; }
+}
+
+const grid = document.getElementById('gameGrid');
+grid.innerHTML = GAMES.map(g=>{
+  const progressHTML = renderProgress(g.progressKey);
+  const inner = `
+    <div class="game-icon">${g.icon}</div>
+    <div class="game-title">${g.title}</div>
+    <div class="game-desc">${g.desc}</div>
+    ${progressHTML}
+    <span class="play-btn">${g.href ? 'Play ▶' : 'Coming soon'}</span>
+  `;
+  if(g.href){
+    return `<a class="game-card" href="${g.href}">${inner}</a>`;
+  }
+  return `<div class="game-card coming-soon">${inner}</div>`;
+}).join('');
+</script>
+</body>
+</html>

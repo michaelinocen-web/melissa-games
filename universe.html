@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melissa's Universe &amp; Planets! 🌌✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0F2E; --bg2:#171B4D; --card:#1C2158; --line:#333A80;
+  --ink:#EDEBFF; --ink-soft:#B7B4E8;
+  --accent:#8B7FFF; --accent-shadow:#5A4FCC;
+  --gold:#FFD166; --pink:#FF7FB0; --teal:#5DE0C6; --red:#FF6B5B;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:19px; line-height:1.5; overflow-x:hidden; position:relative; }
+
+.stars{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.star{ position:absolute; background:#fff; border-radius:50%; animation:twinkle 3s infinite ease-in-out; }
+@keyframes twinkle{ 0%,100%{ opacity:.25; } 50%{ opacity:1; } }
+
+h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
+.big-text{ font-size:1.15rem; font-weight:600; }
+svg{ display:block; margin:0 auto; max-width:100%; }
+
+.deck-viewport{ max-width:720px; margin:0 auto; padding:2.2rem 1.3rem 3rem; perspective:1400px; min-height:100vh; position:relative; z-index:1; }
+.session{ display:none; text-align:center; }
+.session.active{ display:block; }
+@keyframes flipOutLeft{ to{ transform:rotateY(-95deg); opacity:0; } }
+@keyframes flipOutRight{ to{ transform:rotateY(95deg); opacity:0; } }
+@keyframes flipInRight{ from{ transform:rotateY(95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+@keyframes flipInLeft{ from{ transform:rotateY(-95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+.leaving-next{ animation:flipOutLeft .24s ease-in forwards; }
+.leaving-prev{ animation:flipOutRight .24s ease-in forwards; }
+.entering-next{ animation:flipInRight .24s ease-out forwards; }
+.entering-prev{ animation:flipInLeft .24s ease-out forwards; }
+
+.hero h1{ font-size:clamp(1.9rem,7vw,2.7rem); background:linear-gradient(90deg,var(--gold),var(--pink),var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hi-name{ font-family:var(--font-display); font-weight:800; color:var(--gold); font-size:1.3rem; margin-bottom:.3rem; }
+.hero p{ font-size:1.1rem; color:var(--ink-soft); max-width:520px; margin:0 auto; }
+.finale{ background:linear-gradient(160deg,#2A1B5E,#0B0F2E); border-radius:28px; padding:2.4rem 1.3rem; border:1px solid var(--line); }
+.finale h2{ color:var(--gold); }
+
+.card{ background:var(--card); border:1px solid var(--line); border-radius:26px; padding:1.6rem 1.4rem; box-shadow:0 6px 0 rgba(0,0,0,.25); margin:1.1rem 0; position:relative; overflow:hidden; }
+.section-badge{ font-family:var(--font-display); font-size:.78rem; color:var(--gold); background:rgba(255,209,102,.1); display:inline-block; padding:.3rem .9rem; border-radius:999px; margin-bottom:.6rem; }
+.card-count{ font-size:.72rem; color:var(--ink-soft); margin-bottom:.6rem; }
+.tap-hint{ font-family:var(--font-display); font-size:.88rem; color:var(--teal); margin-top:.5rem; }
+.reveal{ display:none; margin-top:.8rem; font-size:1rem; background:rgba(255,255,255,.06); border-radius:16px; padding:.85rem; text-align:left; }
+.reveal.shown{ display:block; }
+
+.card-nav{ display:flex; justify-content:center; gap:.7rem; margin-top:1.5rem; flex-wrap:wrap; }
+.nav-btn{ font-family:var(--font-display); font-size:.98rem; background:var(--accent); color:#fff; border:none; border-radius:999px; padding:.68rem 1.3rem; cursor:pointer; box-shadow:0 4px 0 var(--accent-shadow); }
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--accent-shadow); }
+.nav-btn:disabled{ opacity:.3; cursor:default; box-shadow:none; }
+.nav-btn.back-btn{ background:transparent; color:var(--ink-soft); border:2px solid var(--line); box-shadow:none; }
+.nav-btn.map-btn{ background:transparent; color:var(--teal); border:2px dashed var(--teal); box-shadow:none; }
+.action-btn{ font-family:var(--font-display); font-size:1.02rem; background:var(--gold); color:#5A3E00; border:none; border-radius:999px; padding:.68rem 1.3rem; margin:.3rem; cursor:pointer; box-shadow:0 5px 0 #C99A2E; }
+.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 #C99A2E; }
+
+.exit-btn{ position:fixed; top:.8rem; left:1rem; font-family:var(--font-display); font-weight:700; background:var(--card); color:var(--teal); border:2px solid var(--teal); border-radius:999px; padding:.35rem .9rem; font-size:.85rem; text-decoration:none; z-index:50; }
+.progress-pill{ position:fixed; top:.8rem; right:1rem; font-family:var(--font-display); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:.3rem .8rem; font-size:.85rem; color:var(--gold); z-index:50; }
+
+/* ---------- home / topic picker ---------- */
+.topic-pick{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:1rem 1.2rem; margin:.7rem 0; display:flex; align-items:center; justify-content:space-between; gap:1rem; cursor:pointer; box-shadow:0 5px 0 rgba(0,0,0,.25); text-align:left; width:100%; font-family:var(--font-body); color:var(--ink); }
+.topic-pick:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.25); }
+.topic-name{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; }
+.topic-sub{ font-size:.8rem; color:var(--ink-soft); }
+.topic-score{ font-family:var(--font-display); font-size:.78rem; color:var(--gold); background:rgba(255,209,102,.12); padding:.35rem .8rem; border-radius:999px; white-space:nowrap; }
+.topic-pick.quiz-pick{ border-color:var(--gold); }
+
+/* ---------- animated finger hint ---------- */
+@keyframes fingerTap{ 0%,100%{ transform:translate(-50%,0) scale(1); } 50%{ transform:translate(-50%,10px) scale(.92); } }
+.finger-hint{ position:absolute; font-size:2.2rem; pointer-events:none; animation:fingerTap 1s infinite ease-in-out; z-index:5; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); }
+
+/* ---------- generic tap/pulse ---------- */
+.tap-circle{ cursor:pointer; }
+.pulse{ animation:pulse 1.6s infinite ease-in-out; }
+@keyframes pulse{ 0%,100%{ filter:drop-shadow(0 0 6px currentColor);} 50%{ filter:drop-shadow(0 0 22px currentColor);} }
+@keyframes ringPulse{ 0%{ transform:scale(.85); opacity:.9; } 100%{ transform:scale(1.6); opacity:0; } }
+.tap-ring{ position:absolute; border:3px solid var(--gold); border-radius:50%; animation:ringPulse 1.6s infinite ease-out; pointer-events:none; }
+
+/* ---------- particle burst ---------- */
+@keyframes particleFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.particle{ position:absolute; border-radius:50%; animation:particleFly 1s ease-out forwards; }
+.particle-wrap{ position:relative; display:inline-block; min-height:70px; }
+
+/* ---------- screen shake ---------- */
+@keyframes shakeCard{ 0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-8px); } 40%{ transform:translateX(8px); } 60%{ transform:translateX(-6px); } 80%{ transform:translateX(6px); } }
+.shaking{ animation:shakeCard .4s; }
+
+/* ---------- expanding rings (big bang / everywhere-at-once) ---------- */
+.ring-field{ position:relative; height:140px; margin:.5rem 0; }
+@keyframes expandRing{ 0%{ transform:scale(0); opacity:1; border-width:4px; } 100%{ transform:scale(6); opacity:0; border-width:1px; } }
+.exp-ring{ position:absolute; width:20px; height:20px; border:4px solid var(--gold); border-radius:50%; animation:expandRing 2s ease-out infinite; }
+
+/* ---------- sliders ---------- */
+input[type=range]{ width:100%; accent-color:var(--gold); height:8px; margin:1rem 0 .4rem; }
+.stage-label{ font-family:var(--font-display); font-weight:800; font-size:1.15rem; color:var(--gold); margin-top:.3rem; }
+.stage-desc{ font-size:.95rem; color:var(--ink-soft); min-height:2.4em; }
+.milestone-row{ display:flex; justify-content:space-between; font-size:1.4rem; margin-top:.3rem; opacity:.5; }
+.milestone-row span.reached{ opacity:1; }
+
+/* growth timeline visual */
+.grow-stage-visual{ display:flex; align-items:center; justify-content:center; height:100px; }
+.grow-icon{ transition:font-size .25s ease; }
+
+/* distance slider visual */
+.distance-track-wrap{ position:relative; height:120px; margin:.6rem 0; border-radius:16px; overflow:hidden; }
+.distance-bg{ position:absolute; inset:0; transition:background 0.3s; }
+.distance-star{ position:absolute; left:8px; top:38%; transform:translateY(-50%); font-size:2.2rem; }
+.distance-planet{ position:absolute; top:32%; transform:translate(-50%,-50%); font-size:2rem; transition:left .05s linear; z-index:3; }
+.real-planet-marker{ position:absolute; bottom:6px; transform:translateX(-50%); text-align:center; font-size:1.05rem; opacity:.85; }
+.real-planet-marker .rp-label{ display:block; font-size:.58rem; font-family:var(--font-display); color:var(--ink-soft); margin-top:-2px; }
+
+/* sun */
+.sun-wrap{ position:relative; display:inline-block; cursor:pointer; }
+@keyframes rotateRays{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+.sun-rays{ animation:rotateRays 12s linear infinite; transform-origin:center; }
+
+/* galaxy */
+@keyframes rotateGalaxy{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+.galaxy-spin{ animation:rotateGalaxy 20s linear infinite; transform-origin:center; }
+
+/* molten earth */
+@keyframes moltenGlow{ 0%,100%{ filter:drop-shadow(0 0 10px #FF6B5B);} 50%{ filter:drop-shadow(0 0 26px #FFD166);} }
+.molten{ animation:moltenGlow 2.4s infinite ease-in-out; }
+
+/* protoplanetary disk */
+@keyframes spinDisk{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+.disk-spin{ animation:spinDisk 6s linear infinite; transform-origin:center; }
+
+/* rain */
+@keyframes fall{ 0%{ transform:translateY(-10px); opacity:1;} 100%{ transform:translateY(90px); opacity:0;} }
+.raindrop{ position:absolute; width:4px; height:14px; background:#5DE0C6; border-radius:2px; animation:fall 1s linear infinite; }
+.ocean-fill{ position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg,#2E86AB,#1B4B72); transition:height 1.2s ease; border-radius:0 0 16px 16px; }
+
+/* discover galaxies */
+.discover-zone{ position:relative; height:140px; border-radius:16px; overflow:hidden; }
+.discovered-galaxy{ position:absolute; font-size:1.6rem; animation:popIn .4s ease; }
+@keyframes popIn{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
+
+/* sparkle */
+.sparkle{ position:absolute; border-radius:50%; background:#fff; animation:sparkle 1.4s infinite ease-in-out; }
+@keyframes sparkle{ 0%,100%{ opacity:0; transform:scale(.3); } 50%{ opacity:1; transform:scale(1); } }
+
+.quiz-opts{ display:flex; flex-direction:column; gap:.6rem; margin-top:1rem; }
+.quiz-btn{ font-family:var(--font-display); font-size:1.05rem; background:var(--bg2); color:var(--ink); border:3px solid var(--line); border-radius:16px; padding:.68rem 1rem; cursor:pointer; }
+.quiz-btn.yes{ border-color:var(--teal); background:rgba(93,224,198,.15); }
+.quiz-btn.no{ border-color:var(--pink); background:rgba(255,127,176,.15); }
+.quiz-btn:disabled{ cursor:default; }
+.result-emoji{ font-size:2.6rem; margin:.5rem 0; }
+
+.planet-row{ display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin:1rem 0; }
+.planet-btn{ font-size:1.7rem; background:none; border:none; cursor:pointer; padding:.3rem; border-radius:50%; animation:bobPlanet 2.4s infinite ease-in-out; }
+.planet-btn:nth-child(2n){ animation-delay:.4s; }
+.planet-btn:nth-child(3n){ animation-delay:.8s; }
+@keyframes bobPlanet{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-5px);} }
+.planet-btn.picked{ background:rgba(255,255,255,.14); animation:none; }
+
+.orbit-wrap{ position:relative; width:200px; height:200px; margin:0 auto; }
+.orbit-ring{ position:absolute; inset:0; border:1px dashed var(--line); border-radius:50%; }
+.orbit-planet{ position:absolute; top:50%; left:50%; width:16px; height:16px; margin:-8px; border-radius:50%; background:var(--teal); animation:orbitspin 4s linear infinite; transform-origin:8px 108px; }
+@keyframes orbitspin{ from{ transform:rotate(0deg) translateY(-92px); } to{ transform:rotate(360deg) translateY(-92px); } }
+
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:var(--ink-soft); position:relative; z-index:1; }
+</style>
+</head>
+<body>
+
+<div class="stars" id="starsBg"></div>
+<a href="index.html" class="exit-btn">🚪 Exit</a>
+<div class="progress-pill" id="counter">1 / 1</div>
+
+<div class="deck-viewport">
+  <div id="deck">
+
+    <!-- ============ HOME / TOPIC PICKER ============ -->
+    <section class="session hero active" data-index="0">
+      <div class="hi-name">Hi Melissa! 👋✨</div>
+      <h1>The Universe &amp; Planets</h1>
+      <p>Explore how everything began — tap, drag, and play your way from the Big Bang to YOU!</p>
+      <div id="topicPicker" style="margin-top:1.3rem"></div>
+    </section>
+
+    <!-- =========================================================
+         CLUSTER 1: THE BEGINNING  (universe + big bang)
+         ========================================================= -->
+    <section class="session" data-section="beginning">
+      <div class="section-badge">🌠 The Beginning · 1 of 5</div>
+      <div class="card">
+        <h2>Everything, Everywhere ✨</h2>
+        <p class="big-text">The universe is EVERYTHING there is. Tap anywhere in the sky below to fill it with stars!</p>
+        <div class="discover-zone" id="starTapZone" onclick="addTapStar(event)" style="background:radial-gradient(circle at 50% 30%, #1C2158, #0B0F2E); cursor:pointer;"></div>
+        <div class="tap-hint" id="starTapCount">Stars found: 0</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="beginning">
+      <div class="section-badge">🌠 The Beginning · 2 of 5</div>
+      <div class="card">
+        <h2>How Big Is It?</h2>
+        <p class="stage-desc">Drag the slider to zoom OUT, from your planet all the way to the edge of what we can see!</p>
+        <div class="grow-stage-visual"><div class="grow-icon" id="hugeIcon" style="font-size:3rem">🌍</div></div>
+        <div class="stage-label" id="hugeLabel">Planet Earth</div>
+        <input type="range" id="hugeSlider" min="0" max="4" step="1" value="0" oninput="updateHuge(this.value)">
+        <div class="stage-desc" id="hugeDesc">Your home planet.</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="beginning">
+      <div class="section-badge">🌠 The Beginning · 3 of 5</div>
+      <div class="card">
+        <h2>3... 2... 1... BOOM! 💥</h2>
+        <p class="big-text">13.8 billion years ago, everything was squeezed into a tiny dot. Tap it to set off the Big Bang!</p>
+        <div class="ring-field" id="bangField" onclick="triggerBang()" style="cursor:pointer">
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; z-index:2" id="bangDot">💫</div>
+        </div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="beginning">
+      <div class="section-badge">🌠 The Beginning · 4 of 5</div>
+      <div class="card">
+        <h2>The Balloon Trick 🎈</h2>
+        <p class="big-text">Scientists use this trick to picture the Big Bang! The balloon's <strong>surface</strong> is like space, and the <strong>dots</strong> are like galaxies. Drag the slider to blow it up!</p>
+        <svg viewBox="0 0 220 200" width="200" height="180">
+          <g id="balloonGroup" style="transform-origin:110px 100px; transition:transform .1s linear">
+            <ellipse cx="110" cy="100" rx="70" ry="80" fill="#8B7FFF" opacity="0.85"/>
+            <path d="M110 180 L100 200 L120 200 Z" fill="#5A4FCC"/>
+            <circle cx="90" cy="70" r="5" fill="#FFD166"/><circle cx="120" cy="75" r="5" fill="#FFD166"/>
+            <circle cx="100" cy="100" r="5" fill="#FFD166"/><circle cx="130" cy="110" r="5" fill="#FFD166"/>
+            <circle cx="95" cy="130" r="5" fill="#FFD166"/><circle cx="125" cy="135" r="5" fill="#FFD166"/>
+          </g>
+        </svg>
+        <input type="range" id="balloonSlider" min="100" max="180" value="100" oninput="inflateBalloon(this.value)">
+        <div class="stage-desc" id="balloonDesc">This is space, just after the Big Bang — everything is close together.</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="beginning">
+      <div class="section-badge">🌠 The Beginning · 5 of 5</div>
+      <div class="card">
+        <h2>It Happened EVERYWHERE at Once</h2>
+        <p class="big-text">The Big Bang wasn't one firework in a dark room — it happened at every point, all at the same time!</p>
+        <div class="ring-field" id="everywhereField"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('starsplanets')">Next Cluster ▶</button></div>
+    </section>
+
+    <!-- =========================================================
+         CLUSTER 2: STARS & PLANETS ARE BORN
+         ========================================================= -->
+    <section class="session" data-section="starsplanets">
+      <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 1 of 6</div>
+      <div class="card">
+        <h2>Squeeze the Cloud!</h2>
+        <p class="big-text">Gravity pulls gas clouds tighter and tighter. Keep tapping to squeeze it — and see what happens!</p>
+        <div class="grow-stage-visual"><div class="grow-icon" id="squeezeIcon" style="font-size:4rem">☁️</div></div>
+        <div style="background:rgba(255,255,255,.1); border-radius:99px; height:14px; overflow:hidden; margin:.6rem 0">
+          <div id="heatMeter" style="height:100%; width:0%; background:linear-gradient(90deg,#5DE0C6,#FFD166,#FF6B5B); transition:width .3s"></div>
+        </div>
+        <div class="stage-desc" id="squeezeDesc">A cool, thin cloud of gas, floating quietly in space.</div>
+        <button class="action-btn" onclick="squeezeCloud()">👆 Squeeze!</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="starsplanets">
+      <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 2 of 6</div>
+      <div class="card">
+        <h2>Spinning Space Dough 🍕</h2>
+        <p class="big-text">Leftover gas and dust around a new star spins and flattens into a disk — just like pizza dough tossed in the air!</p>
+        <svg viewBox="0 0 200 200" width="180" height="180">
+          <g class="disk-spin">
+            <ellipse cx="100" cy="100" rx="90" ry="26" fill="none" stroke="#8B7FFF" stroke-width="4" opacity="0.5"/>
+            <ellipse cx="100" cy="100" rx="65" ry="19" fill="none" stroke="#5DE0C6" stroke-width="4" opacity="0.6"/>
+            <ellipse cx="100" cy="100" rx="40" ry="12" fill="none" stroke="#FFD166" stroke-width="4" opacity="0.7"/>
+          </g>
+          <circle cx="100" cy="100" r="16" fill="#FFD166"/>
+        </svg>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="starsplanets">
+      <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 3 of 6</div>
+      <div class="card">
+        <h2>Scrub Through Time! ⏩</h2>
+        <p class="big-text">Drag the slider to watch a speck of dust grow into a whole planet, over millions of years.</p>
+        <div class="grow-stage-visual"><div class="grow-icon" id="growEmoji" style="font-size:2rem">✨</div></div>
+        <div class="stage-label" id="growStage">Dust speck</div>
+        <input type="range" id="growSlider" min="0" max="5" step="1" value="0" oninput="updateGrow(this.value)">
+        <div class="milestone-row">
+          <span id="ms0">✨</span><span id="ms1">🪨</span><span id="ms2">🪨</span><span id="ms3">🪨</span><span id="ms4">🌑</span><span id="ms5">🪐</span>
+        </div>
+        <div class="stage-desc" id="growDesc">Tiny specks of rock, metal, and ice drift and bump into each other.</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="starsplanets">
+      <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 4 of 6</div>
+      <div class="card">
+        <h2>Drag Me Near or Far!</h2>
+        <p class="big-text">Drag the rocky test-planet toward or away from the star — and see which REAL planets it passes along the way!</p>
+        <div class="distance-track-wrap" id="distanceBg">
+          <div class="distance-bg" id="distanceGradient"></div>
+          <div class="distance-star">☀️</div>
+          <div class="real-planet-marker" style="left:22%">☄️<span class="rp-label">Mercury</span></div>
+          <div class="real-planet-marker" style="left:34%">🟠<span class="rp-label">Venus</span></div>
+          <div class="real-planet-marker" style="left:46%">🌍<span class="rp-label">Earth</span></div>
+          <div class="real-planet-marker" style="left:56%">🔴<span class="rp-label">Mars</span></div>
+          <div class="real-planet-marker" style="left:72%">🟤<span class="rp-label">Jupiter</span></div>
+          <div class="real-planet-marker" style="left:84%">🪐<span class="rp-label">Saturn</span></div>
+          <div class="real-planet-marker" style="left:94%">🔵<span class="rp-label">Uranus</span></div>
+          <div class="distance-planet" id="distancePlanet" style="left:20%">🪨</div>
+        </div>
+        <input type="range" id="distanceSlider" min="0" max="100" value="10" oninput="updateDistance(this.value)">
+        <div class="stage-desc" id="distanceDesc">Close to the star — too hot for ice. Only rock and metal survive here!</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="starsplanets">
+      <div class="section-badge">⭐🪐 Stars &amp; Planets Are Born · 5 of 6</div>
+      <div class="card">
+        <h2>A Brand New Family! 🎉</h2>
+        <p class="big-text">Tap the sky to watch a whole family of planets pop into place around their new star!</p>
+        <div class="discover-zone" id="planetPopZone" style="background:radial-gradient(circle at 50% 50%, #1C2158, #0B0F2E)">
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem">☀️</div>
+        </div>
+        <button class="action-btn" onclick="popPlanets()">👆 Tap to form planets!</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('earth')">Next Cluster ▶</button></div>
+    </section>
+
+    <!-- =========================================================
+         CLUSTER 3: EARTH'S WILD STORY
+         ========================================================= -->
+    <section class="session" data-section="earth">
+      <div class="section-badge">🌍 Earth's Wild Story · 1 of 5</div>
+      <div class="card">
+        <h2>A Ball of Melted Rock</h2>
+        <p class="big-text">4.5 billion years ago, baby Earth glowed like lava — completely melted, everywhere!</p>
+        <svg class="molten" viewBox="0 0 200 200" width="160" height="160">
+          <defs>
+            <radialGradient id="moltenGrad" cx="45%" cy="40%">
+              <stop offset="0%" stop-color="#FFD166"/>
+              <stop offset="45%" stop-color="#FF6B5B"/>
+              <stop offset="100%" stop-color="#7A1E12"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="85" fill="url(#moltenGrad)"/>
+          <path d="M40 90 Q100 70 160 100" stroke="#FFD166" stroke-width="4" fill="none" opacity="0.7"/>
+          <path d="M50 130 Q100 150 150 125" stroke="#FFD166" stroke-width="3" fill="none" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="earth">
+      <div class="section-badge">🌍 Earth's Wild Story · 2 of 5</div>
+      <div class="card">
+        <h2>Earth Sorts Into Layers</h2>
+        <p class="big-text">Heavy stuff sank to the middle, light stuff floated up. Tap each ring to find out what's there!</p>
+        <div style="position:relative; display:inline-block">
+          <svg viewBox="0 0 200 200" width="180" height="180">
+            <circle class="tap-circle" cx="100" cy="100" r="90" fill="#4A5568" onclick="showEarthLayer('crust', this)"/>
+            <circle class="tap-circle" cx="100" cy="100" r="65" fill="#C1440E" onclick="showEarthLayer('mantle', this)"/>
+            <circle class="tap-circle" cx="100" cy="100" r="30" fill="#FFD166" onclick="showEarthLayer('core', this)"/>
+          </svg>
+          <div class="finger-hint" id="layerFinger" style="top:8px; left:50%;">👆</div>
+        </div>
+        <div class="reveal" id="earthLayerFact"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="earth">
+      <div class="section-badge">🌍 Earth's Wild Story · 3 of 5</div>
+      <div class="card" id="moonCard">
+        <h2>CRASH! The Moon Is Born 🌙</h2>
+        <p class="big-text">Scientists think a space rock the size of Mars — nicknamed "Theia" — smashed into baby Earth! Tap to trigger the impact.</p>
+        <div class="particle-wrap" id="moonWrap" style="font-size:3rem">🌎</div>
+        <button class="action-btn" onclick="moonImpact()">💥 Trigger the impact!</button>
+        <div class="reveal" id="moonReveal">The crash threw a huge amount of melted, glowing-hot rock into orbit around Earth. Over time, that swirling debris clumped together — the same way dust clumps into planets! — and formed the Moon. 🌙</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="earth">
+      <div class="section-badge">🌍 Earth's Wild Story · 4 of 5</div>
+      <div class="card">
+        <h2>Let It Rain! 🌧️</h2>
+        <p class="big-text">Volcanoes and icy comets brought water to Earth. Tap to make it rain and fill the first ocean!</p>
+        <div style="position:relative; height:110px; background:linear-gradient(180deg,#171B4D,#0B0F2E); border-radius:16px; overflow:hidden" id="rainZone">
+          <div class="ocean-fill" id="oceanFill" style="height:0%"></div>
+        </div>
+        <button class="action-btn" onclick="makeItRain()">🌧️ Make it rain!</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('solarsystem')">Next Cluster ▶</button></div>
+    </section>
+
+    <!-- =========================================================
+         CLUSTER 4: OUR SOLAR SYSTEM
+         ========================================================= -->
+    <section class="session" data-section="solarsystem">
+      <div class="section-badge">☀️ Our Solar System · 1 of 4</div>
+      <div class="card">
+        <h2>Our Giant Ball of Fire</h2>
+        <p class="big-text" id="sunFactText">👇 Tap the glowing Sun below for amazing facts — watch it change each time!</p>
+        <div style="position:relative; display:inline-block; margin-top:.5rem">
+          <div class="tap-ring" style="width:110px; height:110px; top:5px; left:5px;"></div>
+          <div class="sun-wrap" id="sunTap" onclick="cycleSunFact()">
+            <div id="sunVisual">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <g class="sun-rays">
+                  <g stroke="#FFD166" stroke-width="5" stroke-linecap="round">
+                    <line x1="60" y1="4" x2="60" y2="18"/><line x1="60" y1="102" x2="60" y2="116"/>
+                    <line x1="4" y1="60" x2="18" y2="60"/><line x1="102" y1="60" x2="116" y2="60"/>
+                    <line x1="18" y1="18" x2="27" y2="27"/><line x1="93" y1="93" x2="102" y2="102"/>
+                    <line x1="102" y1="18" x2="93" y2="27"/><line x1="27" y1="93" x2="18" y2="102"/>
+                  </g>
+                </g>
+                <circle cx="60" cy="60" r="34" fill="#FFD166"/>
+                <circle cx="60" cy="60" r="34" fill="none" stroke="#FFB020" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="solarsystem">
+      <div class="section-badge">☀️ Our Solar System · 2 of 4</div>
+      <div class="card">
+        <h2>Meet the 8 Planets</h2>
+        <p class="big-text">Tap a planet to learn something about it!</p>
+        <div class="planet-row">
+          <button class="planet-btn" onclick="showPlanetFact(this,'mercury')">☄️</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'venus')">🟠</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'earth')">🌍</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'mars')">🔴</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'jupiter')">🟤</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'saturn')">🪐</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'uranus')">🔵</button>
+          <button class="planet-btn" onclick="showPlanetFact(this,'neptune')">🔷</button>
+        </div>
+        <div class="reveal" id="planetFactBox"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="solarsystem">
+      <div class="section-badge">☀️ Our Solar System · 3 of 4</div>
+      <div class="card">
+        <h2>What Keeps a Planet Orbiting?</h2>
+        <p class="big-text">Gravity pulls a planet inward while its own motion carries it forward — together, they curve into an orbit! Drag to change the speed.</p>
+        <div class="orbit-wrap" id="orbitWrap">
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.3rem;">☀️</div>
+          <div class="orbit-ring"></div>
+          <div class="orbit-planet" id="orbitPlanet"></div>
+        </div>
+        <input type="range" id="orbitSpeed" min="1" max="8" value="4" oninput="setOrbitSpeed(this.value)">
+        <div class="stage-desc">👆 Drag to speed up or slow down the orbit!</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('galaxies')">Next Cluster ▶</button></div>
+    </section>
+
+    <!-- =========================================================
+         CLUSTER 5: GALAXIES & STARDUST
+         ========================================================= -->
+    <section class="session" data-section="galaxies">
+      <div class="section-badge">🌌 Galaxies &amp; Stardust · 1 of 5</div>
+      <div class="card">
+        <h2>Our Home: The Milky Way</h2>
+        <p class="big-text">Our Sun and all 8 planets live inside a huge spinning galaxy with 100 to 400 BILLION stars!</p>
+        <svg width="180" height="180" viewBox="0 0 200 200">
+          <g class="galaxy-spin">
+            <path d="M100 100 C 60 60, 40 40, 100 20 C 160 40, 180 60, 100 100 Z" fill="#8B7FFF" opacity="0.55"/>
+            <path d="M100 100 C 140 140, 160 160, 100 180 C 40 160, 20 140, 100 100 Z" fill="#5DE0C6" opacity="0.5"/>
+            <path d="M100 100 C 60 140, 40 160, 20 100 C 40 40, 60 60, 100 100 Z" fill="#FF7FB0" opacity="0.5"/>
+            <circle cx="100" cy="100" r="12" fill="#FFD166"/>
+          </g>
+        </svg>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="galaxies">
+      <div class="section-badge">🌌 Galaxies &amp; Stardust · 2 of 5</div>
+      <div class="card">
+        <h2>Discover Real Galaxies!</h2>
+        <p class="big-text">There could be up to 2 TRILLION galaxies out there — and each one has a real name! Tap to discover one.</p>
+        <div class="discover-zone" id="galaxyZone" style="background:radial-gradient(circle at 50% 30%, #1C2158, #0B0F2E); text-align:center; padding-top:10px;">
+          <div style="font-size:2.4rem" id="galaxyEmoji">🔭</div>
+          <div class="stage-label" id="galaxyName" style="font-size:1rem">Tap below to discover your first galaxy!</div>
+          <div style="font-size:.85rem; color:var(--ink-soft); padding:0 .5rem" id="galaxyFact"></div>
+        </div>
+        <button class="action-btn" onclick="discoverGalaxy()">🔭 Discover a galaxy!</button>
+        <div class="tap-hint" id="galaxyCount">Galaxies discovered: 0 / 8</div>
+        <div id="galaxyCollection" style="display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin-top:.7rem"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="galaxies">
+      <div class="section-badge">🌌 Galaxies &amp; Stardust · 3 of 5</div>
+      <div class="card">
+        <h2>Every Star Runs Out of Fuel</h2>
+        <p class="big-text">What happens next depends on the star's size. Tap one to find out!</p>
+        <div>
+          <button class="action-btn" onclick="starDeath('small')">⭐ Small star</button>
+          <button class="action-btn" onclick="starDeath('big')">💥 Giant star</button>
+        </div>
+        <div class="particle-wrap" id="deathWrap" style="min-height:60px; margin-top:.6rem"></div>
+        <div class="reveal" id="deathReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    </section>
+
+    <section class="session" data-section="galaxies">
+      <div class="section-badge">🌌 Galaxies &amp; Stardust · 4 of 5</div>
+      <div class="card">
+        <h2>You Are Made of Stardust ✨</h2>
+        <p class="big-text">Every heavy atom in your body was forged inside a star! Tap each glowing part of the body to find out which one.</p>
+        <div class="particle-wrap" id="bodyWrap">
+          <svg viewBox="0 0 160 230" width="160" height="220">
+            <circle cx="80" cy="28" r="18" fill="#4A5568"/>
+            <rect id="bodyTorso" class="tap-circle" x="55" y="48" width="50" height="78" rx="18" fill="#4A5568" onclick="revealElement('oxygen', this)"/>
+            <rect id="bodyArmL" class="tap-circle" x="24" y="54" width="20" height="58" rx="10" fill="#4A5568" onclick="revealElement('carbon', this)"/>
+            <rect x="116" y="54" width="20" height="58" rx="10" fill="#4A5568"/>
+            <rect id="bodyLegL" class="tap-circle" x="58" y="128" width="18" height="70" rx="9" fill="#4A5568" onclick="revealElement('calcium', this)"/>
+            <rect x="84" y="128" width="18" height="70" rx="9" fill="#4A5568"/>
+            <circle id="bodyHeart" class="tap-circle" cx="72" cy="76" r="11" fill="#4A5568" onclick="revealElement('iron', this)"/>
+          </svg>
+        </div>
+        <div class="tap-hint" id="elementCount">Elements found: 0 / 4</div>
+        <div class="reveal" id="elementReveal"></div>
+        <p class="big-text">Scientist Carl Sagan said: <em>"We are made of star-stuff."</em> He meant it for real!</p>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="jumpToSection('quiz')">Take the Quiz! 🎯</button></div>
+    </section>
+
+    <!-- ============ QUIZ (9 questions) ============ -->
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 1 of 9</div>
+      <div class="card">
+        <p class="big-text">What is the universe?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">Everything — stars, planets, space itself</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">Just our solar system</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 2 of 9</div>
+      <div class="card">
+        <p class="big-text">What event started the universe?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">The Big Freeze</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">The Big Bang</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 3 of 9</div>
+      <div class="card">
+        <p class="big-text">About how old is the universe?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">1,000 years old</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">13.8 billion years old</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 4 of 9</div>
+      <div class="card">
+        <p class="big-text">What force pulls gas clouds together to make a star?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">Magnetism</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">Gravity</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 5 of 9</div>
+      <div class="card">
+        <p class="big-text">Why is Earth rocky but Jupiter is a gas giant?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">Earth formed close to the hot Sun; Jupiter formed far away where it's cold</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">Jupiter is much older than Earth</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 6 of 9</div>
+      <div class="card">
+        <p class="big-text">How did the Moon form?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">A space rock crashed into baby Earth</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">It floated by and got stuck</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 7 of 9</div>
+      <div class="card">
+        <p class="big-text">What is the name of our home galaxy?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">The Sombrero Galaxy</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">The Milky Way</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 8 of 9</div>
+      <div class="card">
+        <p class="big-text">What happens when a REALLY massive star dies?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">It quietly turns into a moon</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">It explodes as a supernova</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session quiz-card" data-section="quiz">
+      <div class="section-badge">🎯 Quiz — Question 9 of 9</div>
+      <div class="card">
+        <p class="big-text">What are YOU made of, according to Carl Sagan?</p>
+        <div class="quiz-opts">
+          <button class="quiz-btn" onclick="answerQuiz(this,false)">Plastic and metal</button>
+          <button class="quiz-btn" onclick="answerQuiz(this,true)">Star-stuff (stardust!)</button>
+        </div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button></div>
+    </section>
+
+    <section class="session" id="quizResultCard" data-section="quiz">
+      <h2>Quiz Results! 🏆</h2>
+      <div class="card">
+        <p class="big-text" id="quizResultText">Let's see how you did!</p>
+        <div class="result-emoji" id="quizResultEmoji">🌟</div>
+        <button class="action-btn" onclick="retryQuiz()">Try the Quiz Again 🔄</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button><button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button><button class="nav-btn" onclick="nextCard()">Finish ▶</button></div>
+    </section>
+
+    <!-- ============ FINALE ============ -->
+    <section class="session finale" id="finaleCard">
+      <h2>You explored the whole universe! 🌌🎓</h2>
+      <p class="big-text">From the Big Bang to stardust to YOU — that's the whole story! Every atom in you traveled billions of years to get here.</p>
+      <div class="result-emoji">✨🚀✨</div>
+      <div class="card-nav">
+        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+        <button class="nav-btn map-btn" onclick="goHome()">🗺️ Map</button>
+        <a href="index.html" class="nav-btn" style="text-decoration:none">🚪 Back to Hub</a>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer>Made with 🌌 for Melissa. Facts adapted from a fact-checked NASA-sourced lesson document.</footer>
+
+<script>
+// ================= STARFIELD =================
+const starsBg = document.getElementById('starsBg');
+for(let i=0;i<60;i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random()*2.5+1;
+  s.style.width = s.style.height = size+'px';
+  s.style.left = Math.random()*100+'%';
+  s.style.top = Math.random()*100+'%';
+  s.style.animationDelay = (Math.random()*3)+'s';
+  starsBg.appendChild(s);
+}
+
+// ================= TOPIC PICKER (home) =================
+const TOPICS = [
+  {key:'beginning', icon:'🌠', name:'The Beginning'},
+  {key:'starsplanets', icon:'⭐🪐', name:'Stars & Planets Are Born'},
+  {key:'earth', icon:'🌍', name:"Earth's Wild Story"},
+  {key:'solarsystem', icon:'☀️', name:'Our Solar System'},
+  {key:'galaxies', icon:'🌌', name:'Galaxies & Stardust'},
+];
+const QUIZ_KEY = 'melissaUniverseQuizScore_v1';
+function loadBestQuizScore(){
+  try{ const v = localStorage.getItem(QUIZ_KEY); return v===null? null : parseInt(v,10); }catch(e){ return null; }
+}
+function saveBestQuizScore(score){
+  try{
+    const best = loadBestQuizScore();
+    if(best===null || score>best) localStorage.setItem(QUIZ_KEY, String(score));
+  }catch(e){}
+  renderTopicPicker();
+}
+function renderTopicPicker(){
+  const wrap = document.getElementById('topicPicker');
+  const topicsHTML = TOPICS.map(t=>`<button class="topic-pick" onclick="jumpToSection('${t.key}')"><span><span class="topic-name">${t.icon} ${t.name}</span></span><span class="topic-score">Explore</span></button>`).join('');
+  const best = loadBestQuizScore();
+  const quizScoreLabel = best===null ? 'Not taken yet' : `Best: ${best} / 9`;
+  const quizHTML = `<button class="topic-pick quiz-pick" onclick="jumpToSection('quiz')"><span><span class="topic-name">🎯 Final Quiz</span></span><span class="topic-score">${quizScoreLabel}</span></button>`;
+  wrap.innerHTML = topicsHTML + quizHTML;
+}
+renderTopicPicker();
+
+// ================= DECK NAVIGATION =================
+const sessions = Array.from(document.querySelectorAll('.session'));
+let current = 0;
+function updateNav(){ document.getElementById('counter').textContent = (current+1) + ' / ' + sessions.length; }
+function goTo(idx){
+  if(idx < 0 || idx >= sessions.length || idx === current) return;
+  const dir = idx > current ? 'next' : 'prev';
+  const curEl = sessions[current];
+  const nextEl = sessions[idx];
+  curEl.classList.add(dir === 'next' ? 'leaving-next' : 'leaving-prev');
+  setTimeout(()=>{
+    curEl.classList.remove('active','leaving-next','leaving-prev');
+    nextEl.classList.add('active', dir === 'next' ? 'entering-next' : 'entering-prev');
+    setTimeout(()=> nextEl.classList.remove('entering-next','entering-prev'), 260);
+    current = idx;
+    updateNav();
+    window.scrollTo({top:0, behavior:'auto'});
+    if(nextEl.id === 'quizResultCard') updateQuizResult();
+  }, 240);
+}
+function nextCard(){ goTo(current+1); }
+function prevCard(){ goTo(current-1); }
+function goHome(){ goTo(0); }
+function jumpToSection(key){
+  const idx = sessions.findIndex(s => s.dataset.section === key);
+  if(idx >= 0) goTo(idx);
+}
+updateNav();
+
+let touchStartX = 0;
+document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{ touchStartX = e.changedTouches[0].screenX; }, {passive:true});
+document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if(dx < -50) nextCard(); else if(dx > 50) prevCard();
+}, {passive:true});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+});
+
+// ================= GENERIC PARTICLE BURST =================
+function burst(wrapId, colors, count){
+  const wrap = document.getElementById(wrapId);
+  const rect = wrap.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 5 + Math.random()*9;
+    p.style.width = p.style.height = size+'px';
+    p.style.left = (rect.width/2) + 'px';
+    p.style.top = (rect.height/2) + 'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const angle = Math.random()*2*Math.PI;
+    const dist = 60 + Math.random()*80;
+    p.style.setProperty('--dx', (Math.cos(angle)*dist)+'px');
+    p.style.setProperty('--dy', (Math.sin(angle)*dist)+'px');
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(), 1000);
+  }
+}
+
+// ---- Cluster 1: tap to add stars ----
+let starCount = 0;
+function addTapStar(e){
+  const zone = document.getElementById('starTapZone');
+  const rect = zone.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const star = document.createElement('div');
+  const colors = ['#FFD166','#fff','#5DE0C6','#FF7FB0'];
+  star.style.position = 'absolute';
+  star.style.left = x+'px'; star.style.top = y+'px';
+  const size = 4+Math.random()*5;
+  star.style.width = star.style.height = size+'px';
+  star.style.borderRadius = '50%';
+  star.style.background = colors[Math.floor(Math.random()*colors.length)];
+  star.style.animation = 'sparkle 1.4s infinite ease-in-out';
+  zone.appendChild(star);
+  starCount++;
+  document.getElementById('starTapCount').textContent = `Stars found: ${starCount}`;
+}
+
+// ---- Cluster 1: how big slider ----
+const HUGE_STAGES = [
+  {icon:'🌍', size:'3rem', label:'Planet Earth', desc:'Your home planet.'},
+  {icon:'☀️', size:'3.4rem', label:'Solar System', desc:'The Sun and everything held by its gravity, including Earth.'},
+  {icon:'🌌', size:'3.8rem', label:'Our Galaxy', desc:'The Milky Way — billions of stars, including our Sun.'},
+  {icon:'✨', size:'4.2rem', label:'Galaxy Group', desc:'Our Local Group — about 40-50 galaxies together.'},
+  {icon:'🌠', size:'4.8rem', label:'The Whole Universe', desc:"Everything we can detect — maybe even more we can't!"}
+];
+function updateHuge(v){
+  const s = HUGE_STAGES[v];
+  const icon = document.getElementById('hugeIcon');
+  icon.textContent = s.icon;
+  icon.style.fontSize = s.size;
+  document.getElementById('hugeLabel').textContent = s.label;
+  document.getElementById('hugeDesc').textContent = s.desc;
+}
+
+// ---- Cluster 1: Big Bang ----
+function triggerBang(){
+  document.getElementById('bangDot').textContent = '💥';
+  const field = document.getElementById('bangField');
+  for(let i=0;i<3;i++){
+    setTimeout(()=>{
+      const ring = document.createElement('div');
+      ring.className = 'exp-ring';
+      ring.style.top = '50%'; ring.style.left = '50%'; ring.style.marginTop='-10px'; ring.style.marginLeft='-10px';
+      ring.style.animationIterationCount = '1';
+      field.appendChild(ring);
+      setTimeout(()=>ring.remove(), 2000);
+    }, i*150);
+  }
+  burst('bangField', ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6'], 18);
+  setTimeout(()=>{ document.getElementById('bangDot').textContent = '🌌'; }, 600);
+}
+
+// ---- Cluster 1: everywhere-at-once ambient rings ----
+(function ambientRings(){
+  const field = document.getElementById('everywhereField');
+  if(!field) return;
+  const spots = [[20,30],[70,20],[45,60],[80,70],[15,75]];
+  spots.forEach((pos,i)=>{
+    setInterval(()=>{
+      const ring = document.createElement('div');
+      ring.className = 'exp-ring';
+      ring.style.top = pos[1]+'%'; ring.style.left = pos[0]+'%';
+      ring.style.animationIterationCount = '1';
+      ring.style.borderColor = ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6','#FF6B5B'][i];
+      field.appendChild(ring);
+      setTimeout(()=>ring.remove(), 2000);
+    }, 2000 + i*400);
+  });
+})();
+
+// ---- Cluster 1: balloon inflate via slider ----
+function inflateBalloon(v){
+  const scale = v / 100;
+  document.getElementById('balloonGroup').style.transform = `scale(${scale})`;
+  const desc = document.getElementById('balloonDesc');
+  if(v < 125){ desc.textContent = "This is space, just after the Big Bang — everything is close together."; }
+  else if(v < 160){ desc.textContent = "Space is stretching! Watch the dots (galaxies) drift apart from EVERY other dot."; }
+  else { desc.textContent = "No matter which dot you pick, every OTHER dot looks like it's moving away. That's exactly what we see in real space — no galaxy is the \"center\"!"; }
+}
+
+// ---- Cluster 2: squeeze cloud ----
+let squeezeCount = 0;
+const SQUEEZE_STAGES = ['☁️','🌫️','🔥','🌟'];
+const SQUEEZE_DESCS = [
+  "A cool, thin cloud of gas, floating quietly in space.",
+  "Gravity is pulling it tighter — the cloud is getting denser.",
+  "As it squeezes smaller, it heats up — just like a bicycle pump gets warm when you compress air inside!",
+  "It's now millions of degrees in the center — hot enough for hydrogen atoms to FUSE together. A star is born! ✨"
+];
+function squeezeCloud(){
+  squeezeCount = Math.min(squeezeCount+1, 3);
+  document.getElementById('squeezeIcon').textContent = SQUEEZE_STAGES[squeezeCount];
+  document.getElementById('heatMeter').style.width = (squeezeCount/3*100)+'%';
+  document.getElementById('squeezeDesc').textContent = SQUEEZE_DESCS[squeezeCount];
+  if(squeezeCount===3){
+    document.getElementById('squeezeIcon').classList.add('pulse');
+    document.getElementById('squeezeIcon').style.color = '#FFD166';
+  }
+}
+
+// ---- Cluster 2: growth timeline slider ----
+const GROW_STAGES = [
+  {emoji:'✨', size:'2rem', label:'Dust speck', desc:'Tiny specks of rock, metal, and ice drift and bump into each other.'},
+  {emoji:'🪨', size:'2.3rem', label:'Clump', desc:'When specks collide gently, weak static forces make them stick together — like lint!'},
+  {emoji:'🪨', size:'2.8rem', label:'Pebble', desc:'Clumps keep colliding and sticking, slowly growing bigger and bigger.'},
+  {emoji:'🪨', size:'3.4rem', label:'Rock', desc:'After thousands of years of bumping together, it has grown into a real rock.'},
+  {emoji:'🌑', size:'4rem', label:'Boulder', desc:"Once it's about a kilometer across, its OWN gravity kicks in and starts pulling in material fast!"},
+  {emoji:'🪐', size:'4.8rem', label:'A whole planet!! 🎉', desc:'Over millions of years, it swept up everything nearby and became a full planet!'}
+];
+function updateGrow(v){
+  const s = GROW_STAGES[v];
+  const el = document.getElementById('growEmoji');
+  el.textContent = s.emoji;
+  el.style.fontSize = s.size;
+  document.getElementById('growStage').textContent = s.label;
+  document.getElementById('growDesc').textContent = s.desc;
+  for(let i=0;i<=5;i++){
+    document.getElementById('ms'+i).classList.toggle('reached', i<=v);
+  }
+}
+
+// ---- Cluster 2: distance slider ----
+function updateDistance(v){
+  const pct = v;
+  document.getElementById('distancePlanet').style.left = (15 + pct*0.8)+'%';
+  const grad = `linear-gradient(90deg, rgba(255,107,91,${0.5-pct/250}) 0%, rgba(11,15,46,0.3) 50%, rgba(93,224,198,${pct/250}) 100%)`;
+  document.getElementById('distanceGradient').style.background = grad;
+  const planetEl = document.getElementById('distancePlanet');
+  const descEl = document.getElementById('distanceDesc');
+  if(pct < 45){
+    planetEl.textContent = '🪨';
+    planetEl.style.fontSize = '1.6rem';
+    descEl.textContent = 'Close to the star — too hot for ice. Only rock and metal survive here! This is about where Mercury, Venus, Earth, and Mars orbit.';
+  } else if(pct < 65){
+    planetEl.textContent = '🌍';
+    planetEl.style.fontSize = '2rem';
+    descEl.textContent = "Still fairly close — this is near the \"frost line,\" the boundary where it starts getting cold enough for ice.";
+  } else {
+    planetEl.textContent = '🪐';
+    planetEl.style.fontSize = '2.6rem';
+    descEl.textContent = 'Far away — cold enough for ice, so it grabs huge amounts of gas and becomes a giant! This is about where Jupiter, Saturn, Uranus, and Neptune orbit.';
+  }
+}
+updateDistance(10);
+
+// ---- Cluster 2: pop planets ----
+function popPlanets(){
+  const zone = document.getElementById('planetPopZone');
+  const planets = ['☄️','🟠','🌍','🔴','🟤','🪐','🔵','🔷'];
+  planets.forEach((p,i)=>{
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.textContent = p;
+      el.style.position = 'absolute';
+      const angle = (i/planets.length)*2*Math.PI;
+      const dist = 45 + (i%2)*15;
+      el.style.left = (50 + Math.cos(angle)*dist)+'%';
+      el.style.top = (50 + Math.sin(angle)*dist)+'%';
+      el.style.fontSize = '1.6rem';
+      el.style.animation = 'popIn .4s ease';
+      el.style.transform = 'translate(-50%,-50%)';
+      zone.appendChild(el);
+    }, i*150);
+  });
+}
+
+// ---- Cluster 3: Earth layers (with finger hint) ----
+const EARTH_LAYERS = {
+  crust: "🌎 <strong>Crust</strong> — the thin, cool outer shell we live on.",
+  mantle: "🔥 <strong>Mantle</strong> — thick, super-hot rock underneath.",
+  core: "⭐ <strong>Core</strong> — mostly iron and nickel, incredibly hot in the very center."
+};
+function showEarthLayer(layer, el){
+  const fact = document.getElementById('earthLayerFact');
+  fact.innerHTML = EARTH_LAYERS[layer];
+  fact.classList.add('shown');
+  const finger = document.getElementById('layerFinger');
+  if(finger) finger.remove();
+}
+
+// ---- Cluster 3: moon impact ----
+function moonImpact(){
+  const card = document.getElementById('moonCard');
+  card.classList.add('shaking');
+  setTimeout(()=>card.classList.remove('shaking'), 400);
+  burst('moonWrap', ['#9AA0A6','#4A5568','#FFD166'], 16);
+  setTimeout(()=>{
+    document.getElementById('moonWrap').innerHTML = '<span style="font-size:2.6rem">🌎</span> <span style="font-size:1.2rem; animation:popIn .6s ease">🌙</span>';
+    document.getElementById('moonReveal').classList.add('shown');
+  }, 450);
+}
+
+// ---- Cluster 3: rain ----
+function makeItRain(){
+  const zone = document.getElementById('rainZone');
+  for(let i=0;i<16;i++){
+    setTimeout(()=>{
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.left = (Math.random()*95)+'%';
+      drop.style.animationDuration = (0.6+Math.random()*0.5)+'s';
+      zone.appendChild(drop);
+      setTimeout(()=>drop.remove(), 1200);
+    }, i*80);
+  }
+  const fill = document.getElementById('oceanFill');
+  const current = parseInt(fill.style.height) || 0;
+  fill.style.height = Math.min(current+25, 80)+'%';
+}
+
+// ---- Cluster 4: Sun facts ----
+let sunIdx = -1;
+const SUN_FACTS = [
+  "Its core reaches about 15 MILLION degrees! (Look — the white-hot center!)",
+  "The Sun holds more than 99.8% of everything in our whole solar system with its gravity — it's HUGE compared to planets!",
+  "It's made of about 75% hydrogen (teal) and 25% helium (pink).",
+  "Its surface is about 5,800 Kelvin — roughly 9,900°F! It constantly shoots out flares of energy."
+];
+const SUN_VISUALS = [
+  // 0: core temperature — glowing white-hot center
+  `<svg width="120" height="120" viewBox="0 0 120 120">
+     <g class="sun-rays"><g stroke="#FFD166" stroke-width="5" stroke-linecap="round">
+       <line x1="60" y1="4" x2="60" y2="18"/><line x1="60" y1="102" x2="60" y2="116"/>
+       <line x1="4" y1="60" x2="18" y2="60"/><line x1="102" y1="60" x2="116" y2="60"/>
+       <line x1="18" y1="18" x2="27" y2="27"/><line x1="93" y1="93" x2="102" y2="102"/>
+       <line x1="102" y1="18" x2="93" y2="27"/><line x1="27" y1="93" x2="18" y2="102"/>
+     </g></g>
+     <circle cx="60" cy="60" r="34" fill="#FF6B3D"/>
+     <circle cx="60" cy="60" r="15" fill="#FFFFFF" class="pulse" style="color:#fff"/>
+   </svg>`,
+  // 1: mass/scale — tiny planet dots dwarfed by the Sun
+  `<svg width="140" height="140" viewBox="0 0 140 140">
+     <circle cx="8" cy="65" r="2.5" fill="#8B7FFF"/>
+     <circle cx="132" cy="30" r="2" fill="#5DE0C6"/>
+     <circle cx="128" cy="112" r="1.8" fill="#FF7FB0"/>
+     <circle cx="18" cy="20" r="1.6" fill="#fff"/>
+     <circle cx="70" cy="70" r="38" fill="#FFD166"/>
+     <circle cx="70" cy="70" r="38" fill="none" stroke="#FFB020" stroke-width="2"/>
+   </svg>`,
+  // 2: composition — hydrogen/helium donut chart
+  `<svg width="120" height="120" viewBox="0 0 120 120">
+     <circle cx="60" cy="60" r="34" fill="#171B4D"/>
+     <circle cx="60" cy="60" r="34" fill="none" stroke="#5DE0C6" stroke-width="16" stroke-dasharray="160 214" transform="rotate(-90 60 60)"/>
+     <circle cx="60" cy="60" r="34" fill="none" stroke="#FF7FB0" stroke-width="16" stroke-dasharray="54 214" stroke-dashoffset="-160" transform="rotate(-90 60 60)"/>
+   </svg>`,
+  // 3: surface temperature — extra rays + flares
+  `<svg width="130" height="130" viewBox="0 0 130 130">
+     <g class="sun-rays"><g stroke="#FF6B5B" stroke-width="6" stroke-linecap="round">
+       <line x1="65" y1="2" x2="65" y2="18"/><line x1="65" y1="112" x2="65" y2="128"/>
+       <line x1="2" y1="65" x2="18" y2="65"/><line x1="112" y1="65" x2="128" y2="65"/>
+       <line x1="20" y1="20" x2="31" y2="31"/><line x1="99" y1="99" x2="110" y2="110"/>
+       <line x1="110" y1="20" x2="99" y2="31"/><line x1="31" y1="99" x2="20" y2="110"/>
+       <line x1="65" y1="10" x2="65" y2="26" transform="rotate(22.5 65 65)"/>
+       <line x1="65" y1="10" x2="65" y2="26" transform="rotate(67.5 65 65)"/>
+       <line x1="65" y1="10" x2="65" y2="26" transform="rotate(-22.5 65 65)"/>
+       <line x1="65" y1="10" x2="65" y2="26" transform="rotate(-67.5 65 65)"/>
+     </g></g>
+     <circle cx="65" cy="65" r="36" fill="#FFD166"/>
+   </svg>`
+];
+function cycleSunFact(){
+  sunIdx = (sunIdx+1) % SUN_FACTS.length;
+  document.getElementById('sunFactText').textContent = SUN_FACTS[sunIdx];
+  document.getElementById('sunVisual').innerHTML = SUN_VISUALS[sunIdx];
+  const sun = document.getElementById('sunTap');
+  sun.style.transform = 'scale(1.15)';
+  setTimeout(()=> sun.style.transform = 'scale(1)', 200);
+}
+
+// ---- Cluster 4: planet facts ----
+const PLANET_FACTS = {
+  mercury: "☄️ <strong>Mercury</strong> — the smallest planet and closest to the Sun.",
+  venus: "🟠 <strong>Venus</strong> — the hottest planet, even hotter than Mercury!",
+  earth: "🌍 <strong>Earth</strong> — the only planet we know of with life!",
+  mars: '🔴 <strong>Mars</strong> — the "Red Planet," covered in rusty dust.',
+  jupiter: "🟤 <strong>Jupiter</strong> — the biggest planet, a giant ball of gas.",
+  saturn: "🪐 <strong>Saturn</strong> — famous for its beautiful rings made of ice and rock.",
+  uranus: "🔵 <strong>Uranus</strong> — spins on its side, unlike any other planet!",
+  neptune: "🔷 <strong>Neptune</strong> — the farthest planet, with the fastest winds in the solar system."
+};
+function showPlanetFact(btn, key){
+  document.querySelectorAll('.planet-btn').forEach(b=>b.classList.remove('picked'));
+  btn.classList.add('picked');
+  const box = document.getElementById('planetFactBox');
+  box.innerHTML = PLANET_FACTS[key];
+  box.classList.add('shown');
+}
+
+// ---- Cluster 4: orbit speed ----
+function setOrbitSpeed(v){
+  const duration = 9 - v; // higher slider value = faster (shorter duration)
+  document.getElementById('orbitPlanet').style.animationDuration = duration+'s';
+}
+
+// ---- Cluster 5: discover REAL galaxies ----
+const REAL_GALAXIES = [
+  {emoji:'🌌', name:'Andromeda Galaxy', fact:'Our closest big neighbor, about 2.5 million light-years away. Scientists predict it will actually collide with the Milky Way in about 4 billion years!'},
+  {emoji:'🌀', name:'Triangulum Galaxy', fact:'The third-largest galaxy in our neighborhood (the Local Group), about 3 million light-years away.'},
+  {emoji:'☁️', name:'Large Magellanic Cloud', fact:'A small galaxy that orbits the Milky Way, only about 160,000 light-years away — you can see it with just your eyes from the Southern Hemisphere!'},
+  {emoji:'🌀', name:'Whirlpool Galaxy', fact:'A gorgeous spiral about 23 million light-years away, with a smaller companion galaxy right beside it.'},
+  {emoji:'🎩', name:'Sombrero Galaxy', fact:'Shaped like a wide-brimmed hat! It sits about 28 million light-years away.'},
+  {emoji:'🌌', name:'Pinwheel Galaxy', fact:'A huge, face-on spiral about 21 million light-years away — even bigger across than our Milky Way.'},
+  {emoji:'⭕', name:'Cartwheel Galaxy', fact:'Shaped like a wagon wheel because another galaxy crashed right through its middle! About 500 million light-years away.'},
+  {emoji:'🚬', name:'Cigar Galaxy (M82)', fact:'A "starburst" galaxy that makes new stars about 10 times faster than our Milky Way! About 12 million light-years away.'}
+];
+let galaxyCount = 0;
+function discoverGalaxy(){
+  if(galaxyCount >= REAL_GALAXIES.length){
+    document.getElementById('galaxyCount').textContent = `You've discovered all ${REAL_GALAXIES.length}! And there could be up to 2 TRILLION more out there!`;
+    return;
+  }
+  const g = REAL_GALAXIES[galaxyCount];
+  document.getElementById('galaxyEmoji').textContent = g.emoji;
+  document.getElementById('galaxyName').textContent = g.name;
+  document.getElementById('galaxyFact').textContent = g.fact;
+  const chip = document.createElement('span');
+  chip.textContent = g.emoji;
+  chip.style.fontSize = '1.3rem';
+  chip.style.animation = 'popIn .4s ease';
+  document.getElementById('galaxyCollection').appendChild(chip);
+  galaxyCount++;
+  document.getElementById('galaxyCount').textContent = `Galaxies discovered: ${galaxyCount} / ${REAL_GALAXIES.length}`;
+}
+
+// ---- Cluster 5: star death ----
+function starDeath(type){
+  const reveal = document.getElementById('deathReveal');
+  if(type==='small'){
+    document.getElementById('deathWrap').innerHTML = '<div style="font-size:2.5rem">⭐ ➜ 🔴 ➜ ⚪</div>';
+    reveal.innerHTML = "A star like our Sun puffs up into a <strong>red giant</strong>, then shrinks down into a small glowing leftover called a <strong>white dwarf</strong>.";
+  } else {
+    document.getElementById('deathWrap').innerHTML = '<div style="font-size:2.5rem" id="supernovaEmoji">⭐</div>';
+    burst('deathWrap', ['#FFD166','#FF7FB0','#8B7FFF','#fff'], 22);
+    setTimeout(()=>{ const e=document.getElementById('supernovaEmoji'); if(e) e.textContent='🕳️'; }, 500);
+    reveal.innerHTML = "A REALLY massive star explodes as a <strong>supernova</strong> 💥 — one of the most powerful events in the universe! What's left becomes a neutron star or even a <strong>black hole</strong>.";
+  }
+  reveal.classList.add('shown');
+}
+
+// ---- Cluster 5: build-a-stardust-body ----
+const BODY_ELEMENTS = {
+  oxygen: {color:'#5DE0C6', label:'Oxygen', fact:'🫁 The oxygen you breathe every second was made inside a star, long before Earth existed!'},
+  carbon: {color:'#FFD166', label:'Carbon', fact:'💪 The carbon in your muscles was forged inside a star billions of years ago.'},
+  calcium: {color:'#FFFFFF', label:'Calcium', fact:'🦴 The calcium in your bones was made inside a star too!'},
+  iron: {color:'#FF6B5B', label:'Iron', fact:"🩸 The iron in your blood, which carries oxygen through your body, was forged inside a star or a star's explosion."}
+};
+let elementsFound = 0;
+const foundSet = new Set();
+function revealElement(key, el){
+  const info = BODY_ELEMENTS[key];
+  el.setAttribute('fill', info.color);
+  el.classList.add('pulse');
+  el.style.color = info.color;
+  document.getElementById('elementReveal').innerHTML = `<strong>${info.label}</strong> — ${info.fact}`;
+  document.getElementById('elementReveal').classList.add('shown');
+  if(!foundSet.has(key)){
+    foundSet.add(key);
+    elementsFound++;
+    document.getElementById('elementCount').textContent = `Elements found: ${elementsFound} / 4`;
+    if(elementsFound === 4){
+      setTimeout(()=>{
+        burst('bodyWrap', ['#FFD166','#FF7FB0','#8B7FFF','#5DE0C6','#fff'], 24);
+        document.getElementById('elementReveal').innerHTML = "🎉 You found them all! Every single one of those elements was born inside a star. You really ARE made of stardust!";
+      }, 200);
+    }
+  }
+}
+
+// ================= QUIZ =================
+let quizScore = 0;
+function answerQuiz(btn, correct){
+  const card = btn.closest('.card');
+  const session = btn.closest('.session');
+  const reveal = card.querySelector('.reveal');
+  const btns = card.querySelectorAll('.quiz-btn');
+  if(btns[0].disabled) return;
+  btns.forEach(b=>b.disabled=true);
+  if(correct){
+    btn.classList.add('yes');
+    reveal.textContent = "Yes! That's right! 🎉";
+    quizScore++;
+  } else {
+    btn.classList.add('no');
+    btns.forEach(b=>{ if(b.getAttribute('onclick').includes('true')) b.classList.add('yes'); });
+    reveal.textContent = "Not quite — the correct answer is highlighted in green.";
+  }
+  reveal.classList.add('shown');
+  const nextBtn = session.querySelector('.next-btn');
+  if(nextBtn) nextBtn.disabled = false;
+}
+
+function updateQuizResult(){
+  const total = document.querySelectorAll('.quiz-card').length;
+  let phrase, emoji;
+  if(quizScore === total){ phrase = "Excellent, Melissa"; emoji = "🏆🌟🏆"; }
+  else if(quizScore >= 6){ phrase = "Good job, Melissa"; emoji = "👍✨"; }
+  else { phrase = "Nice try, Melissa — keep exploring"; emoji = "💪🙂"; }
+  document.getElementById('quizResultText').textContent = `${phrase}! You got ${quizScore} out of ${total} right!`;
+  document.getElementById('quizResultEmoji').textContent = emoji;
+  saveBestQuizScore(quizScore);
+}
+
+function retryQuiz(){
+  quizScore = 0;
+  document.querySelectorAll('.quiz-card .quiz-btn').forEach(b=>{ b.disabled=false; b.classList.remove('yes','no'); });
+  document.querySelectorAll('.quiz-card .reveal').forEach(r=>{ r.classList.remove('shown'); r.textContent=''; });
+  document.querySelectorAll('.quiz-card .next-btn').forEach(b=> b.disabled = true);
+  jumpToSection('quiz');
+}
+</script>
+</body>
+</html>

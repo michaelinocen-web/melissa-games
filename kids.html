@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melissa's Wiggly Earth! 🌍💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+/* Fonts load via <link> (not @import) and every fallback ends in a plain
+   sans-serif — never the generic "cursive" keyword — so text stays readable
+   on a phone even if Baloo 2 is slow to load. */
+
+:root{
+  --sky:#FFDCEC;         /* soft pink — page background & light accents */
+  --sun:#FFC93C;
+  --grass:#8FCB6B;
+  --lava:#FF7A45;
+  --ocean:#E8558B;       /* Melissa's pink — primary buttons/accents */
+  --ocean-shadow:#B23A67;/* darker pink for button "pressed" shadow */
+  --ink:#33313C;
+  --card:#FFFFFF;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--sky);
+  font-family:var(--font-body);
+  color:var(--ink);
+  font-size:19px;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
+.big-text{ font-size:1.25rem; font-weight:600; }
+svg{ display:block; margin:0 auto; max-width:100%; }
+
+/* ---------------- deck / flip-card structure ---------------- */
+.deck-viewport{ max-width:720px; margin:0 auto; padding:2.2rem 1.3rem 3rem; perspective:1400px; min-height:100vh; }
+.session{ display:none; text-align:center; }
+.session.active{ display:block; }
+
+@keyframes flipOutLeft{ to{ transform:rotateY(-95deg); opacity:0; } }
+@keyframes flipOutRight{ to{ transform:rotateY(95deg); opacity:0; } }
+@keyframes flipInRight{ from{ transform:rotateY(95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+@keyframes flipInLeft{ from{ transform:rotateY(-95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+.leaving-next{ animation:flipOutLeft .26s ease-in forwards; }
+.leaving-prev{ animation:flipOutRight .26s ease-in forwards; }
+.entering-next{ animation:flipInRight .26s ease-out forwards; }
+.entering-prev{ animation:flipInLeft .26s ease-out forwards; }
+
+.hero{ background:linear-gradient(180deg, var(--sky), #FFF0F6); border-radius:28px; padding:2.6rem 1.3rem; }
+.hi-name{ font-family:var(--font-display); font-weight:800; color:var(--ocean); font-size:1.4rem; margin-bottom:.3rem; }
+.hero h1{ font-size:clamp(2rem,7vw,2.9rem); color:var(--ocean); }
+.hero p{ font-size:1.2rem; max-width:520px; margin:0 auto; }
+.badge{ display:inline-block; background:var(--sun); color:#7A5200; font-family:var(--font-display); font-weight:700; padding:.4em 1em; border-radius:999px; margin-bottom:1rem; font-size:1rem; }
+.finale{ background:var(--sun); border-radius:28px; padding:2.6rem 1.3rem; }
+.finale h2{ color:#7A5200; font-size:2rem; }
+
+.card{ background:var(--card); border-radius:28px; padding:1.8rem 1.4rem; box-shadow:0 6px 0 rgba(0,0,0,.06); margin:1.2rem 0; }
+.tap-hint{ font-family:var(--font-display); font-size:.95rem; color:var(--ocean); margin-top:.6rem; }
+.reveal{ display:none; margin-top:1rem; font-size:1.1rem; background:#FFF6DE; border-radius:16px; padding:1rem; }
+.reveal.shown{ display:block; }
+
+.trio{ display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+.trio .card{ flex:1 1 190px; cursor:pointer; }
+.trio .card:active{ transform:scale(.97); }
+
+@keyframes bubble{ 0%{ transform:translateY(0) scale(1); opacity:.9; } 100%{ transform:translateY(-70px) scale(1.4); opacity:0; } }
+.bub{ animation:bubble 2.4s infinite ease-in; }
+.bub:nth-child(2){ animation-delay:.6s; }
+.bub:nth-child(3){ animation-delay:1.2s; }
+.bub:nth-child(4){ animation-delay:1.8s; }
+
+@keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+.bob{ animation:bob 3s infinite ease-in-out; }
+
+@keyframes wiggle{ 0%,100%{transform:rotate(0deg);} 25%{transform:rotate(-4deg);} 75%{transform:rotate(4deg);} }
+.wiggling{ animation:wiggle .3s 3; }
+
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+.shaking{ animation:shake .25s 4; }
+
+@keyframes fly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),-140px) scale(.3); opacity:0; } }
+.particle{ position:absolute; animation:fly 1.1s ease-out forwards; }
+.volcano-wrap{ position:relative; display:inline-block; cursor:pointer; }
+.volcano-wrap:active svg{ transform:scale(.98); }
+
+.quiz-btn{ font-family:var(--font-display); font-size:1.3rem; background:var(--card); border:3px solid var(--sky); border-radius:18px; padding:.8rem 1.2rem; margin:.4rem; cursor:pointer; min-width:110px; }
+.quiz-btn.yes{ border-color:var(--grass); background:#E9F8E0; }
+.quiz-btn.no{ border-color:var(--lava); background:#FFEBE3; }
+.quiz-btn:disabled{ cursor:default; }
+
+.stage-nav{ display:flex; justify-content:center; align-items:center; gap:1rem; margin-top:.8rem; }
+.stage-nav button{ font-family:var(--font-display); font-size:1.6rem; background:var(--ocean); color:#fff; border:none; width:52px; height:52px; border-radius:50%; cursor:pointer; }
+.stage-nav button:disabled{ opacity:.35; cursor:default; }
+.stage-label{ font-family:var(--font-display); color:var(--ocean); font-size:1rem; margin-top:.5rem; }
+
+.fact-row{ display:flex; gap:.8rem; flex-wrap:wrap; justify-content:center; }
+.fact-pill{ background:var(--card); border-radius:20px; padding:.9rem 1.1rem; flex:1 1 160px; box-shadow:0 4px 0 rgba(0,0,0,.06); cursor:pointer; }
+.fact-pill .emoji{ font-size:1.8rem; }
+.fact-pill .more{ display:none; font-size:.85rem; margin-top:.5rem; color:var(--ocean); font-weight:700; }
+.fact-pill.open .more{ display:block; }
+
+.peach-fact{ display:none; margin-top:1rem; font-size:1.05rem; background:#FFF6DE; border-radius:16px; padding:1rem; text-align:left; }
+.peach-fact.shown{ display:block; }
+
+.action-btn{ font-family:var(--font-display); font-size:1.2rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.75rem 1.4rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--ocean-shadow); }
+.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--ocean-shadow); }
+.action-btn.secondary{ background:#fff; color:var(--ocean); border:2px solid var(--ocean); box-shadow:0 5px 0 var(--sky); }
+.action-btn.secondary:active{ box-shadow:0 2px 0 var(--sky); }
+
+#groundRect.ground-shake{ animation:groundshake .1s 20; }
+@keyframes groundshake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+#buildingA.toppled{ animation:topple .9s ease-in forwards; }
+@keyframes topple{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(28deg) translate(14px,4px); } }
+#buildingB.swaying-safe{ animation:swaysafe 3.6s ease-in-out; transform-origin:170px 170px; }
+@keyframes swaysafe{
+  0%,100%{ transform:rotate(0deg); }
+  10%{ transform:rotate(-7deg); } 20%{ transform:rotate(6deg); }
+  30%{ transform:rotate(-5deg); } 40%{ transform:rotate(4deg); }
+  50%{ transform:rotate(-3deg); } 60%{ transform:rotate(2deg); }
+  70%{ transform:rotate(-1deg); } 80%{ transform:rotate(1deg); } 90%{ transform:rotate(0deg); }
+}
+.sky-result{ margin-top:1rem; font-size:1.1rem; font-weight:700; min-height:1.6em; }
+
+/* ---------------- nav buttons live ON each card ---------------- */
+.card-nav{ display:flex; justify-content:center; gap:1rem; margin-top:1.6rem; flex-wrap:wrap; }
+.nav-btn{
+  font-family:var(--font-display); font-size:1.05rem; background:var(--ocean); color:#fff;
+  border:none; border-radius:999px; padding:.75rem 1.5rem; cursor:pointer; box-shadow:0 4px 0 var(--ocean-shadow);
+}
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ocean-shadow); }
+.nav-btn:disabled{ opacity:.35; cursor:default; box-shadow:none; }
+.nav-btn.back-btn{ background:#fff; color:var(--ocean); border:2px solid var(--ocean); box-shadow:0 4px 0 var(--sky); }
+.nav-btn.back-btn:active{ box-shadow:0 1px 0 var(--sky); }
+
+.progress-pill{
+  position:fixed; top:.8rem; right:1rem; font-family:var(--font-display);
+  background:#fff; border-radius:999px; padding:.3rem .8rem; font-size:.9rem;
+  color:var(--ocean); box-shadow:0 3px 0 rgba(0,0,0,.06); z-index:50;
+}
+.exit-btn{
+  position:fixed; top:.8rem; left:1rem; font-family:var(--font-display); font-weight:700;
+  background:#fff; color:var(--ocean-shadow); border:2px solid var(--ocean);
+  border-radius:999px; padding:.35rem .9rem; font-size:.9rem; text-decoration:none;
+  box-shadow:0 3px 0 var(--sky); z-index:50;
+}
+.exit-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--sky); }
+.deck-dots{ display:flex; justify-content:center; gap:.35rem; flex-wrap:wrap; margin-top:1.2rem; }
+.deck-dot{ width:10px; height:10px; border-radius:50%; background:var(--sky); border:none; padding:0; cursor:pointer; }
+.deck-dot.active-dot{ background:var(--ocean); transform:scale(1.3); }
+
+.result-emoji{ font-size:3rem; margin:.6rem 0; }
+
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c5650; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="exit-btn">🚪 Exit</a>
+<div class="progress-pill" id="counter">1 / 16</div>
+
+<div class="deck-viewport" id="deck">
+
+  <section class="session hero active" data-index="0">
+    <div class="badge">A Wiggly Earth Adventure 🐚</div>
+    <div class="hi-name">Hi Melissa! 👋💗</div>
+    <h1>Why does the ground move?! 🌍</h1>
+    <p>Flip through the cards, tap things, and play!</p>
+    <svg viewBox="0 0 200 200" width="170" height="170" style="margin-top:1.3rem" id="mascot" onclick="this.classList.add('wiggling')">
+      <circle cx="100" cy="100" r="90" fill="#5DCAA5"/>
+      <circle cx="70" cy="80" r="28" fill="#3E9E7A"/>
+      <circle cx="130" cy="130" r="20" fill="#3E9E7A"/>
+      <circle cx="140" cy="60" r="16" fill="#3E9E7A"/>
+      <circle cx="78" cy="72" r="7" fill="#33313C"/>
+      <circle cx="105" cy="72" r="7" fill="#33313C"/>
+      <path d="M80 100 Q92 112 105 100" stroke="#33313C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="tap-hint">👆 Tap Earth to say hi!</div>
+    <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+  </section>
+
+  <section class="session" data-index="1">
+    <h2>Earth is like a peach! 🍑 Tap each part!</h2>
+    <div class="card">
+      <svg viewBox="0 0 240 240" width="200" height="200">
+        <circle class="peach-part" cx="120" cy="120" r="110" fill="#F2A623" onclick="showPeach('crust')"/>
+        <circle class="peach-part" cx="120" cy="120" r="75" fill="#FF7A45" onclick="showPeach('mantle')"/>
+        <circle class="peach-part" cx="120" cy="120" r="32" fill="#8B2E1F" onclick="showPeach('core')"/>
+      </svg>
+      <div class="peach-fact" id="peachFact"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="2">
+    <h2>The ground is a giant puzzle! 🧩</h2>
+    <div class="card">
+      <svg viewBox="0 0 300 200" width="260" height="175" id="puzzle-svg">
+        <rect class="piece bob" x="10" y="10" width="130" height="90" fill="#5DCAA5" rx="8" onclick="this.classList.add('wiggling')"/>
+        <rect class="piece bob" x="150" y="10" width="140" height="90" fill="#FAC775" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:.5s"/>
+        <rect class="piece bob" x="10" y="110" width="140" height="80" fill="#7F9CF5" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:1s"/>
+        <rect class="piece bob" x="160" y="110" width="130" height="80" fill="#F17FA0" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:1.5s"/>
+        <line x1="145" y1="0" x2="145" y2="200" stroke="#fff" stroke-width="6" pointer-events="none"/>
+        <line x1="0" y1="105" x2="300" y2="105" stroke="#fff" stroke-width="6" pointer-events="none"/>
+      </svg>
+      <p class="big-text">Earth's shell is cracked into giant pieces called <strong>plates</strong>. Tap a piece to wiggle it!</p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="3">
+    <h2>The pieces float on hot goo! 🍲</h2>
+    <div class="card">
+      <svg viewBox="0 0 260 200" width="230" height="175">
+        <rect x="30" y="90" width="200" height="90" rx="16" fill="#9AA0A6"/>
+        <ellipse cx="130" cy="90" rx="100" ry="18" fill="#FF7A45"/>
+        <circle class="bub" cx="90" cy="85" r="8" fill="#FFCB77"/>
+        <circle class="bub" cx="140" cy="88" r="6" fill="#FFCB77"/>
+        <circle class="bub" cx="170" cy="82" r="9" fill="#FFCB77"/>
+        <circle class="bub" cx="115" cy="90" r="5" fill="#FFCB77"/>
+        <rect x="60" y="55" width="60" height="14" rx="6" fill="#5DCAA5" class="bob"/>
+        <rect x="140" y="60" width="70" height="14" rx="6" fill="#7F9CF5" class="bob"/>
+      </svg>
+      <p class="big-text">Under the plates, hot rock slowly bubbles like soup on a stove. That pushes the puzzle pieces around — slower than a snail!</p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="4">
+    <h2>What happens when pieces meet? Tap to find out!</h2>
+    <div class="trio">
+      <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="110" height="82"><path d="M20 90 L70 20 L120 90 Z" fill="#639922"/></svg>
+        <p class="big-text">Bump! 🏔️</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">When two pieces crash together, the ground pushes UP and makes tall mountains!</div>
+      </div>
+      <div class="card" onclick="const c=this; c.classList.add('shaking'); setTimeout(()=>c.classList.remove('shaking'),1000); c.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="110" height="82"><path d="M10 60 L50 60 L60 40 L70 80 L80 50 L90 60 L130 60" stroke="#C1440E" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+        <p class="big-text">Slide! 〰️</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">When two pieces slide past each other, the ground can suddenly SHAKE — that's an earthquake!</div>
+      </div>
+      <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="110" height="82"><rect x="10" y="40" width="45" height="35" fill="#7F9CF5"/><rect x="85" y="40" width="45" height="35" fill="#5DCAA5"/><path d="M55 40 L70 15 L85 40 Z" fill="#FF7A45"/></svg>
+        <p class="big-text">Pull apart! ↔️</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">When two pieces pull apart, hot melty rock rises up between them and makes brand new ground!</div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="5">
+    <h2>Fire mountains! Tap the volcano! 🌋</h2>
+    <div class="card">
+      <p class="big-text">Super hot melted rock called <strong>magma</strong> sneaks up through a crack. When it bursts out — that's a volcano erupting!</p>
+      <div class="volcano-wrap" id="volcano" onclick="erupt(this)">
+        <svg viewBox="0 0 220 180" width="180" height="145">
+          <path d="M20 170 L110 30 L200 170 Z" fill="#8B6F47"/>
+          <path d="M90 80 L110 30 L130 80 Z" fill="#C1440E"/>
+          <circle cx="110" cy="35" r="10" fill="#FFCB3C"/>
+        </svg>
+      </div>
+      <div class="tap-hint">👆 Tap the mountain!</div>
+      <p style="margin-top:1rem">Lots of volcanoes ring the edge of the Pacific Ocean — people call it the <strong>Ring of Fire</strong> 🔥⭕</p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="6">
+    <h2>Some buildings survive earthquakes! 🏢</h2>
+    <div class="card">
+      <p class="big-text">Stiff buildings can crack and fall. Smart buildings have squishy pads — like bouncy sneakers instead of hard shoes!</p>
+      <svg viewBox="0 0 400 220" width="100%" style="max-width:340px">
+        <rect id="groundRect" x="0" y="190" width="400" height="30" fill="#8B6F47"/>
+        <g id="buildingA">
+          <rect x="60" y="80" width="70" height="110" fill="#9AA0A6"/>
+          <rect x="70" y="95" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="95" width="15" height="15" fill="#E9F6FC"/>
+          <rect x="70" y="120" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="120" width="15" height="15" fill="#E9F6FC"/>
+          <rect x="70" y="145" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="145" width="15" height="15" fill="#E9F6FC"/>
+        </g>
+        <g id="buildingB">
+          <rect x="250" y="55" width="70" height="115" fill="#5DCAA5"/>
+          <rect x="260" y="70" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="70" width="15" height="15" fill="#E9F6FC"/>
+          <rect x="260" y="95" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="95" width="15" height="15" fill="#E9F6FC"/>
+          <rect x="260" y="120" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="120" width="15" height="15" fill="#E9F6FC"/>
+          <circle cx="263" cy="178" r="9" fill="#FFC93C"/><circle cx="285" cy="178" r="9" fill="#FFC93C"/><circle cx="307" cy="178" r="9" fill="#FFC93C"/>
+        </g>
+        <text x="95" y="215" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">Stiff building</text>
+        <text x="285" y="215" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">Squishy-pad building</text>
+      </svg>
+      <div>
+        <button class="action-btn" onclick="shakeTest()">Shake it! 🌍💥</button>
+        <button class="action-btn secondary" onclick="resetShake()">Reset ↺</button>
+      </div>
+      <div class="sky-result" id="skyResult"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="7">
+    <h2>Long, long ago... one BIG land! 🗺️🦕</h2>
+    <div class="card">
+      <svg id="pangea-kid-svg" viewBox="0 0 300 180" width="260" height="155"></svg>
+      <div class="stage-nav">
+        <button id="prevStage" onclick="changeStage(-1)">◀</button>
+        <button id="nextStage" onclick="changeStage(1)">▶</button>
+      </div>
+      <div class="stage-label" id="stageLabel"></div>
+      <p class="big-text" id="stageText" style="margin-top:1rem"></p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" data-index="8">
+    <h2>Did you know? Tap a card! 🤓</h2>
+    <div class="fact-row">
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🐌</div>Plates move slowly<div class="more">About as fast as your fingernails grow — a few centimeters a year!</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🔥</div>The Ring of Fire<div class="more">Most volcanoes and earthquakes happen around the edge of the Pacific Ocean!</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🦖</div>Dino world was different<div class="more">Dinosaurs never saw today's map — the continents looked totally different back then!</div></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Let's quiz you! ▶</button>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ: one question per card ===== -->
+  <section class="session quiz-session" data-index="9">
+    <h2>Question 1 of 5 🎉</h2>
+    <div class="card">
+      <p class="big-text">When two plates bump into each other, they make...</p>
+      <div><button class="quiz-btn" onclick="answer(this,false)">🌊 Waves</button><button class="quiz-btn" onclick="answer(this,true)">🏔️ Mountains</button></div>
+      <div class="reveal"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session quiz-session" data-index="10">
+    <h2>Question 2 of 5 🎉</h2>
+    <div class="card">
+      <p class="big-text">What was the name of the one giant land long ago?</p>
+      <div><button class="quiz-btn" onclick="answer(this,true)">🗺️ Pangea</button><button class="quiz-btn" onclick="answer(this,false)">🍕 Pizzaland</button></div>
+      <div class="reveal"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session quiz-session" data-index="11">
+    <h2>Question 3 of 5 🎉</h2>
+    <div class="card">
+      <p class="big-text">What makes the puzzle pieces move?</p>
+      <div><button class="quiz-btn" onclick="answer(this,false)">❄️ Cold wind</button><button class="quiz-btn" onclick="answer(this,true)">🍲 Hot bubbling rock below</button></div>
+      <div class="reveal"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session quiz-session" data-index="12">
+    <h2>Question 4 of 5 🎉</h2>
+    <div class="card">
+      <p class="big-text">What bursts out of a volcano?</p>
+      <div><button class="quiz-btn" onclick="answer(this,false)">🍦 Ice cream</button><button class="quiz-btn" onclick="answer(this,true)">🌋 Hot melted rock (magma)</button></div>
+      <div class="reveal"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session quiz-session" data-index="13">
+    <h2>Question 5 of 5 🎉</h2>
+    <div class="card">
+      <p class="big-text">Which building survives an earthquake better?</p>
+      <div><button class="quiz-btn" onclick="answer(this,false)">🏢 Stiff building</button><button class="quiz-btn" onclick="answer(this,true)">🏢 Squishy-pad building</button></div>
+      <div class="reveal"></div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session" id="quizResultSession" data-index="14">
+    <h2>Quiz Results! 🏆</h2>
+    <div class="card">
+      <p class="big-text" id="resultText">Let's see how you did!</p>
+      <div class="result-emoji" id="resultEmoji">🌟</div>
+      <button class="action-btn" onclick="tryAgain()">Try Again 🔄</button>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+    </div>
+  </section>
+
+  <section class="session finale" data-index="15">
+    <h2>You're a Tectonic Plate Explorer! 🎓🌋</h2>
+    <p class="big-text">The ground under your feet has been moving for millions of years — and now you know why!</p>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
+      <button class="nav-btn" onclick="goTo(0)">Start Over 🔁</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="deck-dots" id="deckDots" style="padding-bottom:1.5rem"></div>
+
+<footer>Made with 💗 for Melissa. Ask a grown-up if you want to learn even more!</footer>
+
+<script>
+// ================= DECK / FLIP-CARD NAVIGATION =================
+const sessions = Array.from(document.querySelectorAll('.session'));
+let current = 0;
+const dotsWrap = document.getElementById('deckDots');
+sessions.forEach((s,i)=>{
+  const dot = document.createElement('button');
+  dot.className = 'deck-dot' + (i===0 ? ' active-dot':'');
+  dot.setAttribute('aria-label', 'Go to card ' + (i+1));
+  dot.onclick = ()=> goTo(i);
+  dotsWrap.appendChild(dot);
+});
+const dots = Array.from(dotsWrap.children);
+
+function updateNav(){
+  document.getElementById('counter').textContent = (current+1) + ' / ' + sessions.length;
+  dots.forEach((d,i)=> d.classList.toggle('active-dot', i===current));
+}
+function goTo(idx){
+  if(idx < 0 || idx >= sessions.length || idx === current) return;
+  const dir = idx > current ? 'next' : 'prev';
+  const curEl = sessions[current];
+  const nextEl = sessions[idx];
+  curEl.classList.add(dir === 'next' ? 'leaving-next' : 'leaving-prev');
+  setTimeout(()=>{
+    curEl.classList.remove('active','leaving-next','leaving-prev');
+    nextEl.classList.add('active', dir === 'next' ? 'entering-next' : 'entering-prev');
+    setTimeout(()=> nextEl.classList.remove('entering-next','entering-prev'), 280);
+    current = idx;
+    updateNav();
+    window.scrollTo({top:0, behavior:'auto'});
+    if(nextEl.id === 'quizResultSession') updateResult();
+  }, 260);
+}
+function nextCard(){ goTo(current+1); }
+function prevCard(){ goTo(current-1); }
+updateNav();
+
+// swipe support
+let touchStartX = 0;
+const deckEl = document.getElementById('deck');
+deckEl.addEventListener('touchstart', e=>{ touchStartX = e.changedTouches[0].screenX; }, {passive:true});
+deckEl.addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if(dx < -50) nextCard();
+  else if(dx > 50) prevCard();
+}, {passive:true});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+});
+
+// ================= SESSION INTERACTIONS =================
+
+// ---- peach layers ----
+const peachFacts = {
+  crust: "🌎 <strong>Crust</strong> — the thin skin we live on! Thinner than the peach's skin compared to the whole fruit.",
+  mantle: "🍑 <strong>Mantle</strong> — the big gooey middle. So hot it flows slowly, like thick honey.",
+  core: "🔥 <strong>Core</strong> — the super-hot pit in the center, as hot as the surface of the sun!"
+};
+function showPeach(part){
+  const el = document.getElementById('peachFact');
+  el.innerHTML = peachFacts[part];
+  el.classList.add('shown');
+}
+
+// ---- quiz (one question per card, scored, personalized for Melissa) ----
+const KID_NAME = "Melissa";
+let quizScore = 0;
+const quizStartIndex = 9;
+
+function answer(btn, correct){
+  const card = btn.closest('.card');
+  const session = btn.closest('.session');
+  const reveal = card.querySelector('.reveal');
+  const btns = card.querySelectorAll('.quiz-btn');
+  if(btns[0].disabled) return; // already answered — ignore repeat taps
+  btns.forEach(b=>b.disabled=true);
+  if(correct){
+    btn.classList.add('yes');
+    reveal.textContent = "Yay! That's right! 🎉";
+    quizScore++;
+  } else {
+    btn.classList.add('no');
+    btns.forEach(b=>{ if(b.getAttribute('onclick').includes(',true')) b.classList.add('yes'); });
+    reveal.textContent = "Close! The correct answer is highlighted in green. 😊";
+  }
+  reveal.classList.add('shown');
+  const nextBtn = session.querySelector('.next-btn');
+  if(nextBtn) nextBtn.disabled = false;
+}
+
+function updateResult(){
+  const total = document.querySelectorAll('.quiz-session').length;
+  let phrase, emoji;
+  if(quizScore === total){ phrase = "Excellent"; emoji = "🏆🌟🏆"; }
+  else if(quizScore >= Math.ceil(total*0.6)){ phrase = "Good job"; emoji = "👍✨"; }
+  else { phrase = "Try again"; emoji = "💪🙂"; }
+  document.getElementById('resultText').textContent = `${KID_NAME}, ${phrase}! You got ${quizScore} out of ${total} right!`;
+  document.getElementById('resultEmoji').textContent = emoji;
+}
+
+function tryAgain(){
+  quizScore = 0;
+  document.querySelectorAll('.quiz-session .quiz-btn').forEach(b=>{ b.disabled=false; b.classList.remove('yes','no'); });
+  document.querySelectorAll('.quiz-session .reveal').forEach(r=>{ r.classList.remove('shown'); r.textContent=''; });
+  document.querySelectorAll('.quiz-session .next-btn').forEach(b=> b.disabled = true);
+  goTo(quizStartIndex);
+}
+
+// ---- volcano eruption ----
+function erupt(wrap){
+  const rect = wrap.getBoundingClientRect();
+  for(let i=0;i<10;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.style.left = (rect.width/2 + (Math.random()*40-20)) + 'px';
+    p.style.top = (rect.height*0.18) + 'px';
+    p.style.width = p.style.height = (6+Math.random()*8)+'px';
+    p.style.borderRadius='50%';
+    p.style.background = Math.random()>0.5 ? '#FF7A45' : '#FFCB3C';
+    p.style.setProperty('--dx', (Math.random()*100-50)+'px');
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),1200);
+  }
+}
+
+// ---- earthquake-proof buildings ----
+function shakeTest(){
+  resetShake();
+  document.getElementById('groundRect').classList.add('ground-shake');
+  document.getElementById('buildingB').classList.add('swaying-safe');
+  const result = document.getElementById('skyResult');
+  result.textContent = "Watch closely...";
+  setTimeout(()=>{
+    document.getElementById('buildingA').classList.add('toppled');
+    result.innerHTML = "😱 The stiff building toppled — the squishy-pad building wiggled safely and stayed standing! 🏢✅";
+  }, 900);
+}
+function resetShake(){
+  document.getElementById('groundRect').classList.remove('ground-shake');
+  document.getElementById('buildingA').classList.remove('toppled');
+  document.getElementById('buildingB').classList.remove('swaying-safe');
+  document.getElementById('skyResult').textContent = '';
+}
+
+// ---- continent drift slider (kid version, with dinosaurs) ----
+const kidStages = [
+  {
+    label: "250 million years ago",
+    text: "One GIANT land called Pangea! Early dinosaurs could walk anywhere they wanted. 🦕",
+    svg: `<path d="M60 30 C30 40 30 80 60 100 C90 130 180 130 220 100 C260 80 250 40 210 30 C170 10 100 10 60 30 Z" fill="#5DCAA5"/>
+          <text x="150" y="75" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="18" fill="#fff" font-weight="700">Pangea</text>
+          <text x="80" y="60" font-size="24">🦕</text><text x="190" y="90" font-size="24">🦖</text>`
+  },
+  {
+    label: "200 million years ago",
+    text: "Pangea cracks into two big pieces! Dinosaurs are still roaming around on both. 🦕",
+    svg: `<path d="M50 30 C25 40 25 65 50 78 C110 95 200 90 240 65 C265 45 245 25 190 25 C140 8 90 12 50 30 Z" fill="#5DCAA5"/>
+          <path d="M45 100 C22 115 30 145 65 155 C120 175 210 168 240 140 C260 120 235 100 180 98 C130 78 85 82 45 100 Z" fill="#7F9CF5"/>
+          <text x="55" y="55" font-size="20">🦕</text><text x="210" y="135" font-size="20">🦖</text>`
+  },
+  {
+    label: "100 million years ago",
+    text: "Pieces keep drifting apart! Now dinosaurs can't visit each other, so different kinds start showing up on different lands.",
+    svg: `<path d="M30 40 C15 50 20 68 45 75 C75 82 95 75 100 60 Z" fill="#7F9CF5"/>
+          <path d="M130 25 C110 32 108 55 130 68 C165 85 220 78 235 55 C248 38 230 22 190 22 C168 10 148 15 130 25 Z" fill="#5DCAA5"/>
+          <path d="M40 105 C22 118 28 140 55 148 C85 158 110 150 118 132 Z" fill="#F17FA0"/>
+          <path d="M120 110 C105 122 112 148 150 158 C195 170 235 162 250 142 C260 128 245 112 205 110 C180 98 140 100 120 110 Z" fill="#FAC775"/>
+          <text x="45" y="60" font-size="16">🦕</text><text x="150" y="45" font-size="16">🦖</text><text x="150" y="140" font-size="16">🦎</text>`
+  },
+  {
+    label: "Today",
+    text: "The continents are where we see them now! Dinosaurs (except birds 🐦) disappeared 66 million years ago because of a giant asteroid — a totally different story!",
+    svg: `<path d="M30 35 C18 42 22 60 42 65 C65 70 82 62 85 50 Z" fill="#7F9CF5"/>
+          <path d="M120 22 C105 28 102 48 122 58 C160 72 215 66 230 46 C242 32 226 20 190 20 C170 10 138 14 120 22 Z" fill="#5DCAA5"/>
+          <path d="M40 95 C25 106 30 126 52 132 C78 140 98 132 105 116 Z" fill="#F17FA0"/>
+          <path d="M110 100 C97 110 102 132 135 140 C172 150 205 144 218 128 C226 116 214 102 182 100 C162 90 128 92 110 100 Z" fill="#FAC775"/>
+          <path d="M230 120 C220 130 224 148 246 154 C264 158 276 144 270 128 C264 116 240 112 230 120 Z" fill="#B8862E"/>
+          <text x="150" y="18" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">🐦 birds are dinosaur descendants!</text>`
+  }
+];
+let stageIdx = 0;
+const stageSvg = document.getElementById('pangea-kid-svg');
+const stageLabel = document.getElementById('stageLabel');
+const stageText = document.getElementById('stageText');
+const prevStageBtn = document.getElementById('prevStage');
+const nextStageBtn = document.getElementById('nextStage');
+function renderStage(){
+  stageSvg.innerHTML = kidStages[stageIdx].svg;
+  stageLabel.textContent = kidStages[stageIdx].label;
+  stageText.textContent = kidStages[stageIdx].text;
+  prevStageBtn.disabled = stageIdx === 0;
+  nextStageBtn.disabled = stageIdx === kidStages.length-1;
+}
+function changeStage(dir){
+  stageIdx = Math.min(kidStages.length-1, Math.max(0, stageIdx+dir));
+  renderStage();
+}
+renderStage();
+</script>
+</body>
+</html>
