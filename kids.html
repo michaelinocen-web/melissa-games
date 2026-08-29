@@ -448,6 +448,40 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
 <footer>Made with 💗 for Melissa. Ask a grown-up if you want to learn even more!</footer>
 
 <script>
+// ================= AUDIO: click/drag sound effects (works on iOS, Android, and desktop) =================
+let audioCtx = null;
+function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  }catch(e){ /* audio unavailable, game still works */ }
+}
+function playBlip(freq, duration){
+  if(!audioCtx) initAudio();
+  if(!audioCtx) return;
+  if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  freq = freq || (520 + Math.random()*90);
+  duration = duration || 0.11;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  g.gain.value = 0.14;
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start();
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.stop(audioCtx.currentTime + duration + 0.02);
+}
+document.addEventListener('click', initAudio, {once:true});
+document.addEventListener('click', (e)=>{
+  const el = e.target.closest('button, [onclick]');
+  if(el) playBlip();
+}, true);
+document.addEventListener('change', (e)=>{
+  if(e.target.tagName === 'INPUT' && e.target.type === 'range') playBlip(420, 0.09);
+});
+
 // ================= DECK / FLIP-CARD NAVIGATION =================
 const sessions = Array.from(document.querySelectorAll('.session'));
 let current = 0;
