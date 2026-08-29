@@ -133,6 +133,15 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 }
 @keyframes distBodyPulse{ 0%,100%{ box-shadow:0 0 6px rgba(61,219,255,.35); } 50%{ box-shadow:0 0 16px rgba(61,219,255,.75); } }
 .dist-body-orb{ animation:distBodyPulse 1.8s infinite ease-in-out; }
+.dist-body-wrap{ position:relative; margin:0 auto; }
+@keyframes selectRingSpin{ from{ transform:translate(-50%,-50%) rotate(0deg);} to{ transform:translate(-50%,-50%) rotate(360deg);} }
+.dist-body-ring{
+  position:absolute; top:50%; left:50%; border-radius:50%;
+  border:3px dashed var(--ok);
+  animation:selectRingSpin 3s linear infinite;
+  display:none; pointer-events:none;
+}
+.dist-body-selected .dist-body-ring{ display:block; }
 
 /* ---------- kid-friendly slider ---------- */
 input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:40px; background:transparent; margin:1rem 0 .4rem; cursor:pointer; touch-action:pan-y; }
@@ -289,14 +298,17 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 1 of 11</div>
       <div class="card">
         <h2>The Whole Neighborhood</h2>
-        <p class="big-text">Here's the Sun and all 8 planets sized to their real proportions, next to each other for the first time. Click and drag sideways to travel across the whole solar system.</p>
-        <div id="distanceMapScroll" style="overflow-x:auto; overflow-y:hidden; white-space:nowrap; border-radius:16px; background:var(--bg2); height:170px; position:relative; -webkit-overflow-scrolling:touch; cursor:grab;">
-          <div id="distanceMapTrack" style="position:relative; height:100%; width:3220px;"></div>
+        <p class="big-text">The Sun and all 8 planets, sized to scale. Drag to explore, or use the arrows.</p>
+        <div id="distanceMapScroll" style="overflow-x:auto; overflow-y:hidden; white-space:nowrap; border-radius:16px; background:var(--bg2); height:220px; position:relative; -webkit-overflow-scrolling:touch; cursor:grab;">
+          <div id="distanceMapTrack" style="position:relative; height:100%; width:7700px;"></div>
           <div class="finger-hint-drag" id="distanceDragFinger"></div>
         </div>
-        <button class="action-btn" onclick="flyByTour()">Fly-By Tour</button>
+        <div style="display:flex; justify-content:center; gap:.6rem; margin:.6rem 0">
+          <button class="nav-btn" id="distPrevBtn" onclick="jumpToDistanceBody(currentDistanceIndex-1)">◀ Previous</button>
+          <button class="nav-btn" id="distNextBtn" onclick="jumpToDistanceBody(currentDistanceIndex+1)">Next ▶</button>
+        </div>
         <div class="reveal" id="distanceMapInfo">Tap the Sun or any planet above to see its distance, size, and surface.</div>
-        <p class="stage-desc">Sizes above are true to each other (the Sun is shown a bit smaller than truly accurate, or nothing else would fit on screen — in real life it's even more enormous!). The inner planets are bunched close together — the outer planets are almost unimaginably far apart.</p>
+        <p class="stage-desc">Sizes are true to each other — the Sun is shrunk down so it all fits!</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-intro')">Quiz</button></div>
     </section>
@@ -611,7 +623,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 7 of 11 — Jupiter</div>
       <div class="card">
         <h2>Day and Night</h2>
-        <p class="big-text">A day on Jupiter lasts only about 10 hours — the fastest spin of any planet, even though it's the biggest! Its clouds whip around at incredible speed.</p>
+        <p class="big-text">A day on Jupiter lasts only about 10 hours — the fastest spin of any planet, even though it's the biggest! Jupiter has no solid ground to stand on, so "day and night" here means which side of its swirling clouds currently faces the Sun — that sunlit side is genuinely warmer than the dark side, even though nobody could ever stand on either one.</p>
         <div class="porthole" style="width:140px; height:140px">
           <img id="jupiterDayNightImg" style="width:78%; height:78%; border-radius:50%">
           <div id="jupiterDayNightOverlay" style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(90deg, transparent 50%, rgba(5,11,24,.82) 50%); opacity:0.3; transition:opacity .08s"></div>
@@ -681,7 +693,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 8 of 11 — Saturn</div>
       <div class="card">
         <h2>Day and Night</h2>
-        <p class="big-text">A day on Saturn lasts about 10.5 hours — almost as fast as Jupiter, despite being a giant ball of gas.</p>
+        <p class="big-text">A day on Saturn lasts about 10.5 hours — almost as fast as Jupiter. Like Jupiter, Saturn is a giant ball of gas with no solid surface, so its "day and night" is really just which side of the clouds the Sun is currently lighting up as it spins.</p>
         <div class="porthole" style="width:140px; height:140px">
           <img id="saturnDayNightImg" style="width:78%; height:78%; border-radius:50%">
           <div id="saturnDayNightOverlay" style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(90deg, transparent 50%, rgba(5,11,24,.82) 50%); opacity:0.3; transition:opacity .08s"></div>
@@ -735,7 +747,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 9 of 11 — Uranus</div>
       <div class="card">
         <h2>Day and Night</h2>
-        <p class="big-text">A day on Uranus lasts about 17 hours. But because it's tipped so far on its side, each pole actually gets about 42 years of continuous daylight, then 42 years of continuous darkness!</p>
+        <p class="big-text">A day on Uranus lasts about 17 hours. Uranus is an icy gas world with no solid ground either — but because it's tipped so far on its side, each pole gets about 42 years of continuous sunlight on its clouds, then 42 years of continuous darkness!</p>
         <div class="porthole" style="width:140px; height:140px">
           <img id="uranusDayNightImg" style="width:78%; height:78%; border-radius:50%">
           <div id="uranusDayNightOverlay" style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(90deg, transparent 50%, rgba(5,11,24,.82) 50%); opacity:0.3; transition:opacity .08s"></div>
@@ -788,7 +800,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 10 of 11 — Neptune</div>
       <div class="card">
         <h2>Day and Night</h2>
-        <p class="big-text">A day on Neptune lasts about 16 hours, even way out at the icy edge of the solar system.</p>
+        <p class="big-text">A day on Neptune lasts about 16 hours, even way out at the icy edge of the solar system. Neptune is a gas and ice world with no solid surface, so its day and night are simply the sunlit and shadowed sides of its deep, windy atmosphere.</p>
         <div class="porthole" style="width:140px; height:140px">
           <img id="neptuneDayNightImg" style="width:78%; height:78%; border-radius:50%">
           <div id="neptuneDayNightOverlay" style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(90deg, transparent 50%, rgba(5,11,24,.82) 50%); opacity:0.3; transition:opacity .08s"></div>
@@ -887,10 +899,13 @@ function initAudio(){
   if(audioCtx) return;
   try{
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
   }catch(e){ /* audio unavailable, game still works */ }
 }
 function playBlip(freq, duration){
+  if(!audioCtx) initAudio();
   if(!audioCtx) return;
+  if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
   freq = freq || (520 + Math.random()*90);
   duration = duration || 0.11;
   const osc = audioCtx.createOscillator();
@@ -1431,23 +1446,28 @@ function boostOrbits(){
 
 // ================= CHAPTER 1: proportional distance map =================
 const DISTANCE_BODIES = [
-  {key:'sun', name:'Sun', img:null, color:'#FFA94D', size:100, px:60},
-  {key:'mercury', name:'Mercury', img:'mercury', size:12, px:170},
-  {key:'venus', name:'Venus', img:'venus', size:19, px:202},
-  {key:'earth', name:'Earth', img:'earth', size:20, px:228},
-  {key:'mars', name:'Mars', img:'mars', size:14, px:280},
-  {key:'jupiter', name:'Jupiter', img:'jupiter', size:64, px:644},
-  {key:'saturn', name:'Saturn', img:'saturn', size:59, px:1072},
-  {key:'uranus', name:'Uranus', img:'uranus', size:39, px:2048},
-  {key:'neptune', name:'Neptune', img:'neptune', size:38, px:3120}
+  {key:'sun', name:'Sun', img:null, color:'#FFA94D', w:135, h:135, radius:'50%', px:95},
+  {key:'mercury', name:'Mercury', img:'mercury', w:17, h:17, radius:'50%', px:304},
+  {key:'venus', name:'Venus', img:'venus', w:27, h:27, radius:'50%', px:384},
+  {key:'earth', name:'Earth', img:'earth', w:28, h:28, radius:'50%', px:452},
+  {key:'mars', name:'Mars', img:'mars', w:20, h:20, radius:'50%', px:579},
+  {key:'jupiter', name:'Jupiter', img:'jupiter', w:90, h:90, radius:'50%', px:1468},
+  {key:'saturn', name:'Saturn', img:'saturn', w:128, h:84, radius:'18px', px:2514, contain:true},
+  {key:'uranus', name:'Uranus', img:'uranus', w:55, h:55, radius:'50%', px:4890},
+  {key:'neptune', name:'Neptune', img:'neptune', w:54, h:54, radius:'50%', px:7490}
 ];
 function buildDistanceMap(){
   const track = document.getElementById('distanceMapTrack');
   track.innerHTML = DISTANCE_BODIES.map(b=>{
-    const bg = b.img ? `background-image:url(${PLANET_IMAGES[b.img]}); background-size:cover;` : `background:${b.color};`;
-    return `<div class="tap-circle" data-body-key="${b.key}" style="position:absolute; left:${b.px}px; top:50%; transform:translate(-50%,-50%); text-align:center;">
-      <div class="dist-body-orb" style="width:${b.size}px; height:${b.size}px; border-radius:50%; ${bg} margin:0 auto;"></div>
-      <div style="font-family:var(--font-display); font-size:.66rem; color:var(--ink-soft); margin-top:.25rem; white-space:nowrap;">${b.name}</div>
+    const sizeMode = b.contain ? 'contain' : 'cover';
+    const bg = b.img ? `background-image:url(${PLANET_IMAGES[b.img]}); background-size:${sizeMode}; background-repeat:no-repeat; background-position:center;` : `background:${b.color};`;
+    const ringPad = 12;
+    return `<div class="tap-circle" data-body-key="${b.key}" id="body-${b.key}" style="position:absolute; left:${b.px}px; top:50%; transform:translate(-50%,-50%); text-align:center;">
+      <div class="dist-body-wrap" style="width:${b.w}px; height:${b.h}px;">
+        <div class="dist-body-ring" id="ring-${b.key}" style="width:${b.w+ringPad*2}px; height:${b.h+ringPad*2}px;"></div>
+        <div class="dist-body-orb" style="width:${b.w}px; height:${b.h}px; border-radius:${b.radius}; ${bg}"></div>
+      </div>
+      <div style="font-family:var(--font-display); font-size:.74rem; color:var(--ink); margin-top:.4rem; white-space:nowrap;">${b.name}</div>
     </div>`;
   }).join('');
   track.querySelectorAll('[data-body-key]').forEach(el=>{
@@ -1455,9 +1475,15 @@ function buildDistanceMap(){
   });
 }
 buildDistanceMap();
+let currentDistanceIndex = 0;
 
 function showDistanceInfo(key){
   document.getElementById('distanceDragFinger')?.remove();
+  document.querySelectorAll('.dist-body-ring').forEach(r=> r.style.display = 'none');
+  const activeRing = document.getElementById('ring-'+key);
+  if(activeRing) activeRing.style.display = 'block';
+  const idx = DISTANCE_BODIES.findIndex(b=>b.key===key);
+  if(idx >= 0){ currentDistanceIndex = idx; updateDistanceNavButtons(); }
   const body = DISTANCE_BODIES.find(b=>b.key===key);
   const facts = PLANET_FACTS[key];
   const info = document.getElementById('distanceMapInfo');
@@ -1469,22 +1495,33 @@ function showDistanceInfo(key){
   info.classList.add('shown');
 }
 
-function flyByTour(){
-  document.getElementById('distanceDragFinger')?.remove();
-  const scroller = document.getElementById('distanceMapScroll');
-  const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-  const duration = 5000;
-  const start = performance.now();
-  const startScroll = scroller.scrollLeft;
+function updateDistanceNavButtons(){
+  document.getElementById('distPrevBtn').disabled = currentDistanceIndex <= 0;
+  document.getElementById('distNextBtn').disabled = currentDistanceIndex >= DISTANCE_BODIES.length - 1;
+}
+
+function animateScrollTo(el, target, duration){
+  const start = el.scrollLeft;
+  const startTime = performance.now();
   function step(now){
-    const elapsed = now - start;
-    const t = Math.min(elapsed/duration, 1);
-    const eased = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
-    scroller.scrollLeft = startScroll + (maxScroll-startScroll)*eased;
-    if(t<1) requestAnimationFrame(step);
+    const t = Math.min((now - startTime) / duration, 1);
+    const eased = t < 0.5 ? 2*t*t : -1 + (4-2*t)*t;
+    el.scrollLeft = start + (target - start) * eased;
+    if(t < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
+
+function jumpToDistanceBody(index){
+  if(index < 0 || index >= DISTANCE_BODIES.length) return;
+  const body = DISTANCE_BODIES[index];
+  showDistanceInfo(body.key);
+  const scroller = document.getElementById('distanceMapScroll');
+  const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+  const target = Math.min(Math.max(0, body.px - scroller.clientWidth/2), maxScroll);
+  animateScrollTo(scroller, target, 700);
+}
+updateDistanceNavButtons();
 
 // real click-and-drag scrolling with mouse (touch already works natively)
 (function makeDistanceMapDraggable(){
