@@ -310,6 +310,28 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <div class="reveal" id="distanceMapInfo">Tap the Sun or any planet above to see its distance, size, and surface.</div>
         <p class="stage-desc">Sizes are true to each other — the Sun is shrunk down so it all fits!</p>
       </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="intro">
+      <div class="chapter-badge">Chapter 1 of 11 — the Solar System</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="introFunPorthole" onclick="funFactPulse(this)">
+          <svg viewBox="0 0 200 200" width="78%" height="78%">
+            <circle cx="100" cy="100" r="8" fill="#FFA94D"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#1E3A52" stroke-width="1"/>
+            <circle cx="100" cy="100" r="45" fill="none" stroke="#1E3A52" stroke-width="1"/>
+            <g style="transform-origin:100px 100px; animation:rotateSlow 4s linear infinite">
+              <circle cx="170" cy="100" r="5" fill="#3DDBFF"/>
+            </g>
+            <g style="transform-origin:100px 100px; animation:rotateSlow 7s linear infinite">
+              <circle cx="100" cy="55" r="4" fill="#FF6B6B"/>
+            </g>
+          </svg>
+        </div>
+        <p class="big-text">The whole solar system — Sun, planets, and all — is racing around the center of the Milky Way galaxy at about 515,000 miles per hour! Even at that incredible speed, one full trip around the galaxy takes about 230 million years.</p>
+      </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-intro')">Quiz</button></div>
     </section>
 
@@ -352,6 +374,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <div class="tap-hint" id="sunFillCount">Tap the Sun to pack in Earths</div>
         <div class="finger-hint" id="sunFillFinger" style="top:34%; left:50%;"></div>
         <p class="stage-desc">Never look right at the Sun, even with sunglasses on.</p>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="sun">
+      <div class="chapter-badge">Chapter 2 of 11 — the Sun</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="sunFunPorthole" onclick="funFactPulse(this)">
+          <img id="sunFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Light from the Sun's surface takes only about 8 minutes to reach Earth. But before that, the same burst of energy can spend tens of thousands of years bouncing around inside the Sun's core, just trying to escape!</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-sun')">Quiz</button></div>
     </section>
@@ -400,6 +434,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         </div>
         <input type="range" id="mercuryDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('mercury', this.value)">
         <div class="stage-label" id="mercuryDayNightLabel">Daytime</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="mercury">
+      <div class="chapter-badge">Chapter 3 of 11 — Mercury</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="mercuryFunPorthole" onclick="funFactPulse(this)">
+          <img id="mercuryFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">A day on Mercury (sunrise to the next sunrise) lasts 176 Earth days — longer than TWO full Mercury years! Its slow spin combined with its fast trip around the Sun creates this strange effect.</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-mercury')">Quiz</button></div>
     </section>
@@ -457,6 +503,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         </div>
         <input type="range" id="venusDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('venus', this.value)">
         <div class="stage-label" id="venusDayNightLabel">Daytime</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="venus">
+      <div class="chapter-badge">Chapter 4 of 11 — Venus</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="venusFunPorthole" onclick="funFactPulse(this)">
+          <img id="venusFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">It actually rains sulfuric acid on Venus every day — but the rain evaporates in the scorching heat before it ever reaches the ground!</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-venus')">Quiz</button></div>
     </section>
@@ -533,6 +591,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <input type="range" id="earthDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('earth', this.value)">
         <div class="stage-label" id="earthDayNightLabel">Daytime</div>
       </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="earth">
+      <div class="chapter-badge">Chapter 5 of 11 — Earth</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="earthFunPorthole" onclick="funFactPulse(this)">
+          <img id="earthFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Earth is the densest planet in the whole solar system! Its heavy iron core, squeezed tight by gravity, packs more mass into its size than any other planet.</p>
+      </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-earth')">Quiz</button></div>
     </section>
 
@@ -585,6 +655,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <input type="range" id="marsDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('mars', this.value)">
         <div class="stage-label" id="marsDayNightLabel">Daytime</div>
       </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="mars">
+      <div class="chapter-badge">Chapter 6 of 11 — Mars</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="marsFunPorthole" onclick="funFactPulse(this)">
+          <img id="marsFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Mars's red color comes from rusted iron in its soil. Rovers have also found dried-up riverbeds and ancient lakebeds, which is why many scientists think Mars once had flowing water — and might have supported simple microbial life billions of years ago.</p>
+      </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-mars')">Quiz</button></div>
     </section>
 
@@ -630,6 +712,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         </div>
         <input type="range" id="jupiterDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('jupiter', this.value)">
         <div class="stage-label" id="jupiterDayNightLabel">Daytime</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="jupiter">
+      <div class="chapter-badge">Chapter 7 of 11 — Jupiter</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="jupiterFunPorthole" onclick="funFactPulse(this)">
+          <img id="jupiterFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Scientists used to think Jupiter's gravity acts like a bodyguard, pulling in asteroids and comets before they reach us. Newer research shows it's more complicated — sometimes Jupiter shields us, but sometimes its gravity flings objects toward the inner solar system instead!</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-jupiter')">Quiz</button></div>
     </section>
@@ -701,6 +795,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <input type="range" id="saturnDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('saturn', this.value)">
         <div class="stage-label" id="saturnDayNightLabel">Daytime</div>
       </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="saturn">
+      <div class="chapter-badge">Chapter 8 of 11 — Saturn</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="saturnFunPorthole" onclick="funFactPulse(this)">
+          <img id="saturnFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Saturn's rings are so wide they could almost stretch from Earth to the Moon — but in most places they're only about as thick as a few houses stacked up. Incredibly thin for something so enormous!</p>
+      </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-saturn')">Quiz</button></div>
     </section>
 
@@ -755,6 +861,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <input type="range" id="uranusDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('uranus', this.value)">
         <div class="stage-label" id="uranusDayNightLabel">Daytime</div>
       </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="uranus">
+      <div class="chapter-badge">Chapter 9 of 11 — Uranus</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="uranusFunPorthole" onclick="funFactPulse(this)">
+          <img id="uranusFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Uranus's clouds contain hydrogen sulfide — the same gas that makes rotten eggs smell so bad! If you could ever fly through its clouds, scientists say you'd definitely notice the stink.</p>
+      </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-uranus')">Quiz</button></div>
     </section>
 
@@ -807,6 +925,18 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         </div>
         <input type="range" id="neptuneDayNightSlider" min="0" max="100" value="30" oninput="updateDayNight('neptune', this.value)">
         <div class="stage-label" id="neptuneDayNightLabel">Daytime</div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="neptune">
+      <div class="chapter-badge">Chapter 10 of 11 — Neptune</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="neptuneFunPorthole" onclick="funFactPulse(this)">
+          <img id="neptuneFunImg" style="width:78%; height:78%; border-radius:50%">
+        </div>
+        <p class="big-text">Neptune's atmosphere has no oxygen to breathe, and it's so cold and crushingly high-pressure that no human could ever survive there — even before you'd need to worry about anything else.</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-neptune')">Quiz</button></div>
     </section>
@@ -870,6 +1000,28 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
           <div id="cometHead" style="position:absolute; top:50%; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:#D6E8E4; left:80%;"></div>
         </div>
         <input type="range" id="cometSlider" min="10" max="90" value="80" oninput="updateComet(this.value)">
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="nextCard()">Next</button></div>
+    </section>
+
+    <section class="session" data-chapter="beyond">
+      <div class="chapter-badge">Chapter 11 of 11 — Beyond Neptune</div>
+      <div class="card">
+        <h2>Did You Know?</h2>
+        <div class="porthole tap-circle" id="beyondFunPorthole" onclick="funFactPulse(this)">
+          <svg viewBox="0 0 200 200" width="78%" height="78%">
+            <circle cx="100" cy="100" r="8" fill="#FFA94D"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#1E3A52" stroke-width="1"/>
+            <circle cx="100" cy="100" r="45" fill="none" stroke="#1E3A52" stroke-width="1"/>
+            <g style="transform-origin:100px 100px; animation:rotateSlow 4s linear infinite">
+              <circle cx="170" cy="100" r="5" fill="#3DDBFF"/>
+            </g>
+            <g style="transform-origin:100px 100px; animation:rotateSlow 7s linear infinite">
+              <circle cx="100" cy="55" r="4" fill="#FF6B6B"/>
+            </g>
+          </svg>
+        </div>
+        <p class="big-text">The true edge of the solar system is a giant, distant shell of icy objects called the Oort Cloud, reaching maybe halfway to the nearest star. Voyager 1, humanity's farthest-traveling spacecraft, would still take about 300 more years just to reach its inner edge!</p>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('quiz-beyond')">Quiz</button></div>
     </section>
@@ -1423,7 +1575,15 @@ function launchRocket(){
   if(img) img.src = PLANET_IMAGES[name];
   const dnImg = document.getElementById(name+'DayNightImg');
   if(dnImg) dnImg.src = PLANET_IMAGES[name];
+  const funImg = document.getElementById(name+'FunImg');
+  if(funImg) funImg.src = PLANET_IMAGES[name];
 });
+function funFactPulse(el){
+  el.classList.remove('planet-tapped');
+  void el.offsetWidth;
+  el.classList.add('planet-tapped');
+  burst(el.id, ['#3DDBFF','#FFA94D','#6FE0A0'], 12);
+}
 function updateDayNight(key, v){
   document.getElementById(key+'DayNightOverlay').style.opacity = v/100;
   document.getElementById(key+'DayNightLabel').textContent = v < 50 ? 'Daytime' : 'Nighttime';
