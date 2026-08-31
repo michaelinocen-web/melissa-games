@@ -278,8 +278,8 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
         <p class="big-text">"Before we earn anything," said Azul, "let's get clear on something. A bike is fun — but you don't need it to stay healthy. That makes it a want. A warm coat, though? That's a need. Drag each thing below into the right box!"</p>
         <div id="needWantPool" style="display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:.6rem 0"></div>
         <div style="display:flex; gap:.5rem;">
-          <div class="sort-bin" id="binNeedZone"><div class="sort-bin-title" style="color:var(--accent-shadow)">Need</div><div id="binNeed"></div></div>
-          <div class="sort-bin" id="binWantZone"><div class="sort-bin-title" style="color:var(--coral-shadow)">Want</div><div id="binWant"></div></div>
+          <div class="sort-bin drop-zone" id="binNeedZone"><div class="sort-bin-title" style="color:var(--accent-shadow)">Need</div><div id="binNeed"></div></div>
+          <div class="sort-bin drop-zone" id="binWantZone"><div class="sort-bin-title" style="color:var(--coral-shadow)">Want</div><div id="binWant"></div></div>
         </div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('check-bike')">Next</button></div>
@@ -1148,7 +1148,9 @@ let touchStartX = 0;
 let touchStartedOnSlider = false;
 document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{
   touchStartX = e.changedTouches[0].screenX;
-  touchStartedOnSlider = e.target.tagName === 'INPUT' && e.target.type === 'range';
+  const isSlider = e.target.tagName === 'INPUT' && e.target.type === 'range';
+  const isDragArea = !!e.target.closest('.draggable, .drop-zone, .sort-bin, .jar, .dragq-zone');
+  touchStartedOnSlider = isSlider || isDragArea;
 }, {passive:true});
 document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
   if(touchStartedOnSlider) return;
