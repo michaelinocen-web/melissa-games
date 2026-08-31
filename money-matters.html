@@ -323,19 +323,33 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="chapter-badge">Chapter 3 of 11 — The Tricky Trade</div>
       <div class="card">
         <h2>The Tricky Trade</h2>
-        <p class="big-text">Melissa had 10 pink hair clips and really wanted her friend's stuffed unicorn. Drag the hair clips over to her friend to offer a trade!</p>
+        <p class="big-text">Melissa had 10 pink hair clips and really wanted her friend's stuffed unicorn. Drag the hair clips anywhere onto the square to offer a trade!</p>
         <div style="display:flex; justify-content:center;">
-          <div class="scene" id="tradeScene" style="width:260px; position:relative;">
-            <svg viewBox="0 0 260 160" width="90%" height="90%">
-              <circle cx="190" cy="80" r="45" fill="#FFD9EC" stroke="#E85D5D" stroke-width="3"/>
-              <circle cx="178" cy="72" r="5" fill="#4A3520"/>
-              <circle cx="202" cy="72" r="5" fill="#4A3520"/>
-              <path id="tradeMouth" d="M178 92 Q190 100 202 92" stroke="#4A3520" stroke-width="4" fill="none" stroke-linecap="round"/>
-              <circle cx="220" cy="100" r="16" fill="#F0DCB0" stroke="#B08A5A" stroke-width="2"/>
-              <path d="M220 88 L224 78 L227 90 Z" fill="#FFD9EC" stroke="#E85D5D" stroke-width="1.5"/>
-              <circle cx="214" cy="98" r="2" fill="#4A3520"/><circle cx="226" cy="98" r="2" fill="#4A3520"/>
+          <div class="scene" id="tradeScene" style="width:220px; height:220px; position:relative;">
+            <svg viewBox="0 0 220 220" width="88%" height="88%">
+              <circle cx="90" cy="90" r="50" fill="#FFD9EC" stroke="#E85D5D" stroke-width="3"/>
+              <path d="M42 78 Q34 20 90 16 Q146 20 138 78 Q130 42 90 42 Q50 42 42 78 Z" fill="#6B4226" stroke="#4A2F1A" stroke-width="1.5"/>
+              <path d="M42 78 Q38 104 48 116" fill="none" stroke="#6B4226" stroke-width="9" stroke-linecap="round"/>
+              <path d="M138 78 Q142 104 132 116" fill="none" stroke="#6B4226" stroke-width="9" stroke-linecap="round"/>
+              <circle cx="73" cy="82" r="5.5" fill="#4A3520"/>
+              <circle cx="107" cy="82" r="5.5" fill="#4A3520"/>
+              <path id="tradeMouth" d="M73 104 Q90 113 107 104" stroke="#4A3520" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <g transform="translate(168,120) scale(1.5)">
+                <ellipse cx="0" cy="14" rx="19" ry="6" fill="#000" opacity="0.06"/>
+                <path d="M-9 -6 Q-16 3 -9 12 Q-2 20 9 15 Q17 9 14 -2 Q10 -12 -1 -13 Q-8 -12 -9 -6 Z" fill="#FFFFFF" stroke="#E85D5D" stroke-width="1.6"/>
+                <ellipse cx="10" cy="7" rx="6" ry="4.5" fill="#FFFFFF" stroke="#E85D5D" stroke-width="1.4"/>
+                <path d="M-3 -13 L2 -13 L1 -24 Q3 -21 5 -24 L2 -12 Z" fill="#FFD966" stroke="#D9A31C" stroke-width="1"/>
+                <path d="M-1 -16 L1.5 -16 M-1.5 -19 L1 -19" stroke="#D9A31C" stroke-width="0.7"/>
+                <path d="M-11 -8 Q-20 -10 -22 -2 Q-19 2 -12 -1" fill="none" stroke="#FF6FB0" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M-10 -5 Q-19 -3 -20 6 Q-16 9 -10 4" fill="none" stroke="#9B7FD4" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M-9 -1 Q-17 3 -16 12 Q-12 14 -8 8" fill="none" stroke="#5AA9E6" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M-14 -9 L-19 -16 L-8 -12 Z" fill="#FFFFFF" stroke="#E85D5D" stroke-width="1.4"/>
+                <circle cx="2" cy="-1" r="2.4" fill="#4A3520"/>
+                <circle cx="3" cy="-2" r="0.8" fill="#fff"/>
+                <path d="M-2 6 Q1 8 4 6" stroke="#D9438A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              </g>
             </svg>
-            <div class="drop-zone" id="friendDropZone" style="position:absolute; left:45%; top:0; width:55%; height:100%;"></div>
+            <div class="drop-zone" id="friendDropZone" style="position:absolute; left:0; top:0; width:100%; height:100%;"></div>
             <div style="position:absolute; right:100%; top:50%; transform:translateY(-50%); width:90px; height:90px; display:flex; align-items:center; justify-content:center; margin-right:4px;">
               <img src="" id="img-azul_pointing" style="width:95%; height:95%; object-fit:contain">
             </div>
@@ -606,6 +620,13 @@ function playBlip(freq, duration){
   g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
   osc.stop(audioCtx.currentTime + duration + 0.02);
 }
+let justFinishedDrag = false;
+document.addEventListener('click', e=>{
+  if(justFinishedDrag){
+    e.stopPropagation();
+    e.preventDefault();
+  }
+}, true);
 document.addEventListener('click', initAudio, {once:true});
 document.addEventListener('click', (e)=>{
   const el = e.target.closest('button, [onclick]');
@@ -1229,6 +1250,8 @@ function startDragFor(el, downEvent, getDropZones, onDrop){
     let accepted=false;
     if(zone) accepted = onDrop(zone, el);
     if(!accepted) snapBack();
+    justFinishedDrag = true;
+    setTimeout(()=>{ justFinishedDrag = false; }, 50);
   }
   downEvent.preventDefault();
   const pt = getPoint(downEvent);
@@ -1385,7 +1408,7 @@ function attemptTrade(el){
   scene.classList.add('idle-wobble');
   setTimeout(()=>scene.classList.remove('idle-wobble'), 700);
   if(tradeStep === 1){
-    mouth.setAttribute('d', 'M178 96 Q190 86 202 96');
+    mouth.setAttribute('d', 'M73 108 Q90 98 107 108');
     reveal.innerHTML = '"Sorry," says your friend, "I don\'t want hair clips — I want COOKIES!" No trade. <strong>Try dragging again to see what happens next.</strong>';
     reveal.classList.add('shown');
     playBlip(260,0.15);
