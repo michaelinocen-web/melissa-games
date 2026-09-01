@@ -49,6 +49,7 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .chapter-badge{ font-family:var(--font-display); font-size:.72rem; color:var(--coral-shadow); background:rgba(255,138,91,.12); display:inline-block; padding:.28rem .8rem; border-radius:999px; margin-bottom:.5rem; letter-spacing:.02em; }
 .tap-hint{ font-family:var(--font-display); font-size:.82rem; color:var(--accent-shadow); margin-top:.45rem; }
 .reveal{ display:none; margin-top:.7rem; font-size:.92rem; background:rgba(60,170,107,.09); border-radius:14px; padding:.75rem; text-align:left; }
+.reveal.wrong{ background:rgba(232,93,93,.12); }
 .reveal.shown{ display:block; }
 
 .card-nav{ display:flex; justify-content:center; gap:.6rem; margin-top:1.2rem; flex-wrap:wrap; }
@@ -281,6 +282,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
           <div class="sort-bin drop-zone" id="binNeedZone"><div class="sort-bin-title" style="color:var(--accent-shadow)">Need</div><div id="binNeed"></div></div>
           <div class="sort-bin drop-zone" id="binWantZone"><div class="sort-bin-title" style="color:var(--coral-shadow)">Want</div><div id="binWant"></div></div>
         </div>
+        <div class="reveal" id="needWantFeedback"></div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goHome()">Map</button><button class="nav-btn" onclick="jumpToChapter('check-bike')">Next</button></div>
     </section>
@@ -918,7 +920,7 @@ document.getElementById('img-azul_greeting_intro').src = AZUL_IMAGES.azul_greeti
 
 const CHECK_ICONS = {
   bike: '<circle cx="10" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><circle cx="26" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><path d="M10 24 L18 10 L26 24 M18 10 L15 24" stroke="#FF8A5B" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
-  water: '<path d="M17 3 C10 14 6 20 6 25 a11 11 0 0 0 22 0 C28 20 24 14 17 3 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
+  water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
   toy: '<rect x="6" y="12" width="24" height="18" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="30" r="4" fill="#4A3520"/><circle cx="24" cy="30" r="4" fill="#4A3520"/>',
   work: '<circle cx="17" cy="10" r="6" fill="#F2C79A" stroke="#B08A5A" stroke-width="1.5"/><rect x="7" y="17" width="20" height="14" rx="4" fill="#3CAA6B"/>',
   magic: '<path d="M8 28 L26 10" stroke="#8AB6D6" stroke-width="3" stroke-linecap="round"/><path d="M24 6 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#FFC93C"/>',
@@ -935,44 +937,44 @@ function iconSvg(key){ return `<svg viewBox="0 0 34 34" width="44" height="44">$
 
 const CHAPTER_CHECKS = {
   bike: [
-    {type:'tiles', prompt:"Which of these is something you NEED to stay healthy?", options:[{icon:'water', text:"Food and water", correct:true},{icon:'toy', text:"A new toy", correct:false}]},
-    {type:'dragq', prompt:"Drag the bike to where it belongs.", icon:'bike', zones:[{label:'Need', correct:false},{label:'Want', correct:true}]}
+    {type:'tiles', prompt:"Which of these is something you NEED to stay healthy?", options:[{icon:'water', text:"Food and water", correct:true},{icon:'toy', text:"A new toy", correct:false}], explain:"Food and water keep your body healthy and alive every day — that makes them needs!"},
+    {type:'dragq', prompt:"Drag the bike to where it belongs.", icon:'bike', zones:[{label:'Need', correct:false},{label:'Want', correct:true}], explain:"A bike is fun to have, but you don't need it to stay healthy — that makes it a want, not a need!"}
   ],
   earning: [
-    {type:'tiles', prompt:'What does it mean to "earn" money?', options:[{icon:'work', text:"Do something valuable for someone", correct:true},{icon:'magic', text:"It just appears from nowhere", correct:false}]},
-    {type:'lever', prompt:"True or false: Money you get from working is called your income.", correct:true}
+    {type:'tiles', prompt:'What does it mean to "earn" money?', options:[{icon:'work', text:"Do something valuable for someone", correct:true},{icon:'magic', text:"It just appears from nowhere", correct:false}], explain:"Earning means doing a job or task that's valuable to someone else, who pays you for it."},
+    {type:'lever', prompt:"True or false: Money you get from working is called your income.", correct:true, explain:"Income is exactly the word for money earned from work — that's why the statement is true!"}
   ],
   trading: [
-    {type:'tiles', prompt:"Trading goods directly for other goods, without money, is called...", options:[{icon:'swap', text:"Barter", correct:true},{icon:'bank', text:"Banking", correct:false}]},
-    {type:'lever', prompt:"True or false: Bartering is easy because everyone always wants the same thing.", correct:false}
+    {type:'tiles', prompt:"Trading goods directly for other goods, without money, is called...", options:[{icon:'swap', text:"Barter", correct:true},{icon:'bank', text:"Banking", correct:false}], explain:"Trading one item directly for another, with no money involved, is called bartering."},
+    {type:'lever', prompt:"True or false: Bartering is easy because everyone always wants the same thing.", correct:false, explain:"Bartering is actually tricky — both people have to want exactly what the other has, which doesn't happen very often."}
   ],
   money: [
-    {type:'tiles', prompt:"What is currency?", options:[{icon:'coin', text:"The money used in a country", correct:true},{icon:'swap', text:"A type of trade", correct:false}]},
-    {type:'dragq', prompt:"Drag the shiny coin to when it was used.", icon:'coin', zones:[{label:'Long Ago', correct:true},{label:'Just Today', correct:false}]}
+    {type:'tiles', prompt:"What is currency?", options:[{icon:'coin', text:"The money used in a country", correct:true},{icon:'swap', text:"A type of trade", correct:false}], explain:"Currency is simply the official money a country uses, like dollars or coins."},
+    {type:'dragq', prompt:"Drag the shiny coin to when it was used.", icon:'coin', zones:[{label:'Long Ago', correct:true},{label:'Just Today', correct:false}], explain:"Coins have been used for thousands of years — bank cards and digital payments are much newer!"}
   ],
   tradeoffs: [
-    {type:'tiles', prompt:"Choosing one thing because you can't afford both is called a...", options:[{icon:'scale', text:"Trade-off", correct:true},{icon:'bank', text:"Bank deposit", correct:false}]},
-    {type:'lever', prompt:"True or false: You can only pick one toy because money and time are limited.", correct:true}
+    {type:'tiles', prompt:"Choosing one thing because you can't afford both is called a...", options:[{icon:'scale', text:"Trade-off", correct:true},{icon:'bank', text:"Bank deposit", correct:false}], explain:"When you pick one thing over another because you can't have both, that's called a trade-off."},
+    {type:'lever', prompt:"True or false: You can only pick one toy because money and time are limited.", correct:true, explain:"Exactly — trade-offs happen because we never have unlimited money or time to get everything we want."}
   ],
   oppcost: [
-    {type:'tiles', prompt:"The opportunity cost of a choice is...", options:[{icon:'scale', text:"The next-best thing you gave up", correct:true},{icon:'coin', text:"The tax you pay at a store", correct:false}]},
-    {type:'tiles', prompt:"If you pick a coloring book over a toy car, the opportunity cost is...", options:[{icon:'toy', text:"The fun of the toy car", correct:true},{icon:'coin', text:"The $5 you spent", correct:false}]}
+    {type:'tiles', prompt:"The opportunity cost of a choice is...", options:[{icon:'scale', text:"The next-best thing you gave up", correct:true},{icon:'coin', text:"The tax you pay at a store", correct:false}], explain:"Opportunity cost is the value of the next-best option you gave up to make your choice."},
+    {type:'tiles', prompt:"If you pick a coloring book over a toy car, the opportunity cost is...", options:[{icon:'toy', text:"The fun of the toy car", correct:true},{icon:'coin', text:"The $5 you spent", correct:false}], explain:"The $5 is just the price — the opportunity cost is the fun of the toy car you didn't get to have."}
   ],
   lemonade: [
-    {type:'tiles', prompt:"If lots of people want lemonade and there's not much of it, the price tends to...", options:[{icon:'coin', text:"Go up", correct:true},{icon:'water', text:"Disappear", correct:false}]},
-    {type:'dragq', prompt:"Only 1 cup left and everyone wants it! Drag the cup to the right price.", icon:'water', zones:[{label:'High Price', correct:true},{label:'Low Price', correct:false}]}
+    {type:'tiles', prompt:"If lots of people want lemonade and there's not much of it, the price tends to...", options:[{icon:'coin', text:"Go up", correct:true},{icon:'water', text:"Disappear", correct:false}], explain:"When demand is high and supply is low, prices usually rise — that's supply and demand at work!"},
+    {type:'dragq', prompt:"Only 1 cup left and everyone wants it! Drag the cup to the right price.", icon:'water', zones:[{label:'High Price', correct:true},{label:'Low Price', correct:false}], explain:"When there's only a little of something and lots of people want it, sellers can charge more — that's supply and demand!"}
   ],
   jars: [
-    {type:'tiles', prompt:"The Save jar is for...", options:[{icon:'jar', text:"A bigger goal, like a big purchase", correct:true},{icon:'toy', text:"Spending right away", correct:false}]},
-    {type:'dragq', prompt:"This coin is for a birthday gift for a friend. Drag it to the right jar.", icon:'coin', zones:[{label:'Give', correct:true},{label:'Spend', correct:false}]}
+    {type:'tiles', prompt:"The Save jar is for...", options:[{icon:'jar', text:"A bigger goal, like a big purchase", correct:true},{icon:'toy', text:"Spending right away", correct:false}], explain:"The Save jar is for money you're setting aside for a bigger goal, like the bike!"},
+    {type:'dragq', prompt:"This coin is for a birthday gift for a friend. Drag it to the right jar.", icon:'coin', zones:[{label:'Give', correct:true},{label:'Spend', correct:false}], explain:"A gift for someone else is exactly what the Give jar is for!"}
   ],
   bank: [
-    {type:'tiles', prompt:"Interest is...", options:[{icon:'bank', text:"Extra money a bank pays you", correct:true},{icon:'coin', text:"A fee for talking to a banker", correct:false}]},
-    {type:'lever', prompt:"True or false: A bank keeps your money safe AND helps it grow.", correct:true}
+    {type:'tiles', prompt:"Interest is...", options:[{icon:'bank', text:"Extra money a bank pays you", correct:true},{icon:'coin', text:"A fee for talking to a banker", correct:false}], explain:"Interest is the little bit of extra money a bank pays you just for keeping your savings there."},
+    {type:'lever', prompt:"True or false: A bank keeps your money safe AND helps it grow.", correct:true, explain:"Right — banks protect your money and pay you interest, which helps it grow a little over time."}
   ],
   inflation: [
-    {type:'lever', prompt:"True or false: Prices for things always jump up instantly overnight.", correct:false},
-    {type:'tiles', prompt:"Why does growing your savings (like with interest) matter?", options:[{icon:'clock', text:"Prices rise, so your money needs to grow too", correct:true},{icon:'house', text:"Because banks require it", correct:false}]}
+    {type:'lever', prompt:"True or false: Prices for things always jump up instantly overnight.", correct:false, explain:"Prices usually creep up slowly over months or years — that gradual rise is what inflation really looks like."},
+    {type:'tiles', prompt:"Why does growing your savings (like with interest) matter?", options:[{icon:'clock', text:"Prices rise, so your money needs to grow too", correct:true},{icon:'house', text:"Because banks require it", correct:false}], explain:"Since prices slowly rise over time, your savings need to grow too, or they'll buy less later."}
   ]
 };
 
@@ -1072,11 +1074,14 @@ function answerTile(key, qIndex, oIndex, correct){
   if(correct){
     tile.classList.add('yes');
     reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
     playBlip(700,0.15);
   } else {
     tile.classList.add('no');
     allTiles.forEach(t=>{ if(t.getAttribute('onclick').includes(',true)')) t.classList.add('yes'); });
-    reveal.textContent = "Close! Here's the answer.";
+    const q = CHAPTER_CHECKS[key][qIndex];
+    reveal.textContent = `Not quite! ${q.explain || ''}`;
+    reveal.classList.add('wrong');
     playBlip(260,0.15);
   }
   reveal.classList.add('shown');
@@ -1098,11 +1103,14 @@ function submitLever(key, qIndex, correctAnswer){
   const card = knob.closest('.card');
   const reveal = card.querySelector('.reveal');
   const correct = chosen === correctAnswer;
+  const q = CHAPTER_CHECKS[key][qIndex];
   if(correct){
     reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
     playBlip(700,0.15);
   } else {
-    reveal.textContent = `Close! The answer is ${correctAnswer ? 'True' : 'False'}.`;
+    reveal.textContent = `Not quite \u2014 the answer is ${correctAnswer ? 'True' : 'False'}. ${q.explain || ''}`;
+    reveal.classList.add('wrong');
     playBlip(260,0.15);
   }
   reveal.classList.add('shown');
@@ -1114,10 +1122,12 @@ function answerDragq(key, qIndex, zoneIndex, correct){
   const reveal = card.querySelector('.reveal');
   if(correct){
     reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
     playBlip(700,0.15);
   } else {
     const correctZoneIndex = q.zones.findIndex(z=>z.correct);
-    reveal.textContent = `Close! It belongs with "${q.zones[correctZoneIndex].label}".`;
+    reveal.textContent = `Not quite! It belongs with "${q.zones[correctZoneIndex].label}". ${q.explain || ''}`;
+    reveal.classList.add('wrong');
     playBlip(260,0.15);
   }
   reveal.classList.add('shown');
@@ -1272,7 +1282,7 @@ function startDragFor(el, downEvent, getDropZones, onDrop){
 // ================= CHAPTER 1: Needs vs Wants (real drag-and-drop) =================
 const NEEDWANT_ICONS = {
   Food: '<circle cx="17" cy="19" r="11" fill="#E85D5D"/><path d="M17 8 Q19 4 23 5" stroke="#3CAA6B" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
-  Water: '<path d="M17 3 C10 14 6 20 6 25 a11 11 0 0 0 22 0 C28 20 24 14 17 3 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
+  Water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
   Coat: '<path d="M11 8 L17 4 L23 8 L27 12 L23 15 L23 30 H11 V15 L7 12 Z" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.5"/>',
   Shoes: '<path d="M4 26 h26 v-5 q-4 0 -6 -3 l-5 -7 h-6 v9 q0 3 -3 4 z" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/>',
   'Toy Car': '<rect x="6" y="12" width="24" height="14" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="28" r="4" fill="#4A3520"/><circle cx="24" cy="28" r="4" fill="#4A3520"/>',
@@ -1294,9 +1304,20 @@ function initNeedWantPool(){
     </div>`).join('');
   makeDraggablePool(pool, '.draggable', ()=>[document.getElementById('binNeedZone'), document.getElementById('binWantZone')], onNeedWantDrop);
 }
+const NEEDWANT_EXPLAIN = {
+  Food: "Food is something your body needs to stay healthy and alive!",
+  Water: "Water is something your body needs every single day!",
+  Coat: "A coat keeps you warm and safe \u2014 that makes it a need!",
+  Shoes: "Shoes protect your feet \u2014 that makes them a need!",
+  'Toy Car': "A toy car is fun, but you don't need it to stay healthy \u2014 that makes it a want!",
+  Candy: "Candy is a yummy treat, but you don't need it to live \u2014 that makes it a want!",
+  'Video Game': "A video game is fun to play, but you don't need it to survive \u2014 that makes it a want!",
+  Stickers: "Stickers are fun to collect, but you don't need them \u2014 that makes them a want!"
+};
 function onNeedWantDrop(zone, el){
   const isNeedZone = zone.id === 'binNeedZone';
   const isNeedItem = el.dataset.need === 'true';
+  const feedback = document.getElementById('needWantFeedback');
   if(isNeedZone === isNeedItem){
     Object.assign(el.style,{position:'', left:'', top:'', width:'', margin:''});
     el.classList.add('drop-settled');
@@ -1308,9 +1329,13 @@ function onNeedWantDrop(zone, el){
     document.getElementById(isNeedZone ? 'binNeed' : 'binWant').appendChild(el);
     playBlip(700, 0.15);
     needWantSortedCount++;
+    feedback.classList.remove('shown','wrong');
     return true;
   }
   playBlip(260, 0.15);
+  const itemName = el.querySelector('span') ? el.querySelector('span').textContent : '';
+  feedback.textContent = `Not quite! ${NEEDWANT_EXPLAIN[itemName] || 'Try dragging it to the other box.'}`;
+  feedback.classList.add('shown','wrong');
   return false;
 }
 initNeedWantPool();
