@@ -3,31 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Melissa's Flags Around the World! 🌍💗</title>
+<title>Flags Around the World!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Mulish:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --sky:#FFDCEC;
-  --sun:#FFC93C;
-  --grass:#8FCB6B;
-  --lava:#FF7A45;
-  --ocean:#E8558B;
-  --ocean-shadow:#B23A67;
-  --ink:#33313C;
-  --card:#FFFFFF;
-  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
-  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+  --sky:#CDE9F2;
+  --sky-deep:#9FCFE0;
+  --parchment:#FBF3E1;
+  --parchment-deep:#F0E3C4;
+  --navy:#1C4E63;
+  --navy-deep:#123A4A;
+  --coral:#EF6F4B;
+  --coral-shadow:#C24F2F;
+  --gold:#D9A441;
+  --gold-shadow:#A97D26;
+  --teal:#2E8B8B;
+  --teal-shadow:#1F6666;
+  --ink:#2A3238;
+  --card:#FFFDF7;
+  --font-display:'Fredoka','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Mulish','Trebuchet MS','Verdana',sans-serif;
   --c-africa:#E86A33; --c-asia:#D64550; --c-europe:#3B82C4;
   --c-namerica:#4CAF7D; --c-samerica:#9B59B6; --c-oceania:#17A2A2;
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+.icon{ display:inline-block; width:1em; height:1em; vertical-align:-.15em; }
+.icon-lg{ width:2.2em; height:2.2em; vertical-align:-.5em; }
 html,body{ height:100%; }
-body{ margin:0; background:var(--sky); font-family:var(--font-body); color:var(--ink); font-size:19px; line-height:1.5; overflow-x:hidden; }
-h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
-.big-text{ font-size:1.2rem; font-weight:600; }
-.flag-emoji{ font-size:6rem; line-height:1; margin:.2rem 0; }
+body{
+  margin:0; color:var(--ink); font-family:var(--font-body); font-size:19px; line-height:1.5; overflow-x:hidden;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 8%, rgba(255,255,255,.65) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 20%, rgba(255,255,255,.5) 0%, transparent 60%),
+    linear-gradient(180deg, var(--sky) 0%, var(--sky-deep) 100%);
+  background-attachment:fixed;
+}
+h1,h2{ font-family:var(--font-display); font-weight:600; margin:0 0 .3em; color:var(--navy); }
+.big-text{ font-size:1.2rem; font-weight:700; }
+.flag-emoji{ font-size:6rem; line-height:1; margin:.2rem 0; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18)); }
 
 .deck-viewport{ max-width:720px; margin:0 auto; padding:2.2rem 1.3rem 3rem; perspective:1400px; min-height:100vh; }
 .session{ display:none; text-align:center; }
@@ -41,94 +56,229 @@ h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
 .entering-next{ animation:flipInRight .24s ease-out forwards; }
 .entering-prev{ animation:flipInLeft .24s ease-out forwards; }
 
-.hero{ background:linear-gradient(180deg, var(--sky), #FFF0F6); border-radius:28px; padding:2.6rem 1.3rem; }
-.hi-name{ font-family:var(--font-display); font-weight:800; color:var(--ocean); font-size:1.4rem; margin-bottom:.3rem; }
-.hero h1{ font-size:clamp(1.8rem,7vw,2.6rem); color:var(--ocean); }
+.hero{ background:linear-gradient(180deg, var(--parchment), var(--parchment-deep)); border-radius:24px; padding:2.6rem 1.3rem; border:3px solid var(--navy); box-shadow:0 8px 0 rgba(28,78,99,.15); position:relative; overflow:hidden; }
+.hi-name{ font-family:var(--font-display); font-weight:600; color:var(--coral); font-size:1.4rem; margin-bottom:.3rem; }
+.hero h1{ font-size:clamp(1.8rem,7vw,2.6rem); color:var(--navy); }
 .hero p{ font-size:1.15rem; max-width:520px; margin:0 auto; }
-.badge{ display:inline-block; background:var(--sun); color:#7A5200; font-family:var(--font-display); font-weight:700; padding:.4em 1em; border-radius:999px; margin-bottom:1rem; font-size:1rem; }
-.finale{ background:var(--sun); border-radius:28px; padding:2.6rem 1.3rem; }
-.finale h2{ color:#7A5200; font-size:1.9rem; }
+.badge{ display:inline-flex; align-items:center; gap:.4rem; background:var(--gold); color:#5C4106; font-family:var(--font-display); font-weight:600; padding:.4em 1.1em; border-radius:999px; margin-bottom:1rem; font-size:1rem; box-shadow:0 3px 0 var(--gold-shadow); }
+.finale{ background:linear-gradient(180deg, var(--parchment), var(--parchment-deep)); border-radius:24px; padding:2.6rem 1.3rem; border:3px solid var(--navy); box-shadow:0 8px 0 rgba(28,78,99,.15); }
+.finale h2{ color:var(--navy); font-size:1.9rem; }
+.compass-decoration{ position:absolute; top:-30px; right:-30px; width:150px; height:150px; color:var(--navy); opacity:.08; pointer-events:none; animation:compassSpin 90s linear infinite; }
+@keyframes compassSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
-.card{ background:var(--card); border-radius:28px; padding:1.8rem 1.4rem; box-shadow:0 6px 0 rgba(0,0,0,.06); margin:1.2rem 0; }
-.level-badge{ font-family:var(--font-display); font-size:.85rem; color:var(--ocean); background:#FFF0F6; display:inline-block; padding:.3rem .9rem; border-radius:999px; margin-bottom:.6rem; }
+.card{ background:var(--card); border-radius:22px; padding:1.8rem 1.4rem; margin:1.2rem 0; border:2.5px solid var(--navy); position:relative; box-shadow:0 6px 0 rgba(28,78,99,.12); }
+.card::before{
+  content:''; position:absolute; top:8px; left:8px; right:8px; bottom:8px;
+  border:1.5px dashed rgba(28,78,99,.25); border-radius:15px; pointer-events:none;
+}
+.level-badge{ font-family:var(--font-display); font-size:.85rem; color:var(--navy); background:var(--sky); display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .9rem; border-radius:999px; margin-bottom:.6rem; }
 .continent-pill{ font-family:var(--font-display); font-size:.78rem; color:#fff; display:inline-block; padding:.25rem .8rem; border-radius:999px; margin:.3rem 0 .8rem; }
 .fact-line{ font-size:1.05rem; margin:.35rem 0; text-align:left; padding-left:.2rem; }
-.fact-line b{ color:var(--ocean); }
-.tap-hint{ font-family:var(--font-display); font-size:.9rem; color:var(--ocean); margin-top:.5rem; cursor:pointer; }
-.reveal{ display:none; margin-top:.8rem; font-size:1.02rem; background:#FFF6DE; border-radius:16px; padding:.9rem; text-align:left; }
+.fact-line b{ color:var(--coral); }
+.tap-hint{ font-family:var(--font-display); font-size:.9rem; color:var(--coral); margin-top:.5rem; cursor:pointer; }
+.reveal{ display:none; margin-top:.8rem; font-size:1.02rem; background:var(--sky); border-radius:14px; padding:.9rem; text-align:left; border:1.5px dashed var(--teal); }
 .reveal.shown{ display:block; }
 
 .quiz-opts{ display:flex; flex-direction:column; gap:.6rem; margin-top:1rem; }
-.quiz-btn{ font-family:var(--font-display); font-size:1.1rem; background:var(--card); border:3px solid var(--sky); border-radius:16px; padding:.7rem 1rem; cursor:pointer; }
-.quiz-btn.yes{ border-color:var(--grass); background:#E9F8E0; }
-.quiz-btn.no{ border-color:var(--lava); background:#FFEBE3; }
+.quiz-btn{ font-family:var(--font-display); font-weight:500; font-size:1.1rem; background:var(--card); border:2.5px solid var(--sky-deep); border-radius:14px; padding:.7rem 1rem; cursor:pointer; color:var(--ink); }
+.quiz-btn.yes{ border-color:var(--teal); background:#DEF3EE; }
+.quiz-btn.no{ border-color:var(--coral); background:#FCE3DA; }
 .quiz-btn:disabled{ cursor:default; }
 
 .card-nav{ display:flex; justify-content:center; gap:1rem; margin-top:1.6rem; flex-wrap:wrap; }
-.nav-btn{ font-family:var(--font-display); font-size:1.02rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.7rem 1.4rem; cursor:pointer; box-shadow:0 4px 0 var(--ocean-shadow); }
-.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ocean-shadow); }
+.nav-btn{ font-family:var(--font-display); font-weight:500; font-size:1.02rem; background:var(--coral); color:#fff; border:none; border-radius:999px; padding:.7rem 1.4rem; cursor:pointer; box-shadow:0 4px 0 var(--coral-shadow); }
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--coral-shadow); }
 .nav-btn:disabled{ opacity:.35; cursor:default; box-shadow:none; }
-.nav-btn.back-btn{ background:#fff; color:var(--ocean); border:2px solid var(--ocean); box-shadow:0 4px 0 var(--sky); }
-.nav-btn.back-btn:active{ box-shadow:0 1px 0 var(--sky); }
-.action-btn{ font-family:var(--font-display); font-size:1.1rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.7rem 1.3rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--ocean-shadow); }
-.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--ocean-shadow); }
+.nav-btn.back-btn{ background:#fff; color:var(--navy); border:2px solid var(--navy); box-shadow:0 4px 0 var(--sky-deep); }
+.nav-btn.back-btn:active{ box-shadow:0 1px 0 var(--sky-deep); }
+.nav-btn.home-btn{ background:var(--teal); box-shadow:0 4px 0 var(--teal-shadow); }
+.nav-btn.home-btn:active{ box-shadow:0 1px 0 var(--teal-shadow); }
+.action-btn{ font-family:var(--font-display); font-weight:500; font-size:1.1rem; background:var(--teal); color:#fff; border:none; border-radius:999px; padding:.7rem 1.3rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--teal-shadow); }
+.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--teal-shadow); }
 
-.progress-pill{ position:fixed; top:.8rem; right:1rem; font-family:var(--font-display); background:#fff; border-radius:999px; padding:.3rem .8rem; font-size:.85rem; color:var(--ocean); box-shadow:0 3px 0 rgba(0,0,0,.06); z-index:50; }
+.progress-pill{ position:fixed; top:.8rem; right:1rem; font-family:var(--font-display); background:#fff; border-radius:999px; padding:.3rem .8rem; font-size:.85rem; color:var(--navy); box-shadow:0 3px 0 rgba(28,78,99,.15); z-index:50; border:1.5px solid var(--sky-deep); }
 .exit-btn{
-  position:fixed; top:.8rem; left:1rem; font-family:var(--font-display); font-weight:700;
-  background:#fff; color:var(--ocean-shadow); border:2px solid var(--ocean);
+  position:fixed; top:.8rem; left:1rem; font-family:var(--font-display); font-weight:500;
+  background:#fff; color:var(--coral-shadow); border:2px solid var(--coral);
   border-radius:999px; padding:.35rem .9rem; font-size:.85rem; text-decoration:none;
-  box-shadow:0 3px 0 var(--sky); z-index:50;
+  box-shadow:0 3px 0 rgba(28,78,99,.15); z-index:50;
 }
-.exit-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--sky); }
+.exit-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(28,78,99,.15); }
 .deck-dots{ display:flex; justify-content:center; gap:.25rem; flex-wrap:wrap; margin-top:1.2rem; max-width:640px; margin-left:auto; margin-right:auto; }
-.deck-dot{ width:7px; height:7px; border-radius:50%; background:var(--sky); border:none; padding:0; cursor:pointer; }
-.deck-dot.active-dot{ background:var(--ocean); transform:scale(1.5); }
-.result-emoji{ font-size:2.6rem; margin:.5rem 0; }
+.deck-dot{ width:7px; height:7px; border-radius:50%; background:var(--sky-deep); border:none; padding:0; cursor:pointer; }
+.deck-dot.active-dot{ background:var(--coral); transform:scale(1.5); }
+.result-badge-stamp{
+  width:90px; height:90px; margin:.3rem auto 1rem; border-radius:50%; font-size:2.6rem;
+  display:flex; align-items:center; justify-content:center; background:#F2F0EC; border:2.5px dashed #b8b2a5; color:#9a948c;
+}
+.result-badge-stamp.passed{ background:var(--sky); border:2.5px solid var(--gold-shadow); color:var(--gold-shadow); box-shadow:0 4px 0 rgba(28,78,99,.12); }
+.result-sub-text{ font-size:.95rem; color:#5c5650; margin-top:.4rem; }
 
 .level-pick-card{
-  background:var(--card); border-radius:20px; padding:1rem 1.2rem; margin:.7rem 0;
+  background:var(--card); border-radius:16px; padding:1rem 1.2rem; margin:.7rem 0;
   display:flex; align-items:center; justify-content:space-between; gap:1rem; cursor:pointer;
-  box-shadow:0 5px 0 rgba(0,0,0,.06); text-align:left; border:none; width:100%; font-family:var(--font-body);
+  box-shadow:0 5px 0 rgba(28,78,99,.12); text-align:left; border:2px solid var(--sky-deep); width:100%; font-family:var(--font-body);
+  border-left:6px dashed var(--teal); position:relative;
 }
-.level-pick-card:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.06); }
-.level-pick-name{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:var(--ink); }
+.level-pick-card:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(28,78,99,.12); }
+.level-pick-card.locked{ opacity:.5; cursor:default; border-left-color:#b8b2a5; }
+.level-pick-card.locked:active{ transform:none; box-shadow:0 5px 0 rgba(0,0,0,.06); }
+.level-lock-icon{ flex-shrink:0; }
+
+.badge-section-title{ font-family:var(--font-display); font-weight:600; font-size:.95rem; color:var(--navy); text-align:left; margin:1.1rem 0 .5rem; }
+.badge-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; }
+.badge-tile{
+  background:#F2F0EC; border-radius:50%; aspect-ratio:1; padding:.6rem .3rem; text-align:center;
+  opacity:.4; filter:grayscale(1); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:2.5px dashed #b8b2a5;
+}
+.badge-tile.earned{
+  opacity:1; filter:none; border-style:solid; border-width:2.5px;
+  box-shadow:0 3px 0 rgba(28,78,99,.15); transform:rotate(-4deg);
+}
+.badge-tile.earned:nth-child(3n+2){ transform:rotate(3deg); }
+.badge-tile.earned:nth-child(3n){ transform:rotate(-2deg); }
+.badge-icon{ font-size:1.5rem; line-height:1; }
+.badge-name{ font-family:var(--font-display); font-weight:600; font-size:.66rem; color:var(--ink); margin-top:.2rem; line-height:1.15; }
+.badge-sub{ font-family:var(--font-body); font-size:.62rem; color:#8a857c; margin-top:.1rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em; }
+.badge-tile.tier-bronze{ background:#F3DFC7; border-color:#C08A45; }
+.badge-tile.tier-bronze .badge-sub{ color:#8a5c25; }
+.badge-tile.tier-silver{ background:#E4E7EC; border-color:#9CA5B0; }
+.badge-tile.tier-silver .badge-sub{ color:#5B6470; }
+.badge-tile.tier-gold{ background:#FCE8A8; border-color:var(--gold-shadow); }
+.badge-tile.tier-gold .badge-sub{ color:#8a611a; }
+.badge-tile.tier-continent{ background:#DEF3EE; border-color:var(--teal); }
+.badge-tile.tier-continent .badge-sub{ color:var(--teal-shadow); }
+.level-pick-name{ font-family:var(--font-display); font-weight:600; font-size:1.05rem; color:var(--navy); }
 .level-pick-sub{ font-size:.82rem; color:#7a7570; }
-.level-pick-score{ font-family:var(--font-display); font-size:.85rem; color:var(--ocean); background:#FFF0F6; padding:.35rem .8rem; border-radius:999px; white-space:nowrap; }
-.home-btn{ background:#fff; color:var(--ocean-shadow); border:2px dashed var(--ocean); }
+.level-pick-score{ font-family:var(--font-display); font-size:.85rem; color:var(--navy); background:var(--sky); padding:.35rem .8rem; border-radius:999px; white-space:nowrap; }
+.home-btn{ background:#fff; color:var(--teal-shadow); border:2px dashed var(--teal); }
 footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c5650; }
+
+.continent-popup{
+  position:fixed; top:-140px; left:50%; transform:translateX(-50%); z-index:120;
+  background:linear-gradient(180deg, var(--parchment), var(--parchment-deep));
+  border:3px solid var(--gold-shadow); border-radius:20px; padding:.9rem 1.2rem;
+  display:flex; align-items:center; gap:.8rem; max-width:340px; width:88%;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  transition:top .5s cubic-bezier(.34,1.56,.64,1);
+}
+.continent-popup.shown{ top:1rem; }
+.continent-popup-icon{ width:52px; height:52px; flex-shrink:0; border-radius:50%; background:var(--sky); border:2px solid var(--gold-shadow); display:flex; align-items:center; justify-content:center; }
+.continent-popup-title{ font-family:var(--font-display); font-weight:600; font-size:.95rem; color:var(--navy); }
+.continent-popup-sub{ font-family:var(--font-body); font-size:.85rem; color:#5c5650; margin-top:.1rem; }
 </style>
 </head>
 <body>
 
-<a href="index.html" class="exit-btn">🚪 Exit</a>
+<svg style="display:none">
+  <symbol id="ic-exit" viewBox="0 0 24 24"><path d="M9 4 H5 a1 1 0 0 0 -1 1 v14 a1 1 0 0 0 1 1 h4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8 L19 12 L14 16 M19 12 H9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12 h18 M12 3 a15 15 0 0 1 0 18 M12 3 a15 15 0 0 0 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20 C7 16 3 12.5 3 8.5 C3 5.8 5.2 4 7.6 4 C9.4 4 10.8 5 12 6.5 C13.2 5 14.6 4 16.4 4 C18.8 4 21 5.8 21 8.5 C21 12.5 17 16 12 20 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-trophy" viewBox="0 0 24 24"><path d="M7 4 h10 v6 a5 5 0 0 1 -10 0 Z" fill="currentColor"/><path d="M7 5 H3 a4 4 0 0 0 4 6 M17 5 h4 a4 4 0 0 1 -4 6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="10.5" y="15" width="3" height="3" fill="currentColor"/><rect x="7" y="19" width="10" height="2.2" rx="1" fill="currentColor"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2 L14.7 8.6 L22 9.2 L16.5 14 L18.2 21 L12 17.3 L5.8 21 L7.5 14 L2 9.2 L9.3 8.6 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3 l1.8 5.2 L19 10 l-5.2 1.8 L12 17 l-1.8 -5.2 L5 10 l5.2 -1.8 Z" fill="currentColor"/><path d="M19 3 l.8 2.2 L22 6 l-2.2 .8 L19 9 l-.8 -2.2 L16 6 l2.2 -.8 Z" fill="currentColor" opacity=".7"/></symbol>
+  <symbol id="ic-wave" viewBox="0 0 24 24"><path d="M8 21 v-8 a2 2 0 0 1 4 0 M12 13 v-2 a2 2 0 0 1 4 0 v2 M16 13 v-1 a2 2 0 0 1 4 0 v4 c0 3.5 -2 6 -5.5 6 h-1 c-2.3 0 -3.7 -.9 -5 -2.7 L5 15.5 a1.4 1.4 0 0 1 2.2 -1.7 L8 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 13 V5 a1.5 1.5 0 0 1 3 0 v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="ic-map" viewBox="0 0 24 24"><path d="M9 4 L4 6 v14 l5 -2 l6 2 l5 -2 V4 l-5 2 Z" fill="currentColor"/><path d="M9 4 v14 M15 6 v14" stroke="rgba(255,255,255,.5)" stroke-width="1.3" fill="none"/></symbol>
+  <symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M4 12 a8 8 0 0 1 14 -5.6 M20 4 v5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12 a8 8 0 0 1 -14 5.6 M4 20 v-5 h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="9" y="2.5" width="6" height="3.5" rx="1" fill="currentColor"/><line x1="8" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="8" y1="15" x2="16" y2="15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5" stroke="currentColor" stroke-width="1.8"/><line x1="8" y1="3" x2="8" y2="7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="16" y1="3" x2="16" y2="7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="ic-speech" viewBox="0 0 24 24"><path d="M4 5 h16 a1 1 0 0 1 1 1 v9 a1 1 0 0 1 -1 1 H10 l-4.5 4 V16 H4 a1 1 0 0 1 -1 -1 V6 a1 1 0 0 1 1 -1 Z" fill="currentColor"/><circle cx="8.5" cy="10.5" r="1.1" fill="#fff"/><circle cx="12.5" cy="10.5" r="1.1" fill="#fff"/><circle cx="16.5" cy="10.5" r="1.1" fill="#fff"/></symbol>
+  <symbol id="ic-food" viewBox="0 0 24 24">
+    <path d="M7 2.5 V9.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    <path d="M5 2.5 V7 a2 2 0 0 0 4 0 V2.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7 9.5 V21.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    <path d="M17.5 2.5 C15 2.5 13.5 5 13.5 8 C13.5 10 15 11.3 16.7 11.6 L16.7 21.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </symbol>
+  <symbol id="ic-finger" viewBox="0 0 24 24"><path d="M9 13.5 V6 a1.5 1.5 0 0 1 3 0 v5.5 M12 11.5 V5 a1.5 1.5 0 0 1 3 0 v6.8 M15 11.5 V6.5 a1.5 1.5 0 0 1 3 0 V15 c0 3.5 -2 6 -5.5 6 h-1 c-2.3 0 -3.5 -.8 -4.7 -2.6 L4 14.6 a1.4 1.4 0 0 1 2.2 -1.7 L9 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-thumbsup" viewBox="0 0 24 24"><path d="M2 11 h4 v10 H2 Z" fill="currentColor"/><path d="M8 11 L11 3.5 a1.8 1.8 0 0 1 3.4 1.2 L13 9 h5.5 a2 2 0 0 1 1.9 2.6 l-2 7 A2.5 2.5 0 0 1 16 21 H8 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-flex" viewBox="0 0 24 24"><path d="M3 15 c0 -3 2 -5 5 -5 c1.5 0 2.5 .5 3.5 1.5 c1 -3 4 -5 7 -3.5 c2.5 1.3 3 4.5 1.5 7 c-2 3.3 -6 5 -9 5 c-4 0 -8 -1.5 -8 -5 Z" fill="currentColor"/><circle cx="17" cy="7" r="3" fill="currentColor"/></symbol>
+  <symbol id="ic-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor"/><circle cx="8.5" cy="10" r="1.3" fill="#fff"/><circle cx="15.5" cy="10" r="1.3" fill="#fff"/><path d="M8 14 Q12 18 16 14" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="ic-lion" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.5" fill="#B5652E"/><circle cx="12" cy="12" r="9" fill="none" stroke="#8B4A1E" stroke-width="2.4" stroke-dasharray="2.6,2.2"/><circle cx="10" cy="11" r=".8" fill="#3D2E22"/><circle cx="14" cy="11" r=".8" fill="#3D2E22"/><path d="M11 13.5 q1 1 2 0" fill="none" stroke="#3D2E22" stroke-width="1" stroke-linecap="round"/></symbol>
+  <symbol id="ic-pagoda" viewBox="0 0 24 24">
+    <rect x="11" y="16" width="2" height="6" fill="currentColor"/>
+    <path d="M6 16.2 L12 12.5 L18 16.2 L18 17 L6 17 Z" fill="currentColor"/>
+    <path d="M4 12.6 L12 7.8 L20 12.6 L20 13.4 L4 13.4 Z" fill="currentColor"/>
+    <rect x="11.3" y="9.8" width="1.4" height="2.8" fill="currentColor"/>
+    <path d="M2 9.2 L12 3.2 L22 9.2 L22 10 L2 10 Z" fill="currentColor"/>
+    <circle cx="12" cy="2.2" r=".65" fill="currentColor"/>
+  </symbol>
+  <symbol id="ic-mountains" viewBox="0 0 24 24">
+    <circle cx="18" cy="5.5" r="2.3" fill="currentColor" opacity=".7"/>
+    <path d="M1 20 L8 8 L11.5 13.5 L14 10 L23 20 Z" fill="currentColor"/>
+    <path d="M8 8 L9.6 10.6 L6.6 11.5 Z" fill="#fff" opacity=".35"/>
+    <path d="M14 10 L15.3 12 L12.8 12.7 Z" fill="#fff" opacity=".35"/>
+  </symbol>
+  <symbol id="ic-castle" viewBox="0 0 24 24"><path d="M4 21 V11 h3 V9 h2 v2 h6 V9 h2 v2 h3 v10 Z" fill="currentColor"/><path d="M4 11 V7 h2 v2 h2 V7 h2 v4 M14 11 V7 h2 v2 h2 V7 h2 v4" fill="currentColor"/><rect x="10" y="14" width="4" height="7" fill="#fff" opacity=".85"/></symbol>
+  <symbol id="ic-palm" viewBox="0 0 24 24"><path d="M12 22 V13" stroke="#8C6B4F" stroke-width="2" stroke-linecap="round"/><path d="M12 13 C9 9 4 9 3 6 C7 5 10 7 12 11 C13 6 17 4 21 5 C19 9 15 9 12 13 C14 8 18 6 21 8 C18 11 14 11 12 13 C10 8 6 7 4 10 C7 12 10 12 12 13 Z" fill="#4CAF7D"/></symbol>
+  <symbol id="ic-butterfly" viewBox="0 0 24 24"><path d="M12 5 v14" stroke="#3D2E22" stroke-width="1.4" stroke-linecap="round"/><path d="M12 6 C10 2 3 2 3 7 C3 11 8 12 12 9 Z" fill="#9B59B6"/><path d="M12 6 C14 2 21 2 21 7 C21 11 16 12 12 9 Z" fill="#B87BC9"/><path d="M12 10 C10 13 4 14 4 17 C4 20 9 19.5 12 16 Z" fill="#9B59B6"/><path d="M12 10 C14 13 20 14 20 17 C20 20 15 19.5 12 16 Z" fill="#B87BC9"/></symbol>
+  <symbol id="ic-ocean-wave" viewBox="0 0 24 24">
+    <path d="M2 15 C4 11 7 11 8.5 14 C10 17 12.5 17 13.5 13.5 C14.5 10 17.5 10 19 13.5 C20 16 21.5 16 22 14.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M2 20 C4 17.5 7 17.5 8.5 19.8 C10 22 12.5 22 13.5 19.3 C14.5 16.5 17.5 16.5 19 19.3 C20 21 21.5 21 22 19.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+    <circle cx="17" cy="6" r="3.2" fill="currentColor" opacity=".85"/>
+  </symbol>
+  <symbol id="ic-crown" viewBox="0 0 24 24"><path d="M3 18 L4.5 8 L9 12.5 L12 6 L15 12.5 L19.5 8 L21 18 Z" fill="currentColor"/><rect x="3" y="18" width="18" height="2.6" rx="1" fill="currentColor"/><circle cx="4.5" cy="8" r="1.4" fill="currentColor"/><circle cx="12" cy="6" r="1.4" fill="currentColor"/><circle cx="19.5" cy="8" r="1.4" fill="currentColor"/></symbol>
+  <symbol id="ic-brain" viewBox="0 0 24 24"><path d="M9 3.5 C6.5 3.5 5 5.5 5.2 7.5 C3.5 8.2 3 10.5 4.3 12 C3.3 13.3 3.7 15.5 5.5 16.2 C5.3 18 6.8 19.5 8.7 19.2 C9.2 20.4 10.4 21 11.5 20.8 V4.5 C11 3.8 10 3.5 9 3.5 Z" fill="currentColor"/><path d="M15 3.5 C17.5 3.5 19 5.5 18.8 7.5 C20.5 8.2 21 10.5 19.7 12 C20.7 13.3 20.3 15.5 18.5 16.2 C18.7 18 17.2 19.5 15.3 19.2 C14.8 20.4 13.6 21 12.5 20.8 V4.5 C13 3.8 14 3.5 15 3.5 Z" fill="currentColor" opacity=".8"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5DCAA5"/><path d="M7 12.5 L10.5 16 L17 8.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-lock" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#9a948c" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#9a948c" stroke-width="1.8"/></symbol>
+  <symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-compass" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/>
+    <g stroke="currentColor" stroke-width="1.2" opacity=".6">
+      <line x1="50" y1="4" x2="50" y2="12"/><line x1="50" y1="88" x2="50" y2="96"/>
+      <line x1="4" y1="50" x2="12" y2="50"/><line x1="88" y1="50" x2="96" y2="50"/>
+      <line x1="17" y1="17" x2="22" y2="22"/><line x1="78" y1="78" x2="83" y2="83"/>
+      <line x1="17" y1="83" x2="22" y2="78"/><line x1="78" y1="22" x2="83" y2="17"/>
+    </g>
+    <path d="M50 14 L58 50 L50 86 L42 50 Z" fill="currentColor" opacity=".85"/>
+    <path d="M14 50 L50 42 L86 50 L50 58 Z" fill="currentColor" opacity=".5"/>
+    <circle cx="50" cy="50" r="5" fill="currentColor"/>
+    <text x="50" y="26" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor">N</text>
+  </symbol>
+</svg>
+
+<a href="index.html" class="exit-btn"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-exit"/></svg> Exit</a>
 <div class="progress-pill" id="counter">1 / 1</div>
+
+<div class="continent-popup" id="continentPopup">
+  <div class="continent-popup-icon" id="continentPopupIcon"></div>
+  <div class="continent-popup-text">
+    <div class="continent-popup-title">Continent Badge Earned!</div>
+    <div class="continent-popup-sub" id="continentPopupSub"></div>
+  </div>
+</div>
+
 <div class="deck-viewport">
   <div id="deck">
     <section class="session hero active" data-index="0">
-      <div class="badge">🌍 A Round-the-World Adventure 💗</div>
-      <div class="hi-name">Hi Melissa! 👋</div>
+      <svg class="compass-decoration" viewBox="0 0 100 100"><use href="#ic-compass"/></svg>
+      <div class="badge"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-globe"/></svg> A Round-the-World Adventure <svg class="icon" viewBox="0 0 24 24"><use href="#ic-heart"/></svg></div>
+      <div class="hi-name">Welcome! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-wave"/></svg></div>
       <h1>Countries &amp; Flags!</h1>
       <p>Learn about countries from every continent, then test yourself with a flag quiz! Pick a level below to jump right in.</p>
       <div id="levelPicker"></div>
-      <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Start from the beginning ▶</button></div>
+      <h2 style="margin-top:1.6rem;">My Badges</h2>
+      <div id="badgeCase"></div>
+      <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Start from the beginning <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button></div>
     </section>
 
     <section class="session finale" id="finaleCard">
-      <h2>You explored the whole world! 🌍🏆</h2>
+      <h2>You explored the whole world! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-globe"/></svg><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-trophy"/></svg></h2>
       <p class="big-text" id="finalScoreText">Loading your final score...</p>
-      <div class="result-emoji">🎉🗺️🎉</div>
+      <div class="result-emoji"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-map"/></svg><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></div>
       <div class="card-nav">
-        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
-        <button class="nav-btn" onclick="restartEverything()">Play Again From Start 🔁</button>
+        <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+        <button class="nav-btn" onclick="restartEverything()">Play Again From Start <svg class="icon" viewBox="0 0 24 24"><use href="#ic-refresh"/></svg></button>
       </div>
     </section>
   </div>
   <div class="deck-dots" id="deckDots"></div>
 </div>
 
-<footer>Made with 💗 for Melissa. Facts checked for accuracy — ask a grown-up if you want to learn even more!</footer>
+<footer>Made with care. Facts checked for accuracy. Ask a grown-up if you want to learn even more!</footer>
 
 <script>
 // ================= AUDIO: click/drag sound effects (works on iOS, Android, and desktop) =================
@@ -172,7 +322,7 @@ const CONTINENT_COLOR = {
 };
 
 const LEVELS = [
-{ name:"Easy", emoji:"🟢", countries:[
+{ name:"Easy", emoji:"<svg class=\"icon\" style=\"color:#5DBE72\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
   {name:"United States", continent:"North America", flag:"🇺🇸", established:"Declared independence July 4, 1776", language:"English (most common; no official federal language)", food:"Hamburgers & apple pie", culture:"Baseball is called \"America's pastime,\" and the Statue of Liberty was a gift from France in 1886."},
   {name:"Brazil", continent:"South America", flag:"🇧🇷", established:"Independence on September 7, 1822", language:"Portuguese", food:"Feijoada (black bean & pork stew)", culture:"Home of Carnival, the world's biggest party, and more soccer World Cup wins than any other country."},
   {name:"France", continent:"Europe", flag:"🇫🇷", established:"Became a republic in 1792 (roots over 1,000 years old)", language:"French", food:"Croissants & baguettes", culture:"The Eiffel Tower was built in 1889 and was only meant to stand for 20 years!"},
@@ -184,22 +334,22 @@ const LEVELS = [
   {name:"China", continent:"Asia", flag:"🇨🇳", established:"Modern nation founded 1949 (civilization over 3,500 years old)", language:"Mandarin Chinese", food:"Dumplings & noodles", culture:"The Great Wall of China stretches over 13,000 miles!"},
   {name:"Mexico", continent:"North America", flag:"🇲🇽", established:"Independence declared September 16, 1810", language:"Spanish", food:"Tacos", culture:"Día de los Muertos (Day of the Dead) honors loved ones who have passed away with colorful altars."}
 ]},
-{ name:"Intermediate", emoji:"🔵", countries:[
+{ name:"Intermediate", emoji:"<svg class=\"icon\" style=\"color:#3B82C4\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
   {name:"Spain", continent:"Europe", flag:"🇪🇸", established:"United as a kingdom in 1479", language:"Spanish", food:"Paella", culture:"Flamenco dancing began in Andalusia and combines singing, guitar, and rhythmic clapping."},
   {name:"India", continent:"Asia", flag:"🇮🇳", established:"Independence on August 15, 1947", language:"Hindi & English (plus 21 other official languages!)", food:"Curry", culture:"Diwali, the festival of lights, fills homes and streets with lamps, fireworks, and sweets."},
   {name:"Australia", continent:"Oceania", flag:"🇦🇺", established:"Became one federation January 1, 1901", language:"English", food:"Meat pie", culture:"Home to kangaroos, koalas, and more venomous animals than anywhere else on Earth!"},
   {name:"Egypt", continent:"Africa", flag:"🇪🇬", established:"One of the world's oldest civilizations, over 5,000 years old", language:"Arabic", food:"Koshari (rice, lentils & pasta)", culture:"The Great Pyramid of Giza was the tallest man-made structure on Earth for almost 4,000 years."},
   {name:"South Korea", continent:"Asia", flag:"🇰🇷", established:"Republic established August 15, 1948", language:"Korean", food:"Kimchi", culture:"Taekwondo, a martial art now practiced worldwide, was developed in Korea."},
-  {name:"Russia", continent:"Europe", flag:"🇷🇺", established:"Modern nation formed in 1991", language:"Russian", food:"Borscht (beet soup)", culture:"Russia is so big it spans 11 time zones — more than any other country!"},
+  {name:"Russia", continent:"Europe", flag:"🇷🇺", established:"Modern nation formed in 1991", language:"Russian", food:"Borscht (beet soup)", culture:"Russia is so big it spans 11 time zones, more than any other country!"},
   {name:"Argentina", continent:"South America", flag:"🇦🇷", established:"Independence on July 9, 1816", language:"Spanish", food:"Asado (barbecue)", culture:"Tango, a passionate partner dance, was born in the streets of Buenos Aires."},
   {name:"South Africa", continent:"Africa", flag:"🇿🇦", established:"Full democracy achieved in 1994", language:"11 official languages!", food:"Bobotie (spiced meat bake)", culture:"Nicknamed the \"Rainbow Nation\" for its incredible mix of cultures and languages."},
   {name:"Netherlands", continent:"Europe", flag:"🇳🇱", established:"Independence recognized in 1648", language:"Dutch", food:"Stroopwafels", culture:"Famous for tulip fields, windmills, and more bicycles than people!"},
   {name:"Switzerland", continent:"Europe", flag:"🇨🇭", established:"Founded in 1291", language:"German, French, Italian & Romansh", food:"Cheese fondue", culture:"Known worldwide for chocolate, mountains, and staying neutral in wars for over 200 years."}
 ]},
-{ name:"Hard", emoji:"🟠", countries:[
+{ name:"Hard", emoji:"<svg class=\"icon\" style=\"color:#E8862F\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
   {name:"Sweden", continent:"Europe", flag:"🇸🇪", established:"One of the oldest states in Europe, unified around 1000 AD", language:"Swedish", food:"Meatballs (köttbullar)", culture:"Celebrates Midsummer with flower crowns and dancing around a maypole."},
   {name:"Greece", continent:"Europe", flag:"🇬🇷", established:"Independence in 1830", language:"Greek", food:"Moussaka", culture:"The birthplace of the very first Olympic Games, held in 776 BC!"},
-  {name:"Turkey", continent:"Europe", flag:"🇹🇷", established:"Republic founded October 29, 1923", language:"Turkish", food:"Kebabs & baklava", culture:"The only country in the world that sits on two continents — Europe and Asia — at once."},
+  {name:"Turkey", continent:"Europe", flag:"🇹🇷", established:"Republic founded October 29, 1923", language:"Turkish", food:"Kebabs & baklava", culture:"The only country in the world that sits on two continents, Europe and Asia, at once."},
   {name:"Kenya", continent:"Africa", flag:"🇰🇪", established:"Independence December 12, 1963", language:"Swahili & English", food:"Ugali (cornmeal)", culture:"Home to the Maasai people and some of the world's greatest long-distance runners."},
   {name:"Thailand", continent:"Asia", flag:"🇹🇭", established:"Never colonized; current dynasty began in 1782", language:"Thai", food:"Pad Thai", culture:"The only Southeast Asian country never ruled by a European power."},
   {name:"Portugal", continent:"Europe", flag:"🇵🇹", established:"Founded as a kingdom in 1143", language:"Portuguese", food:"Bacalhau (salted cod)", culture:"Portuguese explorers like Vasco da Gama helped map much of the world in the 1400s."},
@@ -208,53 +358,210 @@ const LEVELS = [
   {name:"Nigeria", continent:"Africa", flag:"🇳🇬", established:"Independence October 1, 1960", language:"English (plus over 500 local languages!)", food:"Jollof rice", culture:"Nollywood, Nigeria's film industry, makes more movies per year than Hollywood."},
   {name:"New Zealand", continent:"Oceania", flag:"🇳🇿", established:"Became fully independent in 1947", language:"English & Māori", food:"Pavlova (meringue dessert)", culture:"The Māori haka is a powerful ceremonial dance now famous worldwide through rugby."}
 ]},
-{ name:"Extremely Hard", emoji:"🔴", countries:[
+{ name:"Extremely Hard", emoji:"<svg class=\"icon\" style=\"color:#D64550\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
   {name:"Morocco", continent:"Africa", flag:"🇲🇦", established:"Independence March 2, 1956", language:"Arabic & Berber", food:"Couscous & tagine", culture:"Famous for colorful outdoor markets called souks and the vast Sahara Desert."},
   {name:"Vietnam", continent:"Asia", flag:"🇻🇳", established:"Independence declared September 2, 1945", language:"Vietnamese", food:"Pho (noodle soup)", culture:"The áo dài, a flowing traditional dress, is still worn for special occasions today."},
   {name:"Colombia", continent:"South America", flag:"🇨🇴", established:"Independence declared July 20, 1810", language:"Spanish", food:"Arepas (corn cakes)", culture:"One of the world's top coffee producers, grown in its misty mountain regions."},
-  {name:"Finland", continent:"Europe", flag:"🇫🇮", established:"Independence December 6, 1917", language:"Finnish & Swedish", food:"Salmon soup", culture:"Finland invented the sauna — there are more saunas than cars in the country!"},
+  {name:"Finland", continent:"Europe", flag:"🇫🇮", established:"Independence December 6, 1917", language:"Finnish & Swedish", food:"Salmon soup", culture:"Finland invented the sauna. There are more saunas than cars in the country!"},
   {name:"Iceland", continent:"Europe", flag:"🇮🇸", established:"Independence June 17, 1944", language:"Icelandic", food:"Skyr (creamy yogurt)", culture:"Settled by Vikings around 874 AD, it has active volcanoes AND glaciers."},
-  {name:"Philippines", continent:"Asia", flag:"🇵🇭", established:"Independence declared June 12, 1898", language:"Filipino & English", food:"Adobo", culture:"Made up of over 7,000 islands — more than any country except Indonesia."},
-  {name:"Chile", continent:"South America", flag:"🇨🇱", established:"Independence declared September 18, 1810", language:"Spanish", food:"Empanadas", culture:"One of the longest, skinniest countries on Earth — stretching over 2,600 miles!"},
+  {name:"Philippines", continent:"Asia", flag:"🇵🇭", established:"Independence declared June 12, 1898", language:"Filipino & English", food:"Adobo", culture:"Made up of over 7,000 islands, more than any country except Indonesia."},
+  {name:"Chile", continent:"South America", flag:"🇨🇱", established:"Independence declared September 18, 1810", language:"Spanish", food:"Empanadas", culture:"One of the longest, skinniest countries on Earth, stretching over 2,600 miles!"},
   {name:"Poland", continent:"Europe", flag:"🇵🇱", established:"Statehood traced back to 966 AD", language:"Polish", food:"Pierogi (filled dumplings)", culture:"Home of composer Frédéric Chopin and famous for beautiful amber jewelry."},
   {name:"Indonesia", continent:"Asia", flag:"🇮🇩", established:"Independence August 17, 1945", language:"Bahasa Indonesia", food:"Nasi goreng (fried rice)", culture:"The world's largest archipelago, with over 17,000 islands, and home to real Komodo dragons!"},
   {name:"Ghana", continent:"Africa", flag:"🇬🇭", established:"Independence March 6, 1957", language:"English", food:"Jollof rice & fufu", culture:"The first country in sub-Saharan Africa to gain independence from colonial rule."}
 ]},
-{ name:"Legendary", emoji:"🏆", countries:[
+{ name:"Legendary", emoji:"<svg class=\"icon\" style=\"color:#C9972E\" viewBox=\"0 0 24 24\"><use href=\"#ic-trophy\"/></svg>", countries:[
   {name:"Bhutan", continent:"Asia", flag:"🇧🇹", established:"Unified in 1616; modern monarchy since 1907", language:"Dzongkha", food:"Ema datshi (chili & cheese stew)", culture:"Measures success using \"Gross National Happiness\" instead of just money."},
   {name:"Nepal", continent:"Asia", flag:"🇳🇵", established:"Unified in 1768", language:"Nepali", food:"Dal bhat (lentils & rice)", culture:"Home to Mount Everest, and the only country with a flag that isn't a rectangle!"},
   {name:"Mongolia", continent:"Asia", flag:"🇲🇳", established:"Empire founded 1206 by Genghis Khan; modern republic 1924", language:"Mongolian", food:"Buuz (steamed dumplings)", culture:"Many families still live in traditional round tents called gers and herd animals across the grasslands."},
   {name:"Madagascar", continent:"Africa", flag:"🇲🇬", established:"Independence June 26, 1960", language:"Malagasy & French", food:"Romazava (meat & vegetable stew)", culture:"Home to lemurs and thousands of plants and animals found nowhere else on Earth."},
   {name:"Uruguay", continent:"South America", flag:"🇺🇾", established:"Independence August 25, 1825", language:"Spanish", food:"Chivito (steak sandwich)", culture:"The first country ever to host and win the FIFA World Cup, back in 1930."},
   {name:"Fiji", continent:"Oceania", flag:"🇫🇯", established:"Independence October 10, 1970", language:"English, Fijian & Fiji Hindi", food:"Kokoda (coconut fish)", culture:"Made up of over 300 islands surrounded by colorful coral reefs."},
-  {name:"Estonia", continent:"Europe", flag:"🇪🇪", established:"Independence February 24, 1918", language:"Estonian", food:"Rye bread & sprats", culture:"One of the most digital countries on Earth — you can even vote online!"},
+  {name:"Estonia", continent:"Europe", flag:"🇪🇪", established:"Independence February 24, 1918", language:"Estonian", food:"Rye bread & sprats", culture:"One of the most digital countries on Earth. You can even vote online!"},
   {name:"Jamaica", continent:"North America", flag:"🇯🇲", established:"Independence August 6, 1962", language:"English & Jamaican Patois", food:"Jerk chicken", culture:"Birthplace of reggae music and home to some of the fastest sprinters ever."},
-  {name:"Ethiopia", continent:"Africa", flag:"🇪🇹", established:"Never colonized; history over 2,000 years old", language:"Amharic", food:"Injera with wat (spicy stew)", culture:"Uses its own unique calendar — Ethiopia is currently a few years \"behind\" the rest of the world!"},
-  {name:"Bolivia", continent:"South America", flag:"🇧🇴", established:"Independence August 6, 1825", language:"Spanish + 36 official Indigenous languages (a world record!)", food:"Salteñas (savory pastry)", culture:"Has two capital cities and is home to the world's largest salt flat."}
+  {name:"Ethiopia", continent:"Africa", flag:"🇪🇹", established:"Never colonized; history over 2,000 years old", language:"Amharic", food:"Injera with wat (spicy stew)", culture:"Uses its own unique calendar. Ethiopia is currently a few years \"behind\" the rest of the world!"},
+  {name:"Bolivia", continent:"South America", flag:"\ud83c\udde7\ud83c\uddf4", established:"Independence August 6, 1825", language:"Spanish + 36 official Indigenous languages (a world record!)", food:"Salte\u00f1as (savory pastry)", culture:"Has two capital cities and is home to the world's largest salt flat."}
+]},
+{ name:"Master", emoji:"<svg class=\"icon\" style=\"color:#9B59B6\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
+  {name:"Ireland", continent:"Europe", flag:"\ud83c\uddee\ud83c\uddea", established:"Independence December 6, 1921", language:"Irish (Gaelic) & English", food:"Irish stew", culture:"St. Patrick's Day, celebrated every March 17, began as an Irish holiday and is now a party held worldwide."},
+  {name:"Austria", continent:"Europe", flag:"\ud83c\udde6\ud83c\uddf9", established:"Republic founded in 1918", language:"German", food:"Wiener schnitzel", culture:"The birthplace of composer Wolfgang Amadeus Mozart, and home to grand palaces once ruled by emperors."},
+  {name:"Belgium", continent:"Europe", flag:"\ud83c\udde7\ud83c\uddea", established:"Independence October 4, 1830", language:"Dutch, French & German", food:"Waffles & chocolate", culture:"Famous for inventing french fries, which Belgians actually call \\\"frites.\\\""},
+  {name:"Denmark", continent:"Europe", flag:"\ud83c\udde9\ud83c\uddf0", established:"One of the world's oldest kingdoms, over 1,000 years old", language:"Danish", food:"Smørrebrød (open sandwiches)", culture:"Regularly ranked one of the happiest countries in the world, home to the concept of \\\"hygge\\\" (cozy contentment)."},
+  {name:"Israel", continent:"Asia", flag:"\ud83c\uddee\ud83c\uddf1", established:"Founded May 14, 1948", language:"Hebrew & Arabic", food:"Falafel & hummus", culture:"Home to Jerusalem, one of the oldest cities in the world and sacred to three major religions."},
+  {name:"Singapore", continent:"Asia", flag:"\ud83c\uddf8\ud83c\uddec", established:"Independence August 9, 1965", language:"English, Malay, Mandarin & Tamil", food:"Chicken rice", culture:"One of the cleanest cities on Earth, famous for Gardens by the Bay's giant tree-shaped towers."},
+  {name:"Malaysia", continent:"Asia", flag:"\ud83c\uddf2\ud83c\uddfe", established:"Independence August 31, 1957", language:"Malay", food:"Nasi lemak (coconut rice)", culture:"Home to the Petronas Towers, once the tallest buildings in the world, and lush rainforests full of wildlife."},
+  {name:"Saudi Arabia", continent:"Asia", flag:"\ud83c\uddf8\ud83c\udde6", established:"Founded September 23, 1932", language:"Arabic", food:"Kabsa (spiced rice & meat)", culture:"Home to Mecca, the holiest city in Islam, visited by millions of pilgrims every year."},
+  {name:"United Arab Emirates", continent:"Asia", flag:"\ud83c\udde6\ud83c\uddea", established:"Formed December 2, 1971", language:"Arabic", food:"Al machboos (spiced rice & meat)", culture:"Home to the Burj Khalifa, the tallest building in the world, rising higher than half a mile."},
+  {name:"Cuba", continent:"North America", flag:"\ud83c\udde8\ud83c\uddfa", established:"Independence May 20, 1902", language:"Spanish", food:"Ropa vieja (shredded beef)", culture:"Famous for classic 1950s cars still driving the streets, and the birthplace of salsa-style music."}
+]},
+{ name:"Grandmaster", emoji:"<svg class=\"icon\" style=\"color:#8B6F47\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
+  {name:"Czech Republic", continent:"Europe", flag:"\ud83c\udde8\ud83c\uddff", established:"Formed January 1, 1993", language:"Czech", food:"Svíčková (marinated beef)", culture:"Prague, its capital, is famous for a medieval astronomical clock still ticking after 600 years."},
+  {name:"Hungary", continent:"Europe", flag:"\ud83c\udded\ud83c\uddfa", established:"Kingdom founded in the year 1000", language:"Hungarian", food:"Goulash", culture:"Budapest's parliament building is one of the most beautiful in the world, lit up gold at night."},
+  {name:"Ukraine", continent:"Europe", flag:"\ud83c\uddfa\ud83c\udde6", established:"Independence August 24, 1991", language:"Ukrainian", food:"Borscht & varenyky (dumplings)", culture:"Famous for intricately hand-painted Easter eggs called pysanky."},
+  {name:"Croatia", continent:"Europe", flag:"\ud83c\udded\ud83c\uddf7", established:"Independence June 25, 1991", language:"Croatian", food:"Peka (slow-cooked meat & vegetables)", culture:"The necktie was invented here, originally worn by Croatian soldiers centuries ago."},
+  {name:"Pakistan", continent:"Asia", flag:"\ud83c\uddf5\ud83c\uddf0", established:"Independence August 14, 1947", language:"Urdu & English", food:"Biryani", culture:"Home to K2, the world's second-tallest mountain, and thrillingly painted trucks and buses."},
+  {name:"Bangladesh", continent:"Asia", flag:"\ud83c\udde7\ud83c\udde9", established:"Independence March 26, 1971", language:"Bengali", food:"Rice & fish curry", culture:"Home to the Sundarbans, the world's largest mangrove forest, shared with wild Bengal tigers."},
+  {name:"Sri Lanka", continent:"Asia", flag:"\ud83c\uddf1\ud83c\uddf0", established:"Independence February 4, 1948", language:"Sinhala & Tamil", food:"Rice & curry", culture:"Known as the \\\"Pearl of the Indian Ocean\\\" for its lush tea plantations and ancient temples."},
+  {name:"Venezuela", continent:"South America", flag:"\ud83c\uddfb\ud83c\uddea", established:"Independence July 5, 1811", language:"Spanish", food:"Arepas", culture:"Home to Angel Falls, the tallest waterfall on Earth, dropping over half a mile."},
+  {name:"Ecuador", continent:"South America", flag:"\ud83c\uddea\ud83c\udde8", established:"Independence May 24, 1822", language:"Spanish", food:"Ceviche & llapingachos (potato cakes)", culture:"Named for the equator, which runs right through the country, and home to the wildlife-rich Galápagos Islands."},
+  {name:"Panama", continent:"North America", flag:"\ud83c\uddf5\ud83c\udde6", established:"Independence November 3, 1903", language:"Spanish", food:"Sancocho (chicken stew)", culture:"Home to the Panama Canal, an engineering marvel that lets ships cross between two oceans."}
+]},
+{ name:"World Explorer", emoji:"<svg class=\"icon\" style=\"color:#3B82C4\" viewBox=\"0 0 24 24\"><use href=\"#ic-globe\"/></svg>", countries:[
+  {name:"Iran", continent:"Asia", flag:"\ud83c\uddee\ud83c\uddf7", established:"Persian Empire dates back 2,500 years; Islamic Republic since 1979", language:"Persian (Farsi)", food:"Kebab & saffron rice", culture:"Home to Persepolis, a magnificent ancient palace built by Persian kings over 2,000 years ago."},
+  {name:"Iraq", continent:"Asia", flag:"\ud83c\uddee\ud83c\uddf6", established:"Independence October 3, 1932", language:"Arabic & Kurdish", food:"Masgouf (grilled fish)", culture:"Part of ancient Mesopotamia, the \\\"cradle of civilization\\\" where writing was first invented."},
+  {name:"Qatar", continent:"Asia", flag:"\ud83c\uddf6\ud83c\udde6", established:"Independence September 3, 1971", language:"Arabic", food:"Machbous (spiced rice & meat)", culture:"Hosted the FIFA World Cup in 2022, the first Middle Eastern country ever to do so."},
+  {name:"Kuwait", continent:"Asia", flag:"\ud83c\uddf0\ud83c\uddfc", established:"Independence June 19, 1961", language:"Arabic", food:"Machboos (spiced rice & meat)", culture:"One of the world's top exporters of oil, discovered here in the 1930s."},
+  {name:"Jordan", continent:"Asia", flag:"\ud83c\uddef\ud83c\uddf4", established:"Independence May 25, 1946", language:"Arabic", food:"Mansaf (lamb & yogurt rice)", culture:"Home to Petra, an ancient city carved directly into rose-colored cliffs over 2,000 years ago."},
+  {name:"Tunisia", continent:"Africa", flag:"\ud83c\uddf9\ud83c\uddf3", established:"Independence March 20, 1956", language:"Arabic", food:"Couscous", culture:"Home to ruins of ancient Carthage, once one of the most powerful cities in the ancient world."},
+  {name:"Algeria", continent:"Africa", flag:"\ud83c\udde9\ud83c\uddff", established:"Independence July 5, 1962", language:"Arabic & Berber", food:"Couscous & tagine", culture:"Africa's largest country by area, with most of its land covered by the vast Sahara Desert."},
+  {name:"Senegal", continent:"Africa", flag:"\ud83c\uddf8\ud83c\uddf3", established:"Independence April 4, 1960", language:"French & Wolof", food:"Thieboudienne (fish & rice)", culture:"Known for lively drumming and wrestling matches that draw huge, cheering crowds."},
+  {name:"Tanzania", continent:"Africa", flag:"\ud83c\uddf9\ud83c\uddff", established:"Formed by union in 1964", language:"Swahili & English", food:"Ugali (cornmeal)", culture:"Home to Mount Kilimanjaro, Africa's tallest peak, and the Serengeti's famous animal migrations."},
+  {name:"Uganda", continent:"Africa", flag:"\ud83c\uddfa\ud83c\uddec", established:"Independence October 9, 1962", language:"English & Swahili", food:"Matoke (steamed plantains)", culture:"Home to mountain gorillas, one of the only places on Earth where they still live in the wild."}
+]},
+{ name:"Geography Genius", emoji:"<svg class=\"icon\" style=\"color:#E8558B\" viewBox=\"0 0 24 24\"><use href=\"#ic-brain\"/></svg>", countries:[
+  {name:"Slovenia", continent:"Europe", flag:"\ud83c\uddf8\ud83c\uddee", established:"Independence June 25, 1991", language:"Slovenian", food:"Potica (rolled nut pastry)", culture:"One of the greenest countries on Earth, covered by dense forest and dotted with fairytale lakes."},
+  {name:"Slovakia", continent:"Europe", flag:"\ud83c\uddf8\ud83c\uddf0", established:"Formed January 1, 1993", language:"Slovak", food:"Bryndzové halušky (dumplings & sheep cheese)", culture:"Home to more castles per person than almost any other country in the world."},
+  {name:"Latvia", continent:"Europe", flag:"\ud83c\uddf1\ud83c\uddfb", established:"Independence November 18, 1918", language:"Latvian", food:"Grey peas with bacon", culture:"Famous for a massive Song and Dance Festival where tens of thousands of singers perform together."},
+  {name:"Lithuania", continent:"Europe", flag:"\ud83c\uddf1\ud83c\uddf9", established:"Independence February 16, 1918", language:"Lithuanian", food:"Cepelinai (potato dumplings)", culture:"Home to one of the oldest languages still spoken today, closely related to ancient Sanskrit."},
+  {name:"Serbia", continent:"Europe", flag:"\ud83c\uddf7\ud83c\uddf8", established:"Modern republic since 2006", language:"Serbian", food:"Ćevapi (grilled meat)", culture:"Famous for lively brass band festivals that fill entire towns with music and dancing."},
+  {name:"Bulgaria", continent:"Europe", flag:"\ud83c\udde7\ud83c\uddec", established:"Founded in 681 AD, one of Europe's oldest states", language:"Bulgarian", food:"Banitsa (cheese pastry)", culture:"Bulgarians traditionally nod for \\\"no\\\" and shake their head for \\\"yes,\\\" the opposite of most countries!"},
+  {name:"Romania", continent:"Europe", flag:"\ud83c\uddf7\ud83c\uddf4", established:"United as one country in 1859", language:"Romanian", food:"Sarmale (stuffed cabbage rolls)", culture:"Home to Bran Castle, a real fortress often linked to the legend of Dracula."},
+  {name:"Costa Rica", continent:"North America", flag:"\ud83c\udde8\ud83c\uddf7", established:"Independence September 15, 1821", language:"Spanish", food:"Gallo pinto (rice & beans)", culture:"Has no permanent army, and protects more of its land as nature reserves than almost any country on Earth."},
+  {name:"Paraguay", continent:"South America", flag:"\ud83c\uddf5\ud83c\uddfe", established:"Independence May 14, 1811", language:"Spanish & Guaraní", food:"Sopa paraguaya (corn bread)", culture:"One of the few countries where an Indigenous language, Guaraní, is spoken by most of the population."},
+  {name:"Cambodia", continent:"Asia", flag:"\ud83c\uddf0\ud83c\udded", established:"Independence November 9, 1953", language:"Khmer", food:"Amok (fish curry)", culture:"Home to Angkor Wat, the largest religious monument in the world, built almost 900 years ago."}
+]},
+{ name:"Ultimate Champion", emoji:"<svg class=\"icon\" style=\"color:#C9972E\" viewBox=\"0 0 24 24\"><use href=\"#ic-crown\"/></svg>", countries:[
+  {name:"Laos", continent:"Asia", flag:"\ud83c\uddf1\ud83c\udde6", established:"Independence October 22, 1953", language:"Lao", food:"Larb (herb & meat salad)", culture:"Known as the \\\"Land of a Million Elephants,\\\" once the name of a powerful ancient kingdom here."},
+  {name:"Myanmar", continent:"Asia", flag:"\ud83c\uddf2\ud83c\uddf2", established:"Independence January 4, 1948", language:"Burmese", food:"Mohinga (fish noodle soup)", culture:"Home to Bagan, an ancient plain dotted with over 2,000 centuries-old temples and pagodas."},
+  {name:"Zimbabwe", continent:"Africa", flag:"\ud83c\uddff\ud83c\uddfc", established:"Independence April 18, 1980", language:"English, Shona & Ndebele", food:"Sadza (cornmeal porridge)", culture:"Home to Victoria Falls, one of the largest waterfalls in the world, known locally as \\\"The Smoke That Thunders.\\\""},
+  {name:"Zambia", continent:"Africa", flag:"\ud83c\uddff\ud83c\uddf2", established:"Independence October 24, 1964", language:"English", food:"Nshima (cornmeal porridge)", culture:"Shares Victoria Falls with Zimbabwe, and is home to vast national parks full of wildlife."},
+  {name:"Rwanda", continent:"Africa", flag:"\ud83c\uddf7\ud83c\uddfc", established:"Independence July 1, 1962", language:"Kinyarwanda, English & French", food:"Ugali & beans", culture:"Nicknamed the \\\"Land of a Thousand Hills\\\" and one of the last homes of wild mountain gorillas."},
+  {name:"Botswana", continent:"Africa", flag:"\ud83c\udde7\ud83c\uddfc", established:"Independence September 30, 1966", language:"English & Setswana", food:"Seswaa (shredded meat)", culture:"Home to the Okavango Delta, a lush wetland teeming with elephants, lions, and hippos."},
+  {name:"Namibia", continent:"Africa", flag:"\ud83c\uddf3\ud83c\udde6", established:"Independence March 21, 1990", language:"English", food:"Braai (barbecue)", culture:"Home to some of the tallest sand dunes on Earth, found in the ancient Namib Desert."},
+  {name:"Papua New Guinea", continent:"Oceania", flag:"\ud83c\uddf5\ud83c\uddec", established:"Independence September 16, 1975", language:"Tok Pisin, English & Hiri Motu", food:"Mumu (earth-oven roasted food)", culture:"One of the most culturally diverse places on Earth, with over 800 different languages spoken."},
+  {name:"Samoa", continent:"Oceania", flag:"\ud83c\uddfc\ud83c\uddf8", established:"Independence January 1, 1962", language:"Samoan & English", food:"Palusami (coconut cream & taro leaves)", culture:"One of the first places on Earth to see the sunrise each new day, near the International Date Line."},
+  {name:"Luxembourg", continent:"Europe", flag:"\ud83c\uddf1\ud83c\uddfa", established:"Independence recognized in 1839", language:"Luxembourgish, French & German", food:"Judd mat gaardebounen (smoked pork & beans)", culture:"One of the smallest countries in the world, yet home to one of the highest standards of living."}
 ]}
 ];
 
-// ================= SCORE PERSISTENCE (localStorage — real site, not a sandboxed preview) =================
+// ================= SCORE PERSISTENCE (localStorage, real site, not a sandboxed preview) =================
 const STORAGE_KEY = 'melissaFlagsLastScores_v1';
 function loadLastScores(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
     if(Array.isArray(parsed) && parsed.length === LEVELS.length) return parsed;
-  }catch(e){ /* localStorage unavailable — fall back below */ }
+  }catch(e){ /* localStorage unavailable, fall back below */ }
   return LEVELS.map(()=>null); // null = not played yet
 }
 function saveLastScore(li, score){
   lastScores[li] = score;
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(lastScores)); }catch(e){ /* ignore */ }
+  if(score > (bestScores[li] || 0)){
+    bestScores[li] = score;
+    saveBestScores();
+  }
   renderLevelPicker();
+  renderBadgeCase();
 }
 let lastScores = loadLastScores();
+
+// ================= BADGE SYSTEM =================
+const BEST_KEY = 'melissaFlagsBestScores_v1';
+const CORRECT_KEY = 'melissaFlagsCorrectCountries_v1';
+function loadBestScores(){
+  try{
+    const raw = localStorage.getItem(BEST_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if(Array.isArray(parsed) && parsed.length === LEVELS.length) return parsed;
+  }catch(e){ /* localStorage unavailable, fall back below */ }
+  return LEVELS.map(()=>0);
+}
+function saveBestScores(){
+  try{ localStorage.setItem(BEST_KEY, JSON.stringify(bestScores)); }catch(e){ /* ignore */ }
+}
+function loadCorrectCountries(){
+  try{
+    const raw = localStorage.getItem(CORRECT_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if(Array.isArray(parsed)) return new Set(parsed);
+  }catch(e){ /* localStorage unavailable, fall back below */ }
+  return new Set();
+}
+function saveCorrectCountries(){
+  try{ localStorage.setItem(CORRECT_KEY, JSON.stringify(Array.from(correctCountries))); }catch(e){ /* ignore */ }
+}
+let bestScores = loadBestScores();
+let correctCountries = loadCorrectCountries();
+
+const CONTINENT_LIST = ["Africa","Asia","Europe","North America","South America","Oceania"];
+const CONTINENT_EMOJI = {
+  "Africa": '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-lion"/></svg>',
+  "Asia": '<svg class="icon-lg" style="color:#D64550" viewBox="0 0 24 24"><use href="#ic-pagoda"/></svg>',
+  "Europe": '<svg class="icon-lg" style="color:#3B82C4" viewBox="0 0 24 24"><use href="#ic-castle"/></svg>',
+  "North America": '<svg class="icon-lg" style="color:#4CAF7D" viewBox="0 0 24 24"><use href="#ic-mountains"/></svg>',
+  "South America": '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-butterfly"/></svg>',
+  "Oceania": '<svg class="icon-lg" style="color:#17A2A2" viewBox="0 0 24 24"><use href="#ic-ocean-wave"/></svg>'
+};
+const CONTINENT_TOTALS = {};
+LEVELS.forEach(level => level.countries.forEach(c => {
+  CONTINENT_TOTALS[c.continent] = (CONTINENT_TOTALS[c.continent] || 0) + 1;
+}));
+
+function levelBadgeTierFromScore(score){
+  if(!score || score < 7) return null;
+  if(score === 10) return 'gold';
+  return 'silver';
+}
+function levelBadgeTier(li){
+  return levelBadgeTierFromScore(bestScores[li] || 0);
+}
+function continentProgress(continent){
+  const total = CONTINENT_TOTALS[continent] || 0;
+  let have = 0;
+  LEVELS.forEach(level => level.countries.forEach(c => {
+    if(c.continent === continent && correctCountries.has(c.name)) have++;
+  }));
+  return { have, total };
+}
+let continentPopupTimer = null;
+function showContinentPopup(continent){
+  const el = document.getElementById('continentPopup');
+  document.getElementById('continentPopupIcon').innerHTML = CONTINENT_EMOJI[continent] || '';
+  document.getElementById('continentPopupSub').textContent = `You collected every ${continent} flag!`;
+  clearTimeout(continentPopupTimer);
+  el.classList.add('shown');
+  continentPopupTimer = setTimeout(()=>{ el.classList.remove('shown'); }, 3200);
+}
+function renderBadgeCase(){
+  const wrap = document.getElementById('badgeCase');
+  if(!wrap) return;
+  const levelBadgesHTML = LEVELS.map((level, li)=>{
+    const tier = levelBadgeTier(li);
+    const cls = tier ? 'badge-tile earned tier-'+tier : 'badge-tile';
+    const label = tier ? tier.charAt(0).toUpperCase()+tier.slice(1) : 'Locked';
+    return `<div class="${cls}"><div class="badge-icon">${level.emoji}</div><div class="badge-name">${level.name}</div><div class="badge-sub">${label}</div></div>`;
+  }).join('');
+  const continentBadgesHTML = CONTINENT_LIST.map(cont=>{
+    const { have, total } = continentProgress(cont);
+    const earned = total > 0 && have === total;
+    const cls = earned ? 'badge-tile earned tier-continent' : 'badge-tile';
+    return `<div class="${cls}"><div class="badge-icon">${CONTINENT_EMOJI[cont]}</div><div class="badge-name">${cont}</div><div class="badge-sub">${have} / ${total}</div></div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <div class="badge-section-title">Level Badges</div>
+    <div class="badge-grid">${levelBadgesHTML}</div>
+    <div class="badge-section-title">Continent Badges</div>
+    <div class="badge-grid">${continentBadgesHTML}</div>
+  `;
+}
+
 
 // ================= BUILD THE DECK =================
 const deckEl = document.getElementById('deck');
 const finaleEl = document.getElementById('finaleCard');
 const levelScores = LEVELS.map(()=>0);
+let newlyCompletedContinents = [];
 
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
 
@@ -268,47 +575,49 @@ function makeSession(innerHTML, extraClass){
 LEVELS.forEach((level, li)=>{
   // --- level intro card ---
   const introHTML = `
-    <div class="level-badge">${level.emoji} Level ${li+1} of 5 — ${level.name}</div>
+    <div class="level-badge">${level.emoji} Level ${li+1} of ${LEVELS.length}: ${level.name}</div>
     <h2>${level.name} Flags</h2>
     <div class="card"><p class="big-text">Get ready to learn 10 countries, then guess their flags! ${level.countries.map(c=>c.flag).join(' ')}</p></div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
-      <button class="nav-btn" onclick="nextCard()">Start Learning ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+      <button class="nav-btn" onclick="nextCard()">Start Learning <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>`;
   deckEl.insertBefore(makeSession(introHTML, 'level-intro'), finaleEl);
 
   // --- fact cards ---
   level.countries.forEach((c, ci)=>{
-    const color = CONTINENT_COLOR[c.continent] || 'var(--ocean)';
+    const color = CONTINENT_COLOR[c.continent] || 'var(--teal)';
     const factHTML = `
-      <div class="level-badge">${level.emoji} ${level.name} — Country ${ci+1} of 10</div>
+      <div class="level-badge">${level.emoji} ${level.name}: Country ${ci+1} of 10</div>
       <div class="card">
         <div class="flag-emoji">${c.flag}</div>
         <h2>${c.name}</h2>
         <div class="continent-pill" style="background:${color}">${c.continent}</div>
-        <p class="fact-line">📅 <b>Established:</b> ${c.established}</p>
-        <p class="fact-line">🗣️ <b>Language:</b> ${c.language}</p>
-        <p class="fact-line">🍽️ <b>Favorite food:</b> ${c.food}</p>
-        <div class="tap-hint" onclick="this.nextElementSibling.classList.toggle('shown')">👆 Tap for a fun cultural fact!</div>
+        <p class="fact-line"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-calendar"/></svg> <b>Established:</b> ${c.established}</p>
+        <p class="fact-line"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-speech"/></svg> <b>Language:</b> ${c.language}</p>
+        <p class="fact-line"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-food"/></svg> <b>Favorite food:</b> ${c.food}</p>
+        <div class="tap-hint" onclick="this.nextElementSibling.classList.toggle('shown')"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-finger"/></svg> Tap for a fun cultural fact!</div>
         <div class="reveal">${c.culture}</div>
       </div>
       <div class="card-nav">
-        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
-        <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+        <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+        <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
       </div>`;
     deckEl.insertBefore(makeSession(factHTML, 'fact-card'), finaleEl);
   });
 
-  // --- quiz cards ---
-  level.countries.forEach((c, ci)=>{
+  // --- quiz cards (shuffled independently from fact-card order, so it tests
+  //     real flag recognition rather than memorizing presentation order) ---
+  const quizOrder = shuffle(level.countries);
+  quizOrder.forEach((c, ci)=>{
     const others = level.countries.filter(x=>x.name!==c.name);
     const distractors = shuffle(others).slice(0,3);
     const options = shuffle([{name:c.name, correct:true}, ...distractors.map(d=>({name:d.name, correct:false}))]);
     const optsHTML = options.map(o=>`<button class="quiz-btn" onclick="answerQuiz(this, ${o.correct}, ${li})">${o.name}</button>`).join('');
     const quizHTML = `
-      <div class="level-badge">${level.emoji} ${level.name} Quiz — Flag ${ci+1} of 10</div>
+      <div class="level-badge">${level.emoji} ${level.name} Quiz: Flag ${ci+1} of 10</div>
       <div class="card">
         <p class="big-text">Which country does this flag belong to?</p>
         <div class="flag-emoji">${c.flag}</div>
@@ -316,25 +625,26 @@ LEVELS.forEach((level, li)=>{
         <div class="reveal"></div>
       </div>
       <div class="card-nav">
-        <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-        <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
-        <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+        <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+        <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
       </div>`;
     deckEl.insertBefore(makeSession(quizHTML, 'quiz-card'), finaleEl);
   });
 
   // --- level result card ---
   const resultHTML = `
-    <h2>${level.name} Results!</h2>
+    <h2 id="levelResultHeading-${li}">${level.name} Results!</h2>
     <div class="card">
+      <div class="result-badge-stamp" id="levelResultStamp-${li}"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
       <p class="big-text" id="levelResultText-${li}">Let's see how you did!</p>
-      <div class="result-emoji" id="levelResultEmoji-${li}">🌟</div>
-      <button class="action-btn" onclick="retryLevel(${li})">Try This Level Again 🔄</button>
+      <p class="result-sub-text" id="levelResultSub-${li}"></p>
+      <button class="action-btn" id="levelResultRetryBtn-${li}" onclick="retryLevel(${li})">Try This Level Again <svg class="icon" viewBox="0 0 24 24"><use href="#ic-refresh"/></svg></button>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn home-btn" onclick="goHome()">📋 Levels</button>
-      <button class="nav-btn" onclick="nextCard()">${li < LEVELS.length-1 ? 'Next Level ▶' : 'Finish ▶'}</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+      <button class="nav-btn" id="levelResultNextBtn-${li}" onclick="nextCard()">${li < LEVELS.length-1 ? 'Next Level <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg>' : 'Finish <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg>'}</button>
     </div>`;
   deckEl.insertBefore(makeSession(resultHTML, 'level-result'), finaleEl);
 });
@@ -345,10 +655,21 @@ function levelIntroIndex(li){
   for(let i=0;i<li;i++){ idx += 1 + 10 + 10 + 1; } // intro + facts + quiz + result per level
   return idx;
 }
+function isLevelUnlocked(li){
+  if(li <= 0) return true;
+  return (bestScores[li-1] || 0) >= 7;
+}
 function renderLevelPicker(){
   const wrap = document.getElementById('levelPicker');
   wrap.innerHTML = LEVELS.map((level, li)=>{
     const score = lastScores[li];
+    const unlocked = isLevelUnlocked(li);
+    if(!unlocked){
+      return `<button class="level-pick-card locked">
+        <span><span class="level-pick-name">${level.emoji} ${level.name}</span><br><span class="level-pick-sub">Score 7+ in ${LEVELS[li-1].name} to unlock</span></span>
+        <span class="level-lock-icon"><svg width="22" height="22" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#9a948c" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#9a948c" stroke-width="1.8"/></svg></span>
+      </button>`;
+    }
     const scoreLabel = (score === null || score === undefined) ? 'Not played yet' : `Last score: ${score} / 10`;
     return `<button class="level-pick-card" onclick="goToLevel(${li})">
       <span><span class="level-pick-name">${level.emoji} ${level.name}</span><br><span class="level-pick-sub">10 flags</span></span>
@@ -357,9 +678,10 @@ function renderLevelPicker(){
   }).join('');
 }
 renderLevelPicker();
+renderBadgeCase();
 
 function goHome(){ goTo(0); }
-function goToLevel(li){ goTo(levelIntroIndex(li)); }
+function goToLevel(li){ if(!isLevelUnlocked(li)) return; goTo(levelIntroIndex(li)); }
 
 // ================= DECK NAVIGATION =================
 const sessions = Array.from(document.querySelectorAll('.session'));
@@ -420,12 +742,30 @@ function answerQuiz(btn, correct, levelIndex){
   btns.forEach(b=>b.disabled=true);
   if(correct){
     btn.classList.add('yes');
-    reveal.textContent = "Yes! That's right! 🎉";
+    reveal.innerHTML = "Yes! That's right! <svg class=\"icon\" viewBox=\"0 0 24 24\"><use href=\"#ic-check\"/></svg>";
     levelScores[levelIndex]++;
+    const countryName = btn.textContent;
+    const countryObj = LEVELS.flatMap(l=>l.countries).find(c=>c.name === countryName);
+    let wasComplete = false;
+    if(countryObj){
+      const before = continentProgress(countryObj.continent);
+      wasComplete = before.total > 0 && before.have === before.total;
+    }
+    correctCountries.add(countryName);
+    saveCorrectCountries();
+    renderBadgeCase();
+    if(countryObj){
+      const after = continentProgress(countryObj.continent);
+      const nowComplete = after.total > 0 && after.have === after.total;
+      if(nowComplete && !wasComplete){
+        newlyCompletedContinents.push(countryObj.continent);
+        showContinentPopup(countryObj.continent);
+      }
+    }
   } else {
     btn.classList.add('no');
     btns.forEach(b=>{ if(b.getAttribute('onclick').includes('true')) b.classList.add('yes'); });
-    reveal.textContent = "Not quite — the correct flag's country is highlighted in green.";
+    reveal.textContent = "Not quite. The correct flag's country is highlighted in green.";
   }
   reveal.classList.add('shown');
   const nextBtn = session.querySelector('.next-btn');
@@ -433,23 +773,44 @@ function answerQuiz(btn, correct, levelIndex){
 }
 
 function updateLevelResult(sessionEl){
-  const li = sessions.indexOf(sessionEl) ;
-  // figure out which level this result belongs to by matching the text node ids present in it
+  const li = sessions.indexOf(sessionEl);
   const textEl = sessionEl.querySelector('[id^="levelResultText-"]');
-  const emojiEl = sessionEl.querySelector('[id^="levelResultEmoji-"]');
   const idx = parseInt(textEl.id.split('-')[1],10);
   const score = levelScores[idx];
-  let phrase, emoji;
-  if(score === 10){ phrase = "Excellent, Melissa"; emoji = "🏆🌟🏆"; }
-  else if(score >= 6){ phrase = "Good job, Melissa"; emoji = "👍✨"; }
-  else { phrase = "Nice try, Melissa — keep exploring"; emoji = "💪🙂"; }
-  textEl.textContent = `${phrase}! You got ${score} out of 10 flags right in ${LEVELS[idx].name}!`;
-  emojiEl.textContent = emoji;
+  const stampEl = document.getElementById(`levelResultStamp-${idx}`);
+  const subEl = document.getElementById(`levelResultSub-${idx}`);
+  const retryBtn = document.getElementById(`levelResultRetryBtn-${idx}`);
+  const nextBtn = document.getElementById(`levelResultNextBtn-${idx}`);
+  const passed = score >= 7;
+
+  if(passed){
+    stampEl.className = 'result-badge-stamp passed';
+    stampEl.innerHTML = score === 10
+      ? '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-trophy"/></svg>'
+      : LEVELS[idx].emoji;
+    textEl.textContent = `You earned the ${LEVELS[idx].name} badge!`;
+    subEl.textContent = `${score} out of 10 flags right, great job!`;
+    retryBtn.style.display = 'none';
+    nextBtn.disabled = false;
+    if(newlyCompletedContinents.length){
+      const names = newlyCompletedContinents.join(', ');
+      subEl.textContent += ` You also completed the ${names} continent badge${newlyCompletedContinents.length>1?'s':''}!`;
+    }
+  } else {
+    stampEl.className = 'result-badge-stamp';
+    stampEl.innerHTML = '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-flex"/></svg>';
+    textEl.textContent = `So close! You got ${score} out of 10.`;
+    subEl.textContent = `Get 7 or more right to earn the ${LEVELS[idx].name} badge. Give it another try!`;
+    retryBtn.style.display = 'inline-block';
+    nextBtn.disabled = true;
+  }
+  newlyCompletedContinents = [];
   saveLastScore(idx, score);
 }
 
 function retryLevel(li){
   levelScores[li] = 0;
+  newlyCompletedContinents = [];
   // reset all quiz cards whose onclick references this level index
   document.querySelectorAll('.quiz-card').forEach(session=>{
     const btns = session.querySelectorAll('.quiz-btn');
@@ -465,9 +826,9 @@ function retryLevel(li){
 }
 
 function updateFinalScore(){
-  const total = levelScores.reduce((a,b)=>a+b,0);
+  const total = bestScores.reduce((a,b)=>a+(b||0),0);
   const max = LEVELS.length*10;
-  document.getElementById('finalScoreText').textContent = `Melissa, you scored ${total} out of ${max} across all 5 levels! You explored countries on every continent!`;
+  document.getElementById('finalScoreText').textContent = `You scored ${total} out of ${max} across all ${LEVELS.length} levels! You explored countries on every continent!`;
 }
 
 function restartEverything(){
@@ -476,6 +837,65 @@ function restartEverything(){
   document.querySelectorAll('.quiz-card .reveal').forEach(r=>{ r.classList.remove('shown'); r.textContent=''; });
   document.querySelectorAll('.quiz-card .next-btn').forEach(b=> b.disabled = true);
   goTo(0);
+}
+
+// ================= PLAYER CHARACTERS =================
+function melissaSVG(pose, size){
+  size = size || 120;
+  const skin = '#E8B48A', hair = '#5C3A21', vest = '#4CAF7D', vestShadow = '#3A8C61', shirt = '#FBF3E1';
+  let arms = '', extra = '', body = '', legs = '';
+  const legsDefault = `<path d="M40 92 L38 118" stroke="${vestShadow}" stroke-width="9" stroke-linecap="round"/><path d="M60 92 L62 118" stroke="${vestShadow}" stroke-width="9" stroke-linecap="round"/>`;
+  if(pose === 'bronze'){
+    arms = `<path d="M38 68 Q22 72 20 62" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>
+             <circle cx="19" cy="59" r="6.5" fill="${skin}"/>
+             <path d="M16 56 L16 61 M19 55 L19 61 M22 56 L22 61" stroke="${skin}" stroke-width="2.6" stroke-linecap="round"/>
+             <path d="M62 68 Q74 78 70 90" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
+    legs = legsDefault;
+  } else if(pose === 'silver'){
+    arms = `<path d="M38 68 Q20 60 18 42" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>
+             <circle cx="18" cy="39" r="7" fill="${skin}"/>
+             <path d="M62 68 Q78 72 76 88" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
+    legs = legsDefault;
+    extra = `<path d="M8 30 l4 6 M14 24 l2 7" stroke="${vest}" stroke-width="2.4" stroke-linecap="round"/>`;
+  } else if(pose === 'gold'){
+    arms = `<path d="M38 66 Q18 50 14 28" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>
+             <path d="M62 66 Q82 50 86 28" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
+    legs = `<path d="M42 92 L34 116" stroke="${vestShadow}" stroke-width="9" stroke-linecap="round"/><path d="M58 92 L66 116" stroke="${vestShadow}" stroke-width="9" stroke-linecap="round"/>`;
+    extra = `<path d="M10 15 l3 6 l6 1 l-4.5 4.5 l1 6.5 L10 30 L4.5 33 l1 -6.5 L1 22 l6 -1 Z" fill="#D9A441"/>
+             <path d="M90 15 l3 6 l6 1 l-4.5 4.5 l1 6.5 L90 30 l-5.5 3 l1 -6.5 L81 22 l6 -1 Z" fill="#EF6F4B"/>
+             <circle cx="50" cy="10" r="2.6" fill="#2E8B8B"/>`;
+    body = `translate(0,-4)`;
+  } else {
+    arms = `<path d="M38 68 Q46 76 46 90" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>
+             <path d="M62 66 Q52 58 54 48" stroke="${skin}" stroke-width="9" stroke-linecap="round" fill="none"/>
+             <circle cx="55" cy="46" r="6.5" fill="${skin}"/>
+             <path d="M50 46 h10 M55 41 v10" stroke="#8a5c25" stroke-width="1.4"/>`;
+    legs = legsDefault;
+    extra = `<rect x="43" y="80" width="4" height="20" rx="1.5" fill="#8C6B4F"/><path d="M47 80 L60 84 L47 88 Z" fill="#EF6F4B"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 130">
+    <ellipse cx="50" cy="122" rx="26" ry="5" fill="rgba(28,78,99,.15)"/>
+    ${legs}
+    <g transform="${body}">
+    ${arms}
+    <path d="M32 62 C32 78 40 90 50 90 C60 90 68 78 68 62 L68 58 L32 58 Z" fill="${vest}"/>
+    <path d="M40 58 L40 90 M60 58 L60 90" stroke="${vestShadow}" stroke-width="1.2" opacity=".5"/>
+    <circle cx="50" cy="38" r="22" fill="${skin}"/>
+    <path d="M28 30 C26 16 34 6 50 6 C66 6 74 16 72 30 C68 24 60 30 60 30 L40 30 C40 30 32 24 28 30 Z" fill="${hair}"/>
+    <ellipse cx="20" cy="42" rx="6" ry="9" fill="${hair}" transform="rotate(-15 20 42)"/>
+    <ellipse cx="80" cy="42" rx="6" ry="9" fill="${hair}" transform="rotate(15 80 42)"/>
+    <ellipse cx="41" cy="40" rx="5.4" ry="6" fill="#fff"/>
+    <ellipse cx="59" cy="40" rx="5.4" ry="6" fill="#fff"/>
+    <circle cx="41.5" cy="41" r="3.1" fill="#2A3238"/>
+    <circle cx="59.5" cy="41" r="3.1" fill="#2A3238"/>
+    <circle cx="42.7" cy="39.3" r="1.1" fill="#fff"/>
+    <circle cx="60.7" cy="39.3" r="1.1" fill="#fff"/>
+    <path d="${pose==='gold' ? 'M42 50 Q50 58 58 50' : 'M42 49 Q50 55 58 49'}" fill="none" stroke="#8a5c25" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="30" cy="48" r="3" fill="#EF6F4B" opacity=".35"/>
+    <circle cx="70" cy="48" r="3" fill="#EF6F4B" opacity=".35"/>
+    </g>
+    ${extra}
+  </svg>`;
 }
 </script>
 </body>

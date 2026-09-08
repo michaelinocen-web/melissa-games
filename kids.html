@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Melissa's Wiggly Earth! 🌍💗</title>
+<title>Melissa's Wiggly Earth!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
 /* Fonts load via <link> (not @import) and every fallback ends in a plain
-   sans-serif — never the generic "cursive" keyword — so text stays readable
+   sans-serif, never the generic "cursive" keyword, so text stays readable
    on a phone even if Baloo 2 is slow to load. */
 
 :root{
-  --sky:#FFDCEC;         /* soft pink — page background & light accents */
+  --sky:#FFDCEC;         /* soft pink, page background & light accents */
   --sun:#FFC93C;
   --grass:#8FCB6B;
   --lava:#FF7A45;
-  --ocean:#E8558B;       /* Melissa's pink — primary buttons/accents */
+  --ocean:#E8558B;       /* Melissa's pink, primary buttons/accents */
   --ocean-shadow:#B23A67;/* darker pink for button "pressed" shadow */
   --ink:#33313C;
   --card:#FFFFFF;
@@ -38,9 +38,11 @@ body{
 h1,h2{ font-family:var(--font-display); font-weight:800; margin:0 0 .3em; }
 .big-text{ font-size:1.25rem; font-weight:600; }
 svg{ display:block; margin:0 auto; max-width:100%; }
+.icon{ display:inline-block; width:1em; height:1em; vertical-align:-.15em; margin:0; }
+.icon-lg{ width:2.4em; height:2.4em; color:var(--ocean); vertical-align:-.5em; }
 
 /* ---------------- deck / flip-card structure ---------------- */
-.deck-viewport{ max-width:720px; margin:0 auto; padding:2.2rem 1.3rem 3rem; perspective:1400px; min-height:100vh; }
+.deck-viewport{ max-width:720px; margin:0 auto; padding:3.6rem 1.3rem 3rem; perspective:1400px; min-height:100vh; }
 .session{ display:none; text-align:center; }
 .session.active{ display:block; }
 
@@ -63,6 +65,10 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 
 .card{ background:var(--card); border-radius:28px; padding:1.8rem 1.4rem; box-shadow:0 6px 0 rgba(0,0,0,.06); margin:1.2rem 0; }
 .tap-hint{ font-family:var(--font-display); font-size:.95rem; color:var(--ocean); margin-top:.6rem; }
+.tap-finger-wrap{ position:relative; width:0; height:0; }
+.tap-finger{ position:absolute; width:34px; height:34px; color:var(--ocean-shadow); filter:drop-shadow(0 3px 3px rgba(0,0,0,.25)); animation:tapPulse 1.4s ease-in-out infinite; pointer-events:none; z-index:5; transform-origin:20% 15%; }
+.tap-finger.hidden{ display:none; }
+@keyframes tapPulse{ 0%,100%{ transform:translateY(0) scale(1); opacity:1; } 40%{ transform:translateY(10px) scale(.92); opacity:.75; } 55%{ transform:translateY(10px) scale(.92); opacity:.75; } 75%{ transform:translateY(0) scale(1); opacity:1; } }
 .reveal{ display:none; margin-top:1rem; font-size:1.1rem; background:#FFF6DE; border-radius:16px; padding:1rem; }
 .reveal.shown{ display:block; }
 
@@ -77,6 +83,8 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .bub:nth-child(4){ animation-delay:1.8s; }
 
 @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes convectPulse{ 0%{ opacity:.3; stroke-width:2; } 50%{ opacity:1; stroke-width:5; } 100%{ opacity:.3; stroke-width:2; } }
+.convect-flow{ animation:convectPulse 1.8s ease-in-out infinite; }
 .bob{ animation:bob 3s infinite ease-in-out; }
 
 @keyframes wiggle{ 0%,100%{transform:rotate(0deg);} 25%{transform:rotate(-4deg);} 75%{transform:rotate(4deg);} }
@@ -110,15 +118,19 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .peach-fact.shown{ display:block; }
 
 .action-btn{ font-family:var(--font-display); font-size:1.2rem; background:var(--ocean); color:#fff; border:none; border-radius:999px; padding:.75rem 1.4rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--ocean-shadow); }
+.quake-features{ display:flex; flex-direction:column; gap:.5rem; max-width:280px; margin:.9rem auto; }
+.feature-btn{ font-family:var(--font-body); font-weight:800; font-size:.95rem; background:#fff; color:var(--ink); border:2.5px solid #D8D4E0; border-radius:14px; padding:.6rem .9rem; cursor:pointer; text-align:left; transition:transform .1s; }
+.feature-btn:active{ transform:translateY(2px); }
+.feature-btn.active{ background:#E9FBF3; border-color:#5DCAA5; color:#2C7A5A; }
 .action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--ocean-shadow); }
 .action-btn.secondary{ background:#fff; color:var(--ocean); border:2px solid var(--ocean); box-shadow:0 5px 0 var(--sky); }
 .action-btn.secondary:active{ box-shadow:0 2px 0 var(--sky); }
 
-#groundRect.ground-shake{ animation:groundshake .1s 20; }
+#quakeGround.ground-shake{ animation:groundshake .1s 20; }
 @keyframes groundshake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
-#buildingA.toppled{ animation:topple .9s ease-in forwards; }
+#quakeBuilding.toppled{ animation:topple .9s ease-in forwards; }
 @keyframes topple{ 0%{ transform:rotate(0deg); } 100%{ transform:rotate(28deg) translate(14px,4px); } }
-#buildingB.swaying-safe{ animation:swaysafe 3.6s ease-in-out; transform-origin:170px 170px; }
+#quakeBuilding.swaying-safe{ animation:swaysafe 3.6s ease-in-out; transform-origin:100px 190px; }
 @keyframes swaysafe{
   0%,100%{ transform:rotate(0deg); }
   10%{ transform:rotate(-7deg); } 20%{ transform:rotate(6deg); }
@@ -162,15 +174,61 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
 </head>
 <body>
 
-<a href="index.html" class="exit-btn">🚪 Exit</a>
+<svg style="display:none">
+  <symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-exit" viewBox="0 0 24 24"><path d="M9 4 H5 a1 1 0 0 0 -1 1 v14 a1 1 0 0 0 1 1 h4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 8 L19 12 L14 16 M19 12 H9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M4 12 a8 8 0 0 1 14 -5.6 M20 4 v5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12 a8 8 0 0 1 -14 5.6 M4 20 v-5 h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12 h18 M12 3 a15 15 0 0 1 0 18 M12 3 a15 15 0 0 0 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="ic-peach" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="currentColor"/><path d="M12 5 C11 2 14 1 16 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 6 a5.5 5.5 0 0 0 0 11" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.4"/></symbol>
+  <symbol id="ic-puzzle" viewBox="0 0 24 24"><path d="M4 9 h4 a1 1 0 0 0 0 -3.2 a2 2 0 1 1 4 0 A1 1 0 0 0 12 9 h4 v4 a1 1 0 0 0 3.2 0 a2 2 0 1 1 0 4 a1 1 0 0 0 -3.2 0 v4 h-4 a1 1 0 0 0 0 -3.2 a2 2 0 1 1 -4 0 A1 1 0 0 0 8 17 H4 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-mountain" viewBox="0 0 24 24"><path d="M2 19 L9 8 L13 14 L16 9 L22 19 Z" fill="currentColor"/><path d="M9 8 L11 11 L13 8.6 Z" fill="rgba(255,255,255,.55)"/></symbol>
+  <symbol id="ic-volcano" viewBox="0 0 24 24"><path d="M2 20 L11 5 L13 8 L15 5 L22 20 Z" fill="currentColor"/><circle cx="13" cy="6" r="1.6" fill="#FFCB3C"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="1" fill="currentColor"/><rect x="9" y="7" width="2.4" height="2.4" fill="#fff"/><rect x="13" y="7" width="2.4" height="2.4" fill="#fff"/><rect x="9" y="11.5" width="2.4" height="2.4" fill="#fff"/><rect x="13" y="11.5" width="2.4" height="2.4" fill="#fff"/></symbol>
+  <symbol id="ic-map" viewBox="0 0 24 24"><path d="M9 4 L4 6 v14 l5 -2 l6 2 l5 -2 V4 l-5 2 Z" fill="currentColor"/><path d="M9 4 v14 M15 6 v14" stroke="rgba(255,255,255,.5)" stroke-width="1.3" fill="none"/></symbol>
+  <symbol id="ic-dino" viewBox="0 0 100 100">
+    <path d="M50 8 L42 24 L50 20 L58 24 Z" fill="#4A9C5D"/>
+    <path d="M32 14 L28 30 L36 26 Z M68 14 L72 30 L64 26 Z" fill="#4A9C5D"/>
+    <ellipse cx="50" cy="52" rx="34" ry="32" fill="#5DBE72"/>
+    <path d="M50 46 C36 46 28 58 31 72 C36 80 46 83 50 78 C54 83 64 80 69 72 C72 58 64 46 50 46 Z" fill="#D8F5DC"/>
+    <path d="M40 68 Q50 76 60 68" fill="none" stroke="#2C3B2E" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="45" cy="62" r="1.8" fill="#2C3B2E"/>
+    <circle cx="55" cy="62" r="1.8" fill="#2C3B2E"/>
+    <ellipse cx="37" cy="46" rx="7.2" ry="8.2" fill="#fff"/>
+    <ellipse cx="63" cy="46" rx="7.2" ry="8.2" fill="#fff"/>
+    <circle cx="38.5" cy="47.5" r="4.2" fill="#2C3B2E"/>
+    <circle cx="61.5" cy="47.5" r="4.2" fill="#2C3B2E"/>
+    <circle cx="40.2" cy="45.5" r="1.5" fill="#fff"/>
+    <circle cx="63.2" cy="45.5" r="1.5" fill="#fff"/>
+    <path d="M22 52 q6 4 5 10" fill="none" stroke="#4A9C5D" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+    <path d="M78 52 q-6 4 -5 10" fill="none" stroke="#4A9C5D" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+  </symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 2 L14.7 8.6 L22 9.2 L16.5 14 L18.2 21 L12 17.3 L5.8 21 L7.5 14 L2 9.2 L9.3 8.6 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-trophy" viewBox="0 0 24 24"><path d="M7 4 h10 v6 a5 5 0 0 1 -10 0 Z" fill="currentColor"/><path d="M7 5 H3 a4 4 0 0 0 4 6 M17 5 h4 a4 4 0 0 1 -4 6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="10.5" y="15" width="3" height="3" fill="currentColor"/><rect x="7" y="19" width="10" height="2.2" rx="1" fill="currentColor"/></symbol>
+  <symbol id="ic-gradcap" viewBox="0 0 24 24"><path d="M12 4 L22 9 L12 14 L2 9 Z" fill="currentColor"/><path d="M6 11 v5 c0 1.5 3 3 6 3 s6 -1.5 6 -3 v-5" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="22" y1="9" x2="22" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="ic-wave" viewBox="0 0 24 24"><path d="M2 14 q2.5 -4 5 0 t5 0 t5 0 t5 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M2 18 q2.5 -4 5 0 t5 0 t5 0 t5 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".55"/></symbol>
+  <symbol id="ic-snail" viewBox="0 0 24 24"><circle cx="15" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 11 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 15 C5 15 2 17 2 19.5 h14" fill="currentColor"/><path d="M4 19.5 l-1.5 -3 M7 19.5 l0 -3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ic-ring-fire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="3,2.4"/><path d="M12 8 c-2 2 -2 3.5 -.6 4.6 c-.4 -1.4 .2 -2 .8 -2.2 c.2 1 .6 1.2 1 1.6 c.6 .6 .4 1.6 -.4 2 c2 -.2 2.6 -2.6 1 -4 c.2 1 -.2 1.4 -.6 1.4 c.2 -1.6 -.6 -2.6 -1.2 -3.4 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18 h6 M10 21 h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 2 a6 6 0 0 0 -3.5 10.9 c.7 .5 1 1.3 1 2.1 h5 c0 -.8 .3 -1.6 1 -2.1 A6 6 0 0 0 12 2 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5DCAA5"/><path d="M7 12.5 L10.5 16 L17 8.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F17FA0"/><path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="ic-finger" viewBox="0 0 24 24"><path d="M9 13.5 V6 a1.5 1.5 0 0 1 3 0 v5.5 M12 11.5 V5 a1.5 1.5 0 0 1 3 0 v6.8 M15 11.5 V6.5 a1.5 1.5 0 0 1 3 0 V15 c0 3.5 -2 6 -5.5 6 h-1 c-2.3 0 -3.5 -.8 -4.7 -2.6 L4 14.6 a1.4 1.4 0 0 1 2.2 -1.7 L9 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3 l1.8 5.2 L19 10 l-5.2 1.8 L12 17 l-1.8 -5.2 L5 10 l5.2 -1.8 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-bird" viewBox="0 0 24 24"><path d="M4 14 c3 -6 9 -9 16 -8 c-1 1.5 -2.5 2 -4 2 c1 1 1.3 2.3 .8 3.6 c3 .2 5.2 2 6.2 4.4 c-3 -1.5 -6 -1 -8 1 c-1.5 -1 -3.2 -1.2 -5 -.5 c1.3 -1 1.6 -2 1 -3.3 c-2.6 .8 -5 1 -7 .8 Z" fill="currentColor"/></symbol>
+  <symbol id="ic-quake" viewBox="0 0 24 24"><path d="M2 14 h4 l2 -6 l3 10 l2 -7 l2 5 l2 -3 h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-pot" viewBox="0 0 24 24"><path d="M4 10 h16 l-1.5 9 a2 2 0 0 1 -2 1.7 h-9 a2 2 0 0 1 -2 -1.7 Z" fill="currentColor"/><rect x="3" y="8" width="18" height="2.4" rx="1.2" fill="currentColor"/><path d="M2 6 l2 3 M22 6 l-2 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="ic-apple" viewBox="0 0 24 24"><path d="M12 8 c-4 -2 -8 1 -8 6 c0 4 3 8 6 8 c1 0 1.5 -.5 2 -.5 s1 .5 2 .5 c3 0 6 -4 6 -8 c0 -5 -4 -8 -8 -6 Z" fill="currentColor"/><path d="M12 8 C11 5 13 3 15 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+</svg>
+
+<a href="index.html" class="exit-btn"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-exit"/></svg> Exit</a>
 <div class="progress-pill" id="counter">1 / 16</div>
 
 <div class="deck-viewport" id="deck">
 
   <section class="session hero active" data-index="0">
-    <div class="badge">A Wiggly Earth Adventure 🐚</div>
-    <div class="hi-name">Hi Melissa! 👋💗</div>
-    <h1>Why does the ground move?! 🌍</h1>
+    <div class="badge"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-globe"/></svg> A Wiggly Earth Adventure</div>
+    <div class="hi-name">Hi Melissa!</div>
+    <h1>Why does the ground move?! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-globe"/></svg></h1>
     <p>Flip through the cards, tap things, and play!</p>
     <svg viewBox="0 0 200 200" width="170" height="170" style="margin-top:1.3rem" id="mascot" onclick="this.classList.add('wiggling')">
       <circle cx="100" cy="100" r="90" fill="#5DCAA5"/>
@@ -181,63 +239,114 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
       <circle cx="105" cy="72" r="7" fill="#33313C"/>
       <path d="M80 100 Q92 112 105 100" stroke="#33313C" stroke-width="4" fill="none" stroke-linecap="round"/>
     </svg>
-    <div class="tap-hint">👆 Tap Earth to say hi!</div>
-    <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Next ▶</button></div>
+    <div class="tap-hint"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-finger"/></svg> Tap Earth to say hi!</div>
+    <div class="card-nav"><button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button></div>
   </section>
 
   <section class="session" data-index="1">
-    <h2>Earth is like a peach! 🍑 Tap each part!</h2>
+    <h2>Earth is like a peach! <svg class="icon-lg" style="color:#E8952E" viewBox="0 0 24 24"><use href="#ic-peach"/></svg> Tap each part!</h2>
     <div class="card">
-      <svg viewBox="0 0 240 240" width="200" height="200">
-        <circle class="peach-part" cx="120" cy="120" r="110" fill="#F2A623" onclick="showPeach('crust')"/>
-        <circle class="peach-part" cx="120" cy="120" r="75" fill="#FF7A45" onclick="showPeach('mantle')"/>
-        <circle class="peach-part" cx="120" cy="120" r="32" fill="#8B2E1F" onclick="showPeach('core')"/>
+      <div style="position:relative; display:inline-block;">
+      <svg viewBox="0 0 240 240" width="210" height="210">
+        <defs>
+          <radialGradient id="crustGrad" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#FFC65C"/><stop offset="100%" stop-color="#E8952E"/></radialGradient>
+          <radialGradient id="mantleGrad" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#FF9B6B"/><stop offset="100%" stop-color="#E85A2E"/></radialGradient>
+          <radialGradient id="coreGrad" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#C4472B"/><stop offset="100%" stop-color="#6E2015"/></radialGradient>
+        </defs>
+        <circle cx="120" cy="120" r="112" fill="#E8952E" opacity=".3"/>
+        <circle class="peach-part" cx="120" cy="120" r="108" fill="url(#crustGrad)" onclick="showPeach('crust')"/>
+        <circle class="peach-part" cx="120" cy="120" r="74" fill="url(#mantleGrad)" onclick="showPeach('mantle')"/>
+        <path d="M120 46 C108 46 100 56 100 68 C90 72 84 82 84 94 C84 110 96 122 112 122 L112 158 C112 168 128 168 128 158 L128 122 C144 122 156 110 156 94 C156 82 150 72 140 68 C140 56 132 46 120 46 Z" fill="url(#mantleGrad)" opacity="0"/>
+        <ellipse class="peach-part" cx="120" cy="120" rx="30" ry="30" fill="url(#coreGrad)" onclick="showPeach('core')"/>
+        <path d="M107 105 q13 -10 26 0 q-4 14 -13 14 q-9 0 -13 -14 Z" fill="#8B2E1F" opacity=".4"/>
+        <path d="M40 60 q80 -35 160 0" stroke="#fff" stroke-width="3" fill="none" opacity=".25" stroke-linecap="round"/>
+        <path d="M55 190 q65 30 130 0" stroke="#8B4010" stroke-width="2" fill="none" opacity=".2" stroke-linecap="round"/>
       </svg>
+      <svg class="tap-finger" id="peachFinger" viewBox="0 0 24 24" style="top:24px; right:18px;"><use href="#ic-finger"/></svg>
+      </div>
       <div class="peach-fact" id="peachFact"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
+    </div>
+  </section>
+
+  <section class="session" data-index="15">
+    <h2>How thin is the crust, really? <svg class="icon-lg" style="color:#E8558B" viewBox="0 0 24 24"><use href="#ic-apple"/></svg></h2>
+    <div class="card">
+      <svg viewBox="0 0 300 200" width="260" height="175">
+        <circle cx="150" cy="100" r="85" fill="#E8952E"/>
+        <circle cx="150" cy="100" r="83" fill="none" stroke="#8B4010" stroke-width="3" stroke-dasharray="2,3" opacity=".5"/>
+        <path d="M150 15 A85 85 0 0 1 150 185" fill="none" stroke="#fff" stroke-width="2" opacity=".3"/>
+        <text x="150" y="105" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="15" fill="#fff">Earth</text>
+        <text x="150" y="123" text-anchor="middle" font-family="Nunito, sans-serif" font-size="11" fill="#fff">12,750 km across</text>
+        <circle cx="255" cy="140" r="16" fill="#C1440E"/>
+        <circle cx="255" cy="140" r="15.4" fill="none" stroke="#8B2E1F" stroke-width="1.2"/>
+        <text x="255" y="144" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="9" fill="#fff">crust</text>
+        <path d="M235 100 L255 124" stroke="#8B4010" stroke-width="2" stroke-dasharray="3,2"/>
+      </svg>
+      <p class="big-text">If Earth were the size of an apple, the crust we all live on would be thinner than the apple's skin! It's only about <strong>5 km</strong> thick under the oceans and around <strong>30 km</strong> thick under the continents. That's tiny compared to Earth's 12,750 km width.</p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="2">
-    <h2>The ground is a giant puzzle! 🧩</h2>
+    <h2>The ground is a giant puzzle! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-puzzle"/></svg></h2>
     <div class="card">
-      <svg viewBox="0 0 300 200" width="260" height="175" id="puzzle-svg">
-        <rect class="piece bob" x="10" y="10" width="130" height="90" fill="#5DCAA5" rx="8" onclick="this.classList.add('wiggling')"/>
-        <rect class="piece bob" x="150" y="10" width="140" height="90" fill="#FAC775" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:.5s"/>
-        <rect class="piece bob" x="10" y="110" width="140" height="80" fill="#7F9CF5" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:1s"/>
-        <rect class="piece bob" x="160" y="110" width="130" height="80" fill="#F17FA0" rx="8" onclick="this.classList.add('wiggling')" style="animation-delay:1.5s"/>
-        <line x1="145" y1="0" x2="145" y2="200" stroke="#fff" stroke-width="6" pointer-events="none"/>
-        <line x1="0" y1="105" x2="300" y2="105" stroke="#fff" stroke-width="6" pointer-events="none"/>
+      <div style="position:relative; display:inline-block;">
+      <svg viewBox="0 0 300 190" width="270" height="171" id="puzzle-svg">
+        <path class="piece bob" d="M10 20 Q40 5 90 15 Q120 25 110 55 Q100 80 60 75 Q15 70 10 40 Z" fill="#5DCAA5" onclick="showPlate(this,'North American Plate','Stretches from the Arctic down through the USA, and includes part of the Atlantic Ocean floor!')"/>
+        <path class="piece bob" d="M120 15 Q170 5 220 20 Q245 35 220 60 Q190 75 150 65 Q115 50 120 15 Z" fill="#FAC775" style="animation-delay:.4s" onclick="showPlate(this,'Eurasian Plate','The biggest continental plate: it carries almost all of Europe and Asia!')"/>
+        <path class="piece bob" d="M235 15 Q270 20 285 45 Q290 65 265 70 Q240 68 235 45 Z" fill="#F17FA0" style="animation-delay:.8s" onclick="showPlate(this,'Pacific Plate','The single largest plate on Earth, almost entirely covered by the Pacific Ocean!')"/>
+        <path class="piece bob" d="M15 85 Q45 75 75 90 Q90 110 65 130 Q35 140 15 120 Z" fill="#7F9CF5" style="animation-delay:1.2s" onclick="showPlate(this,'South American Plate','Carries the whole continent of South America westward, bit by bit, every year.')"/>
+        <path class="piece bob" d="M115 80 Q150 70 185 85 Q200 105 175 125 Q140 135 115 115 Z" fill="#C77DFF" style="animation-delay:1.6s" onclick="showPlate(this,'African Plate','Slowly splitting in two! Someday East Africa may become its own separate landmass.')"/>
+        <path class="piece bob" d="M200 90 Q240 78 275 95 Q290 115 265 135 Q225 145 200 120 Z" fill="#FF9B6B" style="animation-delay:2s" onclick="showPlate(this,'Indo-Australian Plate','Carries India and Australia, and is slowly crashing into Asia, building the Himalayas!')"/>
+        <path class="piece bob" d="M40 145 Q120 130 200 145 Q250 155 260 175 Q150 185 60 178 Q20 170 40 145 Z" fill="#8AB4E8" style="animation-delay:2.4s" onclick="showPlate(this,'Antarctic Plate','Almost perfectly surrounded by ocean ridges on every side, which keeps it fairly still!')"/>
       </svg>
-      <p class="big-text">Earth's shell is cracked into giant pieces called <strong>plates</strong>. Tap a piece to wiggle it!</p>
+      <svg class="tap-finger" id="puzzleFinger" viewBox="0 0 24 24" style="top:60px; left:110px;"><use href="#ic-finger"/></svg>
+      </div>
+      <p class="big-text">Earth's shell is cracked into giant pieces called <strong>plates</strong>. There are 7 major ones! Tap a piece to learn its real name.</p>
+      <div class="peach-fact" id="plateFact"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="3">
-    <h2>The pieces float on hot goo! 🍲</h2>
+    <h2>The pieces float on hot goo! <svg class="icon-lg" style="color:#9AA0A6" viewBox="0 0 24 24"><use href="#ic-pot"/></svg></h2>
     <div class="card">
       <svg viewBox="0 0 260 200" width="230" height="175">
-        <rect x="30" y="90" width="200" height="90" rx="16" fill="#9AA0A6"/>
-        <ellipse cx="130" cy="90" rx="100" ry="18" fill="#FF7A45"/>
-        <circle class="bub" cx="90" cy="85" r="8" fill="#FFCB77"/>
-        <circle class="bub" cx="140" cy="88" r="6" fill="#FFCB77"/>
-        <circle class="bub" cx="170" cy="82" r="9" fill="#FFCB77"/>
-        <circle class="bub" cx="115" cy="90" r="5" fill="#FFCB77"/>
-        <rect x="60" y="55" width="60" height="14" rx="6" fill="#5DCAA5" class="bob"/>
-        <rect x="140" y="60" width="70" height="14" rx="6" fill="#7F9CF5" class="bob"/>
+        <defs>
+          <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 Z" fill="#FFCB3C"/>
+          </marker>
+        </defs>
+        <rect x="20" y="70" width="220" height="110" rx="16" fill="#9AA0A6"/>
+        <ellipse cx="130" cy="70" rx="115" ry="18" fill="#FF7A45"/>
+        <circle class="bub" cx="90" cy="66" r="7" fill="#FFCB77"/>
+        <circle class="bub" cx="140" cy="68" r="5" fill="#FFCB77"/>
+        <circle class="bub" cx="170" cy="63" r="8" fill="#FFCB77"/>
+        <circle class="bub" cx="115" cy="70" r="4" fill="#FFCB77"/>
+        <path d="M130 165 Q130 110 130 75" stroke="#FFCB3C" stroke-width="4" fill="none" marker-end="url(#arrowHead)" stroke-linecap="round" class="convect-flow"/>
+        <path d="M130 75 Q75 65 45 100" stroke="#FFCB3C" stroke-width="4" fill="none" marker-end="url(#arrowHead)" stroke-linecap="round" class="convect-flow" style="animation-delay:.4s"/>
+        <path d="M130 75 Q185 65 215 100" stroke="#FFCB3C" stroke-width="4" fill="none" marker-end="url(#arrowHead)" stroke-linecap="round" class="convect-flow" style="animation-delay:.4s"/>
+        <path d="M45 100 Q40 140 55 165" stroke="#FFCB3C" stroke-width="3" fill="none" marker-end="url(#arrowHead)" stroke-linecap="round" opacity=".7" class="convect-flow" style="animation-delay:.8s"/>
+        <path d="M215 100 Q220 140 205 165" stroke="#FFCB3C" stroke-width="3" fill="none" marker-end="url(#arrowHead)" stroke-linecap="round" opacity=".7" class="convect-flow" style="animation-delay:.8s"/>
+        <rect x="35" y="42" width="60" height="14" rx="6" fill="#5DCAA5" class="bob"/>
+        <rect x="150" y="47" width="70" height="14" rx="6" fill="#7F9CF5" class="bob"/>
       </svg>
-      <p class="big-text">Under the plates, hot rock slowly bubbles like soup on a stove. That pushes the puzzle pieces around — slower than a snail!</p>
+      <p class="big-text">Under the plates, hot rock slowly rises, spreads out, cools, and sinks, like soup bubbling on a stove. This is called a <strong>convection current</strong>, and it's what pushes the puzzle pieces around!</p>
+      <p style="margin-top:.8rem">The plates move about <strong>2–5 centimeters a year</strong>, roughly as fast as your fingernails grow. Slower than a snail, but over millions of years, it adds up to whole oceans opening and closing!</p>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
@@ -245,199 +354,270 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
     <h2>What happens when pieces meet? Tap to find out!</h2>
     <div class="trio">
       <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
-        <svg viewBox="0 0 140 100" width="110" height="82"><path d="M20 90 L70 20 L120 90 Z" fill="#639922"/></svg>
-        <p class="big-text">Bump! 🏔️</p>
+        <svg viewBox="0 0 140 100" width="110" height="82">
+          <path d="M5 85 L45 30 L60 50 L75 15 L95 50 L110 30 L135 85 Z" fill="#8B9DA8"/>
+          <path d="M60 50 L67 38 L75 15 L83 38 L90 50 Z" fill="#fff"/>
+          <path d="M0 88 L30 60 Q 5 78 0 92 Z" fill="#639922"/>
+          <path d="M140 88 L110 60 Q135 78 140 92 Z" fill="#639922"/>
+        </svg>
+        <p class="big-text">Bump! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-mountain"/></svg> <span style="font-size:.7rem; opacity:.6;">(convergent)</span></p>
         <div class="tap-hint">Tap me!</div>
-        <div class="reveal">When two pieces crash together, the ground pushes UP and makes tall mountains!</div>
+        <div class="reveal">When two pieces crash together, the ground pushes UP and makes tall mountains! That's exactly how the <strong>Himalayas</strong>, Earth's tallest mountains, are still growing today.</div>
       </div>
       <div class="card" onclick="const c=this; c.classList.add('shaking'); setTimeout(()=>c.classList.remove('shaking'),1000); c.querySelector('.reveal').classList.toggle('shown')">
-        <svg viewBox="0 0 140 100" width="110" height="82"><path d="M10 60 L50 60 L60 40 L70 80 L80 50 L90 60 L130 60" stroke="#C1440E" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
-        <p class="big-text">Slide! 〰️</p>
+        <svg viewBox="0 0 140 100" width="110" height="82">
+          <rect x="5" y="42" width="60" height="16" rx="3" fill="#7F9CF5"/>
+          <rect x="75" y="42" width="60" height="16" rx="3" fill="#F17FA0"/>
+          <path d="M10 60 L50 60 L60 40 L70 80 L80 50 L90 60 L130 60" stroke="#C1440E" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <p class="big-text">Slide! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-quake"/></svg> <span style="font-size:.7rem; opacity:.6;">(transform)</span></p>
         <div class="tap-hint">Tap me!</div>
-        <div class="reveal">When two pieces slide past each other, the ground can suddenly SHAKE — that's an earthquake!</div>
+        <div class="reveal">When two pieces grind past each other, the ground can suddenly SHAKE. That's an earthquake! California's <strong>San Andreas Fault</strong> is a famous example, running right through the state.</div>
       </div>
       <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
-        <svg viewBox="0 0 140 100" width="110" height="82"><rect x="10" y="40" width="45" height="35" fill="#7F9CF5"/><rect x="85" y="40" width="45" height="35" fill="#5DCAA5"/><path d="M55 40 L70 15 L85 40 Z" fill="#FF7A45"/></svg>
-        <p class="big-text">Pull apart! ↔️</p>
+        <svg viewBox="0 0 140 100" width="110" height="82">
+          <rect x="10" y="40" width="45" height="35" fill="#7F9CF5"/><rect x="85" y="40" width="45" height="35" fill="#5DCAA5"/>
+          <path d="M55 42 L62 30 L70 55 L78 25 L85 42 Z" fill="#FFCB3C"/>
+          <path d="M55 40 L70 15 L85 40 Z" fill="#FF7A45" opacity=".6"/>
+        </svg>
+        <p class="big-text">Pull apart! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg> <span style="font-size:.7rem; opacity:.6;">(divergent)</span></p>
         <div class="tap-hint">Tap me!</div>
-        <div class="reveal">When two pieces pull apart, hot melty rock rises up between them and makes brand new ground!</div>
+        <div class="reveal">When two pieces pull apart, hot melty rock called <strong>magma</strong> rises up and hardens into brand new ground! This is happening right now under the <strong>Mid-Atlantic Ridge</strong>. It's how Iceland keeps growing.</div>
       </div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="5">
-    <h2>Fire mountains! Tap the volcano! 🌋</h2>
+    <h2>Fire mountains! Tap the volcano! <svg class="icon-lg" style="color:#C1440E" viewBox="0 0 24 24"><use href="#ic-volcano"/></svg></h2>
     <div class="card">
-      <p class="big-text">Super hot melted rock called <strong>magma</strong> sneaks up through a crack. When it bursts out — that's a volcano erupting!</p>
+      <p class="big-text">Super hot melted rock called <strong>magma</strong> collects in a chamber underground and sneaks up through a crack. When it bursts out, that's a volcano erupting!</p>
       <div class="volcano-wrap" id="volcano" onclick="erupt(this)">
-        <svg viewBox="0 0 220 180" width="180" height="145">
-          <path d="M20 170 L110 30 L200 170 Z" fill="#8B6F47"/>
+        <svg viewBox="0 0 220 190" width="180" height="155">
+          <path d="M20 180 L110 30 L200 180 Z" fill="#8B6F47"/>
+          <path d="M55 130 L110 30 L165 130" fill="none" stroke="#6E5638" stroke-width="2" opacity=".5"/>
+          <path d="M40 155 L110 30 L180 155" fill="none" stroke="#6E5638" stroke-width="2" opacity=".4"/>
           <path d="M90 80 L110 30 L130 80 Z" fill="#C1440E"/>
           <circle cx="110" cy="35" r="10" fill="#FFCB3C"/>
+          <ellipse cx="110" cy="182" rx="34" ry="14" fill="#FF7A45" opacity=".85"/>
+          <path d="M100 182 L110 130 L120 182" fill="#FFCB3C" opacity=".9"/>
         </svg>
       </div>
-      <div class="tap-hint">👆 Tap the mountain!</div>
-      <p style="margin-top:1rem">Lots of volcanoes ring the edge of the Pacific Ocean — people call it the <strong>Ring of Fire</strong> 🔥⭕</p>
+      <div class="tap-hint"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-finger"/></svg> Tap the mountain!</div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
+    </div>
+  </section>
+
+  <section class="session" data-index="5.5">
+    <h2>Not all volcanoes look alike! Tap to compare!</h2>
+    <div class="trio">
+      <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="105" height="75"><path d="M10 90 Q70 25 130 90 Z" fill="#8B6F47"/><circle cx="70" cy="35" r="6" fill="#FFCB3C"/></svg>
+        <p class="big-text" style="font-size:1.05rem;">Shield volcano</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">Wide and gently sloped, built by runny lava that flows far before hardening. <strong>Hawaii's</strong> volcanoes are shield volcanoes. Some rise higher than Mount Everest, measured from the ocean floor!</div>
+      </div>
+      <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="105" height="75"><path d="M35 90 L70 15 L105 90 Z" fill="#8B6F47"/><circle cx="70" cy="20" r="6" fill="#FFCB3C"/></svg>
+        <p class="big-text" style="font-size:1.05rem;">Stratovolcano</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">Tall and steep, built from layers of hardened lava and ash stacked over thousands of eruptions. Japan's <strong>Mount Fuji</strong> is a famous stratovolcano.</div>
+      </div>
+      <div class="card" onclick="this.querySelector('.reveal').classList.toggle('shown')">
+        <svg viewBox="0 0 140 100" width="105" height="75"><path d="M45 90 L70 45 L95 90 Z" fill="#8B6F47"/><circle cx="70" cy="48" r="7" fill="#C1440E"/></svg>
+        <p class="big-text" style="font-size:1.05rem;">Cinder cone</p>
+        <div class="tap-hint">Tap me!</div>
+        <div class="reveal">Small and steep, made of loose volcanic rock. Mexico's <strong>Parícutin</strong> volcano burst out of a farmer's cornfield in 1943 and grew 400 meters tall in just one year!</div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
+    </div>
+  </section>
+
+  <section class="session" data-index="5.7">
+    <h2>The Ring of Fire <svg class="icon-lg" style="color:#FF7A45" viewBox="0 0 24 24"><use href="#ic-ring-fire"/></svg></h2>
+    <div class="card">
+      <svg viewBox="0 0 260 200" width="230" height="175">
+        <ellipse cx="130" cy="100" rx="115" ry="85" fill="#BFE3F5"/>
+        <path d="M40 40 Q30 100 55 165 Q100 185 165 175 Q220 150 225 90 Q220 40 165 25 Q100 15 40 40 Z" fill="none" stroke="#FF7A45" stroke-width="5" stroke-dasharray="10,7" stroke-linecap="round"/>
+        <circle cx="42" cy="42" r="6" fill="#C1440E"/>
+        <circle cx="56" cy="163" r="6" fill="#C1440E"/>
+        <circle cx="165" cy="176" r="6" fill="#C1440E"/>
+        <circle cx="224" cy="92" r="6" fill="#C1440E"/>
+        <circle cx="167" cy="26" r="6" fill="#C1440E"/>
+      </svg>
+      <p class="big-text">Most of Earth's volcanoes circle the edge of the Pacific Ocean, where plates are crashing and sliding together. People call this the <strong>Ring of Fire</strong>.</p>
+      <p style="margin-top:.8rem">About <strong>75% of all the world's volcanoes</strong>, more than 450 of them, are found along this one ring, and most of Earth's earthquakes happen there too!</p>
+    </div>
+    <div class="card-nav">
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="6">
-    <h2>Some buildings survive earthquakes! 🏢</h2>
+    <h2>Build a building that survives! <svg class="icon-lg" style="color:#9AA0A6" viewBox="0 0 24 24"><use href="#ic-building"/></svg></h2>
     <div class="card">
-      <p class="big-text">Stiff buildings can crack and fall. Smart buildings have squishy pads — like bouncy sneakers instead of hard shoes!</p>
-      <svg viewBox="0 0 400 220" width="100%" style="max-width:340px">
-        <rect id="groundRect" x="0" y="190" width="400" height="30" fill="#8B6F47"/>
-        <g id="buildingA">
-          <rect x="60" y="80" width="70" height="110" fill="#9AA0A6"/>
-          <rect x="70" y="95" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="95" width="15" height="15" fill="#E9F6FC"/>
-          <rect x="70" y="120" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="120" width="15" height="15" fill="#E9F6FC"/>
-          <rect x="70" y="145" width="15" height="15" fill="#E9F6FC"/><rect x="95" y="145" width="15" height="15" fill="#E9F6FC"/>
+      <p class="big-text">Real engineers add special features to protect buildings from earthquakes. Pick some for your building, then test it!</p>
+      <svg viewBox="0 0 200 220" width="180" height="198">
+        <rect id="quakeGround" x="0" y="190" width="200" height="30" fill="#8B6F47"/>
+        <g id="quakeBaseGroup" style="display:none;">
+          <ellipse cx="65" cy="192" rx="10" ry="6" fill="#5DCAA5"/>
+          <ellipse cx="135" cy="192" rx="10" ry="6" fill="#5DCAA5"/>
         </g>
-        <g id="buildingB">
-          <rect x="250" y="55" width="70" height="115" fill="#5DCAA5"/>
-          <rect x="260" y="70" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="70" width="15" height="15" fill="#E9F6FC"/>
-          <rect x="260" y="95" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="95" width="15" height="15" fill="#E9F6FC"/>
-          <rect x="260" y="120" width="15" height="15" fill="#E9F6FC"/><rect x="285" y="120" width="15" height="15" fill="#E9F6FC"/>
-          <circle cx="263" cy="178" r="9" fill="#FFC93C"/><circle cx="285" cy="178" r="9" fill="#FFC93C"/><circle cx="307" cy="178" r="9" fill="#FFC93C"/>
+        <g id="quakeBuilding">
+          <rect x="55" y="70" width="90" height="120" fill="#9AA0A6"/>
+          <rect x="68" y="88" width="16" height="16" fill="#E9F6FC"/><rect x="116" y="88" width="16" height="16" fill="#E9F6FC"/>
+          <rect x="68" y="115" width="16" height="16" fill="#E9F6FC"/><rect x="116" y="115" width="16" height="16" fill="#E9F6FC"/>
+          <rect x="68" y="142" width="16" height="16" fill="#E9F6FC"/><rect x="116" y="142" width="16" height="16" fill="#E9F6FC"/>
+          <g id="quakeBraces" style="display:none;">
+            <line x1="55" y1="70" x2="145" y2="190" stroke="#FFCB3C" stroke-width="4"/>
+            <line x1="145" y1="70" x2="55" y2="190" stroke="#FFCB3C" stroke-width="4"/>
+          </g>
         </g>
-        <text x="95" y="215" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">Stiff building</text>
-        <text x="285" y="215" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">Squishy-pad building</text>
       </svg>
+      <div class="quake-features">
+        <button class="feature-btn" id="featBase" onclick="toggleFeature('base')"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-check"/></svg> Squishy base pads</button>
+        <button class="feature-btn" id="featBrace" onclick="toggleFeature('brace')"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-x"/></svg> Cross-braces</button>
+        <button class="feature-btn" id="featFlex" onclick="toggleFeature('flex')"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-wave"/></svg> Flexible frame</button>
+      </div>
+      <div class="peach-fact" id="featureFact"></div>
       <div>
-        <button class="action-btn" onclick="shakeTest()">Shake it! 🌍💥</button>
-        <button class="action-btn secondary" onclick="resetShake()">Reset ↺</button>
+        <button class="action-btn" onclick="quakeTest()">Test it! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-quake"/></svg></button>
+        <button class="action-btn secondary" onclick="quakeReset()">Reset <svg class="icon" viewBox="0 0 24 24"><use href="#ic-refresh"/></svg></button>
       </div>
       <div class="sky-result" id="skyResult"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="7">
-    <h2>Long, long ago... one BIG land! 🗺️🦕</h2>
+    <h2>Long, long ago... one BIG land! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-map"/></svg><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-dino"/></svg></h2>
     <div class="card">
       <svg id="pangea-kid-svg" viewBox="0 0 300 180" width="260" height="155"></svg>
       <div class="stage-nav">
-        <button id="prevStage" onclick="changeStage(-1)">◀</button>
-        <button id="nextStage" onclick="changeStage(1)">▶</button>
+        <button id="prevStage" onclick="changeStage(-1)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg></button>
+        <button id="nextStage" onclick="changeStage(1)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
       </div>
       <div class="stage-label" id="stageLabel"></div>
       <p class="big-text" id="stageText" style="margin-top:1rem"></p>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" data-index="8">
-    <h2>Did you know? Tap a card! 🤓</h2>
+    <h2>Did you know? Tap a card! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-bulb"/></svg></h2>
     <div class="fact-row">
-      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🐌</div>Plates move slowly<div class="more">About as fast as your fingernails grow — a few centimeters a year!</div></div>
-      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🔥</div>The Ring of Fire<div class="more">Most volcanoes and earthquakes happen around the edge of the Pacific Ocean!</div></div>
-      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji">🦖</div>Dino world was different<div class="more">Dinosaurs never saw today's map — the continents looked totally different back then!</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji"><svg class="icon-lg" style="color:#8B9DA8" viewBox="0 0 24 24"><use href="#ic-mountain"/></svg></div>Everest is still growing<div class="more">India keeps crashing into Asia, so the Himalayas, and Mount Everest, grow about 4mm taller every year!</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-wave"/></svg></div>Hawaii is on the move<div class="more">Hawaii's islands formed one by one as the Pacific Plate slowly slid over a hot spot, like a conveyor belt over a candle flame.</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-wave"/></svg></div>Iceland is splitting apart<div class="more">Iceland sits right on top of the Mid-Atlantic Ridge. It's slowly being pulled in two directions as new crust forms beneath it!</div></div>
+      <div class="fact-pill" onclick="this.classList.toggle('open')"><div class="emoji"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-dino"/></svg></div>Dino world was different<div class="more">Dinosaurs never saw today's map. The continents looked totally different back then!</div></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Let's quiz you! ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Let's quiz you! <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <!-- ===== QUIZ: one question per card ===== -->
   <section class="session quiz-session" data-index="9">
-    <h2>Question 1 of 5 🎉</h2>
+    <h2>Question 1 of 5 <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></h2>
     <div class="card">
       <p class="big-text">When two plates bump into each other, they make...</p>
-      <div><button class="quiz-btn" onclick="answer(this,false)">🌊 Waves</button><button class="quiz-btn" onclick="answer(this,true)">🏔️ Mountains</button></div>
+      <div><button class="quiz-btn" onclick="answer(this,false)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-wave"/></svg> Waves</button><button class="quiz-btn" onclick="answer(this,true)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-mountain"/></svg> Mountains</button></div>
       <div class="reveal"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session quiz-session" data-index="10">
-    <h2>Question 2 of 5 🎉</h2>
+    <h2>Question 2 of 5 <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></h2>
     <div class="card">
       <p class="big-text">What was the name of the one giant land long ago?</p>
-      <div><button class="quiz-btn" onclick="answer(this,true)">🗺️ Pangea</button><button class="quiz-btn" onclick="answer(this,false)">🍕 Pizzaland</button></div>
+      <div><button class="quiz-btn" onclick="answer(this,true)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-map"/></svg> Pangea</button><button class="quiz-btn" onclick="answer(this,false)">Pizzaland</button></div>
       <div class="reveal"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session quiz-session" data-index="11">
-    <h2>Question 3 of 5 🎉</h2>
+    <h2>Question 3 of 5 <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></h2>
     <div class="card">
       <p class="big-text">What makes the puzzle pieces move?</p>
-      <div><button class="quiz-btn" onclick="answer(this,false)">❄️ Cold wind</button><button class="quiz-btn" onclick="answer(this,true)">🍲 Hot bubbling rock below</button></div>
+      <div><button class="quiz-btn" onclick="answer(this,false)">Cold wind</button><button class="quiz-btn" onclick="answer(this,true)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-pot"/></svg> Hot bubbling rock below</button></div>
       <div class="reveal"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session quiz-session" data-index="12">
-    <h2>Question 4 of 5 🎉</h2>
+    <h2>Question 4 of 5 <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></h2>
     <div class="card">
       <p class="big-text">What bursts out of a volcano?</p>
-      <div><button class="quiz-btn" onclick="answer(this,false)">🍦 Ice cream</button><button class="quiz-btn" onclick="answer(this,true)">🌋 Hot melted rock (magma)</button></div>
+      <div><button class="quiz-btn" onclick="answer(this,false)">Ice cream</button><button class="quiz-btn" onclick="answer(this,true)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-volcano"/></svg> Hot melted rock (magma)</button></div>
       <div class="reveal"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session quiz-session" data-index="13">
-    <h2>Question 5 of 5 🎉</h2>
+    <h2>Question 5 of 5 <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-sparkle"/></svg></h2>
     <div class="card">
       <p class="big-text">Which building survives an earthquake better?</p>
-      <div><button class="quiz-btn" onclick="answer(this,false)">🏢 Stiff building</button><button class="quiz-btn" onclick="answer(this,true)">🏢 Squishy-pad building</button></div>
+      <div><button class="quiz-btn" onclick="answer(this,false)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-building"/></svg> One with no safety features</button><button class="quiz-btn" onclick="answer(this,true)"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-check"/></svg> One with squishy base pads</button></div>
       <div class="reveal"></div>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session" id="quizResultSession" data-index="14">
-    <h2>Quiz Results! 🏆</h2>
+    <h2>Quiz Results! <svg class="icon-lg" style="color:#FFC93C" viewBox="0 0 24 24"><use href="#ic-trophy"/></svg></h2>
     <div class="card">
       <p class="big-text" id="resultText">Let's see how you did!</p>
-      <div class="result-emoji" id="resultEmoji">🌟</div>
-      <button class="action-btn" onclick="tryAgain()">Try Again 🔄</button>
+      <div class="result-emoji" id="resultEmoji"><svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-star"/></svg></div>
+      <button class="action-btn" onclick="tryAgain()">Try Again <svg class="icon" viewBox="0 0 24 24"><use href="#ic-refresh"/></svg></button>
     </div>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="nextCard()">Next ▶</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="nextCard()">Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
     </div>
   </section>
 
   <section class="session finale" data-index="15">
-    <h2>You're a Tectonic Plate Explorer! 🎓🌋</h2>
-    <p class="big-text">The ground under your feet has been moving for millions of years — and now you know why!</p>
+    <h2>You're a Tectonic Plate Explorer! <svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-gradcap"/></svg><svg class="icon-lg" style="color:#C1440E" viewBox="0 0 24 24"><use href="#ic-volcano"/></svg></h2>
+    <p class="big-text">The ground under your feet has been moving for millions of years, and now you know why!</p>
     <div class="card-nav">
-      <button class="nav-btn back-btn" onclick="prevCard()">◀ Back</button>
-      <button class="nav-btn" onclick="goTo(0)">Start Over 🔁</button>
+      <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+      <button class="nav-btn" onclick="goTo(0)">Start Over <svg class="icon" viewBox="0 0 24 24"><use href="#ic-refresh"/></svg></button>
     </div>
   </section>
 
@@ -445,7 +625,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
 
 <div class="deck-dots" id="deckDots" style="padding-bottom:1.5rem"></div>
 
-<footer>Made with 💗 for Melissa. Ask a grown-up if you want to learn even more!</footer>
+<footer>Made with care for Melissa. Ask a grown-up if you want to learn even more!</footer>
 
 <script>
 // ================= AUDIO: click/drag sound effects (works on iOS, Android, and desktop) =================
@@ -537,36 +717,46 @@ document.addEventListener('keydown', e=>{
 
 // ---- peach layers ----
 const peachFacts = {
-  crust: "🌎 <strong>Crust</strong> — the thin skin we live on! Thinner than the peach's skin compared to the whole fruit.",
-  mantle: "🍑 <strong>Mantle</strong> — the big gooey middle. So hot it flows slowly, like thick honey.",
-  core: "🔥 <strong>Core</strong> — the super-hot pit in the center, as hot as the surface of the sun!"
+  crust: "<svg class='icon' viewBox='0 0 24 24'><use href='#ic-globe'/></svg> <strong>Crust</strong>: the thin skin we live on! About 5 km thick under the ocean, and around 30 km thick under land, way thinner than the peach's skin compared to the whole fruit.",
+  mantle: "<svg class='icon' viewBox='0 0 24 24'><use href='#ic-peach'/></svg> <strong>Mantle</strong>: the big gooey middle, almost 2,900 km thick! It's so hot (up to 3,700°C near the bottom) that solid rock slowly flows, like thick honey.",
+  core: "<svg class='icon' viewBox='0 0 24 24'><use href='#ic-volcano'/></svg> <strong>Core</strong>: the super-hot pit in the center, made of iron and nickel. It's about as hot as the surface of the Sun, and the inner part is squeezed so hard it stays solid metal!"
 };
 function showPeach(part){
   const el = document.getElementById('peachFact');
   el.innerHTML = peachFacts[part];
   el.classList.add('shown');
+  const finger = document.getElementById('peachFinger');
+  if(finger) finger.classList.add('hidden');
+}
+function showPlate(el, name, fact){
+  el.classList.add('wiggling');
+  const panel = document.getElementById('plateFact');
+  panel.innerHTML = `<strong>${name}</strong>: ${fact}`;
+  panel.classList.add('shown');
+  const finger = document.getElementById('puzzleFinger');
+  if(finger) finger.classList.add('hidden');
 }
 
 // ---- quiz (one question per card, scored, personalized for Melissa) ----
 const KID_NAME = "Melissa";
 let quizScore = 0;
-const quizStartIndex = 9;
+const quizStartIndex = sessions.findIndex(s => s.classList.contains('quiz-session'));
 
 function answer(btn, correct){
   const card = btn.closest('.card');
   const session = btn.closest('.session');
   const reveal = card.querySelector('.reveal');
   const btns = card.querySelectorAll('.quiz-btn');
-  if(btns[0].disabled) return; // already answered — ignore repeat taps
+  if(btns[0].disabled) return; // already answered, ignore repeat taps
   btns.forEach(b=>b.disabled=true);
   if(correct){
     btn.classList.add('yes');
-    reveal.textContent = "Yay! That's right! 🎉";
+    reveal.textContent = "Yay! That's right!";
     quizScore++;
   } else {
     btn.classList.add('no');
     btns.forEach(b=>{ if(b.getAttribute('onclick').includes(',true')) b.classList.add('yes'); });
-    reveal.textContent = "Close! The correct answer is highlighted in green. 😊";
+    reveal.textContent = "Close! The correct answer is highlighted in green.";
   }
   reveal.classList.add('shown');
   const nextBtn = session.querySelector('.next-btn');
@@ -575,12 +765,12 @@ function answer(btn, correct){
 
 function updateResult(){
   const total = document.querySelectorAll('.quiz-session').length;
-  let phrase, emoji;
-  if(quizScore === total){ phrase = "Excellent"; emoji = "🏆🌟🏆"; }
-  else if(quizScore >= Math.ceil(total*0.6)){ phrase = "Good job"; emoji = "👍✨"; }
-  else { phrase = "Try again"; emoji = "💪🙂"; }
+  let phrase, iconName, iconColor;
+  if(quizScore === total){ phrase = "Excellent"; iconName = "ic-trophy"; iconColor = "#FFC93C"; }
+  else if(quizScore >= Math.ceil(total*0.6)){ phrase = "Good job"; iconName = "ic-check"; iconColor = "#5DCAA5"; }
+  else { phrase = "Try again"; iconName = "ic-star"; iconColor = "#E8558B"; }
   document.getElementById('resultText').textContent = `${KID_NAME}, ${phrase}! You got ${quizScore} out of ${total} right!`;
-  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultEmoji').innerHTML = `<svg class="icon-lg" style="width:3rem;height:3rem;color:${iconColor}" viewBox="0 0 24 24"><use href="#${iconName}"/></svg>`;
 }
 
 function tryAgain(){
@@ -608,22 +798,46 @@ function erupt(wrap){
   }
 }
 
-// ---- earthquake-proof buildings ----
-function shakeTest(){
-  resetShake();
-  document.getElementById('groundRect').classList.add('ground-shake');
-  document.getElementById('buildingB').classList.add('swaying-safe');
+// ---- earthquake-proof buildings: build-and-test game ----
+const FEATURE_FACTS = {
+  base: "Squishy base pads (called base isolators) let the ground move while the building stays mostly still, like a skateboard rolling under your feet!",
+  brace: "X-shaped cross-braces spread shaking forces across the whole frame instead of letting one weak spot take all the stress.",
+  flex: "A flexible frame can bend and sway a little instead of staying rigid. Rigid materials crack, but flexible ones bounce back."
+};
+let quakeFeatures = { base:false, brace:false, flex:false };
+function toggleFeature(key){
+  quakeFeatures[key] = !quakeFeatures[key];
+  const btnId = 'feat' + key.charAt(0).toUpperCase() + key.slice(1);
+  document.getElementById(btnId).classList.toggle('active', quakeFeatures[key]);
+  if(key==='base') document.getElementById('quakeBaseGroup').style.display = quakeFeatures.base ? '' : 'none';
+  if(key==='brace') document.getElementById('quakeBraces').style.display = quakeFeatures.brace ? '' : 'none';
+  const fact = document.getElementById('featureFact');
+  fact.innerHTML = FEATURE_FACTS[key];
+  fact.classList.add('shown');
+}
+function quakeTest(){
+  const ground = document.getElementById('quakeGround');
+  const building = document.getElementById('quakeBuilding');
+  building.classList.remove('toppled','swaying-safe');
+  ground.classList.remove('ground-shake');
+  void ground.offsetWidth;
+  ground.classList.add('ground-shake');
+  const featureCount = Object.values(quakeFeatures).filter(Boolean).length;
   const result = document.getElementById('skyResult');
   result.textContent = "Watch closely...";
   setTimeout(()=>{
-    document.getElementById('buildingA').classList.add('toppled');
-    result.innerHTML = "😱 The stiff building toppled — the squishy-pad building wiggled safely and stayed standing! 🏢✅";
+    if(featureCount >= 2){
+      building.classList.add('swaying-safe');
+      result.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#ic-check"/></svg> With ${featureCount} safety features, your building wiggled but stayed standing!`;
+    } else {
+      building.classList.add('toppled');
+      result.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#ic-x"/></svg> Only ${featureCount} safety feature${featureCount===1?'':'s'}. That wasn't enough, try adding more!`;
+    }
   }, 900);
 }
-function resetShake(){
-  document.getElementById('groundRect').classList.remove('ground-shake');
-  document.getElementById('buildingA').classList.remove('toppled');
-  document.getElementById('buildingB').classList.remove('swaying-safe');
+function quakeReset(){
+  document.getElementById('quakeGround').classList.remove('ground-shake');
+  document.getElementById('quakeBuilding').classList.remove('toppled','swaying-safe');
   document.getElementById('skyResult').textContent = '';
 }
 
@@ -631,17 +845,19 @@ function resetShake(){
 const kidStages = [
   {
     label: "250 million years ago",
-    text: "One GIANT land called Pangea! Early dinosaurs could walk anywhere they wanted. 🦕",
+    text: "One GIANT land called Pangea! Early dinosaurs could walk anywhere they wanted.",
     svg: `<path d="M60 30 C30 40 30 80 60 100 C90 130 180 130 220 100 C260 80 250 40 210 30 C170 10 100 10 60 30 Z" fill="#5DCAA5"/>
           <text x="150" y="75" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="18" fill="#fff" font-weight="700">Pangea</text>
-          <text x="80" y="60" font-size="24">🦕</text><text x="190" y="90" font-size="24">🦖</text>`
+          <use href="#ic-dino" x="72" y="50" width="20" height="20"/><use href="#ic-dino" x="182" y="80" width="20" height="20" transform="scale(-1,1) translate(-404,0)"/>`
   },
   {
     label: "200 million years ago",
-    text: "Pangea cracks into two big pieces! Dinosaurs are still roaming around on both. 🦕",
+    text: "Pangea cracks into two big pieces. Scientists call them Laurasia (north) and Gondwana (south). Dinosaurs are still roaming around on both!",
     svg: `<path d="M50 30 C25 40 25 65 50 78 C110 95 200 90 240 65 C265 45 245 25 190 25 C140 8 90 12 50 30 Z" fill="#5DCAA5"/>
           <path d="M45 100 C22 115 30 145 65 155 C120 175 210 168 240 140 C260 120 235 100 180 98 C130 78 85 82 45 100 Z" fill="#7F9CF5"/>
-          <text x="55" y="55" font-size="20">🦕</text><text x="210" y="135" font-size="20">🦖</text>`
+          <text x="130" y="45" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="12" fill="#fff" font-weight="700">Laurasia</text>
+          <text x="130" y="130" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="12" fill="#fff" font-weight="700">Gondwana</text>
+          <use href="#ic-dino" x="47" y="46" width="17" height="17"/><use href="#ic-dino" x="202" y="126" width="17" height="17" transform="scale(-1,1) translate(-421,0)"/>`
   },
   {
     label: "100 million years ago",
@@ -650,17 +866,16 @@ const kidStages = [
           <path d="M130 25 C110 32 108 55 130 68 C165 85 220 78 235 55 C248 38 230 22 190 22 C168 10 148 15 130 25 Z" fill="#5DCAA5"/>
           <path d="M40 105 C22 118 28 140 55 148 C85 158 110 150 118 132 Z" fill="#F17FA0"/>
           <path d="M120 110 C105 122 112 148 150 158 C195 170 235 162 250 142 C260 128 245 112 205 110 C180 98 140 100 120 110 Z" fill="#FAC775"/>
-          <text x="45" y="60" font-size="16">🦕</text><text x="150" y="45" font-size="16">🦖</text><text x="150" y="140" font-size="16">🦎</text>`
+          <use href="#ic-dino" x="38" y="53" width="14" height="14"/><use href="#ic-dino" x="143" y="38" width="14" height="14" transform="scale(-1,1) translate(-300,0)"/><use href="#ic-dino" x="143" y="133" width="14" height="14"/>`
   },
   {
     label: "Today",
-    text: "The continents are where we see them now! Dinosaurs (except birds 🐦) disappeared 66 million years ago because of a giant asteroid — a totally different story!",
+    text: "The continents are where we see them now! Dinosaurs disappeared 66 million years ago because of a giant asteroid, a totally different story! One group survived though: birds are actually living dinosaur descendants.",
     svg: `<path d="M30 35 C18 42 22 60 42 65 C65 70 82 62 85 50 Z" fill="#7F9CF5"/>
           <path d="M120 22 C105 28 102 48 122 58 C160 72 215 66 230 46 C242 32 226 20 190 20 C170 10 138 14 120 22 Z" fill="#5DCAA5"/>
           <path d="M40 95 C25 106 30 126 52 132 C78 140 98 132 105 116 Z" fill="#F17FA0"/>
           <path d="M110 100 C97 110 102 132 135 140 C172 150 205 144 218 128 C226 116 214 102 182 100 C162 90 128 92 110 100 Z" fill="#FAC775"/>
-          <path d="M230 120 C220 130 224 148 246 154 C264 158 276 144 270 128 C264 116 240 112 230 120 Z" fill="#B8862E"/>
-          <text x="150" y="18" font-family="Baloo 2, sans-serif" font-size="13" fill="#33313C">🐦 birds are dinosaur descendants!</text>`
+          <path d="M230 120 C220 130 224 148 246 154 C264 158 276 144 270 128 C264 116 240 112 230 120 Z" fill="#B8862E"/>`
   }
 ];
 let stageIdx = 0;

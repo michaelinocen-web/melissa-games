@@ -1,4 +1,4 @@
-const CACHE_NAME = 'melissa-games-v2';
+const CACHE_NAME = 'melissa-games-v3';
 const ASSETS = [
   './index.html',
   './kids.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './universe.html',
   './solar-system.html',
   './money-matters.html',
+  './math-fair.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

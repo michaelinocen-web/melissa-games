@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story Corner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1B1B3A; --bg2:#25254A; --card:#2A2A52; --line:#4A4A80;
+  --ink:#F0ECE0; --ink-soft:#ABA6D4;
+  --coral:#E88FA8; --coral-shadow:#C46B85;
+  --sage:#7FD9C4; --sage-shadow:#4FA890;
+  --plum:#B39DDB; --plum-shadow:#8B6FB8;
+  --gold:#F4C95D; --gold-shadow:#D4A030;
+  --sky:#8AB4E8; --sky-shadow:#5D85C4;
+  --page:#F6EFDD; --page-ink:#3A3352;
+  --font-display:'Fredoka','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Fredoka','Trebuchet MS','Verdana',sans-serif;
+  --font-story:'Lora',Georgia,serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:19px; line-height:1.5; overflow-x:hidden; position:relative; }
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(2px 2px at 10% 15%, rgba(244,201,93,.9), transparent),
+    radial-gradient(1.5px 1.5px at 25% 8%, rgba(255,255,255,.7), transparent),
+    radial-gradient(2px 2px at 40% 22%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.5px 1.5px at 60% 6%, rgba(244,201,93,.8), transparent),
+    radial-gradient(2px 2px at 75% 18%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1.5px 1.5px at 88% 10%, rgba(255,255,255,.6), transparent),
+    radial-gradient(2px 2px at 15% 40%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.5px 1.5px at 92% 45%, rgba(244,201,93,.7), transparent),
+    radial-gradient(ellipse at 50% 0%, rgba(139,111,184,.28), transparent 65%);
+  animation:scTwinkle 4s ease-in-out infinite;
+}
+@keyframes scTwinkle{ 0%,100%{ opacity:1; } 50%{ opacity:.65; } }
+h1,h2{ font-family:var(--font-display); font-weight:600; margin:0 0 .3em; color:var(--gold); }
+svg{ display:block; margin:0 auto; max-width:100%; }
+
+.viewport{ max-width:640px; margin:0 auto; padding:1.6rem 1.1rem 3rem; min-height:100vh; position:relative; z-index:1; }
+.screen{ display:none; }
+.screen.active{ display:block; }
+
+@keyframes scRise{ from{ transform:translateY(22px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+@keyframes scFade{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes scPop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.2); } 100%{ transform:scale(1); } }
+@keyframes scFlip{ 0%{ transform:rotateY(0deg); } 50%{ transform:rotateY(92deg); } 100%{ transform:rotateY(0deg); } }
+@keyframes scPanIn{ from{ transform:translateX(28px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+@keyframes scSway{ 0%,100%{ transform:rotate(-2deg); } 50%{ transform:rotate(2deg); } }
+@keyframes scBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
+@keyframes scShake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+@keyframes scStarPop{ 0%{ transform:scale(0) rotate(-20deg); opacity:0; } 60%{ transform:scale(1.3) rotate(8deg); opacity:1; } 100%{ transform:scale(1) rotate(0deg); opacity:1; } }
+@keyframes scSpin{ from{ transform:rotate(0deg) scale(.4); opacity:0; } to{ transform:rotate(360deg) scale(1); opacity:1; } }
+@keyframes scPopUp{ 0%{ transform:translateY(14px) scale(.7); opacity:0; } 70%{ transform:translateY(-4px) scale(1.06); opacity:1; } 100%{ transform:translateY(0) scale(1); opacity:1; } }
+@keyframes scGlow{ 0%,100%{ box-shadow:0 0 12px 2px rgba(244,201,93,.35); } 50%{ box-shadow:0 0 20px 5px rgba(244,201,93,.55); } }
+@keyframes scRoll{ 0%{ transform:translateX(-18px) rotate(0deg); } 100%{ transform:translateX(18px) rotate(360deg); } }
+@keyframes scLoopFly{ 0%{ transform:translate(-16px,6px) rotate(0deg); } 25%{ transform:translate(-6px,-16px) rotate(90deg); } 50%{ transform:translate(16px,-6px) rotate(180deg); } 75%{ transform:translate(6px,12px) rotate(270deg); } 100%{ transform:translate(-16px,6px) rotate(360deg); } }
+@keyframes scSwoopIn{ 0%{ transform:translate(26px,-30px) rotate(-18deg); opacity:0; } 70%{ transform:translate(-4px,4px) rotate(4deg); opacity:1; } 100%{ transform:translate(0,0) rotate(0deg); opacity:1; } }
+@keyframes scFlop{ 0%{ transform:rotate(0deg) translateY(0); } 30%{ transform:rotate(-25deg) translateY(-6px); } 60%{ transform:rotate(15deg) translateY(4px); } 100%{ transform:rotate(0deg) translateY(0); } }
+@keyframes scJumpSplash{ 0%{ transform:translateY(0) scaleY(1); } 30%{ transform:translateY(-22px) scaleY(1.08); } 55%{ transform:translateY(-22px) scaleY(1); } 100%{ transform:translateY(0) scaleY(.92); } }
+@keyframes scWaddle{ 0%,100%{ transform:translateX(0) rotate(-4deg); } 50%{ transform:translateX(10px) rotate(4deg); } }
+@keyframes scCurlUp{ 0%,100%{ transform:scale(1); } 40%{ transform:scale(.72); } 60%{ transform:scale(.72); } }
+@keyframes scShakeOff{ 0%,100%{ transform:rotate(0deg); } 20%{ transform:rotate(-8deg); } 40%{ transform:rotate(8deg); } 60%{ transform:rotate(-6deg); } 80%{ transform:rotate(6deg); } }
+@keyframes scCrossWobble{ 0%{ transform:translateX(-20px) rotate(-6deg); } 25%{ transform:translateX(-8px) rotate(6deg); } 50%{ transform:translateX(4px) rotate(-6deg); } 75%{ transform:translateX(14px) rotate(6deg); } 100%{ transform:translateX(20px) rotate(0deg); } }
+@keyframes scCheerBounce{ 0%,100%{ transform:translateY(0) scale(1); } 25%{ transform:translateY(-14px) scale(1.05); } 50%{ transform:translateY(0) scale(1); } 75%{ transform:translateY(-8px) scale(1.02); } }
+@keyframes scBreathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+@keyframes scDroop{ 0%{ transform:translateY(0) rotate(0deg); } 100%{ transform:translateY(10px) rotate(-6deg); } }
+@keyframes scMarch{ 0%,100%{ transform:translateY(0); } 25%{ transform:translateY(-5px); } 50%{ transform:translateY(0); } 75%{ transform:translateY(-5px); } }
+.sc-rise{ animation:scRise .5s cubic-bezier(.2,.8,.3,1); }
+.sc-fade{ animation:scFade .5s ease; }
+.sc-pop{ animation:scPop .4s cubic-bezier(.34,1.56,.64,1); }
+.sc-flip{ animation:scFlip .55s ease; }
+.sc-pan-in{ animation:scPanIn .5s cubic-bezier(.2,.8,.3,1); }
+.sc-sway{ animation:scSway 3.2s ease-in-out infinite; transform-origin:bottom center; }
+.sc-bob{ animation:scBob 2.4s ease-in-out infinite; }
+.sc-star-pop{ animation:scStarPop .5s cubic-bezier(.34,1.56,.64,1); }
+.sc-spin{ animation:scSpin .6s cubic-bezier(.2,.8,.3,1); }
+.sc-pop-up{ animation:scPopUp .5s cubic-bezier(.34,1.56,.64,1); }
+.sc-roll{ animation:scRoll .9s ease-in-out; }
+.sc-loop-fly{ animation:scLoopFly 1.4s ease-in-out; }
+.sc-swoop-in{ animation:scSwoopIn .8s cubic-bezier(.2,.7,.3,1); }
+.sc-flop{ animation:scFlop .7s ease-in-out; }
+.sc-jump-splash{ animation:scJumpSplash .9s cubic-bezier(.3,.6,.3,1); }
+.sc-waddle{ animation:scWaddle 1.2s ease-in-out infinite; }
+.sc-curl-up{ animation:scCurlUp 1.6s ease-in-out; }
+.sc-shake-off{ animation:scShakeOff .6s ease-in-out; }
+.sc-cross-wobble{ animation:scCrossWobble 1.6s ease-in-out; }
+.sc-cheer-bounce{ animation:scCheerBounce 1s ease-in-out; }
+.sc-breathe{ animation:scBreathe 2.2s ease-in-out infinite; }
+.sc-droop{ animation:scDroop 1s ease-out forwards; }
+.sc-march{ animation:scMarch .9s ease-in-out infinite; }
+
+/* ---- Hub / Library ---- */
+.sc-header{ text-align:center; margin-bottom:1rem; }
+.sc-header h1{ font-size:1.9rem; text-shadow:0 0 18px rgba(244,201,93,.4); }
+.sc-header p{ color:var(--ink-soft); max-width:480px; margin:0 auto; font-size:1rem; }
+.sc-streak-card{ display:flex; align-items:center; gap:.9rem; background:linear-gradient(160deg,var(--card),var(--bg2)); border:1.5px solid var(--gold); border-radius:20px; padding:.9rem 1.1rem; box-shadow:0 0 18px rgba(244,201,93,.22), inset 0 1px 0 rgba(255,255,255,.05); max-width:480px; margin:1rem auto; }
+.sc-streak-flame{ flex-shrink:0; filter:drop-shadow(0 0 6px rgba(244,201,93,.6)); }
+.sc-streak-text{ font-family:var(--font-display); font-weight:600; color:var(--ink); font-size:1rem; }
+.sc-streak-sub{ font-size:.78rem; color:var(--ink-soft); font-weight:500; }
+.sc-stars-total{ margin-left:auto; text-align:center; flex-shrink:0; }
+.sc-stars-total .num{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; color:var(--gold); text-shadow:0 0 10px rgba(244,201,93,.5); }
+.sc-stars-total .lbl{ font-size:.65rem; color:var(--ink-soft); font-weight:600; letter-spacing:.04em; }
+
+.sc-shelf{ display:flex; flex-direction:column; gap:.8rem; max-width:480px; margin:1.2rem auto; }
+.sc-volume-grid{ display:flex; flex-direction:column; gap:1rem; max-width:480px; margin:1.2rem auto; }
+.sc-volume-card{ position:relative; border-radius:20px; padding:1.1rem 1.2rem; cursor:pointer; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.3); transition:transform .15s; border:1.5px solid rgba(255,255,255,.15); }
+.sc-volume-card:active{ transform:translateY(2px) scale(.99); }
+.sc-volume-card.locked{ cursor:default; filter:grayscale(.6); opacity:.55; }
+.sc-volume-card.locked:active{ transform:none; }
+.sc-volume-top{ display:flex; align-items:center; gap:.9rem; }
+.sc-volume-number{ font-family:var(--font-display); font-weight:600; font-size:2rem; color:rgba(255,255,255,.5); flex-shrink:0; min-width:2.2rem; text-align:center; }
+.sc-volume-info{ flex:1; }
+.sc-volume-name{ font-family:var(--font-display); font-weight:600; font-size:1.1rem; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.3); }
+.sc-volume-sub{ font-size:.72rem; color:rgba(255,255,255,.75); margin-top:.1rem; }
+.sc-volume-lock-badge{ flex-shrink:0; }
+.sc-volume-progress-row{ display:flex; align-items:center; gap:.5rem; margin-top:.7rem; }
+.sc-volume-progress-track{ flex:1; height:7px; border-radius:4px; background:rgba(0,0,0,.25); overflow:hidden; }
+.sc-volume-progress-fill{ height:100%; background:#fff; border-radius:4px; transition:width .3s ease; }
+.sc-volume-progress-text{ font-size:.68rem; color:rgba(255,255,255,.85); font-weight:600; white-space:nowrap; }
+.sc-volume-icons-row{ display:flex; gap:.35rem; margin-top:.6rem; flex-wrap:wrap; }
+.sc-volume-mini-icon{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:.9; }
+
+.sc-batch-header{ display:flex; align-items:center; gap:.6rem; margin:1.2rem 0 .3rem; max-width:480px; margin-left:auto; margin-right:auto; }
+.sc-batch-header:first-child{ margin-top:0; }
+.sc-batch-title{ font-family:var(--font-display); font-weight:600; font-size:.85rem; color:var(--sky); text-transform:uppercase; letter-spacing:.04em; }
+.sc-batch-line{ flex:1; height:1px; background:var(--line); }
+.sc-batch-lock-note{ font-size:.72rem; color:var(--ink-soft); max-width:480px; margin:0 auto .6rem; text-align:center; font-style:italic; }
+.sc-book.locked{ opacity:.4; cursor:default; }
+.sc-book.locked:active{ transform:none; }
+.sc-book.planned{ opacity:.35; cursor:default; }
+.sc-lock-icon{ margin-left:auto; flex-shrink:0; }
+.sc-book{ display:flex; align-items:center; gap:.9rem; background:linear-gradient(160deg,var(--card),var(--bg2)); border:1.5px solid var(--line); border-radius:18px; padding:.8rem 1rem; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.25); text-align:left; transition:transform .15s, box-shadow .15s; }
+.sc-book:active{ transform:translateY(2px) scale(.99); }
+.sc-book.read{ border-color:var(--sage); box-shadow:0 0 14px rgba(127,217,196,.25); }
+.sc-book-badge{ width:52px; height:52px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(0,0,0,.3), inset 0 -3px 6px rgba(0,0,0,.15); }
+.sc-book-title{ font-family:var(--font-display); font-weight:600; font-size:.95rem; color:var(--ink); }
+.sc-book-theme{ font-size:.72rem; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:.03em; }
+.sc-book-check{ margin-left:auto; flex-shrink:0; }
+
+.sc-badge-case{ max-width:480px; margin:1.4rem auto 0; padding:1rem; background:linear-gradient(160deg,var(--card),var(--bg2)); border:1.5px solid var(--sky); border-radius:18px; box-shadow:0 0 16px rgba(138,180,232,.2); }
+.sc-badge-case-title{ font-family:var(--font-display); font-weight:600; text-align:center; color:var(--sky); margin-bottom:.6rem; font-size:.95rem; }
+.sc-badge-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(58px,1fr)); gap:.6rem; }
+.sc-badge-slot{ display:flex; flex-direction:column; align-items:center; gap:.25rem; opacity:.28; }
+.sc-badge-slot.earned{ opacity:1; }
+.sc-badge-icon-wrap{ width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0,0,0,.3); }
+.sc-badge-label{ font-size:.58rem; text-align:center; font-weight:600; color:var(--ink-soft); line-height:1.1; }
+
+/* ---- Story reader: an open book glowing in the dark ---- */
+.sc-story-card{ background:var(--page); color:var(--page-ink); border-radius:6px 18px 18px 6px; padding:1.4rem 1.3rem; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 14px 40px rgba(0,0,0,.45), inset 6px 0 12px -8px rgba(0,0,0,.25); position:relative; overflow:hidden; min-height:380px; display:flex; flex-direction:column; }
+.sc-story-card::before{ content:''; position:absolute; top:0; bottom:0; left:0; width:10px; background:linear-gradient(90deg, rgba(0,0,0,.18), transparent); }
+.sc-story-card::after{ content:''; position:absolute; bottom:0; right:0; width:0; height:0; border-style:solid; border-width:0 0 26px 26px; border-color:transparent transparent rgba(0,0,0,.12) transparent; }
+.sc-story-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:.6rem; }
+.sc-story-badge-name{ font-family:var(--font-display); font-weight:600; font-size:.82rem; color:var(--plum-shadow); }
+.sc-page-dots{ display:flex; gap:.3rem; }
+.sc-page-dot{ width:8px; height:8px; border-radius:50%; background:#D9CFB0; }
+.sc-page-dot.on{ background:var(--coral-shadow); }
+.sc-story-stage{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:.9rem; padding:.5rem 0; }
+.sc-story-text{ font-family:var(--font-story); font-size:1.08rem; color:var(--page-ink); max-width:440px; line-height:1.65; }
+.sc-char-stage{ height:120px; display:flex; align-items:center; justify-content:center; gap:1rem; }
+.sc-char-wrap{ position:relative; cursor:pointer; }
+.sc-char-wrap:active{ transform:scale(.96); }
+.sc-bubble{ position:absolute; bottom:100%; left:50%; transform:translateX(calc(-50% + var(--shift,0px))) translateY(8px) scale(.8); background:var(--bg2); border:1.5px solid var(--gold); border-radius:14px; padding:.5rem .7rem; font-size:.74rem; font-weight:600; color:var(--ink); white-space:normal; width:max-content; max-width:150px; line-height:1.3; text-align:center; box-shadow:0 0 12px rgba(244,201,93,.3); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:30; }
+.sc-bubble::after{ content:''; position:absolute; top:100%; left:calc(50% - var(--shift,0px)); transform:translateX(-50%); border:6px solid transparent; border-top-color:var(--gold); }
+.sc-bubble.show{ opacity:1; transform:translateX(calc(-50% + var(--shift,0px))) translateY(0) scale(1); }
+.sc-vocab-word{ position:relative; border-bottom:2px dotted var(--coral-shadow); cursor:pointer; padding-bottom:1px; }
+.sc-vocab-bubble{ position:absolute; bottom:100%; left:50%; transform:translateX(calc(-50% + var(--shift,0px))) translateY(6px) scale(.85); background:var(--bg2); color:var(--ink); border:1.5px solid var(--coral); border-radius:12px; padding:.5rem .7rem; font-family:var(--font-body); font-size:.72rem; font-weight:500; font-style:normal; line-height:1.35; white-space:normal; width:max-content; max-width:150px; box-shadow:0 0 12px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; z-index:30;}
+.sc-vocab-bubble::after{ content:''; position:absolute; top:100%; left:calc(50% - var(--shift,0px)); transform:translateX(-50%); border:6px solid transparent; border-top-color:var(--coral); }
+.sc-vocab-word.open .sc-vocab-bubble{ opacity:1; transform:translateX(calc(-50% + var(--shift,0px))) translateY(0) scale(1); pointer-events:auto; }
+.sc-story-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:1rem; }
+.sc-nav-btn{ font-family:var(--font-display); font-weight:600; border:none; border-radius:999px; padding:.65rem 1.3rem; font-size:.88rem; cursor:pointer; transition:transform .1s, box-shadow .15s; }
+.sc-nav-btn:active{ transform:translateY(2px) scale(.98); }
+.sc-nav-btn.primary{ background:linear-gradient(160deg,var(--gold),var(--gold-shadow)); color:#2A2118; box-shadow:0 0 16px rgba(244,201,93,.45); }
+.sc-nav-btn.ghost{ background:transparent; color:var(--page-ink); opacity:.6; box-shadow:none; }
+.sc-nav-btn:disabled{ opacity:.35; cursor:default; box-shadow:none; }
+
+/* ---- Reflection quiz ---- */
+.sc-reflect-q{ font-family:var(--font-story); font-style:italic; font-size:1.05rem; font-weight:500; color:var(--page-ink); max-width:440px; margin:0 auto .8rem; text-align:center; }
+.sc-reflect-opts{ display:flex; flex-direction:column; gap:.6rem; max-width:420px; margin:0 auto; }
+.sc-reflect-tile{ background:#fff; border:1.5px solid #D9CFB0; border-radius:14px; padding:.8rem 1rem; cursor:pointer; font-size:.92rem; text-align:left; transition:transform .1s, box-shadow .15s; color:var(--page-ink); }
+.sc-reflect-tile:active{ transform:translateY(2px); }
+.sc-reflect-tile.correct{ border-color:var(--sage-shadow); background:#E4F7F1; box-shadow:0 0 10px rgba(79,168,144,.3); }
+.sc-reflect-tile.incorrect{ border-color:var(--coral-shadow); background:#FBEBEF; }
+.sc-reflect-feedback{ max-width:420px; margin:.8rem auto 0; background:#EFE6D0; border-left:4px solid var(--gold-shadow); border-radius:10px; padding:.7rem .9rem; font-size:.88rem; color:var(--page-ink); opacity:0; max-height:0; overflow:hidden; transition:opacity .35s ease, max-height .35s ease, padding .35s ease; }
+.sc-reflect-feedback.shown{ opacity:1; max-height:300px; padding:.7rem .9rem; }
+
+/* ---- Badge award screen ---- */
+.sc-award-stage{ text-align:center; padding:2rem 1rem; }
+.sc-award-badge{ width:140px; height:140px; margin:0 auto 1rem; border-radius:50%; display:flex; align-items:center; justify-content:center; animation:scGlow 2s ease-in-out infinite; }
+.sc-award-title{ font-family:var(--font-display); font-weight:600; font-size:1.4rem; color:var(--gold); text-shadow:0 0 16px rgba(244,201,93,.4); }
+.sc-award-sub{ color:var(--ink-soft); max-width:400px; margin:.4rem auto 1.2rem; }
+.sc-stars-row{ display:flex; justify-content:center; gap:.4rem; margin:.6rem 0 1.2rem; }
+
+.sc-back-btn{ background:var(--card); border:1.5px solid var(--gold); color:var(--gold); border-radius:999px; padding:.5rem 1.1rem; font-family:var(--font-display); font-weight:600; font-size:.82rem; cursor:pointer; box-shadow:0 0 10px rgba(244,201,93,.2); }
+</style>
+</head>
+<body>
+<div class="viewport">
+
+  <!-- ============ HUB / LIBRARY SCREEN ============ -->
+  <section class="screen active" data-screen="hub">
+    <div class="sc-header">
+      <h1>Story Corner</h1>
+      <p>A little story every day, about the big things: courage, kindness, patience, and being you.</p>
+    </div>
+    <div class="sc-streak-card">
+      <svg class="sc-streak-flame" width="40" height="40" viewBox="0 0 40 40"><path d="M20 4 C12 14 10 20 12 26 a8 8 0 0 0 16 0 c2 -6 0 -12 -8 -22 Z" fill="var(--coral)"/><path d="M20 16 C16 22 15 25 16 28 a4 4 0 0 0 8 0 c1 -3 0 -6 -4 -12 Z" fill="var(--gold)"/></svg>
+      <div>
+        <div class="sc-streak-text" id="scStreakText">0-day streak</div>
+        <div class="sc-streak-sub" id="scStreakSub">Read a story today to start one!</div>
+      </div>
+      <div class="sc-stars-total">
+        <div class="num" id="scStarsTotal">0</div>
+        <div class="lbl">STARS</div>
+      </div>
+    </div>
+    <div class="sc-volume-grid" id="scVolumeGrid"></div>
+    <div id="scBadgeCase"></div>
+  </section>
+
+  <!-- ============ VOLUME DETAIL SCREEN ============ -->
+  <section class="screen" data-screen="volume">
+    <button class="sc-back-btn" onclick="scGoHub()">&#8592; All Volumes</button>
+    <div id="scVolumeDetailHeader"></div>
+    <div class="sc-shelf" id="scVolumeShelf" style="margin-top:.9rem;"></div>
+  </section>
+
+  <!-- ============ STORY READER SCREEN ============ -->
+  <section class="screen" data-screen="reader">
+    <button class="sc-back-btn" onclick="scGoVolume()">&#8592; Bookshelf</button>
+    <div class="sc-story-card" style="margin-top:1rem;">
+      <div class="sc-story-topbar">
+        <div class="sc-story-badge-name" id="scReaderTitle"></div>
+        <div class="sc-page-dots" id="scPageDots"></div>
+      </div>
+      <div class="sc-story-stage" id="scStoryStage"></div>
+      <div class="sc-story-nav">
+        <button class="sc-nav-btn ghost" id="scPrevPageBtn" onclick="scPrevPage()">Back</button>
+        <button class="sc-nav-btn primary" id="scNextPageBtn" onclick="scNextPage()">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REFLECTION SCREEN ============ -->
+  <section class="screen" data-screen="reflect">
+    <button class="sc-back-btn" onclick="scGoVolume()">&#8592; Bookshelf</button>
+    <div class="sc-story-card" style="margin-top:1rem;">
+      <div class="sc-story-topbar">
+        <div class="sc-story-badge-name">A Little Reflection</div>
+      </div>
+      <div class="sc-story-stage">
+        <div class="sc-reflect-q" id="scReflectQ"></div>
+        <div class="sc-reflect-opts" id="scReflectOpts"></div>
+        <div class="sc-reflect-feedback" id="scReflectFeedback"></div>
+      </div>
+      <div class="sc-story-nav">
+        <div></div>
+        <button class="sc-nav-btn primary" id="scReflectNextBtn" onclick="scAfterReflect()" disabled>Continue</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BADGE AWARD SCREEN ============ -->
+  <section class="screen" data-screen="award">
+    <div class="sc-award-stage">
+      <div class="sc-award-badge sc-star-pop" id="scAwardBadgeIcon"></div>
+      <div class="sc-award-title">Badge Earned!</div>
+      <div class="sc-award-sub" id="scAwardBadgeName"></div>
+      <div class="sc-stars-row" id="scAwardStars"></div>
+      <button class="sc-nav-btn primary" onclick="scGoVolume()">Back to the Bookshelf</button>
+    </div>
+  </section>
+
+</div>
+<script>
+// ================= CHARACTER PLACEHOLDER ART =================
+// Simple, clean placeholder illustrations for Azul, Melissa, and the parent.
+// Each is a single function so swapping in real artwork later just means
+// replacing the function body (or the <img> it targets) without touching
+// any layout, animation, or story logic.
+function finnSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, mouth;
+  if(expr === 'sad'){
+    eyes = `<ellipse cx="39" cy="36" rx="5" ry="5.6" fill="#fff"/><ellipse cx="61" cy="36" rx="5" ry="5.6" fill="#fff"/><circle cx="39.5" cy="38" r="2.9" fill="#3A2A1F"/><circle cx="60.5" cy="38" r="2.9" fill="#3A2A1F"/><path d="M32 31 Q39 28 45 31.5" fill="none" stroke="#3A2A1F" stroke-width="1.7" stroke-linecap="round"/><path d="M55 31.5 Q61 28 68 31" fill="none" stroke="#3A2A1F" stroke-width="1.7" stroke-linecap="round"/>`;
+    mouth = `<path d="M42 50 Q50 45 58 50" fill="none" stroke="#3A2A1F" stroke-width="1.8" stroke-linecap="round"/>`;
+  } else if(expr === 'worried'){
+    eyes = `<ellipse cx="39" cy="35" rx="6.2" ry="7" fill="#fff"/><ellipse cx="61" cy="35" rx="6.2" ry="7" fill="#fff"/><circle cx="39" cy="36" r="3" fill="#3A2A1F"/><circle cx="61" cy="36" r="3" fill="#3A2A1F"/><circle cx="40.2" cy="34.3" r="1.1" fill="#fff"/><circle cx="62.2" cy="34.3" r="1.1" fill="#fff"/><path d="M31 27 Q39 24 46 28" fill="none" stroke="#3A2A1F" stroke-width="1.6" stroke-linecap="round"/><path d="M54 28 Q61 24 69 27" fill="none" stroke="#3A2A1F" stroke-width="1.6" stroke-linecap="round"/>`;
+    mouth = `<ellipse cx="50" cy="49" rx="3.4" ry="4.2" fill="#3A2A1F"/>`;
+  } else if(expr === 'frustrated'){
+    eyes = `<ellipse cx="39" cy="36" rx="5.4" ry="4.6" fill="#fff"/><ellipse cx="61" cy="36" rx="5.4" ry="4.6" fill="#fff"/><circle cx="40" cy="36" r="3.2" fill="#3A2A1F"/><circle cx="60" cy="36" r="3.2" fill="#3A2A1F"/><path d="M32 29 L46 32.5" fill="none" stroke="#3A2A1F" stroke-width="1.9" stroke-linecap="round"/><path d="M54 32.5 L68 29" fill="none" stroke="#3A2A1F" stroke-width="1.9" stroke-linecap="round"/>`;
+    mouth = `<path d="M41 49 Q50 46 59 49" fill="none" stroke="#3A2A1F" stroke-width="2" stroke-linecap="round"/>`;
+  } else if(expr === 'surprised'){
+    eyes = `<ellipse cx="39" cy="35" rx="6.4" ry="7.4" fill="#fff"/><ellipse cx="61" cy="35" rx="6.4" ry="7.4" fill="#fff"/><circle cx="39" cy="35.5" r="3" fill="#3A2A1F"/><circle cx="61" cy="35.5" r="3" fill="#3A2A1F"/><circle cx="40.3" cy="33.8" r="1.2" fill="#fff"/><circle cx="62.3" cy="33.8" r="1.2" fill="#fff"/>`;
+    mouth = `<ellipse cx="50" cy="48" rx="4.4" ry="5.2" fill="#3A2A1F"/>`;
+  } else {
+    eyes = `<ellipse cx="39" cy="35" rx="5.4" ry="6.2" fill="#fff"/><ellipse cx="61" cy="35" rx="5.4" ry="6.2" fill="#fff"/><circle cx="40" cy="36" r="3.2" fill="#3A2A1F"/><circle cx="60" cy="36" r="3.2" fill="#3A2A1F"/><circle cx="41.2" cy="34.4" r="1.1" fill="#fff"/><circle cx="61.2" cy="34.4" r="1.1" fill="#fff"/>`;
+    mouth = `<path d="M40 46 Q50 53 60 46" fill="none" stroke="#3A2A1F" stroke-width="1.8" stroke-linecap="round"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="93" rx="22" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M30 60 Q14 70 20 88 Q30 93 36 84 Q31 74 33 63 Z" fill="#E8875A"/>
+    <path d="M32 68 Q25 78 29 87" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity=".85"/>
+    <path d="M34 60 C22 62 17 78 24 90 L76 90 C83 78 78 62 66 60 Z" fill="#E8875A"/>
+    <path d="M50 64 C41 64 37 76 39 90 L61 90 C63 76 59 64 50 64 Z" fill="#FBF3E7"/>
+    <ellipse cx="50" cy="38" rx="20" ry="19" fill="#E8875A"/>
+    <path d="M31 28 L19 8 L38 21 Z" fill="#E8875A"/>
+    <path d="M31 24 L25 13 L35 19 Z" fill="#D9A18C"/>
+    <path d="M69 28 L81 8 L62 21 Z" fill="#E8875A"/>
+    <path d="M69 24 L75 13 L65 19 Z" fill="#D9A18C"/>
+    <path d="M50 30 C39 30 32 40 34 52 C38 58 46 60 50 56 C54 60 62 58 66 52 C68 40 61 30 50 30 Z" fill="#FBF3E7"/>
+    ${mouth}
+    <circle cx="50" cy="43" r="3" fill="#3A2A1F"/>
+    ${eyes}
+    <path d="M28 40 q4 3 3 7" fill="none" stroke="#C4693D" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>
+    <path d="M72 40 q-4 3 -3 7" fill="none" stroke="#C4693D" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>
+  </svg>`;
+}
+function pipSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, beak, tufts;
+  if(expr === 'sad'){
+    eyes = `<ellipse cx="42" cy="27" rx="4.2" ry="4.6" fill="#fff"/><ellipse cx="58" cy="27" rx="4.2" ry="4.6" fill="#fff"/><circle cx="42.5" cy="28.5" r="2.4" fill="#26221C"/><circle cx="57.5" cy="28.5" r="2.4" fill="#26221C"/>`;
+    beak = `<path d="M42 30 L50 36 L58 30 Q50 32 42 30 Z" fill="#E8B84B"/>`;
+    tufts = `<path d="M39 17 q5 -6 3 3" fill="none" stroke="#5D85A6" stroke-width="2.4" stroke-linecap="round"/><path d="M46 14 q5 -6 3 3" fill="none" stroke="#5D85A6" stroke-width="2.4" stroke-linecap="round"/><path d="M53 14 q5 -6 4 4" fill="none" stroke="#5D85A6" stroke-width="2.4" stroke-linecap="round"/>`;
+  } else if(expr === 'worried'){
+    eyes = `<ellipse cx="42" cy="26" rx="5.2" ry="6" fill="#fff"/><ellipse cx="58" cy="26" rx="5.2" ry="6" fill="#fff"/><circle cx="42.5" cy="27.5" r="2.6" fill="#26221C"/><circle cx="57.5" cy="27.5" r="2.6" fill="#26221C"/><circle cx="43.6" cy="25.6" r=".9" fill="#fff"/><circle cx="58.6" cy="25.6" r=".9" fill="#fff"/>`;
+    beak = `<path d="M43 30 L50 40 L57 30 Q50 34 43 30 Z" fill="#E8B84B"/>`;
+    tufts = `<path d="M39 13 q6 -9 5 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M46 9 q6 -10 5 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M53 9 q6 -9 6 4" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/>`;
+  } else if(expr === 'frustrated'){
+    eyes = `<ellipse cx="42" cy="27" rx="4.6" ry="4" fill="#fff"/><ellipse cx="58" cy="27" rx="4.6" ry="4" fill="#fff"/><circle cx="43" cy="27" r="2.7" fill="#26221C"/><circle cx="57" cy="27" r="2.7" fill="#26221C"/><path d="M37 20 L45 23" fill="none" stroke="#5D85A6" stroke-width="2.2" stroke-linecap="round"/><path d="M55 23 L63 20" fill="none" stroke="#5D85A6" stroke-width="2.2" stroke-linecap="round"/>`;
+    beak = `<path d="M42 29 L50 34 L58 29 Q50 31 42 29 Z" fill="#E8B84B"/>`;
+    tufts = `<path d="M39 15 q6 -8 5 2" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M46 11 q6 -9 5 2" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M53 11 q6 -8 6 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/>`;
+  } else if(expr === 'surprised'){
+    eyes = `<ellipse cx="42" cy="26" rx="5.4" ry="6.2" fill="#fff"/><ellipse cx="58" cy="26" rx="5.4" ry="6.2" fill="#fff"/><circle cx="42.5" cy="27" r="2.6" fill="#26221C"/><circle cx="57.5" cy="27" r="2.6" fill="#26221C"/><circle cx="43.6" cy="25.2" r=".9" fill="#fff"/><circle cx="58.6" cy="25.2" r=".9" fill="#fff"/>`;
+    beak = `<path d="M43 30 Q50 44 57 30 Q50 37 43 30 Z" fill="#E8B84B"/>`;
+    tufts = `<path d="M39 13 q6 -9 5 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M46 9 q6 -10 5 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M53 9 q6 -9 6 4" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/>`;
+  } else {
+    eyes = `<ellipse cx="42" cy="26" rx="4.6" ry="5.2" fill="#fff"/><ellipse cx="58" cy="26" rx="4.6" ry="5.2" fill="#fff"/><circle cx="43" cy="27" r="2.7" fill="#26221C"/><circle cx="57" cy="27" r="2.7" fill="#26221C"/><circle cx="44" cy="25.6" r=".9" fill="#fff"/><circle cx="58" cy="25.6" r=".9" fill="#fff"/>`;
+    beak = `<path d="M42 29 L50 38 L58 29 Q50 33 42 29 Z" fill="#E8B84B"/>`;
+    tufts = `<path d="M39 15 q6 -8 5 2" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M46 11 q6 -9 5 2" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/><path d="M53 11 q6 -8 6 3" fill="none" stroke="#5D85A6" stroke-width="2.6" stroke-linecap="round"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="90" rx="18" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M50 92 C42 92 36 84 38 74 C40 82 45 87 50 87 C55 87 60 82 62 74 C64 84 58 92 50 92 Z" fill="#5D85A6"/>
+    <path d="M43 89 l1.5 7 l3.5 -7 Z" fill="#E8B84B"/>
+    <path d="M53 89 l1.5 7 l3.5 -7 Z" fill="#C4952E"/>
+    <ellipse cx="50" cy="56" rx="26" ry="24" fill="#7FA8C9"/>
+    <path d="M50 34 C38 36 30 46 30 58 c7 5 16 3 21 -6 c4 -7 4 -14 -1 -18 Z" fill="#EAF4FA" opacity=".45"/>
+    <path d="M28 50 C18 53 13 64 20 73 C26 68 30 59 31 52 Z" fill="#5D85A6"/>
+    <path d="M28 50 C22 52 18 59 22 66 C26 62 28 56 29 51 Z" fill="#9BC2DE"/>
+    <path d="M72 50 C82 53 87 64 80 73 C74 68 70 59 69 52 Z" fill="#5D85A6"/>
+    <path d="M72 50 C78 52 82 59 78 66 C74 62 72 56 71 51 Z" fill="#9BC2DE"/>
+    <ellipse cx="50" cy="72" rx="15" ry="10" fill="#F0C79A"/>
+    <circle cx="50" cy="24" r="15" fill="#7FA8C9"/>
+    ${tufts}
+    ${eyes}
+    ${beak}
+  </svg>`;
+}
+function ollieSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, beak, brow;
+  if(expr === 'sad'){
+    eyes = `<circle cx="38" cy="58" r="10" fill="#fff"/><circle cx="62" cy="58" r="10" fill="#fff"/><circle cx="38" cy="58" r="6.6" fill="#F4C95D"/><circle cx="62" cy="58" r="6.6" fill="#F4C95D"/><circle cx="38" cy="58" r="3.3" fill="#26221C"/><circle cx="62" cy="58" r="3.3" fill="#26221C"/><path d="M28 52 Q38 47 48 52 L48 52 Q38 50 28 52 Z" fill="#B08968"/><path d="M52 52 Q62 47 72 52 L72 52 Q62 50 52 52 Z" fill="#B08968"/>`;
+    beak = `<path d="M45 66 L50 71 L55 66 Z" fill="#F4C95D"/>`;
+    brow = '';
+  } else if(expr === 'worried'){
+    eyes = `<circle cx="38" cy="57" r="12" fill="#fff"/><circle cx="62" cy="57" r="12" fill="#fff"/><circle cx="38" cy="57" r="7.6" fill="#F4C95D"/><circle cx="62" cy="57" r="7.6" fill="#F4C95D"/><circle cx="38" cy="57" r="3.6" fill="#26221C"/><circle cx="62" cy="57" r="3.6" fill="#26221C"/><circle cx="39.8" cy="55" r="1.4" fill="#fff"/><circle cx="63.8" cy="55" r="1.4" fill="#fff"/>`;
+    beak = `<path d="M44 65 L50 75 L56 65 Z" fill="#F4C95D"/>`;
+    brow = `<path d="M27 44 Q38 40 47 45" fill="none" stroke="#8C6B4F" stroke-width="2" stroke-linecap="round"/><path d="M53 45 Q62 40 73 44" fill="none" stroke="#8C6B4F" stroke-width="2" stroke-linecap="round"/>`;
+  } else if(expr === 'frustrated'){
+    eyes = `<circle cx="38" cy="58" r="9.5" fill="#fff"/><circle cx="62" cy="58" r="9.5" fill="#fff"/><circle cx="38" cy="58" r="6.4" fill="#F4C95D"/><circle cx="62" cy="58" r="6.4" fill="#F4C95D"/><circle cx="38" cy="58" r="3.4" fill="#26221C"/><circle cx="62" cy="58" r="3.4" fill="#26221C"/>`;
+    beak = `<path d="M45 66 L50 72 L55 66 Z" fill="#F4C95D"/>`;
+    brow = `<path d="M29 48 L47 52" fill="none" stroke="#8C6B4F" stroke-width="2.4" stroke-linecap="round"/><path d="M53 52 L71 48" fill="none" stroke="#8C6B4F" stroke-width="2.4" stroke-linecap="round"/>`;
+  } else if(expr === 'surprised'){
+    eyes = `<circle cx="38" cy="57" r="13" fill="#fff"/><circle cx="62" cy="57" r="13" fill="#fff"/><circle cx="38" cy="57" r="8.4" fill="#F4C95D"/><circle cx="62" cy="57" r="8.4" fill="#F4C95D"/><circle cx="38" cy="57" r="3.8" fill="#26221C"/><circle cx="62" cy="57" r="3.8" fill="#26221C"/><circle cx="39.9" cy="54.8" r="1.5" fill="#fff"/><circle cx="63.9" cy="54.8" r="1.5" fill="#fff"/>`;
+    beak = `<path d="M44 65 Q50 78 56 65 Q50 72 44 65 Z" fill="#F4C95D"/>`;
+    brow = '';
+  } else {
+    eyes = `<circle cx="38" cy="57" r="11" fill="#fff"/><circle cx="62" cy="57" r="11" fill="#fff"/><circle cx="38" cy="57" r="7.2" fill="#F4C95D"/><circle cx="62" cy="57" r="7.2" fill="#F4C95D"/><circle cx="38" cy="57" r="3.6" fill="#26221C"/><circle cx="62" cy="57" r="3.6" fill="#26221C"/><circle cx="39.4" cy="55.4" r="1.3" fill="#fff"/><circle cx="63.4" cy="55.4" r="1.3" fill="#fff"/>`;
+    beak = `<path d="M45 65 L50 72 L55 65 Z" fill="#F4C95D"/>`;
+    brow = '';
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="92" rx="23" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M50 28 C26 28 17 50 22 72 C25 90 40 96 50 96 C60 96 75 90 78 72 C83 50 74 28 50 28 Z" fill="#B08968"/>
+    <path d="M50 28 C34 28 25 44 25 62 c9 7 22 5 28 -6 c6 -9 6 -19 -3 -28 Z" fill="#D9C2A8" opacity=".5"/>
+    <path d="M32 86 q18 9 36 0 q-2 9 -18 9 q-16 0 -18 -9 Z" fill="#8C6B4F"/>
+    <path d="M18 46 q-7 -16 5 -18 q2 9 -5 18 Z" fill="#8C6B4F"/>
+    <path d="M82 46 q7 -16 -5 -18 q-2 9 5 18 Z" fill="#8C6B4F"/>
+    <path d="M50 40 a24 21 0 0 0 -24 21 a24 21 0 0 0 48 0 a24 21 0 0 0 -24 -21 Z" fill="#F3E9DA"/>
+    <path d="M29 42 q-9 6 -4 20 q11 2 15 -9 q3 -9 -11 -11 Z" fill="#8C6B4F"/>
+    <path d="M71 42 q9 6 4 20 q-11 2 -15 -9 q-3 -9 11 -11 Z" fill="#8C6B4F"/>
+    ${eyes}
+    ${beak}
+    ${brow}
+    <path d="M40 24 q10 -8 20 0" fill="none" stroke="#8C6B4F" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+  </svg>`;
+}
+function tessieSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, mouth;
+  if(expr === 'sad'){
+    eyes = `<ellipse cx="19" cy="36" rx="3.3" ry="3.7" fill="#fff"/><ellipse cx="30" cy="33" rx="3.3" ry="3.7" fill="#fff"/><circle cx="19.3" cy="37" r="1.9" fill="#3A2A1F"/><circle cx="30.3" cy="34" r="1.9" fill="#3A2A1F"/>`;
+    mouth = `<path d="M21 45 Q24.5 43 28 44.5" fill="none" stroke="#3A2A1F" stroke-width="1.5" stroke-linecap="round"/>`;
+  } else if(expr === 'worried'){
+    eyes = `<ellipse cx="19" cy="35" rx="4.2" ry="4.8" fill="#fff"/><ellipse cx="30" cy="32" rx="4.2" ry="4.8" fill="#fff"/><circle cx="19.3" cy="36" r="2.2" fill="#3A2A1F"/><circle cx="30.3" cy="33" r="2.2" fill="#3A2A1F"/><circle cx="20.2" cy="34.6" r=".7" fill="#fff"/><circle cx="31.2" cy="31.6" r=".7" fill="#fff"/><path d="M15 30 Q19 27 23 29.5" fill="none" stroke="#3A2A1F" stroke-width="1.3" stroke-linecap="round"/>`;
+    mouth = `<ellipse cx="24" cy="44" rx="2.2" ry="2.7" fill="#3A2A1F"/>`;
+  } else {
+    eyes = `<ellipse cx="19" cy="35" rx="3.6" ry="4.2" fill="#fff"/><ellipse cx="30" cy="32" rx="3.6" ry="4.2" fill="#fff"/><circle cx="19.5" cy="36" r="2.1" fill="#3A2A1F"/><circle cx="30.5" cy="33" r="2.1" fill="#3A2A1F"/><circle cx="20.2" cy="35" r=".7" fill="#fff"/><circle cx="31.2" cy="32" r=".7" fill="#fff"/>`;
+    mouth = `<path d="M21 43 q4 3 7 -1" fill="none" stroke="#3A2A1F" stroke-width="1.6" stroke-linecap="round"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="90" rx="28" ry="4" fill="rgba(0,0,0,.15)"/>
+    <ellipse cx="30" cy="78" rx="8" ry="6" fill="#C9A876"/>
+    <ellipse cx="70" cy="78" rx="8" ry="6" fill="#C9A876"/>
+    <ellipse cx="50" cy="62" rx="36" ry="27" fill="#8FAE8B"/>
+    <path d="M50 40 C63 40 72 48 72 60 C72 72 63 80 50 80 C37 80 28 72 28 60 C28 48 37 40 50 40 Z" fill="#A7C6A3" stroke="#6B8C68" stroke-width="1.8"/>
+    <path d="M50 40 L50 80 M28 60 L72 60 M39 47 L61 47 M39 73 L61 73" fill="none" stroke="#6B8C68" stroke-width="1.3" opacity=".8"/>
+    <ellipse cx="27" cy="38" rx="15" ry="13" fill="#C9A876"/>
+    ${eyes}
+    ${mouth}
+  </svg>`;
+}
+function haroldSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, mouth;
+  if(expr === 'sad'){
+    eyes = `<ellipse cx="41" cy="56" rx="4.6" ry="5" fill="#fff"/><ellipse cx="59" cy="56" rx="4.6" ry="5" fill="#fff"/><circle cx="41.4" cy="57.4" r="2.6" fill="#3A2A1F"/><circle cx="59.4" cy="57.4" r="2.6" fill="#3A2A1F"/><path d="M35 50 Q41 47 47 50.5" fill="none" stroke="#3A2A1F" stroke-width="1.5" stroke-linecap="round"/><path d="M53 50.5 Q59 47 65 50" fill="none" stroke="#3A2A1F" stroke-width="1.5" stroke-linecap="round"/>`;
+    mouth = `<path d="M44 71 Q50 68 56 71" fill="none" stroke="#3A2A1F" stroke-width="1.8" stroke-linecap="round"/>`;
+  } else if(expr === 'worried'){
+    eyes = `<ellipse cx="41" cy="55" rx="5.6" ry="6.2" fill="#fff"/><ellipse cx="59" cy="55" rx="5.6" ry="6.2" fill="#fff"/><circle cx="41.5" cy="56" r="3.1" fill="#3A2A1F"/><circle cx="59.5" cy="56" r="3.1" fill="#3A2A1F"/><circle cx="42.7" cy="54.2" r="1" fill="#fff"/><circle cx="60.7" cy="54.2" r="1" fill="#fff"/><path d="M34 46 Q41 43 48 47" fill="none" stroke="#3A2A1F" stroke-width="1.4" stroke-linecap="round"/><path d="M52 47 Q59 43 66 46" fill="none" stroke="#3A2A1F" stroke-width="1.4" stroke-linecap="round"/>`;
+    mouth = `<ellipse cx="50" cy="70" rx="2.8" ry="3.4" fill="#3A2A1F"/>`;
+  } else {
+    eyes = `<ellipse cx="41" cy="55" rx="5" ry="5.6" fill="#fff"/><ellipse cx="59" cy="55" rx="5" ry="5.6" fill="#fff"/><circle cx="41.5" cy="56" r="2.9" fill="#3A2A1F"/><circle cx="59.5" cy="56" r="2.9" fill="#3A2A1F"/><circle cx="42.6" cy="54.6" r="1" fill="#fff"/><circle cx="60.6" cy="54.6" r="1" fill="#fff"/>`;
+    mouth = `<path d="M43 70 Q50 75 57 70" fill="none" stroke="#3A2A1F" stroke-width="2.2" stroke-linecap="round"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="93" rx="22" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M32 30 C26 30 24 42 26 56 C28 62 34 62 36 54 C38 44 38 30 32 30 Z" fill="#EAE1D3"/>
+    <path d="M32 34 C29 34 28 43 29 52 C30 56 33 56 34 51 C35 44 35 34 32 34 Z" fill="#E8A9B8"/>
+    <path d="M48 24 C41 24 39 38 41 54 C43 61 50 61 52 53 C54 42 55 24 48 24 Z" fill="#EAE1D3"/>
+    <path d="M48 28 C44 28 43 39 44 51 C45 57 49 57 50 50 C51 41 52 28 48 28 Z" fill="#E8A9B8"/>
+    <circle cx="50" cy="58" r="24" fill="#EAE1D3"/>
+    ${eyes}
+    <ellipse cx="50" cy="64" rx="3.6" ry="2.8" fill="#E8A9B8"/>
+    ${mouth}
+    <path d="M36 62 h-6 M36 66 h-7 M64 62 h6 M64 66 h7" stroke="#C9A876" stroke-width="1.4" stroke-linecap="round"/>
+    <ellipse cx="50" cy="86" rx="18" ry="10" fill="#F3EEE3"/>
+  </svg>`;
+}
+function bramblesSVG(size, expr){
+  size = size || 90;
+  expr = expr || 'happy';
+  let eyes, mouth;
+  if(expr === 'sad'){
+    eyes = `<ellipse cx="42" cy="72" rx="3.4" ry="3.8" fill="#fff"/><ellipse cx="58" cy="72" rx="3.4" ry="3.8" fill="#fff"/><circle cx="42.4" cy="73.2" r="1.9" fill="#3A2A1F"/><circle cx="58.4" cy="73.2" r="1.9" fill="#3A2A1F"/><path d="M37 67 Q42 65 47 67.5" fill="none" stroke="#3A2A1F" stroke-width="1.3" stroke-linecap="round"/><path d="M53 67.5 Q58 65 63 67" fill="none" stroke="#3A2A1F" stroke-width="1.3" stroke-linecap="round"/>`;
+    mouth = `<path d="M45 87 Q50 85 55 87" fill="none" stroke="#3A2A1F" stroke-width="1.4" stroke-linecap="round"/>`;
+  } else if(expr === 'worried'){
+    eyes = `<ellipse cx="42" cy="71" rx="4.4" ry="5" fill="#fff"/><ellipse cx="58" cy="71" rx="4.4" ry="5" fill="#fff"/><circle cx="42.5" cy="72" r="2.5" fill="#3A2A1F"/><circle cx="58.5" cy="72" r="2.5" fill="#3A2A1F"/><circle cx="43.7" cy="70.2" r=".8" fill="#fff"/><circle cx="59.7" cy="70.2" r=".8" fill="#fff"/><path d="M36 63 Q42 60 48 64" fill="none" stroke="#3A2A1F" stroke-width="1.2" stroke-linecap="round"/><path d="M52 64 Q58 60 64 63" fill="none" stroke="#3A2A1F" stroke-width="1.2" stroke-linecap="round"/>`;
+    mouth = `<ellipse cx="50" cy="86" rx="2.4" ry="2.9" fill="#3A2A1F"/>`;
+  } else {
+    eyes = `<ellipse cx="42" cy="71" rx="4" ry="4.6" fill="#fff"/><ellipse cx="58" cy="71" rx="4" ry="4.6" fill="#fff"/><circle cx="42.5" cy="72" r="2.3" fill="#3A2A1F"/><circle cx="58.5" cy="72" r="2.3" fill="#3A2A1F"/><circle cx="43.3" cy="70.8" r=".8" fill="#fff"/><circle cx="59.3" cy="70.8" r=".8" fill="#fff"/>`;
+    mouth = `<path d="M44 84 q6 4 12 0" fill="none" stroke="#3A2A1F" stroke-width="1.6" stroke-linecap="round"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="92" rx="24" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M26 72 C18 50 30 32 50 32 C70 32 82 50 74 72 C70 90 30 90 26 72 Z" fill="#8C6B4F"/>
+    <path d="M30 38 l-9 -11 M38 32 l-5 -13 M46 29 l-2 -14 M54 29 l2 -14 M62 32 l5 -13 M70 38 l9 -11" stroke="#6B5440" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M27 48 l-11 -5 M25 58 l-12 1 M25 68 l-11 6 M73 48 l11 -5 M75 58 l12 1 M75 68 l11 6" stroke="#6B5440" stroke-width="2.8" stroke-linecap="round"/>
+    <ellipse cx="50" cy="74" rx="21" ry="17" fill="#EAE1D3"/>
+    ${eyes}
+    <ellipse cx="50" cy="79" rx="3.2" ry="2.6" fill="#3A2A1F"/>
+    ${mouth}
+  </svg>`;
+}
+function finnProfileSVG(size){
+  size = size || 90;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="93" rx="24" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M74 60 C86 64 90 78 80 88 C76 82 74 72 72 64 Z" fill="#E8875A"/>
+    <path d="M76 66 C83 70 85 78 79 84" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M30 58 C22 58 16 68 18 80 C20 88 30 92 42 90 C52 88 62 84 68 74 C70 66 64 58 54 58 Z" fill="#E8875A"/>
+    <path d="M34 66 C30 66 28 74 30 82 C36 86 44 84 46 76 C47 70 42 66 34 66 Z" fill="#FBF3E7"/>
+    <circle cx="26" cy="42" r="17" fill="#E8875A"/>
+    <path d="M14 32 L6 14 L24 24 Z" fill="#E8875A"/>
+    <path d="M14 28 L10 18 L20 23 Z" fill="#D9A18C"/>
+    <path d="M14 42 C8 42 4 46 2 52 C8 52 13 50 16 46 Z" fill="#FBF3E7"/>
+    <ellipse cx="17" cy="40" rx="5" ry="5.6" fill="#fff"/>
+    <circle cx="16" cy="41" r="3" fill="#3A2A1F"/>
+    <circle cx="17.2" cy="39.6" r="1" fill="#fff"/>
+    <circle cx="6" cy="46" r="2.2" fill="#3A2A1F"/>
+    <path d="M50 88 l-5 8 M60 86 l-4 9 M70 80 l-3 9" stroke="#C4693D" stroke-width="4" stroke-linecap="round"/>
+  </svg>`;
+}
+function pipProfileSVG(size){
+  size = size || 90;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="90" rx="18" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M38 86 l-3 8 l6 -2 Z" fill="#E8B84B"/>
+    <path d="M50 88 l-2 8 l6 -3 Z" fill="#C4952E"/>
+    <ellipse cx="42" cy="56" rx="24" ry="22" fill="#7FA8C9"/>
+    <path d="M42 34 C30 36 22 46 22 58 c7 5 15 3 19 -6 c3 -6 3 -12 1 -18 Z" fill="#EAF4FA" opacity=".4"/>
+    <path d="M46 40 C68 32 88 40 92 54 C78 52 62 52 48 60 C42 62 40 50 46 40 Z" fill="#5D85A6"/>
+    <path d="M50 44 C68 40 82 46 86 54 C74 52 62 54 52 58 Z" fill="#9BC2DE"/>
+    <path d="M20 52 C10 56 4 66 8 76 C16 72 22 62 24 54 Z" fill="#5D85A6"/>
+    <circle cx="22" cy="30" r="14" fill="#7FA8C9"/>
+    <path d="M14 20 q4 -7 4 1" fill="none" stroke="#5D85A6" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M20 17 q4 -8 5 1" fill="none" stroke="#5D85A6" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="16" cy="30" rx="4.4" ry="5" fill="#fff"/>
+    <circle cx="15" cy="31" r="2.6" fill="#26221C"/>
+    <circle cx="16.1" cy="29.7" r=".8" fill="#fff"/>
+    <path d="M12 32 Q3 31 4 36 Q5 40 12 37 Z" fill="#E8B84B"/>
+  </svg>`;
+}
+function ollieProfileSVG(size){
+  size = size || 90;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="92" rx="22" ry="4" fill="rgba(0,0,0,.15)"/>
+    <path d="M40 46 C22 48 14 64 20 80 C24 90 38 94 50 92 C56 90 60 84 60 76 C60 66 52 58 48 50 Z" fill="#B08968"/>
+    <path d="M42 50 C30 52 24 62 26 72 c7 4 15 1 18 -8 c2 -6 1 -10 -2 -14 Z" fill="#D9C2A8" opacity=".5"/>
+    <path d="M44 44 C64 34 86 42 90 58 C76 54 60 56 48 64 C42 66 39 54 44 44 Z" fill="#8C6B4F"/>
+    <path d="M48 48 C64 42 80 48 84 58 C72 55 60 58 50 63 Z" fill="#D9C2A8"/>
+    <ellipse cx="30" cy="34" rx="16" ry="15" fill="#F3E9DA"/>
+    <path d="M18 24 q-6 -12 4 -14 q1 8 -4 14 Z" fill="#8C6B4F"/>
+    <path d="M32 20 q-2 -12 8 -12 q3 8 -8 12 Z" fill="#8C6B4F"/>
+    <circle cx="24" cy="34" r="10.5" fill="#fff"/>
+    <circle cx="24" cy="34" r="6.8" fill="#F4C95D"/>
+    <circle cx="24" cy="34" r="3.4" fill="#26221C"/>
+    <circle cx="25.6" cy="32.2" r="1.2" fill="#fff"/>
+    <path d="M14 38 L6 42 L14 44 Z" fill="#F4C95D"/>
+    <path d="M40 80 l-6 9 M50 82 l-4 9" stroke="#8C6B4F" stroke-width="4" stroke-linecap="round"/>
+  </svg>`;
+}
+const CHAR_ART = { finn: finnSVG, pip: pipSVG, ollie: ollieSVG, tessie: tessieSVG, harold: haroldSVG, brambles: bramblesSVG };
+const CHAR_ART_PROFILE = { finn: finnProfileSVG, pip: pipProfileSVG, ollie: ollieProfileSVG };
+const PROFILE_ACTIONS = ['sc-roll','sc-loop-fly','sc-swoop-in','sc-jump-splash','sc-cross-wobble','sc-march'];
+const PROFILE_ACTION_DURATION = { 'sc-roll':900, 'sc-loop-fly':1400, 'sc-swoop-in':800, 'sc-jump-splash':900, 'sc-cross-wobble':1600, 'sc-march':2400 };
+const CHAR_QUIPS = {
+  finn: [{t:"I wonder what happens next!",e:'happy'}, {t:"This is my favorite part!",e:'happy'}, {t:"Ooh, let's keep going!",e:'happy'}, {t:"I love a good story.",e:'happy'}, {t:"What do you think happens next?",e:'worried'}],
+  pip: [{t:"Tweet tweet! Story time!",e:'happy'}, {t:"Ooh, ooh, what happens next?",e:'surprised'}, {t:"Did somebody say snacks?",e:'happy'}, {t:"I'm all ears! Well... feathers.",e:'happy'}, {t:"Tell me more, tell me more!",e:'happy'}],
+  ollie: [{t:"Ah, a wise choice to keep reading.",e:'happy'}, {t:"Every story has a little lesson in it.",e:'happy'}, {t:"Take your time, young ones.",e:'happy'}, {t:"I've seen many seasons, and stories like this still teach me.",e:'happy'}, {t:"Hoo, hoo \u2014 curious, isn't it?",e:'worried'}],
+  tessie: [{t:"Slow and steady, that's my motto.",e:'happy'}, {t:"No need to rush a good story.",e:'happy'}, {t:"I've got all the time in the world.",e:'happy'}, {t:"Patience tastes like a nice, juicy leaf.",e:'happy'}],
+  harold: [{t:"Oh! Hello there.",e:'surprised'}, {t:"I was hoping to make a new friend.",e:'worried'}, {t:"This is a little scary, but okay.",e:'worried'}, {t:"Thank you for including me!",e:'happy'}],
+  brambles: [{t:"I may look prickly, but I'm friendly!",e:'happy'}, {t:"It's nice not to feel alone.",e:'happy'}, {t:"Ouch \u2014 oh wait, that's just my spikes.",e:'surprised'}, {t:"Thanks for noticing me.",e:'happy'}]
+};
+let scBubbleTimer = null;
+const CHAR_INTROS = {
+  finn: "Hi there! I'm Finn the fox! So nice to meet you!",
+  pip: "Tweet tweet! I'm Pip the bluebird! I'm so happy you're here!",
+  ollie: "Hoo-hoo! I'm Ollie the owl. Welcome, young one.",
+  tessie: "Well hello there! I'm Tessie the tortoise. Slow and steady, that's me!",
+  harold: "Oh! Hi, I'm Harold the rabbit! Lovely to meet you!",
+  brambles: "Hi! I'm Brambles the hedgehog. Don't worry, my spikes are friendly!"
+};
+let introducedChars = [];
+function scKeepInBounds(bubbleEl){
+  bubbleEl.style.setProperty('--shift', '0px');
+  requestAnimationFrame(()=>{
+    const card = bubbleEl.closest('.sc-story-card') || document.body;
+    const bubbleRect = bubbleEl.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const margin = 10;
+    let shift = 0;
+    if(bubbleRect.left < cardRect.left + margin){
+      shift = (cardRect.left + margin) - bubbleRect.left;
+    } else if(bubbleRect.right > cardRect.right - margin){
+      shift = (cardRect.right - margin) - bubbleRect.right;
+    }
+    if(shift !== 0) bubbleEl.style.setProperty('--shift', shift + 'px');
+  });
+}
+function scPlayCharAction(wrapEl, name, actionClass){
+  const artEl = wrapEl.querySelector('svg')?.parentElement;
+  if(!artEl) return false;
+  const svgEl = artEl.querySelector('svg');
+  const size = (svgEl && svgEl.getAttribute('width')) || 100;
+  const usesProfile = PROFILE_ACTIONS.includes(actionClass) && CHAR_ART_PROFILE[name];
+  if(usesProfile){
+    artEl.innerHTML = CHAR_ART_PROFILE[name](size);
+  }
+  artEl.classList.remove(actionClass);
+  void artEl.offsetWidth;
+  artEl.classList.add(actionClass);
+  if(typeof playBlip === 'function') playBlip(600, 0.1);
+  const duration = PROFILE_ACTION_DURATION[actionClass] || 1800;
+  setTimeout(()=>{
+    artEl.classList.remove(actionClass);
+    if(usesProfile && CHAR_ART[name]){
+      artEl.innerHTML = CHAR_ART[name](size);
+    }
+  }, duration);
+  return true;
+}
+function scCharSpeak(wrapEl, name){
+  if(!introducedChars.includes(name) && CHAR_INTROS[name]){
+    introducedChars.push(name);
+    scShowBubble(wrapEl, name, CHAR_INTROS[name], 'happy');
+    return;
+  }
+  const tapActions = (currentStory && currentStory.tapActions && currentStory.tapActions[name]) || [];
+  if(tapActions.length && Math.random() < 0.5){
+    scPlayCharAction(wrapEl, name, tapActions[Math.floor(Math.random()*tapActions.length)]);
+    return;
+  }
+  let quips = CHAR_QUIPS[name] || [];
+  if(currentStory && currentStory.quips && currentStory.quips[name] && currentStory.quips[name].length){
+    quips = currentStory.quips[name];
+  }
+  if(!quips.length) return;
+  const picked = quips[Math.floor(Math.random()*quips.length)];
+  const text = typeof picked === 'string' ? picked : picked.t;
+  const expr = typeof picked === 'string' ? 'happy' : (picked.e || 'happy');
+  scShowBubble(wrapEl, name, text, expr);
+}
+function scShowBubble(wrapEl, name, line, expr){
+  document.querySelectorAll('.sc-bubble.show').forEach(b => b.classList.remove('show'));
+  let bubble = wrapEl.querySelector('.sc-bubble');
+  if(!bubble){
+    bubble = document.createElement('div');
+    bubble.className = 'sc-bubble';
+    wrapEl.appendChild(bubble);
+  }
+  bubble.textContent = line;
+  clearTimeout(scBubbleTimer);
+  requestAnimationFrame(()=> bubble.classList.add('show'));
+  scKeepInBounds(bubble);
+  const artEl = wrapEl.querySelector('svg')?.parentElement;
+  const isProfilePose = artEl && PROFILE_ACTIONS.some(a => artEl.classList.contains(a));
+  let originalExpr = 'happy';
+  if(currentStory && currentStory.pages && currentStory.pages[currentPage]){
+    const pageChar = currentStory.pages[currentPage].chars.find(c=>c.name===name);
+    if(pageChar && pageChar.expr) originalExpr = pageChar.expr;
+  }
+  if(artEl && expr && CHAR_ART[name] && !isProfilePose){
+    const svgEl = artEl.querySelector('svg');
+    const size = (svgEl && svgEl.getAttribute('width')) || 100;
+    artEl.innerHTML = CHAR_ART[name](size, expr);
+  }
+  if(artEl){
+    artEl.classList.remove('sc-pop');
+    void artEl.offsetWidth;
+    artEl.classList.add('sc-pop');
+  }
+  if(typeof playBlip === 'function') playBlip(650, 0.08);
+  scBubbleTimer = setTimeout(()=>{
+    bubble.classList.remove('show');
+    if(artEl && expr && CHAR_ART[name] && !isProfilePose){
+      const svgEl = artEl.querySelector('svg');
+      const size = (svgEl && svgEl.getAttribute('width')) || 100;
+      artEl.innerHTML = CHAR_ART[name](size, originalExpr);
+    }
+  }, 4200);
+}
+function renderChar(name, size, animClass, expr){
+  const usesProfile = animClass && PROFILE_ACTIONS.includes(animClass) && CHAR_ART_PROFILE[name];
+  const fn = usesProfile ? CHAR_ART_PROFILE[name] : CHAR_ART[name];
+  if(!fn) return '';
+  const art = usesProfile ? fn(size) : fn(size, expr);
+  return `<div class="sc-char-wrap" onclick="scCharSpeak(this,'${name}')" data-char="${name}"><div class="${animClass||''}">${art}</div></div>`;
+}
+function playBlip(freq, dur){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur||0.1));
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + (dur||0.1));
+  }catch(e){}
+}
+
+// ================= BADGE ICONS (one per story theme) =================
+const BADGE_ICONS = {
+  motivation: { color:'var(--coral)', icon:'<path d="M22 34 V14 M22 14 L14 22 M22 14 L30 22" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' },
+  honesty: { color:'var(--sky)', icon:'<rect x="12" y="10" width="20" height="24" rx="2" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M17 18 h10 M17 24 h10 M17 30 h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>' },
+  social: { color:'var(--sage)', icon:'<circle cx="16" cy="20" r="7" fill="none" stroke="#fff" stroke-width="2.6"/><circle cx="28" cy="20" r="7" fill="none" stroke="#fff" stroke-width="2.6"/>' },
+  confidence: { color:'var(--gold)', icon:'<path d="M22 10 l3.5 8 8.5 .8 -6.4 5.8 1.9 8.4 -7.5 -4.5 -7.5 4.5 1.9 -8.4 -6.4 -5.8 8.5 -.8 Z" fill="#fff"/>' },
+  emotion: { color:'var(--sky)', icon:'<path d="M12 24 q5 -8 10 0 q5 -8 10 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>' },
+  selflove: { color:'var(--plum)', icon:'<path d="M22 32 C10 24 10 14 17 12 c3 -1 5 1 5 4 c0 -3 2 -5 5 -4 c7 2 7 12 -5 20 Z" fill="#fff"/>' },
+  growth: { color:'var(--sage)', icon:'<path d="M13 30 L20 18 L26 24 L31 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 12 h5 v5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' },
+  respect: { color:'var(--coral)', icon:'<path d="M14 18 a8 6 0 0 1 16 0 v4 a8 6 0 0 1 -16 0 Z" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M22 24 v6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' },
+  empathy: { color:'var(--plum)', icon:'<path d="M11 22 C11 22 16 30 22 30 C28 30 33 22 33 22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="15" cy="17" r="3" fill="#fff"/><circle cx="29" cy="17" r="3" fill="#fff"/>' },
+  gratitude: { color:'var(--gold)', icon:'<circle cx="22" cy="22" r="8" fill="#fff"/><path d="M22 6 v4 M22 34 v4 M6 22 h4 M34 22 h4 M11 11 l3 3 M33 11 l-3 3 M11 33 l3 -3 M33 33 l-3 -3" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' },
+  courage: { color:'var(--coral)', icon:'<path d="M22 8 L33 13 V22 C33 30 28 34 22 36 C16 34 11 30 11 22 V13 Z" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>' },
+  patience: { color:'var(--sky)', icon:'<circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M22 15 v7 l5 3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none"/>' },
+  teamwork: { color:'var(--sage)', icon:'<rect x="10" y="16" width="10" height="10" rx="2" fill="#fff"/><rect x="24" y="16" width="10" height="10" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/>' },
+  disappointment: { color:'var(--plum)', icon:'<path d="M10 24 a12 12 0 0 1 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M14 24 v6 M22 24 v8 M30 24 v6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' },
+  integrity: { color:'var(--gold)', icon:'<line x1="14" y1="34" x2="14" y2="10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M14 12 h16 l-4 5 4 5 h-16" fill="#fff"/>' },
+  responsibility: { color:'var(--sage)', icon:'<rect x="10" y="10" width="24" height="24" rx="3" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 22 l5 5 l9 -11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' },
+  generosity: { color:'var(--coral)', icon:'<rect x="11" y="19" width="22" height="15" rx="1.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M11 19 h22 M22 19 v15" stroke="#fff" stroke-width="2.2"/><path d="M22 19 c-6 0 -8 -8 -3 -8 c3 0 3 4 3 8 Z M22 19 c6 0 8 -8 3 -8 c-3 0 -3 4 -3 8 Z" fill="#fff"/>' },
+  fairness: { color:'var(--sky)', icon:'<line x1="22" y1="8" x2="22" y2="32" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M10 14 h24" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><path d="M6 14 L14 14 L10 24 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M30 14 L38 14 L34 24 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M16 34 h12" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' }
+};
+const BADGE_NAMES = {
+  motivation:'Best-Try Badge', confidence:'Brave Heart Badge', honesty:'Honest Heart Badge', social:'Friendship Badge',
+  emotion:'Calm Mind Badge', selflove:'Gentle Heart Badge', growth:'Growing Mind Badge', respect:'Good Listener Badge',
+  empathy:'Warm Heart Badge', gratitude:'Grateful Heart Badge', courage:'Brave Explorer Badge', patience:'Patient Heart Badge',
+  teamwork:'Team Spirit Badge', disappointment:'Steady Heart Badge', integrity:'Courage Compass Badge',
+  responsibility:'Reliable Heart Badge', generosity:'Giving Heart Badge', fairness:'Fair Play Badge'
+};
+const TIER_NAMES = ['','Bronze','Silver','Gold'];
+
+// ================= STORY LIBRARY =================
+// Each story: id, title, theme (maps to BADGE_ICONS), badgeName, pages[{text, chars:[{name,anim}], caption}],
+// reflection: {question, options:[{text,correct}], explain}
+const STORY_LIBRARY = [
+  {
+    id:'try_your_best', batch:1, title:'Trying Your Best', theme:'motivation', badgeName:'Best-Try Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-roll'},{name:'pip',anim:'sc-loop-fly'}], text:"THUMP! Finn tumbled through his forward roll and landed in a heap of leaves. Whoosh-FLOP! Pip's loop-the-loop turned into a wobbly nosedive into the grass. It was their sixth try of the morning, and neither had gotten it quite right."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'},{name:'pip',anim:'sc-flop',expr:'sad'}], text:"\u201cI'll never get this,\u201d Finn groaned, picking twigs out of his fur. Pip, upside-down and tangled in a fern, sighed. \u201cMe neither. My loop just turns into a flop every single time.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"A soft \u201cHoo-hoo\u201d drifted down from the big oak. Ollie glided in and landed between them, feathers barely rustling. \u201cSix tries,\u201d he said, tilting his head thoughtfully. \u201cDo you know how many tries that is braver than not trying at all? The best part of trying your best isn't landing it perfectly \u2014 it's that you keep showing up, wobbles and all.\u201d"},
+      {chars:[{name:'finn',anim:'sc-roll'},{name:'pip',anim:'sc-loop-fly'}], text:"Finn and Pip looked at each other and grinned. Up they got \u2014 try number seven! This time, his paws hit the ground steadier, and her loop swooped a little rounder. Still not perfect. But good enough to try again... and maybe even have fun doing it."}
+    ],
+    tapActions:{ finn:['sc-roll','sc-cheer-bounce'], pip:['sc-loop-fly','sc-flop'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie say mattered most about trying your best?",
+      options:[
+        {text:"Getting it perfect on the very first try", correct:false},
+        {text:"Keeping showing up and trying, even when it's hard", correct:true}
+      ],
+      explain:"Trying your best isn't about instant perfection \u2014 it's about the courage to keep going, even when things feel wobbly."
+    },
+    quips:{
+      finn:["My tail is STILL full of leaves.", "Try number eight, here I come!", "Ollie makes it look so easy."],
+      pip:["I think I found a new way to fly \u2014 sideways!", "Whoosh-FLOP is my signature move now.", "Practice makes... a little less wobbly?"],
+      ollie:["Hoo-hoo, keep at it, little ones.", "I fell out of my nest forty-two times before I learned to fly.", "Every wobble is practice in disguise."]
+    }
+  },
+  {
+    id:'believe_in_you', batch:1, title:'Believing in Yourself', theme:'confidence', badgeName:'Brave Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Tomorrow, Finn had to cross the wobbly log bridge over Rushing Creek for the very first time \u2014 the one that creaked and swayed above the rushing water. Tonight, his stomach felt full of butterflies. \u201cWhat if I fall in?\u201d he whispered to the dark."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"A soft flutter, and Pip landed on the branch beside him, looking just as wobbly. \u201cI'm nervous too,\u201d she admitted, feathers puffed up small. \u201cTomorrow I have to sing my very first solo at the treetop concert, in front of EVERYONE. What if my voice {{squeaks||makes a high, funny sound by accident}} right in the middle?\u201d"},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie swooped down silently and landed between them, his big amber eyes glowing in the moonlight. \u201cDo you two remember your first swim in Pond Hollow?\u201d he asked. \u201cYou were both SO nervous, you almost didn't get in the water.\u201d Finn and Pip nodded slowly. \u201cBut you did it anyway,\u201d Ollie said. \u201cThat same bravery is still tucked inside both of you tonight.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cross-wobble'},{name:'pip',anim:'sc-loop-fly'}], text:"The next day, Finn's paws still {{trembled||shook a little, usually from fear or nerves}} a little as he crossed the swaying log \u2014 creak, creak, CREAK \u2014 but he made it all the way to the other side. Pip's voice still wobbled \u2014 but she sang her whole solo, clear and bright. Neither of them had needed to feel fearless. They'd just needed to believe they could do it, scared."}
+    ],
+    tapActions:{ finn:['sc-cross-wobble','sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What helped Finn and Pip feel brave enough to try?",
+      options:[
+        {text:"Remembering a time they were scared before, but did it anyway", correct:true},
+        {text:"Waiting until they felt zero nervousness at all", correct:false}
+      ],
+      explain:"Believing in yourself doesn't mean never feeling scared \u2014 it means trusting that you can do hard things even while feeling nervous, just like you have before."
+    },
+    quips:{
+      finn:["That bridge creaks SO loudly.", "I made it across without looking down. Mostly.", "Rushing Creek sounds even louder up close!"],
+      pip:["Do you think my voice actually squeaked?", "Singing in front of everyone is scarier than flying in a storm.", "I practiced my solo forty times today."],
+      ollie:["Courage doesn't roar. Sometimes it just whispers 'try anyway.'", "I remember when I was afraid of the dark \u2014 now I fly in it every night.", "You were both wonderful, wobbles and all."]
+    }
+  },
+  {
+    id:'telling_truth', batch:1, title:'Telling the Truth', theme:'honesty', badgeName:'Honest Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-shake-off',expr:'surprised'},{name:'pip',anim:'sc-shake-off',expr:'surprised'}], text:"CRASH! Finn and Pip were playing chase near Ollie's prized berry bush \u2014 the one he'd been growing for weeks \u2014 when Finn's swishing tail knocked it clean over. Berries rolled everywhere, bouncing off rocks and disappearing into the grass. They both froze."},
+      {chars:[{name:'pip',anim:'sc-sway',expr:'worried'}], text:"\u201cWe could just... pick them all up and never mention it,\u201d Pip whispered, already gathering berries with her beak. Finn chewed his lip. Part of him liked that idea a LOT."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"But he remembered how heavy secrets always seemed to feel after a while, sitting in his stomach like a stone. \u201cI don't think hiding it would feel very good,\u201d he said slowly. Pip stopped mid-peck and sighed. \u201cYeah... me neither.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'ollie',anim:'sc-pan-in'},{name:'pip',anim:'sc-cheer-bounce'}], text:"Together, they found Ollie {{preening||smoothing and cleaning his feathers with his beak}} on his branch. \u201cWe knocked over your berry bush playing chase. We're really sorry,\u201d Finn said, with Pip nodding beside him. Ollie looked at the scattered berries for a long moment \u2014 then his beak curved into a warm smile. \u201cThank you both for telling me,\u201d he said. \u201cThat took courage.\u201d They both felt lighter than they expected, like a stone had rolled right off their chests."}
+    ],
+    tapActions:{ finn:['sc-shake-off','sc-cheer-bounce'], pip:['sc-shake-off','sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"Why did Finn and Pip feel lighter after telling the truth?",
+      options:[
+        {text:"Because hiding it would have felt heavier the longer they carried it", correct:true},
+        {text:"Because the berries magically went back on the bush", correct:false}
+      ],
+      explain:"Telling the truth can feel scary in the moment, but carrying a secret around usually feels heavier over time. Honesty lets you set that weight down."
+    },
+    quips:{
+      finn:["My tail has caused SO much trouble today.", "Berries everywhere! Should we make a pie?", "I feel lighter already, like a cloud."],
+      pip:["I ate approximately twelve berries during clean-up. Oops.", "Secrets are heavier than they look.", "Ollie wasn't even that mad!"],
+      ollie:["Mistakes happen. Honesty is what matters after.", "I've grown three more bushes since \u2014 there's always more berries.", "Telling the truth is a kind of bravery too."]
+    }
+  },
+  {
+    id:'new_friend', batch:1, title:'Making a New Friend', theme:'social', badgeName:'Friendship Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Near the old oak tree, laughter and games echoed through the clearing \u2014 but off to the side, Finn and Pip spotted a rabbit they'd never seen before, sitting alone at the edge, ears drooping. He looked like he wanted to join in but didn't know how."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'},{name:'pip',anim:'sc-fade',expr:'worried'}], text:"They both felt a little shy themselves, if they were honest. What if they said hi and it was awkward? What if he didn't want to play? They hovered by a bush, hearts thumping."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"\u201cMaybe if we go together, it won't feel as scary,\u201d Finn said. Pip puffed up bravely, feathers fluffing out twice their size. \u201cGood idea. I'll do the talking if you get nervous.\u201d"},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-loop-fly'},{name:'harold',anim:'sc-pop-up'}], text:"They marched over together. \u201cHi, I'm Finn, and this chatty bird is Pip. Want to play?\u201d The rabbit's whole face lit up like a sunrise. \u201cI'm Harold! Yes, PLEASE!\u201d By the end of the afternoon, they were racing through the clearing together, laughing so hard Harold nearly tripped over his own ears \u2014 all because two nervous friends took one small, brave step side by side."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-loop-fly'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What helped Finn and Pip make a new friend?",
+      options:[
+        {text:"They took the first small step together, side by side", correct:true},
+        {text:"They waited for the new rabbit to come to them", correct:false}
+      ],
+      explain:"New friendships often start with one small, brave step \u2014 and it can feel easier to take that step with someone by your side."
+    },
+    quips:{
+      finn:["Harold's ears are even longer up close!", "I almost chickened out, ribbit-truth be told.", "New friends are the best kind of surprise."],
+      pip:["I did ALL the talking, just like I promised.", "Harold laughs at all my best jokes.", "Making friends is easier with backup."],
+      harold:["I'd been watching that game for THREE days.", "Nobody had said hi to me until today.", "This is the best clearing in the whole forest now."]
+    }
+  },
+  {
+    id:'feel_angry', batch:1, title:'When You Feel Angry', theme:'emotion', badgeName:'Calm Mind Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-shake-off',expr:'frustrated'}], text:"Finn had built the tallest twig tower EVER \u2014 five whole levels, topped with a perfect acorn cap \u2014 until a sudden gust of wind sent it toppling with a clatter. A hot flash of anger shot through him like a spark. He wanted to growl and kick the whole pile apart."},
+      {chars:[{name:'pip',anim:'sc-flop',expr:'frustrated'}], text:"Right at that exact moment, Pip's favorite perch wobbled and she tumbled off with a squawk, feathers ruffled and cranky. \u201cThat branch is SO annoying!\u201d she snapped, wanting to peck at it out of pure frustration."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie noticed both their scowls from his tree and glided down between them, calm as still water. \u201cIt's okay to feel angry,\u201d he said. \u201cWhat matters most is what we do with that feeling. Try this \u2014 three slow breaths before you say or do anything at all.\u201d"},
+      {chars:[{name:'finn',anim:'sc-breathe'},{name:'pip',anim:'sc-breathe'}], text:"Finn and Pip both breathed in... and out... and in again. The hot feeling cooled, just a little, like a fire settling into {{embers||the glowing, cooling pieces left after a fire's flames die down}}. Instead of growling, Finn rebuilt his tower a bit sturdier this time, and Pip just shook out her feathers and let it go. They felt calmer than before \u2014 and Finn's SIXTH tower turned out to be his best one yet."}
+    ],
+    tapActions:{ finn:['sc-shake-off','sc-breathe'], pip:['sc-flop','sc-breathe'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Finn and Pip do with their anger instead of lashing out?",
+      options:[
+        {text:"They took slow breaths to calm down first", correct:true},
+        {text:"They pretended they weren't angry at all", correct:false}
+      ],
+      explain:"Feeling angry is normal \u2014 pausing to breathe before reacting helps you respond calmly instead of exploding."
+    },
+    quips:{
+      finn:["My new tower has SIX levels now!", "Breathing really does help, who knew?", "That wind has a lot to answer for."],
+      pip:["My perch and I have made peace.", "Three breaths, every time \u2014 I'm counting.", "I felt like a tiny thundercloud for a minute there."],
+      ollie:["Anger is just a feeling passing through, like weather.", "I've learned to count my feathers when I'm frustrated. All 3,000 of them.", "Calm isn't the absence of feeling \u2014 it's what comes after you breathe."]
+    }
+  },
+  {
+    id:'kind_to_self', batch:1, title:'Being Kind to Yourself', theme:'selflove', badgeName:'Gentle Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-flop',expr:'sad'}], text:"During the treetop concert rehearsal, Finn tripped over his own paws in the dance \u2014 AGAIN, for the fourth time that hour. \u201cI'm so clumsy,\u201d he muttered under his breath, feeling his cheeks burn hot with {{embarrassment||a shy, awkward feeling you get when you make a mistake in front of others}}."},
+      {chars:[{name:'pip',anim:'sc-flop',expr:'sad'}], text:"Nearby, Pip had just flubbed her singing cue, coming in a whole beat too early. \u201cUgh, I ALWAYS mess this up,\u201d she grumbled, tucking her head under her wing so nobody could see her face."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Finn peeked over at her. \u201cWould you ever call ME 'so clumsy' if I tripped?\u201d Pip blinked, surprised by the question. \u201cOf course not! You're my best friend.\u201d \u201cThen why do we talk to ourselves that way?\u201d Finn wondered aloud, and neither of them had a good answer."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"They made a promise right there: next time either of them stumbled, they'd say, \u201cThat's okay, I'll get it next time,\u201d just like they'd say to each other. Their shoulders relaxed \u2014 and on the very next try, Finn's paws landed steady, and Pip's cue came in perfectly on beat."}
+    ],
+    tapActions:{ finn:['sc-flop','sc-cheer-bounce'], pip:['sc-flop','sc-loop-fly'] },
+    reflection:{
+      question:"What did Finn and Pip realize about how they talked to themselves?",
+      options:[
+        {text:"They were much harsher with themselves than they'd ever be with a friend", correct:true},
+        {text:"They should never make any mistakes at all", correct:false}
+      ],
+      explain:"Being kind to yourself means talking to yourself the same gentle way you'd talk to someone you love."
+    },
+    quips:{
+      finn:["I'm trying out being nicer to myself. It's weirdly hard.", "My paws and the ground have a complicated relationship.", "Best friends don't call each other clumsy."],
+      pip:["I came in early because I was SO excited to sing.", "Kindness starts with the voice in your own head.", "Next time, I'll get it. I really believe that now."],
+      ollie:["The way you speak to yourself becomes the way you believe about yourself.", "Even old owls trip on branches sometimes.", "Gentleness is a kind of strength, little ones."]
+    }
+  },
+  {
+    id:'ok_mistakes', batch:1, title:"It's Okay to Make Mistakes", theme:'growth', badgeName:'Growing Mind Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-shake-off',expr:'surprised'}], text:"Finn was painting a careful blue sky on a big leaf for the forest art fair when his paw slipped \u2014 SPLAT \u2014 smearing a big dark blob right across the middle of his masterpiece."},
+      {chars:[{name:'pip',anim:'sc-flop',expr:'surprised'}], text:"Trying to help, Pip hopped onto the leaf to steady it and knocked over the whole cup of berry-juice paint, making an even BIGGER splotch spread across the leaf. \u201cOh no, I made it worse!\u201d she squawked, hopping back in horror."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'},{name:'pip',anim:'sc-fade',expr:'sad'}], text:"They both stared at the smudgy purple-blue mess, ready to just crumple the whole leaf and toss it into the creek."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'},{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'}], text:"Ollie leaned over and studied the smudges with one tilted eye. \u201cWhat if those became storm clouds?\u201d he asked. Finn and Pip looked again \u2014 and with a few more careful strokes, the mess transformed into a dramatic sky full of {{billowing||puffed up and rolling, like waves of fabric or smoke}} storm clouds, way more interesting than a plain blue sky ever could have been. Their painting won a ribbon at the fair \u2014 all thanks to a mistake they'd almost given up on."}
+    ],
+    tapActions:{ finn:['sc-shake-off','sc-cheer-bounce'], pip:['sc-flop','sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Finn and Pip learn from their painting mistake?",
+      options:[
+        {text:"Mistakes can sometimes turn into something new and good", correct:true},
+        {text:"They should never try painting again", correct:false}
+      ],
+      explain:"Mistakes are a normal part of learning and creating \u2014 sometimes they even lead somewhere better than the original plan."
+    },
+    quips:{
+      finn:["Storm clouds are way cooler than plain blue sky anyway.", "My paw has a mind of its own sometimes.", "We should call this painting style 'happy accidents.'"],
+      pip:["I still feel a little guilty about that paint cup.", "Who knew a mistake could win a RIBBON?", "Next time I'll steady leaves more carefully. Maybe."],
+      ollie:["The best ideas sometimes arrive wearing a mistake's disguise.", "I've seen many a smudge become a masterpiece.", "Art, like life, rarely goes exactly to plan \u2014 and that's alright."]
+    }
+  },
+  {
+    id:'listening', batch:1, title:'Listening to Others', theme:'respect', badgeName:'Good Listener Badge',
+    pages:[
+      {chars:[{name:'ollie',anim:'sc-swoop-in'},{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Ollie settled onto his branch and began telling a story about his own younger days \u2014 something about a great {{migration||when animals travel together to a new place, often as the seasons change}} and a narrow escape from a hawk \u2014 but Finn kept jumping in about his own day, and Pip kept squawking about HER day, and nobody was letting anybody finish a single sentence."},
+      {chars:[{name:'ollie',anim:'sc-bob'}], text:"Ollie finally paused and said, softly but firmly, \u201cI'd love to hear about both your days \u2014 but I was in the middle of telling mine.\u201d Finn and Pip looked at each other, suddenly realizing neither of them had let anyone finish, not even once, the whole evening."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'},{name:'pip',anim:'sc-fade',expr:'worried'}], text:"\u201cSorry, Ollie! Please, go on,\u201d Finn said, sitting up straight. Pip nodded and folded her wings neatly, trying her very best to just listen \u2014 no interrupting, no matter how exciting her own story felt."},
+      {chars:[{name:'ollie',anim:'sc-cheer-bounce'},{name:'finn',anim:'sc-rise'},{name:'pip',anim:'sc-rise'}], text:"Ollie's story turned out even more thrilling than they'd expected \u2014 wingtip-close escapes and clever tricks! And afterward, true to his word, he listened carefully to both of their days too, asking questions and nodding along. Finn and Pip realized that listening is a gift you give someone, one worth giving fully."}
+    ],
+    tapActions:{ ollie:['sc-swoop-in','sc-cheer-bounce'], finn:['sc-march'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"What did Finn and Pip learn about listening?",
+      options:[
+        {text:"Really listening means letting someone finish before talking about yourself", correct:true},
+        {text:"Listening to others isn't very important", correct:false}
+      ],
+      explain:"Truly listening \u2014 without rushing to talk about yourself \u2014 shows someone real respect."
+    },
+    quips:{
+      finn:["Ollie's hawk story gave me actual chills.", "I talked so much tonight, my throat is tired.", "Turns out listening is its own kind of fun."],
+      pip:["I almost interrupted like four more times. Almost!", "Ollie's story was better than anything I could have said anyway.", "Good listening takes real practice."],
+      ollie:["A story shared and truly heard is worth ten stories rushed through.", "I do love a good dramatic pause, if you'll let me finish.", "Listening is the quietest way of saying 'you matter.'"]
+    }
+  },
+  {
+    id:'sharing_caring', batch:1, title:'Sharing and Caring', theme:'empathy', badgeName:'Warm Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'},{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Near the berry patch, where everyone else was laughing and racing about, Finn and Pip both noticed a hedgehog curled up small and alone at the edge of the clearing, half-hidden behind a fern."},
+      {chars:[{name:'brambles',anim:'sc-curl-up'}], text:"They almost went back to their game of tag \u2014 but something made them both pause and glance back at her, sitting there all by herself."},
+      {chars:[{name:'pip',anim:'sc-sway',expr:'worried'}], text:"\u201cShould we go say hi?\u201d Pip whispered. Finn nodded, and they walked over together, careful of her spikes, moving slow and gentle."},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-loop-fly'},{name:'brambles',anim:'sc-pop-up'}], text:"\u201cWant to play with us?\u201d Finn asked. The hedgehog looked up, {{startled||suddenly surprised, like a little jump of surprise}} and then surprised \u2014 and then she smiled, small and shy. \u201cI'm Brambles. I'd... I'd really love that.\u201d They ended up playing together all afternoon, and by sunset, Brambles was laughing louder than anyone. Finn and Pip both realized how good it feels to help someone feel a little less alone."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-loop-fly'], brambles:['sc-curl-up','sc-cheer-bounce'] },
+    reflection:{
+      question:"What made Finn and Pip's day better?",
+      options:[
+        {text:"Choosing to include someone who felt left out", correct:true},
+        {text:"Only playing with animals they already knew", correct:false}
+      ],
+      explain:"Noticing when someone feels left out, and choosing to include them, is a simple way to show empathy."
+    },
+    quips:{
+      finn:["Brambles is REALLY fast for someone so small.", "I almost got poked twice, but it was worth it.", "Turns out a fern is a great hiding spot for hedgehogs."],
+      pip:["Brambles has the best laugh once she gets going.", "I'm so glad we turned around and said hi.", "Everyone deserves a 'want to play with us?'"],
+      brambles:["Nobody had asked me to play in a whole week.", "I thought my spikes would scare everyone off forever.", "Today might be my favorite day so far."]
+    }
+  },
+  {
+    id:'saying_thanks', batch:1, title:'Saying Thank You', theme:'gratitude', badgeName:'Grateful Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'},{name:'pip',anim:'sc-fade',expr:'frustrated'}], text:"Finn woke up on the wrong side of his den, grumbling about all the things he didn't have. Pip was grumpy too \u2014 her favorite seed mix was ALL gone, not even a crumb left. They both moped around, kicking pebbles."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie, perched nearby, suggested a little game: name three things, big or small, that they were glad to have today. Finn and Pip frowned deeply. Surely there was nothing good about today at all."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"But slowly, {{reluctantly||doing something a little unwillingly, without really wanting to}}, the answers came: a cozy, warm den. A sunny patch of grass, perfect for napping. Each other's silly jokes, the kind that always made them snort-laugh. Bit by bit, their grumpiness started melting away like morning frost."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'},{name:'ollie',anim:'sc-bob'}], text:"That evening, they both told Ollie thank you for the little game. His whole face lit up with a warm, wise smile. Finn and Pip noticed something surprising: noticing the good things had made the whole grumpy day feel warmer, brighter, better."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What happened when Finn and Pip started noticing things they were thankful for?",
+      options:[
+        {text:"Their grumpy mood started to lift", correct:true},
+        {text:"Nothing changed for them at all", correct:false}
+      ],
+      explain:"Practicing gratitude \u2014 noticing what's good, even small things \u2014 can genuinely shift how a whole day feels."
+    },
+    quips:{
+      finn:["Turns out my den is pretty cozy, now that I think about it.", "I'm grateful for naps. Very grateful.", "Grumpy Finn didn't last very long today."],
+      pip:["I found MORE seeds, actually. I just hadn't looked.", "Three good things turned into ten good things real quick.", "Gratitude is sneaky \u2014 it creeps up on you."],
+      ollie:["A grumpy morning doesn't have to mean a grumpy day.", "I'm grateful for young friends who humor an old owl's games.", "Noticing good things is a habit worth building."]
+    }
+  },
+  {
+    id:'being_brave', batch:2, title:'Being Brave', theme:'courage', badgeName:'Brave Explorer Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"At the edge of Tumbling Falls, Finn stood on the highest rock ledge he'd ever dared to climb, the roar of rushing water filling his ears. His legs felt like jelly looking all the way down at the deep pool below."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Above him, Pip was perched on the tallest branch she'd ever tried flying from, wings trembling like leaves in the wind. \u201cThis is REALLY high,\u201d she squeaked, peering down at the treetops far below."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"\u201cBeing brave doesn't mean not being scared,\u201d Finn called up to her, remembering what Ollie once said. \u201cIt means jumping anyway.\u201d \u201cYou first, or me first?\u201d Pip asked, voice wobbling. \u201cTogether,\u201d Finn said firmly, planting his paws."},
+      {chars:[{name:'finn',anim:'sc-jump-splash'},{name:'pip',anim:'sc-loop-fly'}], text:"On the count of three \u2014 one, two, THREE \u2014 Finn leapt and Pip swooped, both at the very same heartbeat. SPLASH! WHOOSH! The cold water and rushing air felt amazing, {{exhilarating||so exciting and thrilling that it makes your heart race}}, alive \u2014 and they came up grinning ear to ear, proud that neither of them had let the fear win."}
+    ],
+    tapActions:{ finn:['sc-jump-splash','sc-cheer-bounce'], pip:['sc-jump-splash','sc-loop-fly'] },
+    reflection:{
+      question:"What does being brave really mean?",
+      options:[
+        {text:"Doing something even though you're scared", correct:true},
+        {text:"Never feeling scared in the first place", correct:false}
+      ],
+      explain:"Courage isn't the absence of fear \u2014 it's moving forward even when you feel scared."
+    },
+    quips:{
+      finn:[{t:"That water was COLDER than I expected!",e:'surprised'}, {t:"My legs are still a little jelly-ish.",e:'worried'}, {t:"Best jump of my whole life, honestly.",e:'happy'}],
+      pip:[{t:"I've never swooped that fast before!",e:'surprised'}, {t:"Tumbling Falls sounds ten times louder up close.",e:'surprised'}, {t:"Courage tastes a little bit like cold water, I think.",e:'happy'}],
+      ollie:[{t:"I've watched a hundred young ones make that very jump.",e:'happy'}, {t:"Fear and bravery are old friends \u2014 they usually show up together.",e:'happy'}, {t:"Well leapt, little ones. Well leapt indeed.",e:'happy'}]
+    }
+  },
+  {
+    id:'waiting_turn', batch:2, title:'Waiting Your Turn', theme:'patience', badgeName:'Patient Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'}], text:"At the watering hole, Finn really wanted a drink after his long romp through the meadow \u2014 but a whole family of ducks was splashing about right in his favorite spot. He felt like just pushing his way in, thirst and all."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'frustrated'}], text:"Nearby, Pip was hopping impatiently from foot to foot, waiting for her turn at the best berry branch, where a fat squirrel was STILL nibbling away, seemingly in no hurry at all."},
+      {chars:[{name:'tessie',anim:'sc-waddle'}], text:"Tessie the tortoise {{ambled||walked slowly and calmly, without any hurry}} by, unhurried as ever. \u201cEveryone gets a turn if we wait for it,\u201d she said with a calm, easy smile. \u201cI've never once needed to rush \u2014 and I've gotten everywhere I've ever wanted to go.\u201d Finn and Pip sighed but decided to wait nearby instead."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'},{name:'tessie',anim:'sc-bob'}], text:"While they waited, Tessie showed them a tiny, spotted ladybug crawling along a leaf, and the three of them watched it together, fascinated. The wait didn't feel nearly as long as they'd expected \u2014 and when their turns finally came, the cool water and sweet berries both tasted even better, earned patiently."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], tessie:['sc-waddle'] },
+    reflection:{
+      question:"What helped Finn and Pip while they waited for their turn?",
+      options:[
+        {text:"Finding something else interesting to notice while waiting", correct:true},
+        {text:"Pushing their way in to get what they wanted", correct:false}
+      ],
+      explain:"Patience gets easier when you find something else to focus on while you wait \u2014 the time passes more easily than it seems it will."
+    },
+    quips:{
+      finn:[{t:"That water tasted extra sweet after waiting.",e:'happy'}, {t:"Ladybugs are more interesting than I gave them credit for.",e:'surprised'}, {t:"Tessie is never in a hurry about anything.",e:'happy'}],
+      pip:[{t:"The squirrel finally left. FINALLY.",e:'happy'}, {t:"Waiting isn't so bad with good company.",e:'happy'}, {t:"I counted the ladybug's spots. There were seven.",e:'happy'}],
+      tessie:[{t:"Slow and steady really does get you there.",e:'happy'}, {t:"I've waited for bigger things than a berry branch, believe me.",e:'happy'}, {t:"Patience tastes like a nice, juicy leaf, if you ask me.",e:'happy'}]
+    }
+  },
+  {
+    id:'working_together', batch:2, title:'Working Together', theme:'teamwork', badgeName:'Team Spirit Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-shake-off',expr:'frustrated'},{name:'pip',anim:'sc-flop',expr:'frustrated'}], text:"Finn and Pip were building a den out of sticks and leaves for the whole afternoon, but they kept arguing about how it should look \u2014 Finn wanted winding tunnels, Pip wanted a high lookout perch \u2014 and every time, the whole thing collapsed with a rustling THUD."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'}], text:"Frustrated and covered in twigs, Finn almost said he'd just build his own den by himself, thank you very much."},
+      {chars:[{name:'pip',anim:'sc-sway'}], text:"\u201cWait,\u201d Pip said suddenly, an idea sparking. \u201cWhat if I build the roof part with a lookout perch, and you build the tunnels below? Then we put them together at the end.\u201d"},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-cheer-bounce'}], text:"They tried it \u2014 and the den turned out bigger, {{sturdier||stronger and more solid, less likely to fall apart}}, and cooler than either of them could ever have built alone, with winding tunnels AND a perfect lookout perch on top. They both climbed up to admire it, feeling proud of what they'd built as a team."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-loop-fly','sc-cheer-bounce'] },
+    reflection:{
+      question:"What made the den turn out better in the end?",
+      options:[
+        {text:"Working together and combining their ideas", correct:true},
+        {text:"Each of them only caring about doing it their own way", correct:false}
+      ],
+      explain:"Teamwork often creates something better than either person could build completely alone."
+    },
+    quips:{
+      finn:[{t:"My tunnels turned out perfectly, if I say so myself.",e:'happy'}, {t:"Two ideas really are better than one.",e:'happy'}, {t:"This den might be the best thing we've ever built.",e:'happy'}],
+      pip:[{t:"Best lookout perch in the whole forest, no contest.",e:'happy'}, {t:"I love how it all fit together in the end.",e:'happy'}, {t:"Arguing about it almost wasn't worth it \u2014 almost.",e:'happy'}],
+      harold:[{t:"Can I come see the finished den? It sounds amazing.",e:'happy'}, {t:"You two build things I could never imagine on my own.",e:'happy'}]
+    }
+  },
+  {
+    id:'disappointment', batch:2, title:"When Things Don't Go Your Way", theme:'disappointment', badgeName:'Steady Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-droop',expr:'sad'}], text:"Finn had practiced for WEEKS to lead the forest parade this year \u2014 but when the day came, another animal got picked instead. He felt his eyes sting, and a lump rose in his throat."},
+      {chars:[{name:'pip',anim:'sc-droop',expr:'sad'}], text:"That same afternoon, Pip didn't win the treetop \u201cbest song\u201d contest she'd been rehearsing for all month. She sat alone on the fence, feathers drooping, wings folded tight."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie found them both and simply sat with them, listening to their disappointment without rushing to fix it or cheer them up too fast. \u201cIt's okay to feel sad about this,\u201d he said gently. \u201cAnd there might still be a good part in it for both of you, even now.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"On parade day, Finn cheered louder than anyone from the crowd and helped decorate the whole path with flowers. Pip sang along joyfully, {{harmonizing||singing notes that blend nicely together with someone else's song}} with the contest winner's song from the sidelines. They both discovered they could feel proud, even glad, even when things hadn't gone exactly as they'd hoped."}
+    ],
+    tapActions:{ finn:['sc-droop','sc-cheer-bounce'], pip:['sc-droop','sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie do first, when they were disappointed?",
+      options:[
+        {text:"Let them feel sad about it before looking for the good part", correct:true},
+        {text:"Told them not to feel sad about it at all", correct:false}
+      ],
+      explain:"It helps to let yourself really feel disappointment first \u2014 rushing past it doesn't make it go away any faster."
+    },
+    quips:{
+      finn:[{t:"Cheering from the crowd was more fun than I expected.",e:'happy'}, {t:"Maybe next year's parade will be mine.",e:'happy'}, {t:"The flowers I picked looked really nice, actually.",e:'happy'}],
+      pip:[{t:"Harmonizing felt almost as good as winning.",e:'happy'}, {t:"I still think my song was pretty great.",e:'happy'}, {t:"Being sad for a while is allowed, I've learned.",e:'sad'}],
+      ollie:[{t:"Disappointment visits everyone \u2014 even old owls.",e:'happy'}, {t:"Feelings need room to be felt before they can pass.",e:'happy'}, {t:"There's often a silver lining, if you give it time to show up.",e:'happy'}]
+    }
+  },
+  {
+    id:'standing_up', batch:2, title:'Standing Up for What\u2019s Right', theme:'integrity', badgeName:'Courage Compass Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'},{name:'pip',anim:'sc-fade',expr:'worried'}], text:"At the clearing, Finn and Pip saw a group of animals circling Brambles, laughing loudly and teasing her about her spikes. \u201cPointy and prickly, nobody wants to play with THAT!\u201d one of them {{jeered||said something mean or made fun of someone in an unkind way}}."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'},{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Finn's stomach twisted into a knot. Pip's feathers puffed up nervously. Neither of them wanted to get involved \u2014 those animals were popular, and speaking up felt like a very big, very scary thing to do."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"He remembered something Ollie once told him: \u201cBeing kind matters more than being popular.\u201d He looked at Pip, throat tight. \u201cWill you come with me?\u201d Pip nodded, wings trembling but ready, eyes fierce despite the fear."},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-march'},{name:'brambles',anim:'sc-bob'}], text:"Together they marched over. \u201cThat's not nice \u2014 leave her alone,\u201d Finn said, voice steadier than he felt, with Pip squawking loudly beside him for extra courage. The teasing stopped cold. Later, Brambles found them quietly and whispered, \u201cThank you.\u201d They realized that speaking up together, even when it was hard, had been exactly the right choice."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-march','sc-loop-fly'], brambles:['sc-cheer-bounce'] },
+    reflection:{
+      question:"Why was it hard for Finn and Pip to speak up?",
+      options:[
+        {text:"They worried it might upset animals they wanted to be friends with", correct:true},
+        {text:"They didn't care about the situation at all", correct:false}
+      ],
+      explain:"Standing up for someone can feel risky, especially when you're worried about what others might think \u2014 but doing what's right matters more, and it can help to do it together."
+    },
+    quips:{
+      finn:[{t:"My voice was shaking, but I said it anyway.",e:'worried'}, {t:"Brambles thanked us so quietly, it almost broke my heart.",e:'happy'}, {t:"Doing the right thing felt scary AND good at the same time.",e:'happy'}],
+      pip:[{t:"I squawked louder than I've ever squawked before.",e:'surprised'}, {t:"Those animals didn't tease anyone again, at least not near us.",e:'happy'}, {t:"Standing together made it feel possible.",e:'happy'}],
+      brambles:[{t:"Nobody had ever stood up for me like that before.",e:'happy'}, {t:"I'll remember this for a long, long time.",e:'happy'}, {t:"Having friends like Finn and Pip changes everything.",e:'happy'}]
+    }
+  },
+  {
+    id:'keep_going', batch:2, title:'Keep Going', theme:'motivation', badgeName:'Best-Try Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'}], text:"Finn had been practicing his whistle for a whole week. He puckered his lips and blew... and got nothing but a sad little hiss of air. Again. \u201cI'm never going to get this,\u201d he sighed, flopping onto the grass."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'sad'}], text:"Pip landed nearby, looking just as discouraged. \u201cI've been trying to learn the warbling call the older birds do. I practice every single day and it still sounds like a broken kazoo.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie settled beside them. \u201cDid you know a seed can spend weeks underground before a single green sprout ever shows?\u201d he asked. \u201cThe roots are growing the whole time \u2014 you just can't see it yet. Practice works the same way.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"They kept at it, day after day, not expecting much. Then one afternoon \u2014 out of nowhere \u2014 Finn's whistle came out clear and sharp, and Pip's warble rang out just right. All that invisible practice had been working the whole time."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie's seed example teach Finn and Pip?",
+      options:[
+        {text:"Progress can be happening even when you can't see it yet", correct:true},
+        {text:"If you can't see progress right away, you should quit", correct:false}
+      ],
+      explain:"Like a seed's roots growing underground before any sprout appears, practice often builds skill quietly before it suddenly shows."
+    }
+  },
+  {
+    id:'talent_show', batch:2, title:'The Talent Show', theme:'confidence', badgeName:'Brave Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Finn was excited to show off his juggling-acorns trick at the forest talent show \u2014 until he watched a squirrel do a dazzling flip-and-spin routine right before him. Suddenly his three little acorns felt pretty boring."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Backstage, Pip was having the same thought, listening to a nightingale's voice soar through the trees. \u201cMy song is going to sound so plain next to that,\u201d she whispered, wings drooping."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie found them both looking pale with worry. \u201cThis isn't a contest to see who's the best,\u201d he said gently. \u201cIt's a chance to share what makes YOU, you. Nobody else can do it your way.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"Finn juggled his three acorns with a big, proud grin, and Pip sang her own simple, cheerful little tune. The applause was warm and real \u2014 turns out being genuinely themselves was more than enough all along."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie remind Finn and Pip about the talent show?",
+      options:[
+        {text:"It's a chance to share what makes you unique, not a contest to be the best", correct:true},
+        {text:"Only the most impressive act matters", correct:false}
+      ],
+      explain:"Confidence often comes from being authentically yourself, not from being better than everyone else."
+    }
+  },
+  {
+    id:'found_not_kept', batch:2, title:'Found and Not Kept', theme:'honesty', badgeName:'Honest Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"On his way through the meadow, Finn spotted something shiny half-buried in the leaves \u2014 a smooth, sparkly blue marble, the prettiest thing he'd ever seen. Nobody was around. He could just... keep it."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip fluttered down and landed beside him, eyeing the marble too. \u201cFinders keepers?\u201d she said uncertainly, watching Finn turn it over in his paws."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Finn remembered the time HIS favorite pinecone went missing, and how much he'd wished whoever found it would try to return it. \u201cI don't think I'd feel good keeping this,\u201d he said slowly. \u201cLet's find out whose it is.\u201d"},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-loop-fly'},{name:'harold',anim:'sc-pop-up'}], text:"They asked around the meadow, and it turned out to belong to Harold, who'd lost it days ago and had nearly given up hope. \u201cYou found it!\u201d he cried, hugging the marble close. Finn felt something warmer than keeping it ever could have felt \u2014 proud that he'd done the honest thing."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-loop-fly'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What helped Finn decide to return the marble instead of keeping it?",
+      options:[
+        {text:"Remembering how it felt when something of his own went missing", correct:true},
+        {text:"Being told he'd get in trouble if he kept it", correct:false}
+      ],
+      explain:"Thinking about how someone else might feel \u2014 the way Finn remembered his own lost pinecone \u2014 can guide us toward doing the honest thing."
+    }
+  },
+  {
+    id:'lunch_table', batch:2, title:'The Lunch Table', theme:'social', badgeName:'Friendship Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Finn and Pip always shared acorns with the same two friends at their favorite log. It wasn't on purpose, but their little circle had gotten pretty snug \u2014 just the right size for four, and not one seed more."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip noticed Brambles hovering nearby, glancing at their group and then looking away, unsure if there was room. \u201cI don't think we're trying to leave anyone out,\u201d Pip said slowly, \u201cbut I bet it looks that way from over there.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cLet's scoot over,\u201d Finn said, sliding down the log to make an actual gap. \u201cHey, Brambles! Plenty of room over here.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'},{name:'brambles',anim:'sc-cheer-bounce'}], text:"Brambles's whole face brightened as she scooted in next to them. The circle wasn't smaller for making room \u2014 it was better, filled with one more voice, one more laugh. A little scooting over had made all the difference."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce','sc-march'], pip:['sc-loop-fly'], brambles:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What did Finn and Pip realize about their lunch circle?",
+      options:[
+        {text:"Making room for someone new made the group better, not worse", correct:true},
+        {text:"Groups should always stay exactly the same size", correct:false}
+      ],
+      explain:"A little effort to include someone \u2014 even just physically making room \u2014 can turn a closed circle into a warmer one."
+    }
+  },
+  {
+    id:'too_loud_inside', batch:2, title:'Too Loud Inside', theme:'emotion', badgeName:'Calm Mind Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"The morning of the big forest festival, Finn's stomach felt like it was full of buzzing bees. He was excited, and nervous, and worried, and thrilled, all mixed together into one big jumbled feeling. \u201cIt's too loud inside my head,\u201d he groaned."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip felt it too, fluttering in place before her first big flock flight. \u201cMy feelings are all tangled up together and I can't tell which one is which,\u201d she admitted."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie taught them a trick: instead of one giant jumbled feeling, try naming each one separately. \u201cI feel excited. I feel nervous. I feel a little scared. I feel hopeful.\u201d Saying them one at a time, he explained, makes each one smaller and easier to hold."},
+      {chars:[{name:'finn',anim:'sc-breathe'},{name:'pip',anim:'sc-breathe'}], text:"Finn and Pip tried it, naming their feelings one by one. Slowly, the noisy jumble inside quieted down into something they could actually manage \u2014 and they both stepped out to enjoy the festival, feelings and all."}
+    ],
+    tapActions:{ finn:['sc-breathe'], pip:['sc-breathe'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What trick did Ollie teach Finn and Pip for their jumbled-up feelings?",
+      options:[
+        {text:"Naming each feeling separately, one at a time", correct:true},
+        {text:"Ignoring all the feelings until they went away", correct:false}
+      ],
+      explain:"Naming feelings one at a time \u2014 instead of leaving them as one big overwhelming jumble \u2014 can make big emotions feel more manageable."
+    }
+  },
+  {
+    id:'mirror_talk', batch:3, title:'The Mirror Talk', theme:'selflove', badgeName:'Gentle Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'}], text:"Finn caught his reflection in the still pond and frowned. \u201cMy ears are too big,\u201d he muttered, \u201cand my tail is all lopsided.\u201d He'd never really noticed before \u2014 until he saw the other foxes at the meadow gathering, all looking so sleek and perfect."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'sad'}], text:"Pip landed beside him and peered into the water too. \u201cI think my belly's too round,\u201d she said quietly. \u201cThe other bluebirds look so streamlined.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie glided down and looked at their reflections beside his own \u2014 round, fluffy, with mismatched ear tufts. \u201cDo you know what I see?\u201d he asked. \u201cA fox who tumbles fearlessly, and a bird who sings braver than anyone. Your bodies carry all of that. They're not too anything \u2014 they're exactly right for being you.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"Finn looked at his reflection again \u2014 same big ears, same lopsided tail \u2014 but somehow they looked different now. Pip fluffed her round belly proudly. They didn't need to look like anyone else. They just needed to be glad to be themselves."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie help Finn and Pip see differently?",
+      options:[
+        {text:"That their bodies are exactly right for who they are, not something to compare", correct:true},
+        {text:"That they should try to look exactly like other animals", correct:false}
+      ],
+      explain:"Being kind to yourself means appreciating your own body and self for what it lets you do, rather than measuring it against others."
+    }
+  },
+  {
+    id:'wobbly_tower', batch:3, title:'The Wobbly Tower', theme:'growth', badgeName:'Growing Mind Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'}], text:"Finn was stacking pebbles into a tower for the meadow contest. CLATTER! It toppled at five stones, just like the last four tries. He groaned and started again from the bottom."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip watched, puzzled. \u201cWhy do you keep starting over the exact same way? Maybe try something different this time?\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn paused. He'd been stacking the biggest pebble on TOP each time. What if the biggest one went on the BOTTOM instead? He tried it \u2014 six stones, seven, eight \u2014 steadier than ever."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'}], text:"Nine stones, ten! Finn's tower stood taller than any he'd built before. Each wobble and tumble had taught him something \u2014 not just that he needed to keep trying, but that trying a NEW way mattered too."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"What finally helped Finn build a taller tower?",
+      options:[
+        {text:"Trying a new approach instead of repeating the same mistake", correct:true},
+        {text:"Giving up on stacking stones entirely", correct:false}
+      ],
+      explain:"Growth often means not just trying again, but noticing what went wrong and trying something different."
+    }
+  },
+  {
+    id:'the_quiet_no', batch:3, title:'Respecting a No', theme:'respect', badgeName:'Good Listener Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Finn really wanted to show Harold his brand new rock collection, following him around the meadow with excitement. \u201cLook, look, LOOK!\u201d But Harold kept saying, \u201cNot right now, Finn,\u201d and Finn kept asking anyway."},
+      {chars:[{name:'harold',anim:'sc-fade',expr:'frustrated'}], text:"Finally, Harold sat down, looking tired. \u201cI said not right now. I'm not trying to be mean \u2014 I just need a little quiet time today.\u201d"},
+      {chars:[{name:'pip',anim:'sc-sway'}], text:"Pip nudged Finn gently. \u201cWhen someone says no, even a small no, it means we should listen \u2014 not keep asking until they change their mind.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cYou're right. Sorry, Harold,\u201d Finn said, tucking his rocks away. Later, when Harold felt ready, HE came find Finn to see the collection \u2014 and Finn realized that respecting the first \u201cno\u201d had made Harold trust him even more."}
+    ],
+    tapActions:{ finn:['sc-shake-off'], pip:['sc-sway'], harold:['sc-bob'] },
+    reflection:{
+      question:"What did Finn learn about respecting someone's \u201cno\u201d?",
+      options:[
+        {text:"Listening the first time shows respect, even if you're excited", correct:true},
+        {text:"Asking again and again eventually gets a better answer", correct:false}
+      ],
+      explain:"Respecting someone's \u201cno\u201d \u2014 the first time, without pestering \u2014 is an important part of being a good friend."
+    }
+  },
+  {
+    id:'new_kids_lunch', batch:3, title:"The New Kid's Lunch", theme:'empathy', badgeName:'Warm Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Finn and Pip noticed Harold sitting extra still at snack time, not touching his berries, staring at the ground. He'd just moved to a new burrow across the meadow and missed his old friends."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"\u201cHe doesn't look like he wants to play,\u201d Pip whispered. \u201cMaybe we shouldn't bother him.\u201d Finn thought about it. \u201cMaybe he doesn't need us to be loud. Maybe he just needs to know someone noticed.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn sat down quietly next to Harold, not saying much, just being there. \u201cMoving is hard,\u201d Finn said softly. \u201cI'd miss my old friends too.\u201d"},
+      {chars:[{name:'harold',anim:'sc-pop-up',expr:'surprised'},{name:'finn',anim:'sc-rise'}], text:"Harold looked up, surprised someone understood. \u201cThanks for sitting with me,\u201d he said, managing a small smile. Sometimes the kindest thing wasn't a big gesture \u2014 just quietly noticing, and staying close."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], harold:['sc-pop-up'] },
+    reflection:{
+      question:"What did Finn realize Harold needed most?",
+      options:[
+        {text:"Someone to quietly notice and sit with him", correct:true},
+        {text:"To be cheered up loudly right away", correct:false}
+      ],
+      explain:"Sometimes empathy means quietly being present with someone, rather than trying to immediately fix how they feel."
+    }
+  },
+  {
+    id:'little_things', batch:3, title:'Little Things', theme:'gratitude', badgeName:'Grateful Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Every morning, Ollie left a neat little pile of fresh berries by Finn and Pip's favorite log \u2014 he'd been doing it for weeks. Finn had never really thought about it. The berries were just... there."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'sad'}], text:"One morning, the berries weren't there. Ollie had a sore wing and couldn't gather them. \u201cI didn't realize how much I looked forward to those,\u201d Finn said, feeling oddly empty without them."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn and Pip visited Ollie instead, bringing HIM berries for once. \u201cWe never said thank you for all those mornings,\u201d Finn admitted. \u201cWe just... never noticed how much you were doing.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-bob'},{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'}], text:"Ollie's eyes crinkled with a warm smile. \u201cThat means more than you know.\u201d From then on, Finn and Pip made sure to notice the little things others did for them \u2014 and to say thank you before those things ever went missing."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], ollie:['sc-bob'] },
+    reflection:{
+      question:"What did Finn and Pip realize about Ollie's berries?",
+      options:[
+        {text:"They'd never noticed or thanked him for something he did every day", correct:true},
+        {text:"The berries didn't really matter to them", correct:false}
+      ],
+      explain:"It's easy to take regular kindnesses for granted \u2014 gratitude means noticing and thanking people for the everyday things too."
+    }
+  },
+  {
+    id:'dark_tunnel', batch:3, title:'The Dark Tunnel', theme:'courage', badgeName:'Brave Explorer Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"The shortcut home led straight through the old hollow log \u2014 dark, narrow, and completely unknown inside. Finn had always taken the long way around it before. Today, storm clouds were rolling in fast."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"\u201cI don't like not knowing what's in there,\u201d Pip admitted, peering into the blackness. \u201cWhat if something's waiting?\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Finn took a shaky breath. \u201cBeing brave doesn't mean not being scared,\u201d he reminded himself and Pip. \u201cIt means going anyway. Want to hold my tail so we go together?\u201d"},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'pip',anim:'sc-march'}], text:"Step by careful step, they made their way through the dark log \u2014 and found nothing waiting at all, just cobwebs and a way out the other side, dry and safe before the storm hit. The unknown had just been... unknown. Nothing more."}
+    ],
+    tapActions:{ finn:['sc-march','sc-cheer-bounce'], pip:['sc-march'] },
+    reflection:{
+      question:"What helped Finn face the dark, unfamiliar tunnel?",
+      options:[
+        {text:"Remembering that courage means going forward even while scared", correct:true},
+        {text:"Waiting until the tunnel stopped seeming scary", correct:false}
+      ],
+      explain:"Facing something unfamiliar, like the dark or the unknown, takes the same kind of courage as facing a big physical challenge."
+    }
+  },
+  {
+    id:'the_long_line', batch:3, title:'The Long Line', theme:'patience', badgeName:'Patient Heart Badge',
+    pages:[
+      {chars:[{name:'pip',anim:'sc-fade',expr:'sad'}], text:"Pip had been sitting on her nest for what felt like forever, waiting for her eggs to hatch. Every day looked exactly the same \u2014 sitting, waiting, nothing happening. \u201cHow much longer?\u201d she sighed to herself."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn visited every day to keep her company. \u201cStill nothing?\u201d he asked gently, settling beside the nest. \u201cStill nothing,\u201d Pip said, \u201cbut I can't rush it. They'll hatch when they're ready.\u201d"},
+      {chars:[{name:'tessie',anim:'sc-waddle'}], text:"Tessie ambled by and peeked at the nest. \u201cThe best things are usually worth the wait,\u201d she said. \u201cI've never once cracked an egg open early to hurry things along, and neither should you.\u201d"},
+      {chars:[{name:'pip',anim:'sc-cheer-bounce'}], text:"Days later \u2014 CRACK! \u2014 the first tiny egg finally hatched, then another, and another. The long, quiet wait had been worth every patient moment, and Pip realized rushing wouldn't have made it happen any sooner."}
+    ],
+    tapActions:{ pip:['sc-cheer-bounce'], finn:['sc-bob'], tessie:['sc-waddle'] },
+    reflection:{
+      question:"What did Tessie remind Pip about waiting for her eggs?",
+      options:[
+        {text:"Good things often can't be rushed, no matter how much you wait", correct:true},
+        {text:"She should try to hurry the eggs along", correct:false}
+      ],
+      explain:"Some things simply take the time they take \u2014 patience means accepting that and waiting without trying to force it."
+    }
+  },
+  {
+    id:'two_heads_one_kite', batch:3, title:'Two Heads, One Kite', theme:'teamwork', badgeName:'Team Spirit Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'}], text:"Finn was great at finding the perfect sticks for a kite frame, but every time he tried to make it fly, it just spun and crashed. He didn't understand why."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip, who spent her whole life reading the wind for flying, watched him struggle. \u201cYour frame's wonderful,\u201d she said, \u201cbut the tail's too short \u2014 that's why it spins. I know exactly how long it should be.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cYou know wind, I know sticks,\u201d Finn realized. \u201cWhat if we built it together?\u201d Finn shaped the frame while Pip measured the perfect tail length, each doing what they did best."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"The kite soared higher than either of them could have imagined \u2014 Finn's sturdy frame, Pip's expert tail, flying together on the very same string. Two different skills had made one amazing kite."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"Why did the kite finally fly well?",
+      options:[
+        {text:"Finn and Pip combined their different skills together", correct:true},
+        {text:"Finn figured out how to do everything by himself", correct:false}
+      ],
+      explain:"Teamwork often works best when each person contributes what they're good at, rather than one person trying to do it all."
+    }
+  },
+  {
+    id:'rained_out', batch:3, title:'Rained Out', theme:'disappointment', badgeName:'Steady Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'}], text:"Finn and Pip had been planning the Big Meadow Picnic for weeks \u2014 games, treats, all their friends. The morning it finally arrived, dark clouds rolled in and rain poured down in sheets."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'sad'}], text:"\u201cAll that planning, ruined,\u201d Pip said, watching raindrops splash into puddles where the picnic blanket should have been. \u201cIt's just not fair.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie found them moping under a big leaf. \u201cIt's okay to be disappointed \u2014 you worked hard for today,\u201d he said. \u201cBut the rain won't last forever, and picnics can happen more than once.\u201d"},
+      {chars:[{name:'finn',anim:'sc-rise'},{name:'pip',anim:'sc-rise'}], text:"Instead, they had a cozy indoor picnic in Finn's den, telling stories and laughing just as much as they would have outside. The next sunny day, they had their REAL picnic \u2014 and it was worth the wait."}
+    ],
+    tapActions:{ finn:['sc-droop','sc-cheer-bounce'], pip:['sc-droop','sc-loop-fly'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie remind Finn and Pip when the picnic got rained out?",
+      options:[
+        {text:"It's okay to feel disappointed, and there would be other chances", correct:true},
+        {text:"They should never plan outdoor picnics again", correct:false}
+      ],
+      explain:"When plans fall through, it helps to allow yourself to feel disappointed while remembering that there will be other chances."
+    }
+  },
+  {
+    id:'borrowed_toy', batch:3, title:'The Borrowed Toy', theme:'integrity', badgeName:'Courage Compass Badge',
+    pages:[
+      {chars:[{name:'harold',anim:'sc-fade'},{name:'finn',anim:'sc-fade'}], text:"Harold let Finn borrow his favorite pinwheel toy for the weekend. \u201cJust be careful with it,\u201d Harold said. \u201cIt's my very favorite.\u201d Finn promised he would."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"While playing near the creek, Finn's paw slipped and the pinwheel tumbled into the water, one of its paper blades tearing. His stomach sank. He could just... not mention it. Maybe Harold wouldn't notice right away."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"\u201cA promise means taking care of it AND being honest if something goes wrong,\u201d Pip said gently. Finn knew she was right, even though admitting it felt hard."},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'harold',anim:'sc-bob'}], text:"Finn brought the pinwheel back right away. \u201cI broke it by accident, and I'm really sorry. I'll help fix it.\u201d Harold looked at the torn blade, then at Finn's honest face. \u201cThanks for telling me straight away,\u201d he said. \u201cThat matters more than the pinwheel.\u201d"}
+    ],
+    tapActions:{ finn:['sc-march','sc-shake-off'], harold:['sc-bob'], pip:['sc-sway'] },
+    reflection:{
+      question:"What did keeping his promise to Harold really mean for Finn?",
+      options:[
+        {text:"Taking care of the toy, and being honest when something went wrong", correct:true},
+        {text:"Never mentioning the toy again if something happened to it", correct:false}
+      ],
+      explain:"Keeping a promise means more than just being careful \u2014 it also means being honest if things don't go as planned."
+    }
+  },
+  {
+    id:'one_more_try', batch:4, title:'One More Try', theme:'motivation', badgeName:'Best-Try Badge',
+    pages:[
+      {chars:[{name:'harold',anim:'sc-fade',expr:'sad'}], text:"Harold had been trying to hop across the three lily pads to reach the far bank, but he kept splashing into the water instead. \u201cI can't do it,\u201d he said, ears drooping. \u201cI'm just going to stop trying.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn sat beside him. \u201cRemember when I couldn't land my forward roll? I fell about a hundred times before it clicked. It felt impossible right up until it wasn't.\u201d"},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"\u201cWe're not going anywhere,\u201d Pip added, settling on a nearby branch. \u201cTake your time. One more try, whenever you're ready.\u201d"},
+      {chars:[{name:'harold',anim:'sc-cheer-bounce'},{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-loop-fly'}], text:"Harold took a deep breath and hopped \u2014 pad one, pad two, pad three \u2014 he made it across! Finn and Pip cheered from the bank. Sometimes trying your best means having someone believe in you when you're ready to stop believing in yourself."}
+    ],
+    tapActions:{ harold:['sc-cheer-bounce'], finn:['sc-cheer-bounce'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"What helped Harold keep trying when he wanted to give up?",
+      options:[
+        {text:"Finn and Pip encouraging him and believing he could do it", correct:true},
+        {text:"Being told to figure it out completely alone", correct:false}
+      ],
+      explain:"Sometimes trying your best means having friends who encourage you to keep going, especially when you feel like stopping."
+    }
+  },
+  {
+    id:'the_big_stage', batch:4, title:'The Big Stage', theme:'confidence', badgeName:'Brave Heart Badge',
+    pages:[
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip was halfway through her song at the treetop concert when she suddenly forgot the next line completely. Silence. Every eye in the audience seemed to be waiting. Her heart pounded."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"From the front row, Finn caught her eye and gave a small, steady nod, mouthing: \u201cYou've got this.\u201d"},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip took a breath. Instead of freezing up or running off stage, she simply hummed a little tune and picked the song back up from where she remembered. Nobody seemed to mind the tiny stumble at all."},
+      {chars:[{name:'pip',anim:'sc-cheer-bounce'},{name:'finn',anim:'sc-cheer-bounce'}], text:"She finished strong, and the whole meadow burst into applause. Pip realized real confidence wasn't about never messing up on stage \u2014 it was about staying steady and continuing, even after a stumble."}
+    ],
+    tapActions:{ pip:['sc-cheer-bounce'], finn:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What did Pip do when she forgot her song's next line?",
+      options:[
+        {text:"Stayed calm and found a way to keep going", correct:true},
+        {text:"Ran off the stage in a panic", correct:false}
+      ],
+      explain:"Confidence isn't about performing perfectly \u2014 it's about staying steady and continuing even after a stumble."
+    }
+  },
+  {
+    id:'cracked_window', batch:4, title:'The Cracked Window', theme:'honesty', badgeName:'Honest Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'harold',anim:'sc-fade'}], text:"Finn watched from a distance as Harold's kicked pinecone accidentally cracked Ollie's favorite birdhouse window. Harold hadn't seen Finn watching \u2014 and quickly hopped away without saying anything."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Later, Ollie asked around the meadow if anyone knew what happened to his window. Finn felt torn \u2014 it wasn't HIS mess to admit to, but staying silent about what he'd seen felt wrong too."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'harold',anim:'sc-fade',expr:'worried'}], text:"Finn found Harold. \u201cI saw what happened with the window,\u201d he said gently. \u201cI think it would mean a lot to Ollie if you told him yourself.\u201d Harold's ears drooped, but he nodded."},
+      {chars:[{name:'harold',anim:'sc-march'},{name:'ollie',anim:'sc-bob'}], text:"Harold owned up to the accident, and Ollie thanked him for being honest. Finn realized that sometimes honesty means gently encouraging someone else to tell the truth, not just telling it yourself."}
+    ],
+    tapActions:{ finn:['sc-bob'], harold:['sc-march'], ollie:['sc-bob'] },
+    reflection:{
+      question:"What did Finn do after seeing Harold accidentally break the window?",
+      options:[
+        {text:"Gently encouraged Harold to be honest with Ollie himself", correct:true},
+        {text:"Pretended he hadn't seen anything at all", correct:false}
+      ],
+      explain:"Honesty can also mean helping and encouraging someone else to tell the truth, not just telling it yourself."
+    }
+  },
+  {
+    id:'moving_away', batch:4, title:'Moving Away', theme:'social', badgeName:'Friendship Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Finn's family was moving to a new burrow on the far side of the forest \u2014 a whole new meadow, with animals he'd never met. \u201cWhat if nobody wants to be my friend there?\u201d he worried aloud to Pip."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"\u201cRemember when Harold was new here, and we said hi first?\u201d Pip reminded him. \u201cYou could be the one to say hi this time.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"On his first day in the new meadow, Finn spotted a group of animals playing tag. His paws felt frozen \u2014 but he remembered Harold's story, took a breath, and walked over. \u201cHi, I'm Finn. Can I play?\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'}], text:"They welcomed him right in. By sunset, Finn had three new friends and a whole new meadow to explore. Being the new one was scary \u2014 but remembering how good it felt to be welcomed helped him take that first brave step himself."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce','sc-march'] },
+    reflection:{
+      question:"What helped Finn make friends in his new meadow?",
+      options:[
+        {text:"Remembering how good it felt to be welcomed, and doing the same himself", correct:true},
+        {text:"Waiting quietly for someone else to say hi first", correct:false}
+      ],
+      explain:"Remembering what it felt like to be welcomed can give you the courage to be the one who says hi first."
+    }
+  },
+  {
+    id:'the_slow_count', batch:4, title:'The Slow Count', theme:'emotion', badgeName:'Calm Mind Badge',
+    pages:[
+      {chars:[{name:'pip',anim:'sc-fade',expr:'surprised'}], text:"CRACK! A branch snapped loudly right behind Pip and she jumped straight up in fright, heart hammering, feathers puffed to twice their size."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"\u201cIt's okay, it's okay, it was just an old branch falling,\u201d Finn said quickly, though his own paws were shaking too."},
+      {chars:[{name:'ollie',anim:'sc-swoop-in'}], text:"Ollie glided down calmly. \u201cWhen you're suddenly scared, try counting slowly to five. It gives your racing heart a moment to catch up with what your eyes already know \u2014 that you're safe.\u201d"},
+      {chars:[{name:'pip',anim:'sc-breathe'},{name:'finn',anim:'sc-breathe'}], text:"One... two... three... four... five. Pip's feathers settled back down, and Finn's paws stopped trembling. The fright had passed, and counting slowly had helped them find calm again."}
+    ],
+    tapActions:{ pip:['sc-breathe'], finn:['sc-breathe'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What did Ollie suggest for a sudden scare?",
+      options:[
+        {text:"Counting slowly to give your racing heart time to settle", correct:true},
+        {text:"Staying startled and jumpy for the rest of the day", correct:false}
+      ],
+      explain:"A slow count can help calm a sudden burst of fear, giving your body a moment to realize you're safe."
+    }
+  },
+  {
+    id:'enough_as_i_am', batch:4, title:'Enough As I Am', theme:'selflove', badgeName:'Gentle Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'}], text:"Finn had built a perfectly good twig fort, but he kept adding more and more to it \u2014 another wall, another tower, another everything \u2014 never quite satisfied. \u201cIt's still not good enough,\u201d he muttered for the tenth time."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip landed on top of the fort and looked around. \u201cFinn, this is amazing. Why do you keep saying it isn't good enough?\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn paused, twig in paw. \u201cI guess... I just always think I could do more.\u201d Pip tilted her head. \u201cSometimes 'good enough' really is enough. You're allowed to be proud and stop.\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'}], text:"Finn set the twig down and looked at his fort with new eyes \u2014 not what it could still become, but what it already was: pretty wonderful, just as it stood. He'd built something great, and that was enough."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"What did Pip help Finn realize about his fort?",
+      options:[
+        {text:"That 'good enough' really can be enough, without endless improving", correct:true},
+        {text:"That he should keep adding to it forever", correct:false}
+      ],
+      explain:"Being kind to yourself sometimes means recognizing when something \u2014 or you \u2014 is already enough, without needing to be perfect."
+    }
+  },
+  {
+    id:'upside_down_drawing', batch:4, title:'The Upside-Down Drawing', theme:'growth', badgeName:'Growing Mind Badge',
+    pages:[
+      {chars:[{name:'harold',anim:'sc-fade'}], text:"Harold proudly showed Finn his drawing of the meadow \u2014 but the trees looked more like wobbly clouds, and the sun was drawn in the wrong corner completely. Finn wasn't sure what to say."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cCan I show you something that might help?\u201d Finn asked carefully. \u201cIf you draw the ground line first, the trees have somewhere to stand.\u201d Harold's ears twitched \u2014 nobody had corrected his art before, and it stung a little."},
+      {chars:[{name:'harold',anim:'sc-fade',expr:'worried'}], text:"Harold took a breath. \u201cOkay... can you show me?\u201d Finn sketched a simple ground line, and Harold tried again, trees now standing properly upright."},
+      {chars:[{name:'harold',anim:'sc-cheer-bounce'}], text:"His next drawing looked so much better. Harold realized that hearing gentle feedback, even when it stung a little at first, had helped him grow as an artist \u2014 accepting help wasn't the same as failing."}
+    ],
+    tapActions:{ harold:['sc-cheer-bounce'], finn:['sc-bob'] },
+    reflection:{
+      question:"What helped Harold's drawing improve?",
+      options:[
+        {text:"Being open to gentle feedback from a friend", correct:true},
+        {text:"Refusing to change anything about his first try", correct:false}
+      ],
+      explain:"Growing often means being willing to hear helpful feedback, even when it feels a little uncomfortable at first."
+    }
+  },
+  {
+    id:'two_stories_at_once', batch:4, title:'Two Stories at Once', theme:'respect', badgeName:'Good Listener Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'frustrated'},{name:'pip',anim:'sc-fade',expr:'frustrated'}], text:"Finn and Pip were arguing about how to play their favorite game of hide-and-seek. \u201cThe rule is you count to twenty!\u201d Finn insisted. \u201cNo, it's always been ten,\u201d Pip argued back."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"They'd each learned the game differently, from different friends, and neither wanted to budge. The argument was getting louder, and neither one was really hearing the other."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip stopped and took a breath. \u201cWait \u2014 maybe we both learned it right, just differently. Can you tell me how YOUR way works?\u201d Finn blinked, surprised, then explained. Pip really listened, and explained her way back."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'}], text:"They decided to count to fifteen \u2014 splitting the difference \u2014 and had their best game yet. Respecting that someone else might see things differently, without needing to be \u201cright,\u201d had made room for both of them."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What helped Finn and Pip solve their disagreement?",
+      options:[
+        {text:"Really listening to each other's different way of seeing it", correct:true},
+        {text:"Both insisting they alone were right", correct:false}
+      ],
+      explain:"Respecting someone means being willing to really listen to a different point of view, even when you see things differently."
+    }
+  },
+  {
+    id:'the_quiet_corner', batch:4, title:'The Quiet Corner', theme:'empathy', badgeName:'Warm Heart Badge',
+    pages:[
+      {chars:[{name:'harold',anim:'sc-fade',expr:'worried'}], text:"During group games, Harold always hung back in a quiet corner instead of joining in. The loud noises and fast pace of tag made him feel overwhelmed, though he never quite said why."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn used to think Harold just didn't like playing with them. But today, he noticed how Harold's ears flattened every time the game got loud and fast."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cWould a quieter game work better for you?\u201d Finn asked gently. Harold's face lit up with relief. \u201cActually... yes. I just get overwhelmed by all the noise and rushing.\u201d"},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'harold',anim:'sc-cheer-bounce'}], text:"They played a quieter guessing game instead, and Harold joined in happily for the first time. Finn realized that understanding what someone needs \u2014 even if it's different from what you need \u2014 is its own kind of caring."}
+    ],
+    tapActions:{ finn:['sc-march'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What did Finn realize about why Harold stayed in the quiet corner?",
+      options:[
+        {text:"Harold felt overwhelmed by loud, fast games, and needed something different", correct:true},
+        {text:"Harold simply didn't like Finn and Pip", correct:false}
+      ],
+      explain:"Empathy sometimes means noticing that someone has different needs than you do, and adjusting to include them."
+    }
+  },
+  {
+    id:'thank_you_notes', batch:4, title:'Thank You Notes', theme:'gratitude', badgeName:'Grateful Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn realized he'd said \u201cthank you\u201d so many times that the words almost didn't feel special anymore \u2014 just something he said out of habit."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"\u201cWhat if we made something instead of just saying it?\u201d Pip suggested. \u201cLike a little leaf note, decorated, just for Ollie.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"They spent the afternoon making a beautiful leaf card, drawing little berries and stars on it, writing \u201cThank you for always being there\u201d in careful letters."},
+      {chars:[{name:'ollie',anim:'sc-bob'},{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'}], text:"When they gave it to Ollie, his eyes actually misted up. \u201cI'll keep this forever,\u201d he said softly. Finn and Pip discovered that gratitude shown through a little extra effort could mean even more than words alone."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-cheer-bounce'], ollie:['sc-bob'] },
+    reflection:{
+      question:"What did Finn and Pip do to show Ollie their gratitude?",
+      options:[
+        {text:"Made him a handmade thank-you note instead of just saying the words", correct:true},
+        {text:"Said thank you the exact same way as always", correct:false}
+      ],
+      explain:"Gratitude shown through a thoughtful action or gesture can feel even more meaningful than words alone."
+    }
+  },
+  {
+    id:'steep_climb', batch:5, title:'The Steep Climb', theme:'courage', badgeName:'Brave Explorer Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"During the forest lesson, Ollie explained something confusing about the stars, and everyone else seemed to nod along. Finn's paw wanted to shoot up and ask a question \u2014 but what if it was a silly question? What if everyone laughed?"},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip noticed Finn's hesitation. \u201cI didn't understand it either,\u201d she whispered. \u201cBut I'm scared to say so in front of everyone.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"Finn thought about it. Staying quiet felt safe, but it also meant staying confused. He took a shaky breath and raised his paw. \u201cOllie? Could you explain that part again? I got a little lost.\u201d"},
+      {chars:[{name:'ollie',anim:'sc-bob'},{name:'finn',anim:'sc-cheer-bounce'}], text:"Ollie smiled warmly. \u201cGreat question \u2014 I bet others were wondering too.\u201d Sure enough, several animals nodded in relief. Speaking up when you don't understand, Finn realized, takes its own kind of courage \u2014 and it often helps everyone else too."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-bob'], ollie:['sc-swoop-in'] },
+    reflection:{
+      question:"What kind of courage did Finn show in this story?",
+      options:[
+        {text:"The courage to admit he didn't understand and ask a question", correct:true},
+        {text:"The courage to jump from somewhere very high", correct:false}
+      ],
+      explain:"Speaking up when you're confused, in front of others, takes real courage \u2014 and it often helps other people who feel the same way."
+    }
+  },
+  {
+    id:'last_in_line', batch:5, title:'Last in Line', theme:'patience', badgeName:'Patient Heart Badge',
+    pages:[
+      {chars:[{name:'harold',anim:'sc-fade',expr:'sad'}], text:"Harold had been practicing hopping in a straight line for weeks, but he was still much wobblier than his friends. \u201cEveryone else got good at this so much faster than me,\u201d he sighed, watching them hop ahead effortlessly."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cEveryone learns at their own speed,\u201d Finn said. \u201cIt took me way longer to learn my forward roll than it looked like it took anyone else.\u201d"},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"\u201cBeing patient with others is easy,\u201d Pip added. \u201cBeing patient with YOURSELF while you're still learning is the hard part \u2014 but it matters just as much.\u201d"},
+      {chars:[{name:'harold',anim:'sc-cheer-bounce'}], text:"Harold kept practicing, at his own pace, without comparing himself to anyone else's timeline. Weeks later, his hop was steady and sure \u2014 proof that patience with himself had been worth it all along."}
+    ],
+    tapActions:{ harold:['sc-cheer-bounce'], finn:['sc-march'], pip:['sc-loop-fly'] },
+    reflection:{
+      question:"What kind of patience did Harold need to practice?",
+      options:[
+        {text:"Patience with himself while learning at his own pace", correct:true},
+        {text:"Patience only while waiting in lines for things", correct:false}
+      ],
+      explain:"Patience isn't only about waiting for other things \u2014 it also means being patient with yourself while you're still learning."
+    }
+  },
+  {
+    id:'big_group_project', batch:5, title:'The Big Group Project', theme:'teamwork', badgeName:'Team Spirit Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"The whole meadow was building a giant flower float for the forest festival \u2014 a dozen animals all working together, everyone with a different idea about how it should look. It was getting loud and confusing fast."},
+      {chars:[{name:'harold',anim:'sc-fade',expr:'frustrated'}], text:"\u201cToo many cooks!\u201d Harold groaned as two more animals started arguing about flower colors. Nothing was getting built at all."},
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"Finn had an idea. \u201cWhat if we split into small teams \u2014 one for the frame, one for flowers, one for decorations? Everyone still helps, just with a clear job.\u201d Pip nodded eagerly, and they organized the groups."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'pip',anim:'sc-cheer-bounce'},{name:'harold',anim:'sc-cheer-bounce'}], text:"With everyone focused on their own piece, the float came together beautifully \u2014 sturdy frame, colorful flowers, sparkling decorations, all fitting perfectly. A big team worked best when everyone had a clear part to play."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-loop-fly'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What helped the big group finally get the float built?",
+      options:[
+        {text:"Splitting into smaller teams with clear jobs", correct:true},
+        {text:"Everyone trying to do everything all at once", correct:false}
+      ],
+      explain:"Big teamwork often works best when a large group divides into smaller teams, each with a clear role."
+    }
+  },
+  {
+    id:'cancelled_trip', batch:5, title:'The Cancelled Trip', theme:'disappointment', badgeName:'Steady Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'}], text:"Finn had been looking forward to the big adventure hike to Faraway Ridge for a whole month \u2014 until his mom asked if he could stay home instead, to help take care of his sick little cousin."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'sad'}], text:"\u201cBut I've been waiting SO long for this hike,\u201d Finn said, feeling his excitement crumble into disappointment. Part of him wanted to argue, but he also knew his cousin needed him."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Pip visited him at home instead. \u201cIt's okay to feel bummed about missing the hike AND still be glad you're helping your cousin,\u201d she said. \u201cBoth feelings can be true at once.\u201d"},
+      {chars:[{name:'finn',anim:'sc-rise'}], text:"Finn spent the day making his cousin laugh with silly stories, and by evening, his cousin felt much better. The hike would happen another day \u2014 but today, he'd chosen something that mattered even more."}
+    ],
+    tapActions:{ finn:['sc-droop','sc-cheer-bounce'], pip:['sc-bob'] },
+    reflection:{
+      question:"What did Pip remind Finn about his disappointment?",
+      options:[
+        {text:"He could feel disappointed AND still be glad he helped his cousin", correct:true},
+        {text:"He shouldn't feel disappointed about missing the hike at all", correct:false}
+      ],
+      explain:"It's possible to feel two things at once \u2014 disappointed about a missed plan, and glad about a good reason for the change."
+    }
+  },
+  {
+    id:'whole_truth', batch:5, title:'The Whole Truth', theme:'integrity', badgeName:'Courage Compass Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'harold',anim:'sc-fade'}], text:"\u201cDid you eat the last berry muffin?\u201d Harold asked. Finn had eaten it \u2014 but he'd also convinced Pip to split it with him. \u201cI had A bite,\u201d Finn said carefully, which was technically true."},
+      {chars:[{name:'harold',anim:'sc-fade'}], text:"Harold looked confused later when there wasn't even a crumb left. \u201cJust one bite? Then where did the rest go?\u201d Finn's stomach twisted \u2014 he'd told the truth, but not the WHOLE truth."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"\u201cActually,\u201d Finn admitted, \u201cPip and I ate the whole thing. I said 'a bite' because it was true, but it wasn't the full story. I'm sorry for being misleading.\u201d"},
+      {chars:[{name:'harold',anim:'sc-bob'},{name:'finn',anim:'sc-march'}], text:"\u201cThanks for telling me the real story,\u201d Harold said. Finn realized that saying something technically true, while leaving out the important parts, wasn't really being honest at all \u2014 real integrity meant telling the WHOLE truth."}
+    ],
+    tapActions:{ finn:['sc-march','sc-shake-off'], harold:['sc-bob'] },
+    reflection:{
+      question:"What did Finn learn about saying something \u201ctechnically true\u201d?",
+      options:[
+        {text:"Leaving out important parts can still be misleading, even if it's technically true", correct:true},
+        {text:"As long as it's technically true, it always counts as fully honest", correct:false}
+      ],
+      explain:"Real honesty means telling the whole truth, not just a technically-true piece that leaves out what matters."
+    }
+  },
+  {
+    id:'forgotten_chore', batch:5, title:'The Forgotten Chore', theme:'responsibility', badgeName:'Reliable Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn had promised to water the shared meadow garden every morning \u2014 but three days in a row, he'd gotten distracted by games and forgotten completely. The little seedlings were starting to droop."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip noticed the wilting plants. \u201cFinn, weren't you watering these?\u201d Finn felt a guilty pang. \u201cI... forgot. A few times.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Instead of making excuses, Finn got right to work watering the thirsty seedlings, and made a little pebble reminder to place by his den door every evening so he wouldn't forget again."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'}], text:"The seedlings perked back up within days, and Finn never missed another watering. Being responsible, he realized, wasn't about never forgetting \u2014 it was about noticing, fixing it, and finding a way to do better."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce','sc-march'], pip:['sc-bob'] },
+    reflection:{
+      question:"What did Finn do after realizing he'd forgotten his watering chore?",
+      options:[
+        {text:"Fixed the problem right away and found a way to remember better", correct:true},
+        {text:"Made excuses and kept forgetting", correct:false}
+      ],
+      explain:"Being responsible isn't about never making mistakes \u2014 it's about noticing them, fixing them, and finding ways to do better."
+    }
+  },
+  {
+    id:'the_promise', batch:5, title:'The Promise', theme:'responsibility', badgeName:'Reliable Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn had promised Harold weeks ago that he'd help him practice hopping today. But this morning, Pip invited him on a much more exciting adventure to explore the far meadow instead."},
+      {chars:[{name:'finn',anim:'sc-fade',expr:'worried'}], text:"\u201cCan't I just go with Pip today and help Harold tomorrow?\u201d Finn wondered. But he remembered how excited Harold had been about today, marking it on his little pebble calendar."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"\u201cThe far meadow will still be there tomorrow,\u201d Pip said gently. \u201cBut you made a promise to Harold for today.\u201d Finn nodded, a little disappointed but sure of what to do."},
+      {chars:[{name:'finn',anim:'sc-march'},{name:'harold',anim:'sc-cheer-bounce'}], text:"Finn kept his word and helped Harold practice all afternoon \u2014 and the far meadow adventure with Pip happened the very next day, just as good as it would have been. Keeping a promise, even when something more exciting came along, mattered."}
+    ],
+    tapActions:{ finn:['sc-march'], pip:['sc-bob'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What did Finn choose to do about his promise to Harold?",
+      options:[
+        {text:"Kept his promise, even though a more exciting offer came up", correct:true},
+        {text:"Broke his promise to do something more fun instead", correct:false}
+      ],
+      explain:"Being responsible means keeping your promises, even when something more tempting comes along."
+    }
+  },
+  {
+    id:'half_a_sandwich', batch:5, title:'Half a Sandwich', theme:'generosity', badgeName:'Giving Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'},{name:'pip',anim:'sc-fade'}], text:"At the meadow picnic, Finn unwrapped his favorite berry-leaf sandwich, mouth watering \u2014 until he noticed Brambles nearby with nothing to eat at all, having forgotten her own lunch that day."},
+      {chars:[{name:'pip',anim:'sc-fade'}], text:"Finn looked at his sandwich, then at Brambles. It was his favorite, and there was only one. Sharing meant half as much for himself."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"He walked over anyway. \u201cWant to split this with me? It's really good.\u201d Brambles's eyes widened with surprise and gratitude. \u201cAre you sure?\u201d \u201cPositive,\u201d Finn smiled."},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'brambles',anim:'sc-cheer-bounce'}], text:"They sat together, sharing the sandwich and laughing about silly things. Finn discovered that half a sandwich, shared with a friend, somehow tasted even better than a whole one eaten alone."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-bob'], brambles:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What did Finn choose to do when he saw Brambles had no lunch?",
+      options:[
+        {text:"Shared his own favorite sandwich with her, even though it meant less for him", correct:true},
+        {text:"Ate his whole sandwich without offering to share", correct:false}
+      ],
+      explain:"Generosity often means giving up a little something for yourself so someone else can have enough too."
+    }
+  },
+  {
+    id:'giving_up_a_turn', batch:5, title:'Giving Up a Turn', theme:'generosity', badgeName:'Giving Heart Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn had finally won first turn on the best rope swing after waiting patiently in line. Just as he grabbed the rope, he noticed Harold nearby, who'd been waiting even longer on a different, much shorter line."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Finn didn't HAVE to give up his turn \u2014 he'd earned it fair and square. But he thought about how long Harold had been waiting, hope fading in his eyes each time someone else went first."},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cHarold, want to go first instead?\u201d Finn offered. Harold blinked in surprise. \u201cReally? You waited for this turn!\u201d \u201cI know,\u201d Finn smiled, \u201cbut I want you to have it.\u201d"},
+      {chars:[{name:'harold',anim:'sc-loop-fly'},{name:'finn',anim:'sc-cheer-bounce'}], text:"Harold swung through the air, laughing louder than Finn had heard in weeks. Watching his friend's joy, Finn realized that giving up something he'd earned, just to make someone else happy, felt even better than swinging himself."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"Why was it generous of Finn to give Harold his turn?",
+      options:[
+        {text:"He gave up something he'd fairly earned to make a friend happy", correct:true},
+        {text:"He was forced to give up his turn by someone else", correct:false}
+      ],
+      explain:"True generosity often means giving up something you're entitled to, simply because it means a lot to someone else."
+    }
+  },
+  {
+    id:'everyone_plays', batch:5, title:'Everyone Plays', theme:'fairness', badgeName:'Fair Play Badge',
+    pages:[
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"Every time the meadow animals picked teams for games, the same fast, strong animals got chosen first, and the same few \u2014 like Harold \u2014 were always picked last, over and over again."},
+      {chars:[{name:'pip',anim:'sc-fade',expr:'worried'}], text:"Pip noticed Harold's shoulders slump a little more each time it happened. \u201cIt's the same every single time,\u201d she said. \u201cThat doesn't seem very fair, even if nobody means to be unkind.\u201d"},
+      {chars:[{name:'finn',anim:'sc-fade'}], text:"\u201cWhat if we picked teams differently?\u201d Finn suggested. \u201cLike taking turns picking, or mixing up fast and slow animals evenly on each team, so it's balanced?\u201d"},
+      {chars:[{name:'finn',anim:'sc-cheer-bounce'},{name:'harold',anim:'sc-cheer-bounce'}], text:"The next game, teams were mixed fairly, and everyone \u2014 fast or slow \u2014 got a real chance to shine. Harold scored the winning point for his team, grinning wider than ever. Fair play, Finn realized, meant everyone truly got a chance to play."}
+    ],
+    tapActions:{ finn:['sc-cheer-bounce'], pip:['sc-bob'], harold:['sc-cheer-bounce'] },
+    reflection:{
+      question:"What made the team-picking fairer for everyone?",
+      options:[
+        {text:"Mixing up fast and slow animals evenly across teams", correct:true},
+        {text:"Always letting the same fast animals pick first", correct:false}
+      ],
+      explain:"Fairness often means changing the rules so that everyone has a real, balanced chance \u2014 not just the same few people every time."
+    }
+  }
+
+];
+const PLANNED_STORIES = [
+  // Batch 2 additions (tier 2 for the first 5 categories)
+  // Batch 3 (tier 2 for the remaining 10 categories)
+  // Batch 4 (tier 3 / Gold for the first 10 categories)
+  // Batch 5 (tier 3 for the remaining 5 + three brand-new categories)
+];
+const UPCOMING_STORIES = [
+];
+
+
+
+
+// ================= PERSISTENCE =================
+const SC_READ_KEY = 'storyCornerReadIds_v1';
+const SC_STARS_KEY = 'storyCornerStars_v1';
+const SC_STREAK_KEY = 'storyCornerStreak_v1'; // {count, lastDate}
+function loadReadIds(){ try{ return JSON.parse(localStorage.getItem(SC_READ_KEY) || '[]'); }catch(e){ return []; } }
+function saveReadIds(arr){ try{ localStorage.setItem(SC_READ_KEY, JSON.stringify(arr)); }catch(e){} }
+function loadStars(){ try{ const v = parseInt(localStorage.getItem(SC_STARS_KEY)); return isNaN(v) ? 0 : v; }catch(e){ return 0; } }
+function saveStars(n){ try{ localStorage.setItem(SC_STARS_KEY, String(n)); }catch(e){} }
+function loadStreak(){ try{ return JSON.parse(localStorage.getItem(SC_STREAK_KEY) || 'null') || {count:0,lastDate:null}; }catch(e){ return {count:0,lastDate:null}; } }
+function saveStreak(s){ try{ localStorage.setItem(SC_STREAK_KEY, JSON.stringify(s)); }catch(e){} }
+
+let readIds = loadReadIds();
+let totalStars = loadStars();
+let streak = loadStreak();
+
+function todayStr(){ const d = new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+function bumpStreakIfNewDay(){
+  const today = todayStr();
+  if(streak.lastDate === today) return; // already counted today
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = `${yesterday.getFullYear()}-${yesterday.getMonth()+1}-${yesterday.getDate()}`;
+  if(streak.lastDate === yStr){
+    streak.count += 1;
+  } else {
+    streak.count = 1;
+  }
+  streak.lastDate = today;
+  saveStreak(streak);
+}
+
+// ================= HUB / SHELF RENDERING =================
+function renderStreakCard(){
+  document.getElementById('scStreakText').textContent = `${streak.count}-day streak`;
+  document.getElementById('scStreakSub').textContent = streak.count > 0
+    ? "Come back tomorrow to keep it going!"
+    : "Read a story today to start one!";
+  document.getElementById('scStarsTotal').textContent = totalStars;
+}
+const VOLUME_INFO = {
+  1: { name:'The First Steps', color:'linear-gradient(150deg,var(--coral),var(--coral-shadow))' },
+  2: { name:'New Beginnings', color:'linear-gradient(150deg,var(--sky),var(--sky-shadow))' },
+  3: { name:'Growing Wiser', color:'linear-gradient(150deg,var(--sage),var(--sage-shadow))' },
+  4: { name:'Hearts of Gold', color:'linear-gradient(150deg,var(--gold),var(--gold-shadow))' },
+  5: { name:'The Grand Finale', color:'linear-gradient(150deg,var(--plum),var(--plum-shadow))' }
+};
+function isBatchUnlocked(batchNum){
+  if(batchNum <= 1) return true;
+  const prevBatchStories = STORY_LIBRARY.filter(s=>s.batch === batchNum - 1);
+  if(prevBatchStories.length === 0) return false;
+  return prevBatchStories.every(s=>readIds.includes(s.id));
+}
+function getCategoryCompletedCount(theme){
+  return STORY_LIBRARY.filter(s=>s.theme===theme && readIds.includes(s.id)).length;
+}
+function renderVolumeOverview(){
+  const grid = document.getElementById('scVolumeGrid');
+  let html = '';
+  for(let vol=1; vol<=5; vol++){
+    const written = STORY_LIBRARY.filter(s=>s.batch===vol);
+    const planned = PLANNED_STORIES.filter(s=>s.batch===vol);
+    const total = written.length + planned.length;
+    if(total === 0) continue;
+    const unlocked = isBatchUnlocked(vol);
+    const readCount = written.filter(s=>readIds.includes(s.id)).length;
+    const info = VOLUME_INFO[vol];
+    const pct = total > 0 ? Math.round((readCount/total)*100) : 0;
+    const iconsHTML = written.slice(0,6).map(s=>{
+      const b = BADGE_ICONS[s.theme];
+      const done = readIds.includes(s.id);
+      return `<div class="sc-volume-mini-icon" style="background:rgba(255,255,255,${done?'.9':'.25'});"><svg width="13" height="13" viewBox="0 0 44 44">${b.icon.replace(/#fff/g,'rgba(0,0,0,.55)')}</svg></div>`;
+    }).join('');
+    if(unlocked){
+      html += `<div class="sc-volume-card" style="background:${info.color};" onclick="scOpenVolume(${vol})">
+        <div class="sc-volume-top">
+          <div class="sc-volume-number">${vol}</div>
+          <div class="sc-volume-info">
+            <div class="sc-volume-name">${info.name}</div>
+            <div class="sc-volume-sub">${total} stories</div>
+          </div>
+        </div>
+        <div class="sc-volume-progress-row">
+          <div class="sc-volume-progress-track"><div class="sc-volume-progress-fill" style="width:${pct}%;"></div></div>
+          <div class="sc-volume-progress-text">${readCount}/${total}</div>
+        </div>
+        <div class="sc-volume-icons-row">${iconsHTML}</div>
+      </div>`;
+    } else {
+      html += `<div class="sc-volume-card locked" style="background:${info.color};">
+        <div class="sc-volume-top">
+          <div class="sc-volume-number">${vol}</div>
+          <div class="sc-volume-info">
+            <div class="sc-volume-name">${info.name}</div>
+            <div class="sc-volume-sub">Finish Volume ${vol-1} to unlock</div>
+          </div>
+          <div class="sc-volume-lock-badge"><svg width="26" height="26" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#fff" stroke-width="1.8"/></svg></div>
+        </div>
+      </div>`;
+    }
+  }
+  grid.innerHTML = html;
+}
+function renderVolumeDetail(volumeNum){
+  const info = VOLUME_INFO[volumeNum];
+  const unlocked = isBatchUnlocked(volumeNum);
+  const written = STORY_LIBRARY.filter(s=>s.batch===volumeNum);
+  const planned = PLANNED_STORIES.filter(s=>s.batch===volumeNum);
+  const readCount = written.filter(s=>readIds.includes(s.id)).length;
+  document.getElementById('scVolumeDetailHeader').innerHTML = `
+    <div class="sc-volume-card" style="background:${info.color}; cursor:default; margin-top:1rem;">
+      <div class="sc-volume-top">
+        <div class="sc-volume-number">${volumeNum}</div>
+        <div class="sc-volume-info">
+          <div class="sc-volume-name">${info.name}</div>
+          <div class="sc-volume-sub">${readCount}/${written.length} stories read</div>
+        </div>
+      </div>
+    </div>
+    ${!unlocked ? `<div class="sc-batch-lock-note">Finish all of Volume ${volumeNum-1} to unlock these stories!</div>` : ''}
+  `;
+  let html = '';
+  written.forEach(s=>{
+    const b = BADGE_ICONS[s.theme];
+    const read = readIds.includes(s.id);
+    if(unlocked){
+      html += `<div class="sc-book ${read?'read':''}" onclick="scOpenStory('${s.id}')">
+        <div class="sc-book-badge" style="background:${b.color};"><svg width="30" height="30" viewBox="0 0 44 44">${b.icon}</svg></div>
+        <div>
+          <div class="sc-book-title">${s.title}</div>
+          <div class="sc-book-theme">${BADGE_NAMES[s.theme]}</div>
+        </div>
+        ${read ? `<div class="sc-book-check"><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="11" fill="var(--sage)"/><path d="M6 11 l3.5 3.5 L16 7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+      </div>`;
+    } else {
+      html += `<div class="sc-book locked">
+        <div class="sc-book-badge" style="background:${b.color};"><svg width="30" height="30" viewBox="0 0 44 44">${b.icon}</svg></div>
+        <div>
+          <div class="sc-book-title">${s.title}</div>
+          <div class="sc-book-theme">${BADGE_NAMES[s.theme]}</div>
+        </div>
+        <div class="sc-lock-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="var(--ink-soft)" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="var(--ink-soft)" stroke-width="1.8"/></svg></div>
+      </div>`;
+    }
+  });
+  planned.forEach(s=>{
+    const b = BADGE_ICONS[s.theme];
+    html += `<div class="sc-book planned">
+      <div class="sc-book-badge" style="background:${b.color};"><svg width="30" height="30" viewBox="0 0 44 44">${b.icon}</svg></div>
+      <div>
+        <div class="sc-book-title">${s.title}</div>
+        <div class="sc-book-theme">Coming soon</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('scVolumeShelf').innerHTML = html;
+}
+function renderBadgeCase(){
+  const card = document.getElementById('scBadgeCase');
+  const categories = Object.keys(BADGE_NAMES);
+  const slotsHTML = categories.map(theme=>{
+    const b = BADGE_ICONS[theme];
+    const tier = getCategoryCompletedCount(theme);
+    const maxTier = Math.max(STORY_LIBRARY.filter(s=>s.theme===theme).length, 1);
+    const earned = tier > 0;
+    const tierLabel = earned ? TIER_NAMES[Math.min(tier,3)] : '';
+    const dotsHTML = Array.from({length:maxTier}).map((_,i)=>
+      `<span style="display:inline-block; width:5px; height:5px; border-radius:50%; background:${i<tier?b.color:'#4A4A80'}; margin:0 1px;"></span>`
+    ).join('');
+    return `<div class="sc-badge-slot ${earned?'earned':''}">
+      <div class="sc-badge-icon-wrap" style="background:${earned?b.color:'#4A4A80'};"><svg width="26" height="26" viewBox="0 0 44 44">${b.icon}</svg></div>
+      <div class="sc-badge-label">${BADGE_NAMES[theme].replace(' Badge','')}</div>
+      <div style="font-size:.6rem; color:${earned?b.color:'var(--ink-soft)'}; font-weight:700; min-height:.9rem;">${tierLabel}</div>
+      <div>${dotsHTML}</div>
+    </div>`;
+  }).join('');
+  const totalEarned = categories.filter(theme=>getCategoryCompletedCount(theme)>0).length;
+  card.innerHTML = `<div class="sc-badge-case"><div class="sc-badge-case-title">My Badges (${totalEarned}/${categories.length}) \u2014 ${readIds.length} stories read</div><div class="sc-badge-grid">${slotsHTML}</div></div>`;
+}
+function scRenderHub(){
+  renderStreakCard();
+  renderVolumeOverview();
+  renderBadgeCase();
+}
+function scShowScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.screen[data-screen="${name}"]`).classList.add('active');
+  window.scrollTo(0,0);
+}
+function scGoHub(){
+  scRenderHub();
+  scShowScreen('hub');
+}
+let currentVolume = null;
+function scOpenVolume(volumeNum){
+  currentVolume = volumeNum;
+  renderVolumeDetail(volumeNum);
+  scShowScreen('volume');
+}
+function scGoVolume(){
+  if(currentVolume){
+    renderVolumeDetail(currentVolume);
+    scShowScreen('volume');
+  } else {
+    scGoHub();
+  }
+}
+
+// ================= STORY READER =================
+let currentStory = null;
+let currentPage = 0;
+function scOpenStory(id){
+  currentStory = STORY_LIBRARY.find(s=>s.id===id);
+  if(!currentStory) return;
+  currentVolume = currentStory.batch;
+  currentPage = 0;
+  introducedChars = [];
+  document.getElementById('scReaderTitle').textContent = currentStory.title;
+  scRenderPage();
+  scShowScreen('reader');
+}
+function scParseVocab(text){
+  return text.replace(/\{\{([^|]+)\|\|([^}]+)\}\}/g, (match, word, def) => {
+    return `<span class="sc-vocab-word" onclick="scToggleVocab(event,this)">${word}<span class="sc-vocab-bubble">${def}</span></span>`;
+  });
+}
+function scToggleVocab(event, el){
+  event.stopPropagation();
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.sc-vocab-word.open').forEach(w => { if(w!==el) w.classList.remove('open'); });
+  el.classList.toggle('open', !wasOpen);
+  if(!wasOpen){
+    if(typeof playBlip === 'function') playBlip(550, 0.06);
+    const bubble = el.querySelector('.sc-vocab-bubble');
+    if(bubble) scKeepInBounds(bubble);
+  }
+}
+function scRenderPage(){
+  const page = currentStory.pages[currentPage];
+  const dotsHTML = currentStory.pages.map((_,i)=>`<div class="sc-page-dot ${i===currentPage?'on':''}"></div>`).join('');
+  document.getElementById('scPageDots').innerHTML = dotsHTML;
+  const charsHTML = page.chars.map(c=>renderChar(c.name, 100, c.anim, c.expr)).join('');
+  const stage = document.getElementById('scStoryStage');
+  stage.innerHTML = `<div class="sc-char-stage">${charsHTML}</div><div class="sc-story-text sc-fade">${scParseVocab(page.text)}</div>`;
+  document.getElementById('scPrevPageBtn').disabled = currentPage === 0;
+  document.getElementById('scNextPageBtn').textContent = currentPage === currentStory.pages.length - 1 ? 'Continue' : 'Next';
+  page.chars.forEach(c=>{
+    if(c.anim && PROFILE_ACTIONS.includes(c.anim) && CHAR_ART_PROFILE[c.name]){
+      const wrap = stage.querySelector(`.sc-char-wrap[data-char="${c.name}"]`);
+      if(!wrap) return;
+      const artEl = wrap.querySelector('svg')?.parentElement;
+      if(!artEl) return;
+      const duration = PROFILE_ACTION_DURATION[c.anim] || 1000;
+      setTimeout(()=>{
+        artEl.classList.remove(c.anim);
+        if(CHAR_ART[c.name]) artEl.innerHTML = CHAR_ART[c.name](100, c.expr);
+      }, duration);
+    }
+  });
+}
+function scNextPage(){
+  if(currentPage < currentStory.pages.length - 1){
+    currentPage++;
+    scRenderPage();
+  } else {
+    scStartReflection();
+  }
+}
+function scPrevPage(){
+  if(currentPage > 0){
+    currentPage--;
+    scRenderPage();
+  }
+}
+
+// ================= REFLECTION =================
+let reflectAnswered = false;
+let reflectWasCorrect = false;
+function scStartReflection(){
+  reflectAnswered = false;
+  reflectWasCorrect = false;
+  const r = currentStory.reflection;
+  document.getElementById('scReflectQ').textContent = r.question;
+  document.getElementById('scReflectOpts').innerHTML = r.options.map((o,i)=>
+    `<div class="sc-reflect-tile" id="scReflectOpt-${i}" onclick="scAnswerReflect(${i})">${o.text}</div>`
+  ).join('');
+  const fb = document.getElementById('scReflectFeedback');
+  fb.classList.remove('shown');
+  const nextBtn = document.getElementById('scReflectNextBtn');
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Continue';
+  scShowScreen('reflect');
+}
+function scAnswerReflect(i){
+  if(reflectAnswered) return;
+  reflectAnswered = true;
+  const r = currentStory.reflection;
+  const correct = r.options[i].correct;
+  reflectWasCorrect = correct;
+  document.getElementById(`scReflectOpt-${i}`).classList.add(correct ? 'correct' : 'incorrect');
+  if(!correct){
+    const correctIdx = r.options.findIndex(o=>o.correct);
+    document.getElementById(`scReflectOpt-${correctIdx}`).classList.add('correct');
+  }
+  const fb = document.getElementById('scReflectFeedback');
+  fb.textContent = r.explain;
+  fb.classList.add('shown');
+  const nextBtn = document.getElementById('scReflectNextBtn');
+  nextBtn.disabled = false;
+  nextBtn.textContent = correct ? 'Continue' : 'Read the Story Again';
+}
+function scAfterReflect(){
+  if(reflectWasCorrect){
+    scAwardBadge();
+  } else {
+    currentPage = 0;
+    scRenderPage();
+    scShowScreen('reader');
+  }
+}
+
+// ================= BADGE AWARD =================
+function scAwardBadge(){
+  const isNew = !readIds.includes(currentStory.id);
+  if(isNew){
+    readIds.push(currentStory.id);
+    saveReadIds(readIds);
+    totalStars += 3;
+    saveStars(totalStars);
+    bumpStreakIfNewDay();
+  }
+  const b = BADGE_ICONS[currentStory.theme];
+  document.getElementById('scAwardBadgeIcon').style.background = b.color;
+  document.getElementById('scAwardBadgeIcon').innerHTML = `<svg width="70" height="70" viewBox="0 0 44 44">${b.icon}</svg>`;
+  document.getElementById('scAwardBadgeName').textContent = `${currentStory.badgeName} \u2014 for reading "${currentStory.title}"`;
+  document.getElementById('scAwardStars').innerHTML = isNew
+    ? `<svg width="28" height="28" viewBox="0 0 24 24" class="sc-star-pop"><path d="M12 2 l2.9 6.6 7.1.6 -5.4 4.7 1.6 7 -6.2 -3.8 -6.2 3.8 1.6 -7 -5.4 -4.7 7.1 -.6 Z" fill="var(--gold)"/></svg>`.repeat(3)
+    : `<div style="font-size:.85rem; color:var(--ink-soft);">Already earned \u2014 great to revisit!</div>`;
+  scShowScreen('award');
+}
+
+scRenderHub();
+
+</script>
+</body>
+</html>
