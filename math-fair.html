@@ -824,9 +824,9 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
       <div class="ticket-card">
         <h2 style="color:var(--red-dark)">What a Fair!</h2>
         <div class="booth-stage" style="height:190px; display:flex; align-items:center; justify-content:center;">
-          <img src="" id="img-azul_confetti" style="width:75%; height:75%; object-fit:contain">
+          <div id="finaleCharWrap" style="width:130px;"></div>
         </div>
-        <p class="big-text">Melissa and Azul threw the best neighborhood fair ever. Every ticket counted, every booth built in tidy rows, every prize shared fairly. You mastered adding, subtracting, multiplying, dividing, and picking the right tool for the job.</p>
+        <p class="big-text">You threw the best neighborhood fair ever. Every ticket counted, every booth built in tidy rows, every prize shared fairly. You mastered adding, subtracting, multiplying, dividing, and picking the right tool for the job.</p>
         <div class="nav-row">
           <button class="btn btn-outline" onclick="goHome()">Back to Midway</button>
           <a href="index.html" class="btn btn-green" style="text-decoration:none">Back to Hub</a>
@@ -1486,7 +1486,15 @@ function loadSelectedChar(){
 }
 let selectedChar = loadSelectedChar();
 function charUnlocked(c){ return totalStars >= c.unlockAt && !c.comingSoon; }
+function goToFinale(){
+  const c = CHARACTERS.find(ch=>ch.id===selectedChar) || CHARACTERS[0];
+  const wrap = document.getElementById('finaleCharWrap');
+  if(wrap && c.svgFn && window[c.svgFn]) wrap.innerHTML = window[c.svgFn](130, 'happy');
+  showScreen('screen-finale');
+}
+let lastVisitedBoothIndex = null;
 function currentMapBoothIndex(){
+  if(lastVisitedBoothIndex !== null) return lastVisitedBoothIndex;
   const idx = checksDone.findIndex(d=>!d);
   return idx < 0 ? checksDone.length-1 : idx;
 }
@@ -1564,19 +1572,38 @@ function charAvatarHTML(c, size){
   const initial = c.name[0];
   return `<div style="width:100%; height:100%; background:${c.avatarBg||'#ccc'}; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2'; font-weight:800; font-size:${size*0.4}px; color:#fff;">${initial}</div>`;
 }
+const OWNED_CHARS_KEY = 'melissaMathOwnedChars_v1';
+function loadOwnedChars(){
+  try{ const v = JSON.parse(localStorage.getItem(OWNED_CHARS_KEY)||'null'); if(Array.isArray(v)) return v; }catch(e){}
+  return CHARACTERS.filter(c=>c.unlockAt===0).map(c=>c.id);
+}
+let ownedChars = loadOwnedChars();
+function buyCharacter(id){
+  const c = CHARACTERS.find(ch=>ch.id===id);
+  if(!c || ownedChars.includes(c.id) || totalStars < c.unlockAt){ playBlip(260,0.15); return; }
+  totalStars -= c.unlockAt;
+  try{ localStorage.setItem(STARS_KEY, String(totalStars)); }catch(e){}
+  ownedChars.push(c.id);
+  try{ localStorage.setItem(OWNED_CHARS_KEY, JSON.stringify(ownedChars)); }catch(e){}
+  const counter = document.getElementById('starCounterText');
+  if(counter) counter.textContent = totalStars;
+  selectCharacter(c.id);
+}
 function renderCharacters(){
   const grid = document.getElementById('charGrid');
   if(!grid) return;
   grid.innerHTML = CHARACTERS.map(c=>{
-    const unlocked = charUnlocked(c);
+    const owned = ownedChars.includes(c.id);
+    const affordable = totalStars >= c.unlockAt;
     const isSelected = selectedChar === c.id;
+    const clickAction = c.comingSoon ? '' : (owned ? `selectCharacter('${c.id}')` : `buyCharacter('${c.id}')`);
     return `
-      <div class="char-card ${unlocked?'':'locked'} ${isSelected?'selected':''}" onclick="${unlocked ? `selectCharacter('${c.id}')` : ''}">
+      <div class="char-card ${owned?'':'locked'} ${isSelected?'selected':''}" onclick="${clickAction}">
         <div class="char-avatar">${charAvatarHTML(c, 80)}</div>
         <div class="char-name">${c.name}</div>
-        ${!unlocked && !c.comingSoon ? `<div class="char-unlock-req">Unlocks at ${c.unlockAt} stars (you have ${totalStars})</div>` : ''}
         ${c.comingSoon ? `<div class="char-unlock-req">Coming soon!</div>` : ''}
-        ${unlocked && !isSelected && !c.comingSoon ? `<div class="char-unlock-req" style="color:#276B38;">${c.unlockAt>0 ? `Unlocked at ${c.unlockAt} stars \u2014 tap to pick!` : 'Free \u2014 tap to pick!'}</div>` : ''}
+        ${!owned && !c.comingSoon ? `<div class="char-unlock-req">${affordable ? `Tap to buy for ${c.unlockAt} \u2605 (you have ${totalStars})` : `Costs ${c.unlockAt} \u2605 (you have ${totalStars})`}</div>` : ''}
+        ${owned && !isSelected && !c.comingSoon ? `<div class="char-unlock-req" style="color:#276B38;">Owned \u2014 tap to pick!</div>` : ''}
         ${isSelected ? `<div class="char-unlock-req" style="color:#276B38; font-weight:800;">Selected!</div>` : ''}
       </div>`;
   }).join('');
@@ -2203,6 +2230,7 @@ function jumpTo(key){
     showScreen('screen-boss');
     return;
   }
+  if(CHAPTER_ORDER.includes(key)) lastVisitedBoothIndex = CHAPTER_ORDER.indexOf(key);
   showScreen('screen-'+key);
 }
 document.addEventListener('keydown', e=>{});
@@ -2554,7 +2582,7 @@ function buildCheckForBooth(key){
 
   const nextBtnHTML = nextKey
     ? `<button class="btn btn-green" id="checkNextBoothBtn-${key}" onclick="jumpTo('${nextKey}')" style="display:none;">Continue to Next Booth</button>`
-    : `<button class="btn btn-green" id="checkNextBoothBtn-${key}" onclick="showScreen('screen-finale')" style="display:none;">See the Ending!</button>`;
+    : `<button class="btn btn-green" id="checkNextBoothBtn-${key}" onclick="goToFinale()" style="display:none;">See the Ending!</button>`;
   const resultSection = document.createElement('section');
   resultSection.className = 'screen';
   resultSection.id = `checkscreen-${key}-result`;
@@ -3771,7 +3799,9 @@ function raiseCurtain(){
   setTimeout(()=>burst('curtainStage', ['#2E86D9','#9B5FD4'], 14), 300);
   setTimeout(()=>{
     const reveal = document.getElementById('curtainReveal');
-    reveal.innerHTML = `<strong>What a day!</strong> You sold 45 tickets (adding), gave change to families (subtracting), set up 6 rows of 5 prize baskets (multiplying \u2014 30 in all!), and split them fairly into 5 gift bags of 6 (dividing). Every single skill came together perfectly.<br><img src="${AZUL_IMAGES.azul_confetti}" style="width:110px; margin-top:.6rem;">`;
+    const finaleChar = CHARACTERS.find(ch=>ch.id===selectedChar) || CHARACTERS[0];
+    const finaleCharHTML = finaleChar.svgFn && window[finaleChar.svgFn] ? window[finaleChar.svgFn](110, 'happy') : '';
+    reveal.innerHTML = `<strong>What a day!</strong> You sold 45 tickets (adding), gave change to families (subtracting), set up 6 rows of 5 prize baskets (multiplying \u2014 30 in all!), and split them fairly into 5 gift bags of 6 (dividing). Every single skill came together perfectly.<br><div style="width:110px; margin-top:.6rem; display:inline-block;">${finaleCharHTML}</div>`;
     reveal.classList.add('shown');
     document.getElementById('finaleNextBtn').disabled = false;
   }, 900);
