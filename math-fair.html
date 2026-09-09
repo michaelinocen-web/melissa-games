@@ -143,6 +143,13 @@ svg{ display:block; margin:0 auto; max-width:100%; }
   background:var(--paper); border:4px solid var(--line); border-radius:6px; padding:1.4rem 1.2rem 1.2rem;
   position:relative; box-shadow:6px 6px 0 var(--line); margin-bottom:1rem;
 }
+.card-close-btn{
+  position:absolute; top:.7rem; right:.7rem; width:34px; height:34px; border-radius:50%;
+  background:#fff; border:3px solid var(--line); font-size:1rem; font-weight:700; color:var(--ink);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5;
+  box-shadow:2px 2px 0 var(--line);
+}
+.card-close-btn:active{ transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line); }
 .ticket-card::before, .ticket-card::after{
   content:''; position:absolute; top:50%; width:22px; height:22px; background:var(--paper);
   border:4px solid var(--line); border-radius:50%; transform:translateY(-50%);
@@ -183,6 +190,27 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .teach-badge{ font-family:var(--font-display); font-weight:800; font-size:.68rem; color:#fff; background:var(--green); display:inline-block; padding:.25rem .8rem; border-radius:999px; border:2px solid var(--line); margin-bottom:.5rem; }
 .teach-demo{ background:#F5F0DC; border:3px solid var(--line); border-radius:14px; padding:.8rem; margin:.6rem 0; min-height:100px; display:flex; align-items:center; justify-content:center; }
 .teach-text{ font-size:.98rem; font-weight:700; line-height:1.5; }
+.explicit-teach-box{
+  background:#FFF6DE; border:3px solid var(--yellow-dark); border-radius:14px;
+  padding:.9rem 1rem; margin-top:.8rem; text-align:left;
+}
+.explicit-teach-title{ font-family:var(--font-display); font-weight:800; font-size:.92rem; color:var(--yellow-dark); margin-bottom:.35rem; display:flex; align-items:center; gap:.35rem; }
+.explicit-teach-body{ font-size:.88rem; line-height:1.45; margin-bottom:.5rem; }
+.explicit-teach-sentence{
+  font-family:var(--font-display); font-weight:800; font-size:1.02rem; text-align:center;
+  background:#fff; border:2px dashed var(--yellow-dark); border-radius:10px; padding:.5rem; color:var(--ink);
+}
+.explicit-teach-overlay{
+  position:fixed; inset:0; background:rgba(43,26,18,.55); z-index:90;
+  display:none; align-items:center; justify-content:center; padding:1.2rem;
+}
+.explicit-teach-overlay.shown{ display:flex; }
+.explicit-teach-modal{
+  background:var(--paper); border:4px solid var(--line); border-radius:16px; padding:1.3rem;
+  max-width:480px; width:100%; box-shadow:6px 6px 0 var(--line); text-align:center;
+  animation:popIn .3s cubic-bezier(.2,.9,.3,1.2);
+}
+.explicit-teach-modal .explicit-teach-box{ margin-top:0; text-align:left; }
 @keyframes slideTogether{ from{ transform:translateX(var(--from-x)); } to{ transform:translateX(0); } }
 @keyframes shrinkAway{ from{ opacity:1; transform:scale(1);} to{ opacity:0; transform:scale(.3);} }
 @keyframes hopAcross{ 0%{ transform:translateX(0);} 100%{ transform:translateX(var(--hop-x));} }
@@ -258,6 +286,13 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
   </div>
 </div>
 
+<div class="explicit-teach-overlay" id="explicitTeachOverlay">
+  <div class="explicit-teach-modal">
+    <div id="explicitTeachModalBody"></div>
+    <button class="btn btn-green" id="explicitTeachContinueBtn" style="margin-top:1rem;">Next &#8594;</button>
+  </div>
+</div>
+
 <div id="app">
 
   <!-- ============ MIDWAY (HOME) ============ -->
@@ -321,6 +356,9 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
         <h2 style="text-align:center;">Ribbon Shop</h2>
         <p class="big-text" style="text-align:center;">Spend your stars on new flag colors for the midway!</p>
         <div class="shop-grid" id="shopGrid"></div>
+        <div style="text-align:center; margin-top:1.2rem;">
+          <button class="btn btn-green" onclick="goHome()">Done</button>
+        </div>
       </div>
     </div>
   </section>
@@ -330,6 +368,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
     <div class="game-wrap">
       <button class="btn btn-outline" onclick="goHome()">Midway</button>
       <div class="ticket-card">
+        <button class="card-close-btn" onclick="goHome()" aria-label="Close">&#10005;</button>
         <h2 style="text-align:center;">Melissa's Scrapbook</h2>
         <p class="big-text" style="text-align:center;">A look back at every fair milestone you've earned!</p>
         <div class="achievements-grid" id="scrapbookGrid" style="margin-top:1rem;"></div>
@@ -376,7 +415,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="ringReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-guestlist" onclick="jumpTo('check-guestlist')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-guestlist" onclick="handleLessonNext('guestlist')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="guestlist"></section>
@@ -406,7 +445,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="crateReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-supplies" onclick="jumpTo('check-supplies')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-supplies" onclick="handleLessonNext('supplies')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="supplies"></section>
@@ -435,7 +474,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="moleReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-cantcome" onclick="jumpTo('check-cantcome')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-cantcome" onclick="handleLessonNext('cantcome')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="cantcome"></section>
@@ -464,7 +503,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="balloonReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-usedup" onclick="jumpTo('check-usedup')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-usedup" onclick="handleLessonNext('usedup')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="usedup"></section>
@@ -494,7 +533,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="stage-desc" id="magicianProgress">Trick 1 of 4</div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-magician" onclick="jumpTo('check-magician')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-magician" onclick="handleLessonNext('magician')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="magician"></section>
@@ -526,7 +565,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="hammerReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-booths" onclick="jumpTo('check-booths')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-booths" onclick="handleLessonNext('booths')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="booths"></section>
@@ -556,7 +595,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="hopReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-skipcount" onclick="jumpTo('check-skipcount')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-skipcount" onclick="handleLessonNext('skipcount')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="skipcount"></section>
@@ -586,7 +625,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="pondReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-sharing" onclick="jumpTo('check-sharing')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-sharing" onclick="handleLessonNext('sharing')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="sharing"></section>
@@ -616,7 +655,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="reveal" id="huddleReveal"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-teams" onclick="jumpTo('check-teams')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-teams" onclick="handleLessonNext('teams')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="teams"></section>
@@ -646,7 +685,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="stage-desc" id="fortuneProgress">Guess 1 of 3</div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-fortune" onclick="jumpTo('check-fortune')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-fortune" onclick="handleLessonNext('fortune')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="fortune"></section>
@@ -678,7 +717,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="stage-desc" id="wheelProgress"></div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-whichop" onclick="jumpTo('check-whichop')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-whichop" onclick="handleLessonNext('whichop')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="whichop"></section>
@@ -709,7 +748,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="stage-desc" id="journeyProgress">Journey 1 of 5</div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-journey" onclick="jumpTo('check-journey')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-journey" onclick="handleLessonNext('journey')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="journey"></section>
@@ -740,7 +779,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="stage-desc" id="pizzaProgress">Round 1 of 6</div>
         </div>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-pizza" onclick="jumpTo('check-pizza')" disabled>Next &#8594;</button></div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-pizza" onclick="handleLessonNext('pizza')" disabled>Next &#8594;</button></div>
     </div>
   </section>
   <section class="screen check-holder" data-check="pizza"></section>
@@ -939,6 +978,48 @@ function enableLessonNext(key){
   const btn = document.getElementById(`nextbtn-lesson-${key}`);
   if(btn) btn.disabled = false;
 }
+function explicitTeachHTML(body, sentence){
+  return `<div class="explicit-teach-box">
+    <div class="explicit-teach-title">&#128161; Check Your Understanding!</div>
+    <div class="explicit-teach-body">${body}</div>
+    <div class="explicit-teach-sentence">${sentence}</div>
+  </div>`;
+}
+const EXPLICIT_TEACH_CONTENT = {
+  guestlist: { body:"When you add, you're combining Group A and Group B into ONE bigger total. It doesn't matter which group you count first, the total is the same either way!", sentence:"Group A + Group B = Total" },
+  supplies: { body:"The tens place is represented by crates of 10, and the ones place is represented by loose cups. Every crate is always worth 10, no matter how many crates you have!", sentence:"3 crates = 10 + 10 + 10 cups = 30 cups" },
+  cantcome: { body:"Subtraction means taking some away from a group and counting what's left. The moles that go home make the group smaller.", sentence:"9 moles \u2212 4 moles = 5 moles left" },
+  usedup: { body:"When part of a group is already used up, subtraction tells us how many are left. Start with the whole amount, then take away the used part.", sentence:"10 balloons \u2212 3 used = 7 left" },
+  magician: { body:"When you know the TOTAL and the part you can SEE, subtract to find the hidden part. The bunnies under the hat are the total minus the ones shown.", sentence:"Total \u2212 Shown = Hiding" },
+  booths: { body:"Multiplication means adding the same number again and again. Instead of counting one by one, rows \u00d7 columns gives you the total in one quick step.", sentence:"3 rows \u00d7 4 booths = 12 booths" },
+  skipcount: { body:"Skip-counting is multiplying by jumping in equal steps. Each hop adds the exact same amount as the last one.", sentence:"3 hops of 5 = 5 + 5 + 5 = 15" },
+  sharing: { body:"Division means sharing a group equally among a number of friends, so everyone gets the exact same amount, with none left over.", sentence:"12 cups \u00f7 4 boats = 3 cups each" },
+  teams: { body:"Division can also mean splitting a group into equal-sized smaller groups, then counting how many groups you made.", sentence:"12 kids \u00f7 groups of 3 = 4 teams" },
+  fortune: { body:"Estimating means using what you already know to make a smart, reasonable guess, instead of stopping to count every single piece one by one.", sentence:"About 20 + about 20 = about 40" },
+  whichop: { body:"The words in a problem are clues for which operation to use. 'In all' or 'together' often means add. 'Left' or 'fewer' often means subtract. 'Each' or 'groups of' often means multiply or divide.", sentence:"Keywords \u2192 pick + , \u2212 , \u00d7 , or \u00f7" },
+  journey: { body:"Multi-step problems need more than one operation. Solve the first step completely, then use THAT answer as the starting point for the next step.", sentence:"Step 1 answer \u2192 becomes the start of Step 2" },
+  pizza: { body:"A fraction shows parts of a whole. The bottom number (denominator) is the total number of equal parts, and the top number (numerator) is how many of those parts you have.", sentence:"3 eaten \u2044 8 total slices = 3/8" }
+};
+function handleLessonNext(key){
+  const btn = document.getElementById(`nextbtn-lesson-${key}`);
+  if(btn && btn.dataset.confirmed === '1'){
+    hideExplicitTeachModal();
+    jumpTo(`check-${key}`);
+    return;
+  }
+  showExplicitTeachModal(key);
+  if(btn){ btn.dataset.confirmed = '1'; }
+}
+function showExplicitTeachModal(key){
+  const content = EXPLICIT_TEACH_CONTENT[key];
+  if(!content) { jumpTo(`check-${key}`); return; }
+  document.getElementById('explicitTeachModalBody').innerHTML = explicitTeachHTML(content.body, content.sentence);
+  document.getElementById('explicitTeachOverlay').classList.add('shown');
+  document.getElementById('explicitTeachContinueBtn').onclick = ()=>{ hideExplicitTeachModal(); jumpTo(`check-${key}`); };
+}
+function hideExplicitTeachModal(){
+  document.getElementById('explicitTeachOverlay').classList.remove('shown');
+}
 // Kid-friendly drop detection: instead of requiring the release point to land
 // exactly on a drop zone (hard for small hands and imprecise taps), find the
 // nearest zone whose expanded "catch area" contains the point, picking the
@@ -1069,6 +1150,7 @@ function loadChecksDone(){
   return CHAPTER_ORDER.map(()=>false);
 }
 let checksDone = loadChecksDone();
+const QUIZ_PASS_THRESHOLD = 3;
 function persistCheckDone(key){
   const idx = CHAPTER_ORDER.indexOf(key);
   checksDone[idx] = true;
@@ -1263,8 +1345,9 @@ function renderCharacters(){
       <div class="char-card ${unlocked?'':'locked'} ${isSelected?'selected':''}" onclick="${unlocked ? `selectCharacter('${c.id}')` : ''}">
         <div class="char-avatar">${charAvatarHTML(c, 80)}</div>
         <div class="char-name">${c.name}</div>
-        ${!unlocked && !c.comingSoon ? `<div class="char-unlock-req">Unlocks at ${c.unlockAt} stars</div>` : ''}
+        ${!unlocked && !c.comingSoon ? `<div class="char-unlock-req">Unlocks at ${c.unlockAt} stars (you have ${totalStars})</div>` : ''}
         ${c.comingSoon ? `<div class="char-unlock-req">Coming soon!</div>` : ''}
+        ${unlocked && !isSelected && !c.comingSoon ? `<div class="char-unlock-req" style="color:#276B38;">${c.unlockAt>0 ? `Unlocked at ${c.unlockAt} stars \u2014 tap to pick!` : 'Free \u2014 tap to pick!'}</div>` : ''}
         ${isSelected ? `<div class="char-unlock-req" style="color:#276B38; font-weight:800;">Selected!</div>` : ''}
       </div>`;
   }).join('');
@@ -1450,6 +1533,14 @@ function boothScoreHTML(key){
     </div>`;
 }
 const mapDims = { w: 320, h: 1000, points: [] };
+function boothFlagColor(i){
+  // solid-color ribbons the player owns get spread across the booth flags,
+  // in the order they were bought; rainbow is excluded here (kept for the
+  // start banner) since a single small triangle can't show a gradient well.
+  const owned = ownedRibbons.map(id => RIBBON_COLORS.find(r=>r.id===id)).filter(r => r && r.color && r.id !== 'rainbow');
+  if(owned.length === 0) return '#E8383A';
+  return owned[i % owned.length].color;
+}
 let mapPan = { x: 0, y: 0, scale: 1 };
 function applyMapPan(animate){
   const canvas = document.getElementById('mapCanvas');
@@ -1565,21 +1656,36 @@ function renderMidway(){
   }
   const pathD = smoothPath(points);
   // decorative trees scattered along both sides of the trail, offset from each booth
-  const treeSeeds = [
-    {dx:-58,dy:14,s:1}, {dx:60,dy:-30,s:.8}, {dx:-66,dy:-24,s:.85}, {dx:55,dy:22,s:1.05},
-    {dx:-52,dy:-14,s:.75}, {dx:64,dy:8,s:1}, {dx:-60,dy:26,s:.9}, {dx:58,dy:-18,s:.8},
-    {dx:-64,dy:4,s:1.1}, {dx:52,dy:30,s:.85}, {dx:-56,dy:-22,s:.95}, {dx:62,dy:12,s:.8},
-    {dx:-58,dy:20,s:1}, {dx:56,dy:-26,s:.9}
-  ];
   function treeSVG(cx, cy, scale){
     return `<g transform="translate(${cx},${cy}) scale(${scale})">
-      <rect x="-2.5" y="4" width="5" height="9" fill="#8C6B4F"/>
-      <polygon points="0,-20 11,2 -11,2" fill="#2E8B47"/>
-      <polygon points="0,-13 9.5,6 -9.5,6" fill="#3FAE5C"/>
-      <polygon points="0,-5 8,12 -8,12" fill="#57C46E"/>
+      <rect x="-3" y="6" width="6" height="12" fill="#8C6B4F"/>
+      <polygon points="0,-34 16,4 -16,4" fill="#2E8B47"/>
+      <polygon points="0,-24 14,10 -14,10" fill="#3FAE5C"/>
+      <polygon points="0,-12 11,18 -11,18" fill="#57C46E"/>
     </g>`;
   }
-  const treesHTML = points.map((p,i)=> treeSVG(p.x+treeSeeds[i%treeSeeds.length].dx, p.y+treeSeeds[i%treeSeeds.length].dy, treeSeeds[i%treeSeeds.length].s)).join('');
+  // trees are scattered freely across the whole canvas (not anchored to booths),
+  // and scaled tall enough to clearly tower over the tents (booth flags top out
+  // around 60 units above the path; trees reach roughly 90-140 units).
+  const treeSpots = [];
+  for(let i=0;i<34;i++){
+    const tx = 40 + (i*271) % (svgW-80);
+    const ty = 60 + (i*151) % (svgH-140);
+    const tooCloseToBooth = points.some(p => Math.hypot(p.x-tx, p.y-ty) < 95);
+    if(tooCloseToBooth) continue;
+    treeSpots.push({ x: tx, y: ty, s: 0.9 + ((i*37)%40)/100 });
+  }
+  const treesHTML = treeSpots.map(t => treeSVG(t.x, t.y, t.s)).join('');
+  // small rocks scattered in the grass for extra texture
+  const rockSpots = [];
+  for(let i=0;i<22;i++){
+    const rx = 60 + (i*337) % (svgW-120);
+    const ry = 70 + (i*197) % (svgH-160);
+    const tooClose = points.some(p => Math.hypot(p.x-rx, p.y-ry) < 70);
+    if(tooClose) continue;
+    rockSpots.push({ x: rx, y: ry, s: 0.7 + ((i*53)%50)/100 });
+  }
+  const rocksHTML = rockSpots.map(r => `<g transform="translate(${r.x},${r.y}) scale(${r.s})"><ellipse cx="1" cy="5" rx="12" ry="3" fill="rgba(43,26,18,.12)"/><path d="M-10 4 C-11 -3 -4 -8 3 -7 C9 -8 12 -2 10 3 C11 7 4 9 -2 8 C-8 9 -11 7 -10 4 Z" fill="#B5AFA0" stroke="#8f8a7c" stroke-width="1.4"/><path d="M-5 -3 Q-1 -6 3 -4" fill="none" stroke="#c9c4b6" stroke-width="1.3" opacity=".7"/></g>`).join('');
   const cloudsHTML = [ {x:svgW*0.08,y: 60}, {x:svgW*0.32,y:100}, {x:svgW*0.6,y:60}, {x:svgW*0.85,y:110}, {x:svgW*0.46,y:820} ].map(c=>
     `<g transform="translate(${c.x},${c.y})" opacity=".55"><ellipse cx="0" cy="0" rx="26" ry="12" fill="#fff"/><ellipse cx="16" cy="-3" rx="16" ry="9" fill="#fff"/><ellipse cx="-16" cy="2" rx="15" ry="8" fill="#fff"/></g>`
   ).join('');
@@ -1616,25 +1722,25 @@ function renderMidway(){
     const color = BOOTH_COLORS[i];
     const p = points[i];
     const scoreLine = boothStats[key] && (boothStats[key].correct+boothStats[key].wrong) > 0
-      ? `<text x="${p.x}" y="${p.y+50}" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" font-weight="800" fill="#276B38">&#10003;${boothStats[key].correct} <tspan fill="#A81E20">&#10007;${boothStats[key].wrong}</tspan></text>`
+      ? `<text x="${p.x}" y="${p.y+68}" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11" font-weight="800" fill="#276B38">&#10003;${boothStats[key].correct} <tspan fill="#A81E20">&#10007;${boothStats[key].wrong}</tspan></text>`
       : '';
     const tentColor = unlocked ? color : '#C9C2B5';
     const bodyColor = unlocked ? '#FFFBF0' : '#DAD5C8';
     const iconGroup = unlocked
-      ? `<g transform="translate(${p.x-11},${p.y-1}) scale(.55)">${BOOTH_ICONS[key]}</g>`
-      : `<g transform="translate(${p.x-9},${p.y-9})"><rect x="2" y="9" width="16" height="12" rx="2" fill="#8a8478"/><path d="M5 9 V6 a5 5 0 0 1 10 0 v3" fill="none" stroke="#8a8478" stroke-width="2.4"/></g>`;
+      ? `<g transform="translate(${p.x-15},${p.y-2}) scale(.75)">${BOOTH_ICONS[key]}</g>`
+      : `<g transform="translate(${p.x-12},${p.y-13})"><rect x="2" y="9" width="22" height="16" rx="2" fill="#8a8478"/><path d="M5 9 V6 a7 7 0 0 1 14 0 v3" fill="none" stroke="#8a8478" stroke-width="3.2"/></g>`;
     return `
       <g class="map-booth ${unlocked?'':'map-booth-locked'}" ${unlocked?`onclick="jumpTo('${key}')"`:''}>
-        <ellipse cx="${p.x+2}" cy="${p.y+27}" rx="27" ry="6" fill="rgba(43,26,18,.15)"/>
-        <polygon points="${p.x-26},${p.y-8} ${p.x},${p.y-34} ${p.x+26},${p.y-8}" fill="${tentColor}" stroke="#2B1A12" stroke-width="2.6" stroke-linejoin="round"/>
-        <polygon points="${p.x-14},${p.y-8} ${p.x},${p.y-27} ${p.x+14},${p.y-8}" fill="#fff" opacity=".22"/>
-        <rect x="${p.x-22}" y="${p.y-9}" width="44" height="30" fill="${bodyColor}" stroke="#2B1A12" stroke-width="2.6"/>
-        <path d="M${p.x-26} ${p.y-8} L${p.x+26} ${p.y-8}" stroke="#2B1A12" stroke-width="2.6"/>
+        <ellipse cx="${p.x+3}" cy="${p.y+38}" rx="37" ry="8" fill="rgba(43,26,18,.15)"/>
+        <polygon points="${p.x-36},${p.y-11} ${p.x},${p.y-48} ${p.x+36},${p.y-11}" fill="${tentColor}" stroke="#2B1A12" stroke-width="3.4" stroke-linejoin="round"/>
+        <polygon points="${p.x-19},${p.y-11} ${p.x},${p.y-38} ${p.x+19},${p.y-11}" fill="#fff" opacity=".22"/>
+        <rect x="${p.x-31}" y="${p.y-13}" width="62" height="42" fill="${bodyColor}" stroke="#2B1A12" stroke-width="3.4"/>
+        <path d="M${p.x-36} ${p.y-11} L${p.x+36} ${p.y-11}" stroke="#2B1A12" stroke-width="3.4"/>
         ${iconGroup}
-        <line x1="${p.x}" y1="${p.y-34}" x2="${p.x}" y2="${p.y-42}" stroke="#2B1A12" stroke-width="2"/>
-        <polygon points="${p.x},${p.y-42} ${p.x+11},${p.y-38} ${p.x},${p.y-34}" fill="${unlocked?'#E8383A':'#a39d90'}"/>
-        ${done ? `<circle cx="${p.x+19}" cy="${p.y+11}" r="9" fill="#3FAE5C" stroke="#fff" stroke-width="2"/><path d="M${p.x+15} ${p.y+11} l3 3 l6 -6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
-        <text x="${p.x}" y="${p.y+38}" text-anchor="middle" font-family="'Baloo 2',sans-serif" font-size="10.5" font-weight="700" fill="${unlocked?'#2B1A12':'#a39d90'}">${CHAPTER_LABELS[key]}</text>
+        <line x1="${p.x}" y1="${p.y-48}" x2="${p.x}" y2="${p.y-60}" stroke="#2B1A12" stroke-width="2.6"/>
+        <polygon points="${p.x},${p.y-60} ${p.x+15},${p.y-54} ${p.x},${p.y-48}" fill="${unlocked?boothFlagColor(i):'#a39d90'}"/>
+        ${done ? `<circle cx="${p.x+27}" cy="${p.y+15}" r="12" fill="#3FAE5C" stroke="#fff" stroke-width="2.6"/><path d="M${p.x+21} ${p.y+15} l4 4 l8 -8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
+        <text x="${p.x}" y="${p.y+52}" text-anchor="middle" font-family="'Baloo 2',sans-serif" font-size="13.5" font-weight="700" fill="${unlocked?'#2B1A12':'#a39d90'}">${CHAPTER_LABELS[key]}</text>
         ${scoreLine}
       </g>`;
   }).join('');
@@ -1648,6 +1754,7 @@ function renderMidway(){
       ${flowersHTML}
       ${cloudsHTML}
       ${lakeHTML}
+      ${rocksHTML}
       ${treesHTML}
       <path d="${pathD}" fill="none" stroke="#6B5440" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="${pathD}" fill="none" stroke="#8C6B4F" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1920,8 +2027,15 @@ const CHAPTER_CHECK_GENERATORS = {
     const num = randInt(23,89);
     const tens = Math.floor(num/10), ones = num%10;
     qs.push(dragqQ(`Drag the number to where it belongs in ${num}.`, 'box', `Tens place: ${tens}`, `Tens place: ${ones}`, `In ${num}, the ${tens} is in the tens place (worth ${tens*10}) and ${ones} is in the ones place.`));
-    const t3=randInt(2,5), o3=randInt(1,9);
-    qs.push(tilesQ(`Which is bigger: ${t3} tens and ${o3} ones, or ${o3} tens and ${t3} ones?`, `${o3} tens and ${t3} ones`, o3*10+t3, `${t3} tens and ${o3} ones`, t3*10+o3, 'box', o3>t3 ? `${o3} tens is worth more than ${t3} tens.` : `${t3} tens is worth more, so that comparison depends on which is larger. Check the tens digit first!`));
+    const t3=randInt(2,5); let o3=randInt(1,9); if(o3===t3) o3 = o3>=9 ? o3-1 : o3+1;
+    const optAtext = `${t3} tens and ${o3} ones`, optAval = t3*10+o3;
+    const optBtext = `${o3} tens and ${t3} ones`, optBval = o3*10+t3;
+    const aIsBigger = optAval > optBval;
+    qs.push(tilesQ(`Which is bigger: ${t3} tens and ${o3} ones, or ${o3} tens and ${t3} ones?`,
+      aIsBigger ? optAtext : optBtext, aIsBigger ? optAval : optBval,
+      aIsBigger ? optBtext : optAtext, aIsBigger ? optBval : optAval,
+      'box',
+      aIsBigger ? `${optAtext} = ${optAval}, which is bigger, because ${t3} tens is worth more than ${o3} tens.` : `${optBtext} = ${optBval}, which is bigger, because ${o3} tens is worth more than ${t3} tens.`));
     qs.push(leverQ("True or false: In a two-digit number, the LEFT digit tells you how many tens there are.", true, "Correct! The left digit is the tens place, and the right digit is the ones place."));
     return shuffle(qs);
   },
@@ -2184,18 +2298,18 @@ function buildCheckForBooth(key){
   });
 
   const nextBtnHTML = nextKey
-    ? `<button class="btn btn-green" onclick="jumpTo('${nextKey}')">Continue to Next Booth</button>`
-    : `<button class="btn btn-green" onclick="showScreen('screen-finale')">See the Ending!</button>`;
+    ? `<button class="btn btn-green" id="checkNextBoothBtn-${key}" onclick="jumpTo('${nextKey}')" style="display:none;">Continue to Next Booth</button>`
+    : `<button class="btn btn-green" id="checkNextBoothBtn-${key}" onclick="showScreen('screen-finale')" style="display:none;">See the Ending!</button>`;
   const resultSection = document.createElement('section');
   resultSection.className = 'screen';
   resultSection.id = `checkscreen-${key}-result`;
   resultSection.innerHTML = `
     <div class="game-wrap">
       <div class="ticket-card">
-        <div class="booth-label">${CHAPTER_LABELS[key]}: Stamp Earned!</div>
+        <div class="booth-label" id="checkResultLabel-${key}">${CHAPTER_LABELS[key]}: Stamp Earned!</div>
         <p class="big-text" id="checktext-${key}"></p>
       </div>
-      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-outline" onclick="goHome()">Midway</button>${nextBtnHTML}</div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-outline" onclick="goHome()">Midway</button><button class="btn btn-yellow" id="checkRetryBtn-${key}" onclick="retryQuiz('${key}')" style="display:none;">Retry Quiz</button>${nextBtnHTML}</div>
     </div>`;
   holder.parentNode.insertBefore(resultSection, holder);
 }
@@ -2214,10 +2328,24 @@ function markAnswered(key, qIndex, correct){
     setTimeout(()=>{
       const total = CHAPTER_CHECKS[key].length;
       const score = checkScores[key] || 0;
-      const phrase = score === total ? "Perfect! You remembered everything." : "Good try! Every lesson makes you a little wiser.";
+      const passed = score >= QUIZ_PASS_THRESHOLD;
       const textEl = document.getElementById(`checktext-${key}`);
-      if(textEl) textEl.textContent = `${phrase} (${score} / ${total})`;
-      persistCheckDone(key);
+      const labelEl = document.getElementById(`checkResultLabel-${key}`);
+      const retryBtn = document.getElementById(`checkRetryBtn-${key}`);
+      const nextBoothBtn = document.getElementById(`checkNextBoothBtn-${key}`);
+      if(passed){
+        const phrase = score === total ? "Perfect! You remembered everything." : "Great job! You've earned your stamp.";
+        if(textEl) textEl.textContent = `${phrase} (${score} / ${total})`;
+        if(labelEl) labelEl.textContent = `${CHAPTER_LABELS[key]}: Stamp Earned!`;
+        if(retryBtn) retryBtn.style.display = 'none';
+        if(nextBoothBtn) nextBoothBtn.style.display = 'inline-block';
+        persistCheckDone(key);
+      } else {
+        if(textEl) textEl.textContent = `So close! You got ${score} / ${total}. Get at least ${QUIZ_PASS_THRESHOLD} correct to earn your stamp and unlock the next booth. Want to try again with new questions?`;
+        if(labelEl) labelEl.textContent = `${CHAPTER_LABELS[key]}: Almost There!`;
+        if(retryBtn) retryBtn.style.display = 'inline-block';
+        if(nextBoothBtn) nextBoothBtn.style.display = 'none';
+      }
     }, 50);
   }
 }
@@ -2696,7 +2824,6 @@ function hammerHit(){
   if(hammerHits % hammerCols === 0){
     bell.style.opacity = '1';
     burst('hammerStage', ['#FFCC33','#E8383A','#3FAE5C'], 10);
-    enableLessonNext('booths');
     setTimeout(()=>{ bell.style.opacity = '0'; }, 500);
   }
   const rows = Math.floor(hammerHits/hammerCols);
@@ -2706,6 +2833,7 @@ function hammerHit(){
     const reveal = document.getElementById('hammerReveal');
     reveal.innerHTML = `<strong>${hammerRows} \u00d7 ${hammerCols} = ${total} booths!</strong> That's ${Array(hammerRows).fill(hammerCols).join(' + ')} \u2014 multiplication is fast repeated addition.`;
     reveal.classList.add('shown');
+    enableLessonNext('booths');
     setTimeout(()=>{
       hammerRoundIndex++;
       if(hammerRoundIndex < hammerRoundsTotal){
