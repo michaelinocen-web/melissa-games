@@ -22,6 +22,13 @@
   --font-story:'Lora',Georgia,serif;
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+.sc-exit-btn{
+  position:fixed; top:.9rem; right:.9rem; z-index:80;
+  background:var(--card); border:2px solid var(--line); border-radius:999px;
+  padding:.5rem 1rem; font-family:var(--font-display); font-weight:600; font-size:.85rem;
+  color:var(--ink); text-decoration:none; box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.sc-exit-btn:active{ transform:translateY(1px); }
 html,body{ height:100%; }
 body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:19px; line-height:1.5; overflow-x:hidden; position:relative; }
 body::before{
@@ -200,6 +207,7 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 </style>
 </head>
 <body>
+<a href="index.html" class="sc-exit-btn">&#8592; Exit</a>
 <div class="viewport">
 
   <!-- ============ HUB / LIBRARY SCREEN ============ -->
