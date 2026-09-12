@@ -286,7 +286,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
   </div>
   <div style="display:flex; gap:.5rem;">
     <div class="star-count" id="starCounter"><svg width="16" height="16" viewBox="0 0 20 20"><polygon points="10,1 12.6,7 19,7.6 14.2,11.9 15.6,18.2 10,14.8 4.4,18.2 5.8,11.9 1,7.6 7.4,7" fill="#2B1A12"/></svg><span id="starCounterText">0</span></div>
-    <div class="stamp-count" id="stampCounter">0 / 14 stamps</div>
+    <div class="stamp-count" id="stampCounter">0 / 15 stamps</div>
   </div>
 </div>
 
@@ -322,7 +322,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <p class="midway-sub">Walk down the midway and play every booth game to get ready for the big fair!</p>
           <div class="rank-banner"><span class="rank-title" id="rankTitle">New Fairgoer</span></div>
           <div class="progress-bar-card">
-            <div class="progress-bar-label"><span id="progressBarText">0 / 14 booths complete</span></div>
+            <div class="progress-bar-label"><span id="progressBarText">0 / 15 booths complete</span></div>
             <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div></div>
           </div>
           <div style="display:flex; justify-content:center; gap:.5rem; flex-wrap:wrap; margin:1rem 0;">
@@ -488,7 +488,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
     <div class="game-wrap">
       
       <div class="ticket-card">
-        <div class="booth-label">Booth 4 &middot; Dart Throw</div>
+        <div class="booth-label">Booth 4 &middot; Magician's Hat</div>
 
         <div class="teach-stage" id="teach-usedup">
           <div class="teach-badge">Let's Learn!</div>
@@ -505,6 +505,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="booth-stage" id="balloonStage" style="height:220px; display:flex; flex-wrap:wrap; align-content:flex-start; justify-content:center; gap:4px; padding:8px;"></div>
           <div class="stage-label" id="balloonCount">30 balloons</div>
           <div class="reveal" id="balloonReveal"></div>
+          <button class="btn btn-yellow" id="balloonNextBtn" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-usedup" onclick="handleLessonNext('usedup')" disabled>Next &#8594;</button></div>
@@ -512,12 +513,52 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
   </section>
   <section class="screen check-holder" data-check="usedup"></section>
 
+  <!-- ============ BOOTH: LANTERN SHOP (Make-a-ten strategy) ============ -->
+  <section class="screen" id="screen-lantern">
+    <div class="game-wrap">
+      <div class="ticket-card">
+        <div class="booth-label" style="background:#C43D3D;">Booth 6 &middot; Lantern Shop</div>
+        <div class="teach-stage" id="teach-lantern">
+          <h2>The Lantern Shop</h2>
+          <div class="teach-demo">
+            <svg width="220" height="110" viewBox="0 0 220 110">
+              <ellipse cx="60" cy="50" rx="26" ry="32" fill="#C43D3D" stroke="#8a2323" stroke-width="2.5"/>
+              <path d="M40 30 h40 M40 70 h40" stroke="#FFCC33" stroke-width="2"/>
+              <line x1="60" y1="18" x2="60" y2="10" stroke="#8a2323" stroke-width="2.5"/>
+              <line x1="60" y1="82" x2="60" y2="92" stroke="#8a2323" stroke-width="2.5"/>
+              <ellipse cx="160" cy="50" rx="26" ry="32" fill="#FFCC33" stroke="#C99000" stroke-width="2.5"/>
+              <path d="M140 30 h40 M140 70 h40" stroke="#C43D3D" stroke-width="2"/>
+              <line x1="160" y1="18" x2="160" y2="10" stroke="#C99000" stroke-width="2.5"/>
+              <line x1="160" y1="82" x2="160" y2="92" stroke="#C99000" stroke-width="2.5"/>
+              <path d="M92 50 L128 50" stroke="#2B1A12" stroke-width="2.5" stroke-dasharray="4,4" marker-end="url(#lanternArrow)"/>
+              <defs><marker id="lanternArrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#2B1A12"/></marker></defs>
+            </svg>
+          </div>
+          <p class="teach-text">A merchant is stringing lanterns for the fair. Counting one at a time is slow, so she uses a trick: she makes a group of TEN lanterns first, then counts what's left over. Let's try her shortcut!</p>
+          <button class="btn btn-green" onclick="startPlay('lantern')">Got it! Let's Play!</button>
+        </div>
+        <div class="play-stage" id="play-lantern" style="display:none;">
+          <div style="text-align:right; margin-bottom:.3rem;"><span onclick="reviewLesson('lantern')" style="font-family:'Baloo 2'; font-weight:700; font-size:.72rem; color:var(--blue-dark); text-decoration:underline; cursor:pointer;">&#8592; Review the lesson</span></div>
+          <h2>Make a Ten!</h2>
+          <p class="big-text" id="lanternPrompt">How many lanterns in all?</p>
+          <div class="booth-stage" id="lanternStage" style="height:150px; display:flex; align-items:center; justify-content:center;"></div>
+          <div class="qtile-row" id="lanternTiles"></div>
+          <div class="reveal" id="lanternReveal"></div>
+          <button class="btn btn-yellow" id="lanternNextBtn" onclick="lanternAdvance()" style="display:none; margin-top:.6rem;">Next Problem &#8594;</button>
+          <div class="stage-desc" id="lanternProgress">Problem 1 of 5</div>
+        </div>
+      </div>
+      <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-lantern" onclick="handleLessonNext('lantern')" disabled>Next &#8594;</button></div>
+    </div>
+  </section>
+  <section class="screen check-holder" data-check="lantern"></section>
+
   <!-- ============ BOOTH 5: MAGICIAN'S HAT (Missing-number problems) ============ -->
   <section class="screen" id="screen-magician">
     <div class="game-wrap">
       
       <div class="ticket-card">
-        <div class="booth-label">Booth 5 &middot; Magician's Hat</div>
+        <div class="booth-label">Booth 5 &middot; Dart Throw</div>
 
         <div class="teach-stage" id="teach-magician">
           <div class="teach-badge">Let's Learn!</div>
@@ -995,7 +1036,8 @@ const EXPLICIT_TEACH_CONTENT = {
   guestlist: { body:"When you add, you're combining Group A and Group B into ONE bigger total. It doesn't matter which group you count first, the total is the same either way!", sentence:"Group A + Group B = Total" },
   supplies: { body:"The tens place is represented by crates of 10, and the ones place is represented by loose cups. Every crate is always worth 10, no matter how many crates you have!", sentence:"3 crates = 10 + 10 + 10 cups = 30 cups" },
   cantcome: { body:"Subtraction means taking some away from a group and counting what's left. The moles that go home make the group smaller.", sentence:"9 moles \u2212 4 moles = 5 moles left" },
-  usedup: { body:"When part of a group is already used up, subtraction tells us how many are left. Start with the whole amount, then take away the used part.", sentence:"10 balloons \u2212 3 used = 7 left" },
+  usedup: { body:"For bigger numbers, break the problem into tens and ones and subtract each part separately, this is much faster than counting one by one!", sentence:"4 tens \u2212 2 tens = 20, plus 2 ones \u2212 0 ones = 2, so 42 \u2212 20 = 22" },
+  lantern: { body:"Making a ten first turns a tricky problem into an easy one. Find how many the first number needs to reach 10, then add what's left over. This is a favorite shortcut in Chinese elementary classrooms!", sentence:"8 + 5 \u2192 8 + 2 = 10, then 10 + 3 = 13" },
   magician: { body:"When you know the TOTAL and the part you can SEE, subtract to find the hidden part. The bunnies under the hat are the total minus the ones shown.", sentence:"Total \u2212 Shown = Hiding" },
   booths: { body:"Multiplication means adding the same number again and again. Instead of counting one by one, rows \u00d7 columns gives you the total in one quick step.", sentence:"3 rows \u00d7 4 booths = 12 booths" },
   skipcount: { body:"Skip-counting is multiplying by jumping in equal steps. Each hop adds the exact same amount as the last one.", sentence:"3 hops of 5 = 5 + 5 + 5 = 15" },
@@ -1116,20 +1158,21 @@ document.querySelectorAll('img[id^="img-azul_"]').forEach(img=>{
 
 // ================= PROGRESS =================
 const FAIR_PROGRESS_KEY = 'melissaMathMidwayProgress_v1';
-const CHAPTER_ORDER = ['guestlist','supplies','cantcome','usedup','magician','booths','skipcount','sharing','teams','fortune','whichop','journey','pizza','fairday'];
+const CHAPTER_ORDER = ['guestlist','supplies','cantcome','magician','usedup','lantern','booths','skipcount','sharing','teams','fortune','whichop','journey','pizza','fairday'];
 const CHAPTER_LABELS = {
   guestlist:'Ring Toss', supplies:'Stack the Crates', cantcome:'Whack-a-Mole',
-  usedup:'Dart Throw', magician:"Magician's Hat", booths:'Strongman Hammer', skipcount:'Lily Pad Hop',
+  usedup:'Dart Throw', magician:"Magician's Hat", lantern:'Lantern Shop', booths:'Strongman Hammer', skipcount:'Lily Pad Hop',
   sharing:'Duck Pond', teams:'Team Huddle', fortune:"Fortune Teller's Tent", whichop:'Wheel of Word Problems',
   journey:'The Journey', pizza:'Pizza Party', fairday:'Grand Finale'
 };
-const BOOTH_COLORS = ['#E8383A','#2E86D9','#FFCC33','#3FAE5C','#9B5FD4','#F0824A','#2BA8A0','#E8639B','#A9682F','#8BC441','#5AB9E8','#F0614F','#D9A441','#B84FC4'];
+const BOOTH_COLORS = ['#E8383A','#2E86D9','#FFCC33','#3FAE5C','#9B5FD4','#F0824A','#C43D3D','#2BA8A0','#E8639B','#A9682F','#8BC441','#5AB9E8','#F0614F','#D9A441','#B84FC4'];
 const BOOTH_ICONS = {
   guestlist: `<circle cx="20" cy="20" r="11" fill="none" stroke="#fff" stroke-width="4"/><circle cx="20" cy="20" r="4" fill="#fff"/>`,
   supplies: `<rect x="9" y="21" width="10" height="9" fill="#fff"/><rect x="21" y="21" width="10" height="9" fill="#fff"/><rect x="15" y="10" width="10" height="9" fill="#fff"/>`,
   cantcome: `<path d="M10 28 Q20 8 30 28 Z" fill="#fff" opacity="0"/><ellipse cx="20" cy="30" rx="13" ry="4" fill="#3A2A1F"/><path d="M12 30 C12 18 28 18 28 30 Z" fill="#8C6B4F"/><ellipse cx="15" cy="19" rx="2.6" ry="3.4" fill="#8C6B4F"/><ellipse cx="25" cy="19" rx="2.6" ry="3.4" fill="#8C6B4F"/><circle cx="16.5" cy="24" r="1.6" fill="#2B1A12"/><circle cx="23.5" cy="24" r="1.6" fill="#2B1A12"/>`,
   usedup: `<circle cx="20" cy="20" r="12" fill="#fff"/><circle cx="20" cy="20" r="8" fill="#E8383A"/><circle cx="20" cy="20" r="4" fill="#fff"/><line x1="6" y1="34" x2="18" y2="22" stroke="#8C6B4F" stroke-width="2.4" stroke-linecap="round"/>`,
   magician: `<rect x="11" y="24" width="18" height="7" rx="1" fill="#fff"/><path d="M14 24 L16 10 Q20 6 24 10 L26 24 Z" fill="#fff"/><rect x="13.5" y="17" width="13" height="3" fill="#E8383A"/><path d="M22 8 l1.4 3 l3.2 .4 l-2.3 2.2 l.6 3.2 l-2.9 -1.6 l-2.9 1.6 l.6 -3.2 l-2.3 -2.2 l3.2 -.4 Z" fill="#FFCC33"/>`,
+  lantern: `<ellipse cx="20" cy="20" rx="9" ry="11" fill="#fff"/><line x1="20" y1="9" x2="20" y2="6" stroke="#fff" stroke-width="2"/><line x1="20" y1="31" x2="20" y2="34" stroke="#fff" stroke-width="2"/><path d="M13 15 h14 M13 25 h14" stroke="#C43D3D" stroke-width="1.6"/>`,
   booths: `<rect x="18.5" y="14" width="3" height="20" rx="1" fill="#fff"/><rect x="10" y="6" width="20" height="9" rx="2" fill="#fff"/>`,
   skipcount: `<ellipse cx="12" cy="26" rx="8" ry="5.5" fill="#fff"/><ellipse cx="27" cy="16" rx="8" ry="5.5" fill="#fff"/><circle cx="27" cy="12" r="3" fill="#3FAE5C"/><circle cx="25.5" cy="10.7" r=".8" fill="#2B1A12"/><circle cx="28.5" cy="10.7" r=".8" fill="#2B1A12"/>`,
   sharing: `<ellipse cx="19" cy="27" rx="12" ry="5" fill="#fff" opacity=".4"/><path d="M10 23 C10 16 16 13 21 15 C24 13 28 15 27 19 C30 19 30 23 27 24 C25 27 12 27 10 23 Z" fill="#fff"/><circle cx="24" cy="17" r="1.3" fill="#2B1A12"/><path d="M27 17 L31 15.5 L28 19 Z" fill="#FFCC33"/>`,
@@ -1828,8 +1871,8 @@ function recenterMap(animate){
   const viewport = document.getElementById('mapViewport');
   const vw = viewport ? viewport.clientWidth : 360;
   const vh = viewport ? viewport.clientHeight : 640;
-  const nextIdx = checksDone.findIndex(d=>!d);
-  const target = mapDims.points[nextIdx < 0 ? mapDims.points.length-1 : nextIdx] || {x:mapDims.w/2, y:120};
+  const charIdx = charMapPos ? charMapPos.idx : currentMapBoothIndex();
+  const target = mapDims.points[charIdx] || {x:mapDims.w/2, y:120};
   mapPan.x = vw/2 - target.x*mapPan.scale;
   mapPan.y = vh*0.4 - target.y*mapPan.scale;
   clampMapPan();
@@ -1930,21 +1973,45 @@ function renderMidway(){
   // decorative trees scattered along both sides of the trail, offset from each booth
   function treeSVG(cx, cy, scale){
     return `<g transform="translate(${cx},${cy}) scale(${scale})">
+      <ellipse cx="0" cy="19" rx="13" ry="3.5" fill="rgba(43,26,18,.12)"/>
       <rect x="-3" y="6" width="6" height="12" fill="#8C6B4F"/>
+      <line x1="-1" y1="8" x2="-1" y2="16" stroke="#6B5440" stroke-width="1"/>
       <polygon points="0,-34 16,4 -16,4" fill="#2E8B47"/>
+      <polygon points="0,-34 16,4 0,4" fill="#256B39" opacity=".35"/>
+      <polygon points="0,-34 -3,-16 -16,4" fill="#57C46E" opacity=".45"/>
       <polygon points="0,-24 14,10 -14,10" fill="#3FAE5C"/>
+      <polygon points="0,-24 14,10 0,10" fill="#2E8B47" opacity=".3"/>
+      <polygon points="0,-24 -3,-8 -14,10" fill="#6ED084" opacity=".4"/>
       <polygon points="0,-12 11,18 -11,18" fill="#57C46E"/>
+      <polygon points="0,-12 11,18 0,18" fill="#3FAE5C" opacity=".3"/>
+      <polygon points="0,-12 -2,2 -11,18" fill="#7DDB92" opacity=".4"/>
     </g>`;
   }
   // trees are scattered freely across the whole canvas (not anchored to booths),
   // and scaled tall enough to clearly tower over the tents (booth flags top out
   // around 60 units above the path; trees reach roughly 90-140 units).
+  function distToSegment(px, py, ax, ay, bx, by){
+    const dx = bx-ax, dy = by-ay;
+    const lenSq = dx*dx + dy*dy;
+    let t = lenSq === 0 ? 0 : ((px-ax)*dx + (py-ay)*dy) / lenSq;
+    t = Math.max(0, Math.min(1, t));
+    const cx = ax + t*dx, cy = ay + t*dy;
+    return Math.hypot(px-cx, py-cy);
+  }
+  function distToPath(x, y){
+    let best = Infinity;
+    for(let i=0; i<points.length-1; i++){
+      const d = distToSegment(x, y, points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+      if(d < best) best = d;
+    }
+    return best;
+  }
   const treeSpots = [];
   for(let i=0;i<34;i++){
     const tx = 40 + (i*271) % (svgW-80);
     const ty = 60 + (i*151) % (svgH-140);
     const tooCloseToBooth = points.some(p => Math.hypot(p.x-tx, p.y-ty) < 95);
-    if(tooCloseToBooth) continue;
+    if(tooCloseToBooth || distToPath(tx,ty) < 28) continue;
     treeSpots.push({ x: tx, y: ty, s: 0.9 + ((i*37)%40)/100 });
   }
   const treesHTML = treeSpots.map(t => treeSVG(t.x, t.y, t.s)).join('');
@@ -1954,7 +2021,7 @@ function renderMidway(){
     const rx = 60 + (i*337) % (svgW-120);
     const ry = 70 + (i*197) % (svgH-160);
     const tooClose = points.some(p => Math.hypot(p.x-rx, p.y-ry) < 70);
-    if(tooClose) continue;
+    if(tooClose || distToPath(rx,ry) < 22) continue;
     rockSpots.push({ x: rx, y: ry, s: 0.7 + ((i*53)%50)/100 });
   }
   const rocksHTML = rockSpots.map(r => `<g transform="translate(${r.x},${r.y}) scale(${r.s})"><ellipse cx="1" cy="5" rx="12" ry="3" fill="rgba(43,26,18,.12)"/><path d="M-10 4 C-11 -3 -4 -8 3 -7 C9 -8 12 -2 10 3 C11 7 4 9 -2 8 C-8 9 -11 7 -10 4 Z" fill="#B5AFA0" stroke="#8f8a7c" stroke-width="1.4"/><path d="M-5 -3 Q-1 -6 3 -4" fill="none" stroke="#c9c4b6" stroke-width="1.3" opacity=".7"/></g>`).join('');
@@ -1962,10 +2029,22 @@ function renderMidway(){
     `<g transform="translate(${c.x},${c.y})" opacity=".55"><ellipse cx="0" cy="0" rx="26" ry="12" fill="#fff"/><ellipse cx="16" cy="-3" rx="16" ry="9" fill="#fff"/><ellipse cx="-16" cy="2" rx="15" ry="8" fill="#fff"/></g>`
   ).join('');
   const flowerSpots = [];
-  for(let i=0;i<48;i++){
-    flowerSpots.push({ x: 14 + (i*97)%(svgW-28), y: 40 + (i*211)%(svgH-70), c: ['#E8383A','#FFCC33','#2E86D9','#9B5FD4'][i%4] });
+  for(let i=0;i<48 && flowerSpots.length<18;i++){
+    const fx = 14 + (i*97)%(svgW-28), fy = 40 + (i*211)%(svgH-70);
+    if(distToPath(fx,fy) < 24) continue;
+    flowerSpots.push({ x: fx, y: fy, c: ['#E8383A','#FFCC33','#2E86D9','#9B5FD4','#FF8FB3'][i%5] });
   }
-  const flowersHTML = flowerSpots.map(f=>`<g transform="translate(${f.x},${f.y})"><circle r="2.6" fill="${f.c}" opacity=".8"/><circle r="1" fill="#FFF9E0"/></g>`).join('');
+  const flowersHTML = flowerSpots.map(f=>{
+    const petals = [0,72,144,216,288].map(deg=>{
+      const rad = deg*Math.PI/180;
+      return `<ellipse cx="${(Math.cos(rad)*3.2).toFixed(1)}" cy="${(Math.sin(rad)*3.2).toFixed(1)}" rx="2.6" ry="1.7" fill="${f.c}" transform="rotate(${deg} ${(Math.cos(rad)*3.2).toFixed(1)} ${(Math.sin(rad)*3.2).toFixed(1)})"/>`;
+    }).join('');
+    return `<g transform="translate(${f.x},${f.y})">
+      <line x1="0" y1="2" x2="0" y2="9" stroke="#4FA050" stroke-width="1.2"/>
+      ${petals}
+      <circle r="2" fill="#FFF9E0"/>
+    </g>`;
+  }).join('');
   // lake, tucked into the open gap in the middle of the path's upper arc
   const lakeCx = points[2] ? (points[2].x+points[3].x)/2 : svgW*0.4;
   const lakeCy = 150;
@@ -1998,15 +2077,31 @@ function renderMidway(){
       : '';
     const tentColor = unlocked ? color : '#C9C2B5';
     const bodyColor = unlocked ? '#FFFBF0' : '#DAD5C8';
+    const stripeColor = unlocked ? '#fff' : '#e2ddd0';
     const iconGroup = unlocked
       ? `<g transform="translate(${p.x-15},${p.y-2}) scale(.75)">${BOOTH_ICONS[key]}</g>`
       : `<g transform="translate(${p.x-12},${p.y-13})"><rect x="2" y="9" width="22" height="16" rx="2" fill="#8a8478"/><path d="M5 9 V6 a7 7 0 0 1 14 0 v3" fill="none" stroke="#8a8478" stroke-width="3.2"/></g>`;
+    // roof stripes: alternating booth-color / cream wedges fanning from the peak
+    const roofStripes = [-36,-21.6,-7.2,7.2,21.6].map((x0,si)=>{
+      const x1v = x0+14.4;
+      const fillC = si%2===0 ? tentColor : stripeColor;
+      return `<polygon points="${p.x+x0},${p.y-11} ${p.x},${p.y-48} ${p.x+x1v},${p.y-11}" fill="${fillC}" opacity="${si%2===0?1:.85}"/>`;
+    }).join('');
+    // scalloped awning valance along the roof's lower edge
+    const scallops = [-32,-19.2,-6.4,6.4,19.2].map(x0=>
+      `<circle cx="${p.x+x0+6.4}" cy="${p.y-9}" r="6.6" fill="${tentColor}"/>`).join('');
     return `
       <g class="map-booth ${unlocked?'':'map-booth-locked'}" ${unlocked?`onclick="jumpTo('${key}')"`:''}>
         <ellipse cx="${p.x+3}" cy="${p.y+38}" rx="37" ry="8" fill="rgba(43,26,18,.15)"/>
         <polygon points="${p.x-36},${p.y-11} ${p.x},${p.y-48} ${p.x+36},${p.y-11}" fill="${tentColor}" stroke="#2B1A12" stroke-width="3.4" stroke-linejoin="round"/>
+        ${unlocked ? roofStripes : ''}
+        <polygon points="${p.x-36},${p.y-11} ${p.x},${p.y-48} ${p.x+36},${p.y-11}" fill="none" stroke="#2B1A12" stroke-width="3.4" stroke-linejoin="round"/>
         <polygon points="${p.x-19},${p.y-11} ${p.x},${p.y-38} ${p.x+19},${p.y-11}" fill="#fff" opacity=".22"/>
+        ${unlocked ? scallops : ''}
         <rect x="${p.x-31}" y="${p.y-13}" width="62" height="42" fill="${bodyColor}" stroke="#2B1A12" stroke-width="3.4"/>
+        <rect x="${p.x-24}" y="${p.y-5}" width="48" height="20" rx="2" fill="#2B1A12" opacity=".14"/>
+        <rect x="${p.x-24}" y="${p.y-5}" width="48" height="20" rx="2" fill="none" stroke="#2B1A12" stroke-width="2"/>
+        <rect x="${p.x-33}" y="${p.y+15}" width="66" height="4" fill="${tentColor}" stroke="#2B1A12" stroke-width="1.6"/>
         <path d="M${p.x-36} ${p.y-11} L${p.x+36} ${p.y-11}" stroke="#2B1A12" stroke-width="3.4"/>
         ${iconGroup}
         <line x1="${p.x}" y1="${p.y-48}" x2="${p.x}" y2="${p.y-60}" stroke="#2B1A12" stroke-width="2.6"/>
@@ -2028,9 +2123,9 @@ function renderMidway(){
       ${cloudsHTML}
       ${lakeHTML}
       ${rocksHTML}
-      ${treesHTML}
       <path d="${pathD}" fill="none" stroke="#6B5440" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="${pathD}" fill="none" stroke="#8C6B4F" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+      ${treesHTML}
       <g transform="translate(${points[0].x-90},${points[0].y})"><polygon points="-2,-24 -2,-2 12,-13" fill="${ribbonFillForSvg}" stroke="#2B1A12" stroke-width="1.6"/><line x1="-2" y1="-24" x2="-2" y2="10" stroke="#2B1A12" stroke-width="2.4"/></g>
       <text x="${points[0].x-90}" y="26" text-anchor="middle" font-family="'Baloo 2',sans-serif" font-size="12" font-weight="700" fill="#276B38">START</text>
       ${flagsHTML}
@@ -2346,6 +2441,18 @@ const CHAPTER_CHECK_GENERATORS = {
     const t4=randInt(24,36), s4=randInt(8,15);
     qs.push(tilesQ(`${t4} balloons, ${s4} used up. How many remain?`, `${t4-s4}`, t4-s4, `${Math.max(1,t4-s4-5)}`, Math.max(1,t4-s4-5), 'balloon', `${t4} \u2212 ${s4} = ${t4-s4}.`));
     qs.push(leverQ("True or false: Subtracting bigger numbers works the same way as subtracting small ones.", true, "Yes! You're always taking away and counting what's left, no matter the size."));
+    return shuffle(qs);
+  },
+  lantern(){
+    const qs = [];
+    for(let i=0;i<3;i++){
+      const a=randInt(6,9), b=randInt(11-a,9);
+      const needed = 10-a, leftover = b-needed;
+      qs.push(tilesQ(`${a} + ${b} = ?`, `${a+b}`, a+b, `${a+b+2}`, a+b+2, 'question', `Make a ten: ${a} + ${needed} = 10, then 10 + ${leftover} = ${a+b}.`));
+    }
+    const a4=randInt(6,9), b4=randInt(11-a4,9);
+    qs.push(eqQ(`${a4} +`, `= ${a4+b4}`, b4, `${a4} + ${b4} = ${a4+b4}. Make a ten first, then add what's left.`));
+    qs.push(leverQ("True or false: Making a ten first can make addition faster.", true, "Yes! Once you have a friendly number like 10, the rest of the adding is easy."));
     return shuffle(qs);
   },
   magician(){
@@ -2936,25 +3043,59 @@ function whackMole(i, el){
 }
 initMoles();
 
-// ================= BOOTH 4: DART BALLOON WALL (2-digit subtraction) =================
+// ================= BOOTH: DART BALLOON WALL (2-digit subtraction, friendly-number strategy) =================
 let balloonsPopped = 0, balloonTarget = {total:30, remove:12}, balloonRoundIndex = 0, balloonRoundsTotal = 5;
+let balloonShortcutShown = false;
 function initBalloons(){
   balloonRoundIndex = 0;
+  balloonShortcutShown = false;
   renderBalloonRound();
 }
 function renderBalloonRound(){
-  balloonTarget = {total: 24+Math.floor(Math.random()*13), remove: 8+Math.floor(Math.random()*8)};
+  if(balloonRoundIndex === 0){
+    const remove = 4+Math.floor(Math.random()*4);
+    const total = remove + 3 + Math.floor(Math.random()*6);
+    balloonTarget = {total, remove, friendly:false};
+  } else {
+    const tens = 3+Math.floor(Math.random()*5);
+    const ones = Math.floor(Math.random()*10);
+    const tensToRemove = 1+Math.floor(Math.random()*(tens-1));
+    balloonTarget = {total: tens*10+ones, remove: tensToRemove*10, tens, ones, tensToRemove, friendly:true};
+  }
   balloonsPopped = 0;
   const stage = document.getElementById('balloonStage');
-  stage.innerHTML = Array.from({length:balloonTarget.total}).map((_,i)=>
-    `<div onclick="popBalloon(${i},this)" id="bln-${i}" style="width:20px; height:24px; cursor:pointer;">
-      <svg width="20" height="24" viewBox="0 0 22 26"><ellipse cx="11" cy="11" rx="9" ry="11" fill="#9B5FD4" stroke="#6B3A99" stroke-width="1.5"/></svg>
-    </div>`
-  ).join('');
+  if(balloonTarget.friendly){
+    const groupsHTML = [];
+    let idx = 0;
+    for(let g=0; g<balloonTarget.tens; g++){
+      const dots = Array.from({length:10}).map(()=>{
+        const i = idx++;
+        return `<div onclick="popBalloon(${i},this)" id="bln-${i}" style="width:16px; height:19px; cursor:pointer; display:inline-block;">
+          <svg width="16" height="19" viewBox="0 0 22 26"><ellipse cx="11" cy="11" rx="9" ry="11" fill="#9B5FD4" stroke="#6B3A99" stroke-width="1.5"/></svg>
+        </div>`;
+      }).join('');
+      groupsHTML.push(`<div style="display:inline-flex; flex-wrap:wrap; width:88px; padding:3px; margin:2px; border:2px dashed #6B3A99; border-radius:6px; vertical-align:top;">${dots}</div>`);
+    }
+    const onesDots = Array.from({length:balloonTarget.ones}).map(()=>{
+      const i = idx++;
+      return `<div onclick="popBalloon(${i},this)" id="bln-${i}" style="width:16px; height:19px; cursor:pointer; display:inline-block;">
+        <svg width="16" height="19" viewBox="0 0 22 26"><ellipse cx="11" cy="11" rx="9" ry="11" fill="#FFCC33" stroke="#C99000" stroke-width="1.5"/></svg>
+      </div>`;
+    }).join('');
+    stage.innerHTML = groupsHTML.join('') + (onesDots ? `<div style="display:inline-flex; flex-wrap:wrap; width:88px; padding:3px; margin:2px; vertical-align:top;">${onesDots}</div>` : '');
+  } else {
+    stage.innerHTML = Array.from({length:balloonTarget.total}).map((_,i)=>
+      `<div onclick="popBalloon(${i},this)" id="bln-${i}" style="width:20px; height:24px; cursor:pointer;">
+        <svg width="20" height="24" viewBox="0 0 22 26"><ellipse cx="11" cy="11" rx="9" ry="11" fill="#9B5FD4" stroke="#6B3A99" stroke-width="1.5"/></svg>
+      </div>`
+    ).join('');
+  }
   document.getElementById('balloonCount').textContent = `${balloonTarget.total} balloons`;
   const reveal = document.getElementById('balloonReveal');
   reveal.classList.remove('shown'); reveal.innerHTML = '';
-  document.querySelector('.play-stage#play-usedup .big-text').textContent = `We started with ${balloonTarget.total} balloons. Tap the wall ${balloonTarget.remove} times to pop the ones already used!`;
+  document.querySelector('.play-stage#play-usedup .big-text').textContent = balloonTarget.friendly
+    ? `We started with ${balloonTarget.total} balloons (${balloonTarget.tens} tens and ${balloonTarget.ones} ones). Pop ${balloonTarget.tensToRemove} whole ten-groups (that's ${balloonTarget.remove}) already used!`
+    : `We started with ${balloonTarget.total} balloons. Tap the wall ${balloonTarget.remove} times to pop the ones already used!`;
   ensureProgressEl('balloonReveal','balloonRoundProgress').textContent = `Round ${balloonRoundIndex+1} of ${balloonRoundsTotal}`;
 }
 function popBalloon(i, el){
@@ -2966,24 +3107,122 @@ function popBalloon(i, el){
   document.getElementById('balloonCount').textContent = `${balloonTarget.total-balloonsPopped} balloons`;
   if(balloonsPopped===balloonTarget.remove){
     const reveal = document.getElementById('balloonReveal');
-    reveal.innerHTML = `<strong>${balloonTarget.total} \u2212 ${balloonTarget.remove} = ${balloonTarget.total-balloonTarget.remove} balloons left!</strong> Same idea as before, just with bigger numbers.`;
+    const leftTens = balloonTarget.friendly ? balloonTarget.tens-balloonTarget.tensToRemove : null;
+    reveal.innerHTML = balloonTarget.friendly
+      ? `<strong>${balloonTarget.tens} tens \u2212 ${balloonTarget.tensToRemove} tens = ${leftTens} tens (${leftTens*10}). ${balloonTarget.ones} ones stay the same.</strong><br>${balloonTarget.total} \u2212 ${balloonTarget.remove} = ${balloonTarget.total-balloonTarget.remove} balloons left!`
+      : `<strong>${balloonTarget.total} \u2212 ${balloonTarget.remove} = ${balloonTarget.total-balloonTarget.remove} balloons left!</strong> Nice counting!`;
     reveal.classList.add('shown');
     burst('balloonStage', ['#9B5FD4','#E8383A'], 10);
+    if(balloonRoundIndex > 0 || balloonShortcutShown) enableLessonNext('usedup');
+    const nextBtn = document.getElementById('balloonNextBtn');
+    if(!balloonShortcutShown && balloonRoundIndex === 0){
+      nextBtn.style.display = 'inline-block';
+      nextBtn.textContent = 'Is there a quicker way? \u2192';
+      nextBtn.onclick = showBalloonShortcut;
+    } else {
+      nextBtn.style.display = 'inline-block';
+      nextBtn.textContent = balloonRoundIndex < balloonRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+      nextBtn.onclick = balloonAdvanceRound;
+    }
+  }
+}
+function showBalloonShortcut(){
+  balloonShortcutShown = true;
+  const reveal = document.getElementById('balloonReveal');
+  reveal.innerHTML = `<strong>&#128161; Wow! Popping ${balloonTarget.total} balloons one at a time takes so long!</strong> Here's a quicker way: split the number into TENS and ONES, and subtract each part on its own.
+    <div class="explicit-teach-box"><div class="explicit-teach-title">&#128161; Try the Shortcut!</div>
+    <div class="explicit-teach-body">For 42 \u2212 20: subtract the tens first (4 tens \u2212 2 tens = 2 tens), then the ones (2 ones \u2212 0 ones = 2 ones). Put them together!</div>
+    <div class="explicit-teach-sentence">4 tens \u2212 2 tens = 20, plus 2 ones \u2212 0 ones = 2, so 42 \u2212 20 = 22</div></div>`;
+  document.getElementById('balloonNextBtn').textContent = "Let's Try It! \u2192";
+  document.getElementById('balloonNextBtn').onclick = balloonAdvanceRound;
+}
+function balloonAdvanceRound(){
+  document.getElementById('balloonNextBtn').style.display = 'none';
+  balloonRoundIndex++;
+  if(balloonRoundIndex < balloonRoundsTotal){
+    renderBalloonRound();
+  } else {
+    document.getElementById('balloonStage').innerHTML = '';
+    document.getElementById('balloonReveal').innerHTML = `<strong>All rounds complete!</strong> Come back anytime to practice new friendly-number subtraction.`;
     enableLessonNext('usedup');
-    setTimeout(()=>{
-      balloonRoundIndex++;
-      if(balloonRoundIndex < balloonRoundsTotal){
-        renderBalloonRound();
-      } else {
-        document.getElementById('balloonStage').innerHTML = '';
-        document.getElementById('balloonReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new subtraction rounds.`;
-        enableLessonNext('usedup');
-        document.getElementById('balloonRoundProgress').textContent = '';
-      }
-    }, 2000);
+    document.getElementById('balloonRoundProgress').textContent = '';
   }
 }
 initBalloons();
+
+// ================= BOOTH: LANTERN SHOP (make-a-ten strategy) =================
+let lanternIndex = 0, lanternScore = 0, lanternRoundsTotal = 5, lanternA = 8, lanternB = 5, lanternOptions = [];
+function renderLanternRound(){
+  lanternA = 6+Math.floor(Math.random()*4); // 6-9, close to ten
+  lanternB = (10-lanternA) + 1 + Math.floor(Math.random()*6); // enough to cross ten
+  const needed = 10 - lanternA;
+  const leftover = lanternB - needed;
+  const total = lanternA + lanternB;
+  document.getElementById('lanternPrompt').textContent = `${lanternA} lanterns are already strung. ${lanternB} more are waiting. How many lanterns in all?`;
+  const stage = document.getElementById('lanternStage');
+  const aDots = Array.from({length:lanternA}).map(()=>`<span style="display:inline-block; width:14px; height:17px; margin:1px;"><svg width="14" height="17" viewBox="0 0 14 17"><ellipse cx="7" cy="8" rx="6" ry="7.5" fill="#C43D3D"/></svg></span>`).join('');
+  const bDots = Array.from({length:lanternB}).map(()=>`<span style="display:inline-block; width:14px; height:17px; margin:1px;"><svg width="14" height="17" viewBox="0 0 14 17"><ellipse cx="7" cy="8" rx="6" ry="7.5" fill="#FFCC33"/></svg></span>`).join('');
+  stage.innerHTML = `<div style="text-align:center;">
+    <div style="border:2px dashed #8a2323; border-radius:8px; padding:4px; display:inline-block;">${aDots}</div>
+    <span style="font-size:1.3rem; font-weight:800; margin:0 6px;">+</span>
+    <div style="border:2px dashed #C99000; border-radius:8px; padding:4px; display:inline-block;">${bDots}</div>
+  </div>`;
+  const correct = total;
+  const wrongs = new Set();
+  while(wrongs.size < 2){
+    const w = correct + (Math.random()<0.5 ? -1 : 1) * (1+Math.floor(Math.random()*3));
+    if(w > 0 && w !== correct) wrongs.add(w);
+  }
+  lanternOptions = shuffle([{count:correct, correct:true}, ...Array.from(wrongs).map(w=>({count:w, correct:false}))]);
+  document.getElementById('lanternTiles').innerHTML = lanternOptions.map((o,oi)=>
+    `<button class="qtile" onclick="answerLantern(${oi})" id="lanternTile-${oi}">${o.count}</button>`
+  ).join('');
+  const reveal = document.getElementById('lanternReveal');
+  reveal.classList.remove('shown'); reveal.innerHTML = '';
+  document.getElementById('lanternNextBtn').style.display = 'none';
+  document.getElementById('lanternProgress').textContent = `Problem ${lanternIndex+1} of ${lanternRoundsTotal}`;
+}
+function answerLantern(oi){
+  const tiles = document.querySelectorAll('#lanternTiles .qtile');
+  tiles.forEach(t=>t.style.pointerEvents='none');
+  const needed = 10 - lanternA;
+  const leftover = lanternB - needed;
+  const reveal = document.getElementById('lanternReveal');
+  if(lanternOptions[oi].correct){
+    tiles[oi].classList.add('yes');
+    lanternScore++;
+    reveal.innerHTML = `<strong>Make a ten first!</strong> ${lanternA} + ${needed} = 10. Then add what's left: 10 + ${leftover} = ${lanternA+lanternB}.`;
+    playBlip(700,0.15);
+  } else {
+    tiles[oi].classList.add('no');
+    const correctIdx = lanternOptions.findIndex(o=>o.correct);
+    tiles[correctIdx].classList.add('yes');
+    reveal.innerHTML = `<strong>Let's use the shortcut:</strong> ${lanternA} + ${needed} = 10, then 10 + ${leftover} = ${lanternA+lanternB}.`;
+    playBlip(260,0.15);
+  }
+  reveal.classList.add('shown');
+  if(lanternIndex===0) reveal.innerHTML += explicitTeachHTML("Making a ten first turns a tricky problem into an easy one. Find how many the first number needs to reach 10, then add what's left over.", "8 + 2 = 10, then 10 + 3 = 13");
+  enableLessonNext('lantern');
+  const nextBtn = document.getElementById('lanternNextBtn');
+  nextBtn.style.display = 'inline-block';
+  nextBtn.textContent = lanternIndex < lanternRoundsTotal-1 ? 'Next Problem \u2192' : 'See My Results';
+}
+function lanternAdvance(){
+  lanternIndex++;
+  if(lanternIndex < lanternRoundsTotal){
+    renderLanternRound();
+  } else {
+    document.getElementById('lanternStage').innerHTML = '';
+    document.getElementById('lanternTiles').innerHTML = '';
+    document.getElementById('lanternPrompt').textContent = `All done! You solved ${lanternScore} of ${lanternRoundsTotal} lantern problems!`;
+    document.getElementById('lanternNextBtn').style.display = 'none';
+    document.getElementById('lanternProgress').textContent = 'Come back anytime for new lanterns!';
+    enableLessonNext('lantern');
+  }
+}
+lanternIndex = 0;
+lanternScore = 0;
+renderLanternRound();
 
 // ================= BOOTH 5: MAGICIAN'S HAT (Missing-number problems) =================
 let magicianTotal = 8, magicianShown = 5, magicianHiding = 3, magicianIndex = 0, magicianScore = 0, magicianOptions = [], magicianRoundsTotal = 5;
