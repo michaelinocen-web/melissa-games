@@ -390,6 +390,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
         <p class="big-text" id="bossPrompt" style="text-align:center;"></p>
         <div class="qtile-row" id="bossTiles"></div>
         <div class="reveal" id="bossReveal"></div>
+        <button class="btn btn-yellow" id="bossNextBtn" onclick="bossAdvanceQuestion()" style="display:none; margin:.6rem auto;">Next Question &#8594;</button>
         <div class="stage-desc" id="bossProgress" style="text-align:center;"></div>
       </div>
     </div>
@@ -417,6 +418,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="booth-stage" id="ringStage"></div>
           <div class="stage-label" id="ringEquation">? + ? = ?</div>
           <div class="reveal" id="ringReveal"></div>
+          <button class="btn btn-yellow" id="ringNextBtn" onclick="ringAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-guestlist" onclick="handleLessonNext('guestlist')" disabled>Next &#8594;</button></div>
@@ -447,6 +449,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div id="cratePool" style="display:flex; justify-content:center; gap:.6rem; margin:.6rem 0; flex-wrap:wrap;"></div>
           <div class="stage-label" id="crateTotal">Tens: 0 | Ones: 0 | Total: 0</div>
           <div class="reveal" id="crateReveal"></div>
+          <button class="btn btn-yellow" id="crateNextBtn" onclick="crateAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-supplies" onclick="handleLessonNext('supplies')" disabled>Next &#8594;</button></div>
@@ -476,6 +479,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div class="booth-stage" id="moleStage" style="min-height:180px; height:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; align-items:center;"></div>
           <div class="stage-label" id="moleCount">12 friends coming</div>
           <div class="reveal" id="moleReveal"></div>
+          <button class="btn btn-yellow" id="moleNextBtn" onclick="moleAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-cantcome" onclick="handleLessonNext('cantcome')" disabled>Next &#8594;</button></div>
@@ -609,6 +613,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <button class="btn btn-yellow" onclick="hammerHit()" id="hammerBtn">Swing the Hammer!</button>
           <div class="stage-label" id="hammerEquation">0 rows of 4 = 0</div>
           <div class="reveal" id="hammerReveal"></div>
+          <button class="btn btn-yellow" id="hammerNextBtn" onclick="hammerAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-booths" onclick="handleLessonNext('booths')" disabled>Next &#8594;</button></div>
@@ -639,6 +644,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <button class="btn btn-yellow" onclick="lilyHop()" id="hopBtn">Hop by 5!</button>
           <div class="stage-label" id="hopLabel">0 chairs</div>
           <div class="reveal" id="hopReveal"></div>
+          <button class="btn btn-yellow" id="hopNextBtn" onclick="hopAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-skipcount" onclick="handleLessonNext('skipcount')" disabled>Next &#8594;</button></div>
@@ -669,6 +675,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div id="boatsRow" style="display:flex; justify-content:center; gap:.6rem; margin:.6rem 0"></div>
           <div class="stage-label" id="pondLabel">Ducks left to place: 12</div>
           <div class="reveal" id="pondReveal"></div>
+          <button class="btn btn-yellow" id="pondNextBtn" onclick="pondAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-sharing" onclick="handleLessonNext('sharing')" disabled>Next &#8594;</button></div>
@@ -699,6 +706,7 @@ footer{ text-align:center; padding:1rem; font-size:.78rem; opacity:.6; position:
           <div id="huddlesRow" style="display:flex; flex-wrap:wrap; justify-content:center; gap:.6rem; margin:.6rem 0"></div>
           <div class="stage-label" id="huddleLabel">Kids left: 15</div>
           <div class="reveal" id="huddleReveal"></div>
+          <button class="btn btn-yellow" id="huddleNextBtn" onclick="huddleAdvanceRound()" style="display:none; margin-top:.6rem;">Next Round &#8594;</button>
         </div>
       </div>
       <div class="nav-row"><button class="btn btn-outline" onclick="goBack()">&#8592; Back</button><button class="btn btn-blue" id="nextbtn-lesson-teams" onclick="handleLessonNext('teams')" disabled>Next &#8594;</button></div>
@@ -1800,16 +1808,20 @@ function finishBossQuestion(correct, explainText){
   else { reveal.textContent = "Not quite! " + (explainText||''); reveal.classList.add('wrong'); playBlip(260,0.15); }
   reveal.classList.add('shown');
   document.querySelectorAll('#bossTiles .qtile').forEach(t=>t.style.pointerEvents='none');
-  setTimeout(()=>{
-    bossIndex++;
-    if(bossIndex < bossQuestions.length) renderBossQuestion();
-    else {
-      document.getElementById('bossPrompt').textContent = `Challenge complete! You got ${bossScore} of ${bossQuestions.length} right!`;
-      document.getElementById('bossTiles').innerHTML = '';
-      document.getElementById('bossProgress').textContent = '';
-      if(bossScore === bossQuestions.length) burst('screen-boss', ['#FFCC33','#E8383A','#3FAE5C','#9B5FD4'], 20);
-    }
-  }, 1800);
+  const nextBtn = document.getElementById('bossNextBtn');
+  nextBtn.style.display = 'inline-block';
+  nextBtn.textContent = bossIndex < bossQuestions.length-1 ? 'Next Question \u2192' : 'See My Results';
+}
+function bossAdvanceQuestion(){
+  document.getElementById('bossNextBtn').style.display = 'none';
+  bossIndex++;
+  if(bossIndex < bossQuestions.length) renderBossQuestion();
+  else {
+    document.getElementById('bossPrompt').textContent = `Challenge complete! You got ${bossScore} of ${bossQuestions.length} right!`;
+    document.getElementById('bossTiles').innerHTML = '';
+    document.getElementById('bossProgress').textContent = '';
+    if(bossScore === bossQuestions.length) burst('screen-boss', ['#FFCC33','#E8383A','#3FAE5C','#9B5FD4'], 20);
+  }
 }
 function answerBoss(i){
   const q = bossQuestions[bossIndex];
@@ -2918,20 +2930,24 @@ function catchRing(group, el){
     reveal.classList.add('shown');
     burst('ringStage', ['#2E86D9','#E8383A','#FFCC33'], 10);
     enableLessonNext('guestlist');
-    setTimeout(()=>{
-      ringRoundIndex++;
-      if(ringRoundIndex < ringRounds.length){
-        renderRingRound();
-      } else {
-        document.getElementById('ringStage').innerHTML = '';
-        document.getElementById('ringEquation').textContent = '';
-        document.getElementById('ringReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new addition rounds.`;
-        document.getElementById('ringRoundProgress').textContent = '';
-        enableLessonNext('guestlist');
-      }
-    }, 2000);
+    const nextBtn = document.getElementById('ringNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = ringRoundIndex < ringRounds.length-1 ? 'Next Round \u2192' : 'See My Results';
   } else {
     setTimeout(spawnNextRing, 250);
+  }
+}
+function ringAdvanceRound(){
+  document.getElementById('ringNextBtn').style.display = 'none';
+  ringRoundIndex++;
+  if(ringRoundIndex < ringRounds.length){
+    renderRingRound();
+  } else {
+    document.getElementById('ringStage').innerHTML = '';
+    document.getElementById('ringEquation').textContent = '';
+    document.getElementById('ringReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new addition rounds.`;
+    document.getElementById('ringRoundProgress').textContent = '';
+    enableLessonNext('guestlist');
   }
 }
 initRingToss();
@@ -2977,18 +2993,22 @@ function stackItem(el, value){
     reveal.classList.add('shown');
     burst('crateStage', ['#FFCC33','#2E86D9'], 10);
     enableLessonNext('supplies');
-    setTimeout(()=>{
-      crateRoundIndex++;
-      if(crateRoundIndex < crateRoundsTotal){
-        renderCrateRound();
-      } else {
-        document.getElementById('cratePool').innerHTML = '';
-        document.getElementById('crateStage').innerHTML = '';
-        document.getElementById('crateReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new tens-and-ones rounds.`;
-        enableLessonNext('supplies');
-        document.getElementById('crateRoundProgress').textContent = '';
-      }
-    }, 2200);
+    const nextBtn = document.getElementById('crateNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = crateRoundIndex < crateRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function crateAdvanceRound(){
+  document.getElementById('crateNextBtn').style.display = 'none';
+  crateRoundIndex++;
+  if(crateRoundIndex < crateRoundsTotal){
+    renderCrateRound();
+  } else {
+    document.getElementById('cratePool').innerHTML = '';
+    document.getElementById('crateStage').innerHTML = '';
+    document.getElementById('crateReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new tens-and-ones rounds.`;
+    enableLessonNext('supplies');
+    document.getElementById('crateRoundProgress').textContent = '';
   }
 }
 initCrates();
@@ -3028,17 +3048,21 @@ function whackMole(i, el){
     reveal.classList.add('shown');
     burst('moleStage', ['#8A6D45','#E8383A'], 10);
     enableLessonNext('cantcome');
-    setTimeout(()=>{
-      moleRoundIndex++;
-      if(moleRoundIndex < moleRoundsTotal){
-        renderMoleRound();
-      } else {
-        document.getElementById('moleStage').innerHTML = '';
-        document.getElementById('moleReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new subtraction rounds.`;
-        enableLessonNext('cantcome');
-        document.getElementById('moleRoundProgress').textContent = '';
-      }
-    }, 2000);
+    const nextBtn = document.getElementById('moleNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = moleRoundIndex < moleRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function moleAdvanceRound(){
+  document.getElementById('moleNextBtn').style.display = 'none';
+  moleRoundIndex++;
+  if(moleRoundIndex < moleRoundsTotal){
+    renderMoleRound();
+  } else {
+    document.getElementById('moleStage').innerHTML = '';
+    document.getElementById('moleReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new subtraction rounds.`;
+    enableLessonNext('cantcome');
+    document.getElementById('moleRoundProgress').textContent = '';
   }
 }
 initMoles();
@@ -3068,13 +3092,15 @@ function renderBalloonRound(){
     const groupsHTML = [];
     let idx = 0;
     for(let g=0; g<balloonTarget.tens; g++){
+      const groupIds = [];
       const dots = Array.from({length:10}).map(()=>{
         const i = idx++;
-        return `<div onclick="popBalloon(${i},this)" id="bln-${i}" style="width:16px; height:19px; cursor:pointer; display:inline-block;">
+        groupIds.push(i);
+        return `<div id="bln-${i}" style="width:16px; height:19px; display:inline-block;">
           <svg width="16" height="19" viewBox="0 0 22 26"><ellipse cx="11" cy="11" rx="9" ry="11" fill="#9B5FD4" stroke="#6B3A99" stroke-width="1.5"/></svg>
         </div>`;
       }).join('');
-      groupsHTML.push(`<div style="display:inline-flex; flex-wrap:wrap; width:88px; padding:3px; margin:2px; border:2px dashed #6B3A99; border-radius:6px; vertical-align:top;">${dots}</div>`);
+      groupsHTML.push(`<div onclick="popGroup([${groupIds.join(',')}],this)" id="blngrp-${g}" style="display:inline-flex; flex-wrap:wrap; width:88px; padding:3px; margin:2px; border:2px dashed #6B3A99; border-radius:6px; vertical-align:top; cursor:pointer;">${dots}</div>`);
     }
     const onesDots = Array.from({length:balloonTarget.ones}).map(()=>{
       const i = idx++;
@@ -3105,6 +3131,25 @@ function popBalloon(i, el){
   balloonsPopped++;
   playBlip(260,0.15);
   document.getElementById('balloonCount').textContent = `${balloonTarget.total-balloonsPopped} balloons`;
+  checkBalloonRoundComplete();
+}
+function popGroup(ids, groupEl){
+  if(groupEl.dataset.gone || balloonsPopped>=balloonTarget.remove) return;
+  groupEl.dataset.gone = 'true';
+  groupEl.style.pointerEvents = 'none';
+  ids.forEach((i, idx)=>{
+    const el = document.getElementById(`bln-${i}`);
+    if(!el || el.dataset.gone) return;
+    el.dataset.gone = 'true';
+    setTimeout(()=>{ el.style.transform = 'scale(1.4)'; el.style.opacity = '0'; playBlip(260,0.15); }, idx*35);
+  });
+  balloonsPopped += ids.length;
+  setTimeout(()=>{
+    document.getElementById('balloonCount').textContent = `${balloonTarget.total-balloonsPopped} balloons`;
+    checkBalloonRoundComplete();
+  }, ids.length*35 + 80);
+}
+function checkBalloonRoundComplete(){
   if(balloonsPopped===balloonTarget.remove){
     const reveal = document.getElementById('balloonReveal');
     const leftTens = balloonTarget.friendly ? balloonTarget.tens-balloonTarget.tensToRemove : null;
@@ -3368,18 +3413,22 @@ function hammerHit(){
     reveal.innerHTML = `<strong>${hammerRows} \u00d7 ${hammerCols} = ${total} booths!</strong> That's ${Array(hammerRows).fill(hammerCols).join(' + ')} \u2014 multiplication is fast repeated addition.`;
     reveal.classList.add('shown');
     enableLessonNext('booths');
-    setTimeout(()=>{
-      hammerRoundIndex++;
-      if(hammerRoundIndex < hammerRoundsTotal){
-        renderHammerRound();
-      } else {
-        document.getElementById('hammerGrid').innerHTML = '';
-        document.getElementById('hammerBtn').style.display = 'none';
-        document.getElementById('hammerReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new multiplication rounds.`;
-        enableLessonNext('booths');
-        document.getElementById('hammerRoundProgress').textContent = '';
-      }
-    }, 2200);
+    const nextBtn = document.getElementById('hammerNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = hammerRoundIndex < hammerRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function hammerAdvanceRound(){
+  document.getElementById('hammerNextBtn').style.display = 'none';
+  hammerRoundIndex++;
+  if(hammerRoundIndex < hammerRoundsTotal){
+    renderHammerRound();
+  } else {
+    document.getElementById('hammerGrid').innerHTML = '';
+    document.getElementById('hammerBtn').style.display = 'none';
+    document.getElementById('hammerReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new multiplication rounds.`;
+    enableLessonNext('booths');
+    document.getElementById('hammerRoundProgress').textContent = '';
   }
 }
 initHammer();
@@ -3427,18 +3476,22 @@ function lilyHop(){
     reveal.classList.add('shown');
     burst('hopStage', ['#3FAE5C','#FFCC33'], 10);
     enableLessonNext('skipcount');
-    setTimeout(()=>{
-      hopRoundIndex++;
-      if(hopRoundIndex < hopRoundsTotal){
-        renderHopRound();
-      } else {
-        document.getElementById('hopStage').innerHTML = '';
-        document.getElementById('hopBtn').style.display = 'none';
-        document.getElementById('hopReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new skip-counting rounds.`;
-        enableLessonNext('skipcount');
-        document.getElementById('hopRoundProgress').textContent = '';
-      }
-    }, 2200);
+    const nextBtn = document.getElementById('hopNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = hopRoundIndex < hopRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function hopAdvanceRound(){
+  document.getElementById('hopNextBtn').style.display = 'none';
+  hopRoundIndex++;
+  if(hopRoundIndex < hopRoundsTotal){
+    renderHopRound();
+  } else {
+    document.getElementById('hopStage').innerHTML = '';
+    document.getElementById('hopBtn').style.display = 'none';
+    document.getElementById('hopReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new skip-counting rounds.`;
+    enableLessonNext('skipcount');
+    document.getElementById('hopRoundProgress').textContent = '';
   }
 }
 initHop();
@@ -3493,18 +3546,22 @@ function catchDuck(el){
     reveal.classList.add('shown');
     burst('pondStage', ['#FFCC33','#2E86D9'], 10);
     enableLessonNext('sharing');
-    setTimeout(()=>{
-      pondRoundIndex++;
-      if(pondRoundIndex < pondRoundsTotal){
-        renderPondRound();
-      } else {
-        document.getElementById('pondStage').innerHTML = '';
-        document.getElementById('boatsRow').innerHTML = '';
-        document.getElementById('pondReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new sharing rounds.`;
-        enableLessonNext('sharing');
-        document.getElementById('pondRoundProgress').textContent = '';
-      }
-    }, 2200);
+    const nextBtn = document.getElementById('pondNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = pondRoundIndex < pondRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function pondAdvanceRound(){
+  document.getElementById('pondNextBtn').style.display = 'none';
+  pondRoundIndex++;
+  if(pondRoundIndex < pondRoundsTotal){
+    renderPondRound();
+  } else {
+    document.getElementById('pondStage').innerHTML = '';
+    document.getElementById('boatsRow').innerHTML = '';
+    document.getElementById('pondReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new sharing rounds.`;
+    enableLessonNext('sharing');
+    document.getElementById('pondRoundProgress').textContent = '';
   }
 }
 initPond();
@@ -3559,18 +3616,22 @@ function sendToHuddle(i, el){
     reveal.classList.add('shown');
     burst('kidsStage', ['#F2C79A','#3FAE5C'], 10);
     enableLessonNext('teams');
-    setTimeout(()=>{
-      huddleRoundIndex++;
-      if(huddleRoundIndex < huddleRoundsTotal){
-        renderHuddleRound();
-      } else {
-        document.getElementById('kidsStage').innerHTML = '';
-        document.getElementById('huddlesRow').innerHTML = '';
-        document.getElementById('huddleReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new grouping rounds.`;
-        enableLessonNext('teams');
-        document.getElementById('huddleRoundProgress').textContent = '';
-      }
-    }, 2200);
+    const nextBtn = document.getElementById('huddleNextBtn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = huddleRoundIndex < huddleRoundsTotal-1 ? 'Next Round \u2192' : 'See My Results';
+  }
+}
+function huddleAdvanceRound(){
+  document.getElementById('huddleNextBtn').style.display = 'none';
+  huddleRoundIndex++;
+  if(huddleRoundIndex < huddleRoundsTotal){
+    renderHuddleRound();
+  } else {
+    document.getElementById('kidsStage').innerHTML = '';
+    document.getElementById('huddlesRow').innerHTML = '';
+    document.getElementById('huddleReveal').innerHTML = `<strong>All 5 rounds complete!</strong> Come back anytime to practice new grouping rounds.`;
+    enableLessonNext('teams');
+    document.getElementById('huddleRoundProgress').textContent = '';
   }
 }
 initHuddle();
