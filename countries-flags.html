@@ -193,6 +193,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.85rem; color:#5c56
   <symbol id="ic-finger" viewBox="0 0 24 24"><path d="M9 13.5 V6 a1.5 1.5 0 0 1 3 0 v5.5 M12 11.5 V5 a1.5 1.5 0 0 1 3 0 v6.8 M15 11.5 V6.5 a1.5 1.5 0 0 1 3 0 V15 c0 3.5 -2 6 -5.5 6 h-1 c-2.3 0 -3.5 -.8 -4.7 -2.6 L4 14.6 a1.4 1.4 0 0 1 2.2 -1.7 L9 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="ic-thumbsup" viewBox="0 0 24 24"><path d="M2 11 h4 v10 H2 Z" fill="currentColor"/><path d="M8 11 L11 3.5 a1.8 1.8 0 0 1 3.4 1.2 L13 9 h5.5 a2 2 0 0 1 1.9 2.6 l-2 7 A2.5 2.5 0 0 1 16 21 H8 Z" fill="currentColor"/></symbol>
   <symbol id="ic-flex" viewBox="0 0 24 24"><path d="M3 15 c0 -3 2 -5 5 -5 c1.5 0 2.5 .5 3.5 1.5 c1 -3 4 -5 7 -3.5 c2.5 1.3 3 4.5 1.5 7 c-2 3.3 -6 5 -9 5 c-4 0 -8 -1.5 -8 -5 Z" fill="currentColor"/><circle cx="17" cy="7" r="3" fill="currentColor"/></symbol>
+  <symbol id="ic-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="8.3" y1="8.3" x2="15.7" y2="15.7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="15.7" y1="8.3" x2="8.3" y2="15.7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
   <symbol id="ic-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="currentColor"/><circle cx="8.5" cy="10" r="1.3" fill="#fff"/><circle cx="15.5" cy="10" r="1.3" fill="#fff"/><path d="M8 14 Q12 18 16 14" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="ic-lion" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.5" fill="#B5652E"/><circle cx="12" cy="12" r="9" fill="none" stroke="#8B4A1E" stroke-width="2.4" stroke-dasharray="2.6,2.2"/><circle cx="10" cy="11" r=".8" fill="#3D2E22"/><circle cx="14" cy="11" r=".8" fill="#3D2E22"/><path d="M11 13.5 q1 1 2 0" fill="none" stroke="#3D2E22" stroke-width="1" stroke-linecap="round"/></symbol>
   <symbol id="ic-pagoda" viewBox="0 0 24 24">
@@ -441,6 +442,42 @@ const LEVELS = [
   {name:"Papua New Guinea", continent:"Oceania", flag:"\ud83c\uddf5\ud83c\uddec", established:"Independence September 16, 1975", language:"Tok Pisin, English & Hiri Motu", food:"Mumu (earth-oven roasted food)", culture:"One of the most culturally diverse places on Earth, with over 800 different languages spoken."},
   {name:"Samoa", continent:"Oceania", flag:"\ud83c\uddfc\ud83c\uddf8", established:"Independence January 1, 1962", language:"Samoan & English", food:"Palusami (coconut cream & taro leaves)", culture:"One of the first places on Earth to see the sunrise each new day, near the International Date Line."},
   {name:"Luxembourg", continent:"Europe", flag:"\ud83c\uddf1\ud83c\uddfa", established:"Independence recognized in 1839", language:"Luxembourgish, French & German", food:"Judd mat gaardebounen (smoked pork & beans)", culture:"One of the smallest countries in the world, yet home to one of the highest standards of living."}
+]},
+{ name:"World Traveler", emoji:"<svg class=\"icon\" style=\"color:#4CAF7D\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
+  {name:"Malta", continent:"Europe", flag:"🇲🇹", established:"Independence September 21, 1964", language:"Maltese & English", food:"Pastizzi (flaky pastry snacks)", culture:"One of the smallest countries in the world, made up of a cluster of tiny islands in the Mediterranean Sea."},
+  {name:"Cyprus", continent:"Europe", flag:"🇨🇾", established:"Independence August 16, 1960", language:"Greek & Turkish", food:"Halloumi cheese", culture:"An island split between two cultures, with ancient ruins dating back over 10,000 years."},
+  {name:"Albania", continent:"Europe", flag:"🇦🇱", established:"Independence November 28, 1912", language:"Albanian", food:"Byrek (savory pastry)", culture:"The double-headed eagle on its flag is a symbol of bravery going back centuries."},
+  {name:"Armenia", continent:"Asia", flag:"🇦🇲", established:"Independence September 21, 1991", language:"Armenian", food:"Dolma (stuffed grape leaves)", culture:"Was the very first country in the world to officially adopt Christianity, in the year 301 AD."},
+  {name:"Georgia", continent:"Asia", flag:"🇬🇪", established:"Independence April 9, 1991", language:"Georgian", food:"Khachapuri (cheese-filled bread)", culture:"Believed to be one of the earliest places in the world where wine was made, over 8,000 years ago."},
+  {name:"Azerbaijan", continent:"Asia", flag:"🇦🇿", established:"Independence October 18, 1991", language:"Azerbaijani", food:"Plov (spiced rice dish)", culture:"Nicknamed the \"Land of Fire\" for its natural gas vents that have burned for centuries."},
+  {name:"Kazakhstan", continent:"Asia", flag:"🇰🇿", established:"Independence December 16, 1991", language:"Kazakh & Russian", food:"Beshbarmak (meat & noodles)", culture:"The largest landlocked country in the world, spanning a huge stretch of Central Asia."},
+  {name:"Oman", continent:"Asia", flag:"🇴🇲", established:"One of the oldest independent states in the Arab world", language:"Arabic", food:"Shuwa (slow-cooked spiced meat)", culture:"Famous for frankincense, a fragrant resin that has been traded here for thousands of years."},
+  {name:"Lebanon", continent:"Asia", flag:"🇱🇧", established:"Independence November 22, 1943", language:"Arabic", food:"Hummus & falafel", culture:"The cedar tree on its flag is an ancient symbol of strength that appears in texts thousands of years old."},
+  {name:"Guyana", continent:"South America", flag:"🇬🇾", established:"Independence May 26, 1966", language:"English", food:"Pepperpot (spiced meat stew)", culture:"The only English-speaking country in South America, with vast unspoiled rainforest."}
+]},
+{ name:"Globe Master", emoji:"<svg class=\"icon\" style=\"color:#3B82C4\" viewBox=\"0 0 24 24\"><use href=\"#ic-star\"/></svg>", countries:[
+  {name:"Angola", continent:"Africa", flag:"🇦🇴", established:"Independence November 11, 1975", language:"Portuguese", food:"Muamba de galinha (chicken stew)", culture:"Home to Kalandula Falls, one of the largest waterfalls in Africa by volume."},
+  {name:"Mozambique", continent:"Africa", flag:"🇲🇿", established:"Independence June 25, 1975", language:"Portuguese", food:"Piri piri chicken", culture:"Its flag features an AK-47 rifle crossed with a hoe, symbolizing defense and agriculture."},
+  {name:"Cameroon", continent:"Africa", flag:"🇨🇲", established:"Independence January 1, 1960", language:"French & English", food:"Ndolé (nutty leafy stew)", culture:"Nicknamed \"Africa in miniature\" because it has nearly every African landscape, from beaches to deserts to rainforest."},
+  {name:"Ivory Coast", continent:"Africa", flag:"🇨🇮", established:"Independence August 7, 1960", language:"French", food:"Attiéké (grated cassava)", culture:"The world's largest producer of cocoa beans, the main ingredient in chocolate."},
+  {name:"Mali", continent:"Africa", flag:"🇲🇱", established:"Independence September 22, 1960", language:"French & Bambara", food:"Jollof rice", culture:"Home to Timbuktu, an ancient city once famous worldwide as a center of learning and trade."},
+  {name:"Sudan", continent:"Africa", flag:"🇸🇩", established:"Independence January 1, 1956", language:"Arabic & English", food:"Ful medames (fava beans)", culture:"Home to more ancient pyramids than Egypt, built by the Kingdom of Kush thousands of years ago."},
+  {name:"Somalia", continent:"Africa", flag:"🇸🇴", established:"Independence July 1, 1960", language:"Somali & Arabic", food:"Bariis iskukaris (spiced rice)", culture:"Has the longest coastline of any country on mainland Africa, along the Indian Ocean."},
+  {name:"Libya", continent:"Africa", flag:"🇱🇾", established:"Independence December 24, 1951", language:"Arabic", food:"Bazin (barley dough)", culture:"Home to Roman ruins at Leptis Magna, among the best-preserved in the entire Mediterranean."},
+  {name:"Malawi", continent:"Africa", flag:"🇲🇼", established:"Independence July 6, 1964", language:"English & Chichewa", food:"Nsima (cornmeal porridge)", culture:"Nicknamed \"The Warm Heart of Africa\" for the friendliness of its people, bordered by a huge lake."},
+  {name:"Democratic Republic of the Congo", continent:"Africa", flag:"🇨🇩", established:"Independence June 30, 1960", language:"French", food:"Fufu (pounded starch)", culture:"Home to the Congo River, the deepest river in the world, and the second-largest rainforest on Earth."}
+]},
+{ name:"Flag Legend", emoji:"<svg class=\"icon\" style=\"color:#C9972E\" viewBox=\"0 0 24 24\"><use href=\"#ic-crown\"/></svg>", countries:[
+  {name:"Guatemala", continent:"North America", flag:"🇬🇹", established:"Independence September 15, 1821", language:"Spanish", food:"Pepián (spiced meat stew)", culture:"Home to Tikal, one of the largest ancient cities built by the Maya civilization."},
+  {name:"Honduras", continent:"North America", flag:"🇭🇳", established:"Independence September 15, 1821", language:"Spanish", food:"Baleada (folded tortilla)", culture:"Home to the Bay Islands, part of the second-largest coral reef system in the world."},
+  {name:"Nicaragua", continent:"North America", flag:"🇳🇮", established:"Independence September 15, 1821", language:"Spanish", food:"Gallo pinto (rice & beans)", culture:"Home to Lake Nicaragua, one of the only lakes in the world with freshwater sharks."},
+  {name:"El Salvador", continent:"North America", flag:"🇸🇻", established:"Independence September 15, 1821", language:"Spanish", food:"Pupusas (stuffed corn cakes)", culture:"The smallest country in Central America, nicknamed \"The Land of Volcanoes\" for its many peaks."},
+  {name:"Dominican Republic", continent:"North America", flag:"🇩🇴", established:"Independence February 27, 1844", language:"Spanish", food:"Mangú (mashed plantains)", culture:"Shares its island with Haiti, and is the birthplace of many of baseball's greatest players."},
+  {name:"Haiti", continent:"North America", flag:"🇭🇹", established:"Independence January 1, 1804", language:"French & Haitian Creole", food:"Griot (fried pork)", culture:"The first country in the world founded by formerly enslaved people who won their freedom."},
+  {name:"Trinidad and Tobago", continent:"North America", flag:"🇹🇹", established:"Independence August 31, 1962", language:"English", food:"Doubles (curried chickpea sandwich)", culture:"Birthplace of steelpan music, created from repurposed oil drums, and a huge Carnival celebration."},
+  {name:"Afghanistan", continent:"Asia", flag:"🇦🇫", established:"Recognized independence August 19, 1919", language:"Dari & Pashto", food:"Kabuli palaw (spiced rice with lamb)", culture:"Home to the towering Hindu Kush mountain range, a crossroads of trade for thousands of years."},
+  {name:"Yemen", continent:"Asia", flag:"🇾🇪", established:"Unified May 22, 1990", language:"Arabic", food:"Saltah (meat & vegetable stew)", culture:"Home to Socotra Island, so isolated that a third of its plant life is found nowhere else on Earth."},
+  {name:"Tonga", continent:"Oceania", flag:"🇹🇴", established:"Never colonized; independence recognized June 4, 1970", language:"Tongan & English", food:"Lu pulu (meat baked in coconut cream)", culture:"The only Pacific island kingdom still ruled by an unbroken royal line, over 1,000 years old."}
 ]}
 ];
 
@@ -608,29 +645,12 @@ LEVELS.forEach((level, li)=>{
     deckEl.insertBefore(makeSession(factHTML, 'fact-card'), finaleEl);
   });
 
-  // --- quiz cards (shuffled independently from fact-card order, so it tests
-  //     real flag recognition rather than memorizing presentation order) ---
-  const quizOrder = shuffle(level.countries);
-  quizOrder.forEach((c, ci)=>{
-    const others = level.countries.filter(x=>x.name!==c.name);
-    const distractors = shuffle(others).slice(0,3);
-    const options = shuffle([{name:c.name, correct:true}, ...distractors.map(d=>({name:d.name, correct:false}))]);
-    const optsHTML = options.map(o=>`<button class="quiz-btn" onclick="answerQuiz(this, ${o.correct}, ${li})">${o.name}</button>`).join('');
-    const quizHTML = `
-      <div class="level-badge">${level.emoji} ${level.name} Quiz: Flag ${ci+1} of 10</div>
-      <div class="card">
-        <p class="big-text">Which country does this flag belong to?</p>
-        <div class="flag-emoji">${c.flag}</div>
-        <div class="quiz-opts">${optsHTML}</div>
-        <div class="reveal"></div>
-      </div>
-      <div class="card-nav">
-        <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
-        <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
-        <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
-      </div>`;
-    deckEl.insertBefore(makeSession(quizHTML, 'quiz-card'), finaleEl);
-  });
+  // --- quiz cards: placeholder sessions created now (fixed DOM positions for
+  //     stable navigation indices); actual questions are filled in by
+  //     buildQuizForLevel(), called fresh every time a level is entered ---
+  for(let ci=0; ci<10; ci++){
+    deckEl.insertBefore(makeSession('', 'quiz-card'), finaleEl);
+  }
 
   // --- level result card ---
   const resultHTML = `
@@ -681,10 +701,53 @@ renderLevelPicker();
 renderBadgeCase();
 
 function goHome(){ goTo(0); }
-function goToLevel(li){ if(!isLevelUnlocked(li)) return; goTo(levelIntroIndex(li)); }
+function goToLevel(li){ if(!isLevelUnlocked(li)) return; buildQuizForLevel(li); goTo(levelIntroIndex(li)); }
 
 // ================= DECK NAVIGATION =================
+const CONTINENTS_ALL = ["Africa","Asia","Europe","North America","South America","Oceania"];
+function buildQuizForLevel(li){
+  const level = LEVELS[li];
+  const startIdx = levelIntroIndex(li) + 1 + 10; // right after this level's 10 fact cards
+  // shuffle the 10 countries fresh each time; since each of the 10 questions
+  // maps to one distinct country, no flag can repeat within the quiz
+  const quizOrder = shuffle(level.countries);
+  quizOrder.forEach((c, ci)=>{
+    const session = sessions[startIdx + ci];
+    if(!session) return;
+    const askContinent = Math.random() < 0.5;
+    const safeName = c.name.replace(/'/g,"\\'");
+    let promptText, optsHTML;
+    if(askContinent){
+      const otherContinents = CONTINENTS_ALL.filter(x=>x!==c.continent);
+      const distractors = shuffle(otherContinents).slice(0,3);
+      const options = shuffle([{name:c.continent, correct:true}, ...distractors.map(d=>({name:d, correct:false}))]);
+      promptText = `${c.name} &mdash; which continent is this country in?`;
+      optsHTML = options.map(o=>`<button class="quiz-btn" onclick="answerQuiz(this, ${o.correct}, ${li}, '${safeName}')">${o.name}</button>`).join('');
+    } else {
+      const others = level.countries.filter(x=>x.name!==c.name);
+      const distractors = shuffle(others).slice(0,3);
+      const options = shuffle([{name:c.name, correct:true}, ...distractors.map(d=>({name:d.name, correct:false}))]);
+      promptText = 'Which country does this flag belong to?';
+      optsHTML = options.map(o=>`<button class="quiz-btn" onclick="answerQuiz(this, ${o.correct}, ${li}, '${safeName}')">${o.name}</button>`).join('');
+    }
+    session.innerHTML = `
+      <div class="level-badge">${level.emoji} ${level.name} Quiz: Flag ${ci+1} of 10</div>
+      <div class="card">
+        <p class="big-text">${promptText}</p>
+        <div class="flag-emoji">${c.flag}</div>
+        <div class="quiz-opts">${optsHTML}</div>
+        <div class="reveal"></div>
+      </div>
+      <div class="card-nav">
+        <button class="nav-btn back-btn" onclick="prevCard()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-left"/></svg> Back</button>
+        <button class="nav-btn home-btn" onclick="goHome()"><svg class="icon" viewBox="0 0 24 24"><use href="#ic-clipboard"/></svg> Levels</button>
+        <button class="nav-btn next-btn" onclick="nextCard()" disabled>Next <svg class="icon" viewBox="0 0 24 24"><use href="#ic-arrow-right"/></svg></button>
+      </div>`;
+  });
+}
 const sessions = Array.from(document.querySelectorAll('.session'));
+LEVELS.forEach((level, li)=> buildQuizForLevel(li));
+
 let current = 0;
 const dotsWrap = document.getElementById('deckDots');
 sessions.forEach((s,i)=>{
@@ -733,7 +796,7 @@ document.addEventListener('keydown', e=>{
 });
 
 // ================= QUIZ LOGIC =================
-function answerQuiz(btn, correct, levelIndex){
+function answerQuiz(btn, correct, levelIndex, countryName){
   const card = btn.closest('.card');
   const session = btn.closest('.session');
   const reveal = card.querySelector('.reveal');
@@ -744,7 +807,6 @@ function answerQuiz(btn, correct, levelIndex){
     btn.classList.add('yes');
     reveal.innerHTML = "Yes! That's right! <svg class=\"icon\" viewBox=\"0 0 24 24\"><use href=\"#ic-check\"/></svg>";
     levelScores[levelIndex]++;
-    const countryName = btn.textContent;
     const countryObj = LEVELS.flatMap(l=>l.countries).find(c=>c.name === countryName);
     let wasComplete = false;
     if(countryObj){
@@ -765,7 +827,7 @@ function answerQuiz(btn, correct, levelIndex){
   } else {
     btn.classList.add('no');
     btns.forEach(b=>{ if(b.getAttribute('onclick').includes('true')) b.classList.add('yes'); });
-    reveal.textContent = "Not quite. The correct flag's country is highlighted in green.";
+    reveal.textContent = "Not quite. The correct answer is highlighted in green.";
   }
   reveal.classList.add('shown');
   const nextBtn = session.querySelector('.next-btn');
@@ -798,7 +860,7 @@ function updateLevelResult(sessionEl){
     }
   } else {
     stampEl.className = 'result-badge-stamp';
-    stampEl.innerHTML = '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-flex"/></svg>';
+    stampEl.innerHTML = '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-x-circle"/></svg>';
     textEl.textContent = `So close! You got ${score} out of 10.`;
     subEl.textContent = `Get 7 or more right to earn the ${LEVELS[idx].name} badge. Give it another try!`;
     retryBtn.style.display = 'inline-block';
@@ -811,16 +873,7 @@ function updateLevelResult(sessionEl){
 function retryLevel(li){
   levelScores[li] = 0;
   newlyCompletedContinents = [];
-  // reset all quiz cards whose onclick references this level index
-  document.querySelectorAll('.quiz-card').forEach(session=>{
-    const btns = session.querySelectorAll('.quiz-btn');
-    if(btns.length && btns[0].getAttribute('onclick').includes(', ' + li + ')')){
-      btns.forEach(b=>{ b.disabled=false; b.classList.remove('yes','no'); });
-      session.querySelector('.reveal').classList.remove('shown');
-      session.querySelector('.reveal').textContent='';
-      session.querySelector('.next-btn').disabled = true;
-    }
-  });
+  buildQuizForLevel(li);
   // jump to first quiz card of this level
   goTo(levelIntroIndex(li) + 1 + 10);
 }

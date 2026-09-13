@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>The Orchard - Melissa's Money Adventures</title>
+<style>
+<style>
+:root{
+  --bg:#FFF7E8; --bg2:#FFEFD1; --card:#FFFFFF; --line:#F0DCB0;
+  --ink:#4A3520; --ink-soft:#8A7350;
+  --accent:#3CAA6B; --accent-shadow:#2A7D4C;
+  --coral:#FF8A5B; --coral-shadow:#D9683A;
+  --gold:#FFC93C; --gold-shadow:#D9A31C;
+  --ok:#3CAA6B; --warn:#E85D5D;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:19px; line-height:1.45; overflow-x:hidden; position:relative; }
+body::before{ content:''; position:fixed; inset:0; background:radial-gradient(ellipse at 50% 0%, rgba(255,201,60,.25), transparent 60%); pointer-events:none; z-index:0; }
+
+h1,h2{ font-family:var(--font-display); font-weight:700; margin:0 0 .3em; }
+.big-text{ font-size:1.06rem; font-weight:600; }
+svg{ display:block; margin:0 auto; max-width:100%; }
+
+.deck-viewport{ max-width:700px; margin:0 auto; padding:2.1rem 1.2rem 3rem; perspective:1400px; min-height:100vh; position:relative; z-index:1; }
+.session{ display:none; text-align:center; }
+.session.active{ display:block; }
+@keyframes flipOutLeft{ to{ transform:rotateY(-95deg); opacity:0; } }
+@keyframes flipOutRight{ to{ transform:rotateY(95deg); opacity:0; } }
+@keyframes flipInRight{ from{ transform:rotateY(95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+@keyframes flipInLeft{ from{ transform:rotateY(-95deg); opacity:0;} to{transform:rotateY(0deg); opacity:1;} }
+.leaving-next{ animation:flipOutLeft .22s ease-in forwards; }
+.leaving-prev{ animation:flipOutRight .22s ease-in forwards; }
+.entering-next{ animation:flipInRight .22s ease-out forwards; }
+.entering-prev{ animation:flipInLeft .22s ease-out forwards; }
+
+.hero h1{ font-size:clamp(1.6rem,6vw,2.3rem); color:var(--coral-shadow); }
+.hi-name{ font-family:var(--font-display); font-weight:700; color:var(--accent-shadow); font-size:1.2rem; margin-bottom:.2rem; }
+.hero p{ font-size:1rem; color:var(--ink-soft); max-width:500px; margin:0 auto; }
+
+.journey-hub-grid{ display:flex; flex-direction:column; gap:1.3rem; max-width:440px; margin:1.4rem auto; }
+.journey-card{ position:relative; border:3px solid var(--line); border-radius:26px; padding:1.3rem 1.2rem 1.1rem 1.5rem; box-shadow:0 8px 0 var(--line); cursor:pointer; text-align:left; overflow:hidden; transition:transform .12s ease; }
+.journey-card:active{ transform:translateY(3px); box-shadow:0 4px 0 var(--line); }
+.journey-card.locked{ opacity:.55; cursor:default; }
+.journey-card.locked:active{ transform:none; box-shadow:0 8px 0 var(--line); }
+.journey-card.bike-theme{ background:linear-gradient(150deg,#FFF3E9,#FFE1CC); }
+.journey-card.dollhouse-theme{ background:linear-gradient(150deg,#FDEFF5,#FBDCEA); }
+.journey-card.world-theme{ background:linear-gradient(150deg,#EAF5FF,#D6EBFF); }
+.journey-card.orchard-theme{ background:linear-gradient(150deg,#F5EFDC,#E8DEC0); }
+
+/* ============ ORCHARD JOURNEY: fresh visual identity ============ */
+:root{
+  --orch-bg:#FBF6EA; --orch-green:#2D5F3F; --orch-green-light:#4F8C63; --orch-green-pale:#DCEBDD;
+  --orch-amber:#C97B4A; --orch-amber-shadow:#A85F35; --orch-gold:#D4A24C; --orch-gold-shadow:#AD7E2E;
+  --orch-brown:#6B4226; --orch-cream:#FBF6EA; --orch-ink:#3A2E1F; --orch-ink-soft:#6B5D48;
+  --orch-red:#B5533C;
+}
+.orchard-scope{ background:var(--orch-bg); color:var(--orch-ink); }
+.orchard-scope h1, .orchard-scope h2{ color:var(--orch-green); font-family:var(--font-display); }
+.orchard-scope .big-text{ color:var(--orch-ink-soft); }
+.orch-card{ background:#fff; border:3px solid var(--orch-green); border-radius:20px; padding:1.2rem 1.1rem; box-shadow:0 6px 0 var(--orch-green); margin:.9rem 0; position:relative; overflow:hidden; }
+.orch-btn{ font-family:var(--font-display); font-weight:800; background:var(--orch-green); color:#fff; border:none; border-radius:16px; padding:.75rem 1.4rem; font-size:.95rem; box-shadow:0 4px 0 var(--orch-green-light); cursor:pointer; transition:transform .1s; }
+.orch-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--orch-green-light); }
+.orch-btn:disabled{ background:#C9C2AC; box-shadow:0 4px 0 #A9A28C; cursor:default; opacity:.7; }
+.orch-btn.amber{ background:var(--orch-amber); box-shadow:0 4px 0 var(--orch-amber-shadow); }
+.orch-btn.amber:active{ box-shadow:0 1px 0 var(--orch-amber-shadow); }
+.orch-tile{ background:#fff; border:3px solid var(--orch-green); border-radius:14px; padding:.8rem 1rem; cursor:pointer; text-align:center; box-shadow:3px 3px 0 var(--orch-green); font-family:var(--font-display); font-weight:700; color:var(--orch-ink); transition:transform .1s; }
+.orch-tile:active{ transform:translateY(2px); box-shadow:1px 1px 0 var(--orch-green); }
+.orch-tile.wrong-flash{ animation:orchShake .4s ease; border-color:var(--orch-red); }
+.orch-reveal{ background:var(--orch-green-pale); border-left:4px solid var(--orch-green); border-radius:10px; padding:.8rem 1rem; margin-top:.8rem; font-size:.88rem; color:var(--orch-ink); opacity:0; max-height:0; overflow:hidden; transition:opacity .35s ease, max-height .35s ease, padding .35s ease; }
+.orch-reveal.shown{ opacity:1; max-height:400px; padding:.8rem 1rem; }
+.orch-reveal.wrong{ background:#FBE7E2; border-left-color:var(--orch-red); }
+.orch-stage-label{ font-family:var(--font-display); font-weight:800; color:var(--orch-brown); font-size:.85rem; text-align:center; margin:.4rem 0; }
+.orch-journal-card{ max-width:320px; margin:1rem auto 0; padding:1rem; background:#fff; border:3px solid var(--orch-gold); border-radius:16px; box-shadow:0 5px 0 var(--orch-gold-shadow); }
+.orch-journal-title{ font-family:var(--font-display); font-weight:800; text-align:center; color:var(--orch-brown); margin-bottom:.5rem; font-size:.9rem; }
+.orch-leaf-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:.4rem; }
+.orch-leaf-slot{ aspect-ratio:1; border-radius:10px; border:2px dashed #D9CFA8; display:flex; align-items:center; justify-content:center; opacity:.35; }
+.orch-leaf-slot.grown{ opacity:1; border-style:solid; border-color:var(--orch-green); background:var(--orch-green-pale); }
+
+@keyframes orchShake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+@keyframes orchSprout{ 0%{transform:scale(0) translateY(10px); opacity:0;} 60%{transform:scale(1.15) translateY(-3px); opacity:1;} 100%{transform:scale(1) translateY(0); opacity:1;} }
+@keyframes orchSway{ 0%,100%{ transform:rotate(-2deg); } 50%{ transform:rotate(2deg); } }
+@keyframes orchGrow{ from{ height:0; } to{ height:var(--grow-h,100%); } }
+@keyframes orchCoinDrop{ 0%{ transform:translateY(-30px) scale(.6); opacity:0; } 60%{ opacity:1; } 100%{ transform:translateY(0) scale(1); opacity:1; } }
+@keyframes orchPulseRing{ 0%{ box-shadow:0 0 0 0 rgba(45,95,63,.35); } 100%{ box-shadow:0 0 0 14px rgba(45,95,63,0); } }
+@keyframes orchFlip{ 0%{ transform:rotateY(0deg); } 50%{ transform:rotateY(90deg); } 100%{ transform:rotateY(0deg); } }
+@keyframes orchRise{ 0%{ transform:translateY(18px); opacity:0; } 100%{ transform:translateY(0); opacity:1; } }
+@keyframes orchDrift{ 0%{ transform:translateX(-6px) translateY(0); } 50%{ transform:translateX(6px) translateY(-3px); } 100%{ transform:translateX(-6px) translateY(0); } }
+@keyframes orchFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes orchPop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.22); } 100%{ transform:scale(1); } }
+@keyframes orchDragHint{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(6px); } }
+.orch-sprout-in{ animation:orchSprout .5s cubic-bezier(.34,1.56,.64,1); }
+.orch-sway{ animation:orchSway 3.5s ease-in-out infinite; transform-origin:bottom center; }
+.orch-coin-in{ animation:orchCoinDrop .45s ease-out; }
+.orch-pulse{ animation:orchPulseRing 1.2s ease-out; }
+.orch-flip{ animation:orchFlip .5s ease; }
+.orch-rise-in{ animation:orchRise .45s cubic-bezier(.2,.8,.3,1); }
+.orch-drift{ animation:orchDrift 3s ease-in-out infinite; }
+.orch-fade-in{ animation:orchFadeIn .5s ease; }
+.orch-pop{ animation:orchPop .4s cubic-bezier(.34,1.56,.64,1); }
+.orch-drag-hint{ animation:orchDragHint 1.1s ease-in-out infinite; }
+.orch-drop-zone{ border:3px dashed #C9C2AC; border-radius:16px; transition:border-color .2s ease, background .2s ease; }
+.orch-drop-zone.drag-over{ border-color:var(--orch-green); background:var(--orch-green-pale); }
+.journey-card-top{ display:flex; align-items:center; gap:.85rem; }
+.journey-icon-badge{ width:68px; height:68px; border-radius:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:2rem; box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-6deg); border:3px solid #fff; }
+.journey-card-title{ font-family:var(--font-display); font-weight:800; font-size:1.15rem; margin-bottom:.1rem; }
+.journey-card-desc{ font-size:.8rem; color:var(--ink-soft); line-height:1.3; }
+.journey-dots-row{ display:flex; gap:.28rem; margin-top:.7rem; flex-wrap:wrap; align-items:center; }
+.journey-dot{ width:15px; height:15px; border-radius:50%; background:#fff; border:2px solid rgba(0,0,0,.12); flex-shrink:0; }
+.journey-dot.filled{ border:2px solid transparent; box-shadow:0 2px 0 rgba(0,0,0,.12); }
+.journey-play-btn{ position:absolute; right:1rem; bottom:1rem; width:44px; height:44px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 rgba(0,0,0,.15); }
+.journey-sparkle{ position:absolute; font-size:1.1rem; opacity:.55; pointer-events:none; }
+.journey-new-ribbon{ position:absolute; top:10px; right:-30px; background:var(--coral); color:#fff; font-family:var(--font-display); font-weight:800; font-size:.68rem; padding:.25rem 2.2rem; transform:rotate(38deg); box-shadow:0 2px 4px rgba(0,0,0,.2); }
+.journey-card.locked .journey-play-btn{ display:none; }
+.badge-case-card{ max-width:420px; margin:1.2rem auto 0; padding:.9rem 1rem; background:var(--card); border:3px solid var(--line); border-radius:18px; box-shadow:0 5px 0 var(--line); }
+.badge-case-title{ font-family:var(--font-display); font-weight:800; font-size:.9rem; text-align:center; margin-bottom:.5rem; color:var(--coral-shadow); }
+.badge-case-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(56px,1fr)); gap:.5rem; }
+.passport-card{ max-width:320px; margin:1rem auto 0; padding:1rem; background:linear-gradient(160deg,#EAF5FF,#D6EBFF); border:3px solid #5AA9E6; border-radius:16px; box-shadow:0 5px 0 #4A90D0; }
+.passport-title{ font-family:var(--font-display); font-weight:800; text-align:center; color:#2C5F8A; margin-bottom:.5rem; }
+.passport-stamps-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:.4rem; }
+.passport-stamp{ aspect-ratio:1; border-radius:8px; border:2px dashed #A8C8E8; display:flex; align-items:center; justify-content:center; font-size:1.3rem; opacity:.3; }
+.passport-stamp.stamped{ opacity:1; border-style:solid; border-color:#5AA9E6; background:#fff; transform:rotate(-4deg); box-shadow:0 2px 0 rgba(0,0,0,.1); }
+.money-badge{ display:flex; flex-direction:column; align-items:center; gap:.15rem; opacity:.3; }
+.money-badge.unlocked{ opacity:1; }
+.money-badge-icon{ width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--line); }
+.money-badge-label{ font-size:.55rem; font-weight:700; text-align:center; line-height:1.1; }
+
+.finale{ background:linear-gradient(160deg,#FFFFFF,#FFF3D6); border-radius:24px; padding:2.2rem 1.2rem; border:2px solid var(--gold); box-shadow:0 10px 0 var(--line); }
+.finale h2{ color:var(--coral-shadow); }
+
+.card{ background:var(--card); border:2px solid var(--line); border-radius:22px; padding:1.3rem 1.2rem; box-shadow:0 6px 0 var(--line); margin:.9rem 0; position:relative; overflow:hidden; }
+.chapter-badge{ font-family:var(--font-display); font-size:.72rem; color:var(--coral-shadow); background:rgba(255,138,91,.12); display:inline-block; padding:.28rem .8rem; border-radius:999px; margin-bottom:.5rem; letter-spacing:.02em; }
+.tap-hint{ font-family:var(--font-display); font-size:.82rem; color:var(--accent-shadow); margin-top:.45rem; }
+.reveal{ display:none; margin-top:.7rem; font-size:.92rem; background:rgba(60,170,107,.09); border-radius:14px; padding:.75rem; text-align:left; }
+.reveal.wrong{ background:rgba(232,93,93,.12); }
+.reveal.shown{ display:block; }
+
+.card-nav{ display:flex; justify-content:center; gap:.6rem; margin-top:1.2rem; flex-wrap:wrap; }
+.nav-btn{ font-family:var(--font-display); font-size:.92rem; background:var(--accent); color:#fff; border:none; border-radius:14px; padding:.6rem 1.2rem; cursor:pointer; box-shadow:0 4px 0 var(--accent-shadow); font-weight:700; }
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--accent-shadow); }
+.nav-btn:disabled{ opacity:.3; cursor:default; box-shadow:none; }
+.nav-btn.back-btn{ background:transparent; color:var(--ink-soft); border:2px solid var(--line); box-shadow:none; }
+.nav-btn.map-btn{ background:transparent; color:var(--coral-shadow); border:2px dashed var(--coral); box-shadow:none; }
+.action-btn{ font-family:var(--font-display); font-size:.95rem; background:var(--gold); color:#5A3E00; border:none; border-radius:14px; padding:.6rem 1.2rem; margin:.3rem; cursor:pointer; box-shadow:0 5px 0 var(--gold-shadow); font-weight:700; }
+.action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--gold-shadow); }
+
+.top-bar-wrap{ position:fixed; top:0; left:0; right:0; max-width:700px; margin:0 auto; height:0; z-index:50; pointer-events:none; }
+.exit-btn{ position:absolute; top:.75rem; left:1.2rem; font-family:var(--font-display); font-weight:700; background:var(--card); color:var(--accent-shadow); border:2px solid var(--accent); border-radius:14px; padding:.32rem .85rem; font-size:.82rem; text-decoration:none; pointer-events:auto; }
+.progress-pill{ position:absolute; top:.75rem; right:1.2rem; font-family:var(--font-display); background:var(--card); border:2px solid var(--line); border-radius:14px; padding:.3rem .75rem; font-size:.82rem; color:var(--coral-shadow); font-weight:700; pointer-events:auto; }
+.bikefund-pill{ position:absolute; top:2.9rem; right:1.2rem; font-family:var(--font-display); background:var(--gold); border:2px solid var(--gold-shadow); border-radius:14px; padding:.3rem .8rem; font-size:.78rem; color:#5A3E00; font-weight:700; white-space:nowrap; pointer-events:auto; }
+
+/* ---------- home: adventure trail map ---------- */
+.goal-card{ background:linear-gradient(160deg,#fff,#FFF3D6); border:3px solid var(--gold); border-radius:22px; padding:1.1rem; margin:.8rem 0 1.4rem; box-shadow:0 6px 0 var(--gold-shadow); }
+.goal-card-top{ display:flex; align-items:center; gap:.8rem; justify-content:center; }
+.goal-card-title{ font-family:var(--font-display); font-weight:700; font-size:.95rem; color:var(--coral-shadow); }
+.goal-track{ width:100%; height:18px; border-radius:999px; background:var(--bg2); border:2px solid var(--line); margin-top:.6rem; overflow:hidden; }
+.goal-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .6s ease; }
+.goal-amounts{ display:flex; justify-content:space-between; font-family:var(--font-display); font-size:.72rem; color:var(--ink-soft); margin-top:.3rem; }
+.journey-track-wrap{ position:relative; margin-top:2.6rem; }
+.journey-marker{ position:absolute; bottom:100%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; transition:left .6s ease; }
+.journey-marker-badge{ width:34px; height:34px; border-radius:50%; border:3px solid #fff; box-shadow:0 3px 0 rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; }
+@keyframes journeyArrowBounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(4px);} }
+.journey-arrow{ width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid var(--gold-shadow); animation:journeyArrowBounce 1s infinite ease-in-out; margin-top:1px; }
+.journey-marker.goal-marker .journey-arrow{ border-top-color:#5A87A8; }
+
+.trail-wrap{ position:relative; padding:.3rem 0 .5rem; }
+.trail-page{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem .5rem; position:relative; }
+.trail-connector-svg{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:visible; }
+.trail-stop{ display:flex; flex-direction:column; align-items:center; gap:.3rem; position:relative; }
+.trail-badge-btn{ background:none; border:none; cursor:pointer; flex-shrink:0; position:relative; z-index:1; padding:0; }
+.trail-badge-btn:active{ transform:scale(.93); }
+.trail-badge{ width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:4px solid #fff; box-shadow:0 5px 0 rgba(0,0,0,.15); position:relative; }
+.trail-badge.big{ width:76px; height:76px; }
+.trail-check{ position:absolute; top:-6px; right:-6px; width:24px; height:24px; border-radius:50%; background:var(--ok); border:3px solid #fff; display:flex; align-items:center; justify-content:center; }
+.trail-num{ font-family:var(--font-display); font-size:.62rem; color:var(--ink-soft); font-weight:700; }
+.trail-name{ font-family:var(--font-display); font-weight:700; font-size:.76rem; color:var(--ink); text-align:center; line-height:1.15; }
+.trail-status{ font-family:var(--font-display); font-size:.6rem; color:var(--ok); }
+@keyframes badgePop{ from{ transform:scale(0); opacity:0;} to{ transform:scale(1); opacity:1;} }
+.trail-badge-btn{ animation:badgePop .35s ease backwards; }
+.trail-pager{ display:flex; align-items:center; justify-content:center; gap:1rem; margin-top:1.1rem; }
+.trail-pager-btn{ font-family:var(--font-display); font-weight:700; background:var(--accent); color:#fff; border:none; border-radius:12px; width:38px; height:38px; cursor:pointer; box-shadow:0 3px 0 var(--accent-shadow); font-size:1.1rem; }
+.trail-pager-btn:disabled{ opacity:.25; cursor:default; box-shadow:none; }
+.trail-pager-dots{ display:flex; gap:.4rem; }
+.trail-pager-dot{ width:9px; height:9px; border-radius:50%; background:var(--line); }
+.trail-pager-dot.active{ background:var(--coral); }
+
+/* ---------- finger hint: pure CSS caret ---------- */
+@keyframes fingerTap{ 0%,100%{ transform:translate(-50%,0); } 50%{ transform:translate(-50%,10px); } }
+.finger-hint{
+  position:absolute; width:0; height:0; pointer-events:none; z-index:6;
+  border-left:11px solid transparent; border-right:11px solid transparent; border-top:16px solid var(--coral);
+  animation:fingerTap 1s infinite ease-in-out;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));
+}
+
+.tap-circle{ cursor:pointer; }
+.pulse{ animation:pulse 1.6s infinite ease-in-out; }
+@keyframes pulse{ 0%,100%{ filter:drop-shadow(0 0 5px currentColor);} 50%{ filter:drop-shadow(0 0 16px currentColor);} }
+@keyframes popIn{ from{ transform:scale(0); opacity:0;} to{ transform:scale(1); opacity:1;} }
+@keyframes coinBounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+
+/* ---------- ambient/idle motion so nothing sits still ---------- */
+@keyframes idleBob{ 0%,100%{ transform:translateY(0) rotate(0deg);} 50%{ transform:translateY(-7px) rotate(-3deg);} }
+.idle-bob{ animation:idleBob 2.6s infinite ease-in-out; }
+@keyframes idleWobble{ 0%,100%{ transform:rotate(-2deg);} 50%{ transform:rotate(2deg);} }
+.idle-wobble{ animation:idleWobble 2.2s infinite ease-in-out; transform-origin:bottom center; }
+@keyframes idleSpin{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+.idle-spin{ animation:idleSpin 6s linear infinite; transform-origin:center; }
+@keyframes idleGlow{ 0%,100%{ opacity:0.5;} 50%{ opacity:1;} }
+.idle-glow{ animation:idleGlow 2s infinite ease-in-out; }
+@keyframes floatUp{ 0%{ transform:translateY(0) rotate(0deg); opacity:0;} 10%{opacity:.7;} 90%{opacity:.5;} 100%{ transform:translateY(-140px) rotate(180deg); opacity:0;} }
+.floating-coin{ position:absolute; pointer-events:none; animation:floatUp 6s linear infinite; }
+.ambient-field{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+
+/* ---------- speech bubble ---------- */
+@keyframes bubblePop{ 0%{ transform:scale(.7); opacity:0;} 60%{ transform:scale(1.05); opacity:1;} 100%{ transform:scale(1); opacity:1;} }
+.speech-bubble{ background:#fff; border:3px solid var(--gold); border-radius:20px; padding:.9rem 1.1rem; position:relative; text-align:left; animation:bubblePop .4s ease; box-shadow:0 4px 0 var(--line); }
+.speech-bubble::after{ content:''; position:absolute; left:32px; bottom:-14px; width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-top:14px solid var(--gold); }
+.speech-bubble::before{ content:''; position:absolute; left:34px; bottom:-9px; width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:11px solid #fff; z-index:1; }
+
+/* ---------- real drag-and-drop ---------- */
+.draggable{ cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; position:relative; z-index:3; pointer-events:auto; -webkit-user-drag:none; }
+.draggable img, .draggable svg{ pointer-events:none; }
+.draggable.dragging{ cursor:grabbing; z-index:20; filter:drop-shadow(0 8px 10px rgba(0,0,0,.25)); transition:none !important; }
+.drop-zone{ transition:background .2s, transform .2s; }
+.drop-zone.drag-over{ background:rgba(60,170,107,.18) !important; transform:scale(1.03); }
+@keyframes dropSettle{ 0%{ transform:scale(1.15);} 100%{ transform:scale(1);} }
+.drop-settled{ animation:dropSettle .3s ease; }
+
+/* ---------- question tiles ---------- */
+.qtile-row{ display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; margin-top:.9rem; }
+.qtile{ background:var(--bg2); border:3px solid var(--line); border-radius:16px; padding:.8rem; width:130px; cursor:pointer; text-align:center; }
+.qtile:active{ transform:scale(.96); }
+.qtile.yes{ border-color:var(--ok); background:rgba(60,170,107,.14); }
+.qtile.no{ border-color:var(--warn); background:rgba(232,93,93,.12); }
+.qtile-icon{ height:52px; display:flex; align-items:center; justify-content:center; }
+.qtile-text{ font-family:var(--font-display); font-size:.82rem; font-weight:700; margin-top:.4rem; }
+
+/* ---------- true/false lever ---------- */
+.lever-track{ width:200px; height:60px; background:var(--bg2); border:3px solid var(--line); border-radius:999px; margin:1rem auto; position:relative; }
+.lever-zone{ position:absolute; top:0; width:50%; height:100%; }
+.lever-zone.left{ left:0; border-radius:999px 0 0 999px; }
+.lever-zone.right{ right:0; border-radius:0 999px 999px 0; }
+.lever-knob{ width:54px; height:54px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,var(--gold) 55%,var(--gold-shadow)); border:3px solid #fff; position:absolute; top:0; left:calc(50% - 27px); transition:left .25s cubic-bezier(.34,1.56,.64,1); box-shadow:0 3px 6px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; color:#5A3E00; z-index:2; }
+.lever-label{ position:absolute; top:50%; transform:translateY(-50%); font-family:var(--font-display); font-weight:700; font-size:.85rem; color:var(--ink-soft); }
+.lever-label.left{ left:14px; }
+.lever-label.right{ right:14px; }
+
+/* ---------- drag-to-jar question ---------- */
+.dragq-item{ width:56px; height:56px; margin:0 auto; }
+.dragq-zones{ display:flex; justify-content:center; gap:1.2rem; margin-top:1rem; }
+.dragq-zone{ width:100px; height:90px; background:var(--bg2); border:3px dashed var(--line); border-radius:16px; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.dragq-zone-label{ font-family:var(--font-display); font-weight:700; font-size:.8rem; margin-top:.3rem; }
+
+@keyframes particleFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.particle{ position:absolute; border-radius:50%; animation:particleFly 1s ease-out forwards; }
+.particle-wrap{ position:relative; display:inline-block; min-height:70px; }
+
+.scene{ width:180px; height:180px; border-radius:26px; margin:.6rem auto 1rem; position:relative;
+  background:linear-gradient(180deg, #FFF3D6, #FFE7B0);
+  border:4px solid var(--gold); box-shadow:0 6px 0 var(--line);
+  display:flex; align-items:center; justify-content:center; overflow:visible; }
+
+/* ---------- kid-friendly slider ---------- */
+input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:40px; background:transparent; margin:1rem 0 .4rem; cursor:pointer; touch-action:pan-y; }
+input[type=range]::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
+input[type=range]::-moz-range-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
+input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; margin-top:-14px; width:40px; height:40px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--gold) 55%, var(--gold-shadow) 100%);
+  border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 6px rgba(255,201,60,.3); cursor:pointer; transition:transform .15s ease; }
+input[type=range]::-moz-range-thumb{ width:40px; height:40px; border-radius:50%; border:3px solid #fff;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--gold) 55%, var(--gold-shadow) 100%);
+  box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 6px rgba(255,201,60,.3); cursor:pointer; transition:transform .15s ease; }
+input[type=range]:active::-webkit-slider-thumb{ transform:scale(1.2); }
+input[type=range]:active::-moz-range-thumb{ transform:scale(1.2); }
+input[type=range]:focus{ outline:none; }
+.stage-label{ font-family:var(--font-display); font-weight:700; font-size:1.02rem; color:var(--coral-shadow); margin-top:.2rem; }
+.stage-desc{ font-size:.88rem; color:var(--ink-soft); min-height:2em; }
+
+/* ---------- sort activity ---------- */
+.sort-bin{ flex:1; background:var(--bg2); border:2px dashed var(--line); border-radius:14px; padding:.6rem; min-height:110px; }
+.sort-bin-title{ font-family:var(--font-display); font-weight:700; font-size:.85rem; margin-bottom:.4rem; }
+.sort-bin-item{ display:block; font-size:.82rem; padding:.28rem .5rem; margin-bottom:.3rem; border-radius:8px; background:rgba(60,170,107,.1); animation:popIn .3s ease; }
+.sort-pool-btn{ font-family:var(--font-display); font-size:.85rem; background:#fff; border:2px solid var(--line); border-radius:12px; padding:.5rem .8rem; cursor:pointer; margin:.2rem; }
+
+/* ---------- comprehension check (light, story-framed) ---------- */
+.check-opts{ display:flex; flex-direction:column; gap:.55rem; margin-top:.9rem; }
+.check-btn{ font-family:var(--font-display); font-size:.96rem; background:var(--bg2); color:var(--ink); border:3px solid var(--line); border-radius:14px; padding:.62rem .9rem; cursor:pointer; }
+.check-btn.yes{ border-color:var(--ok); background:rgba(60,170,107,.14); }
+.check-btn.no{ border-color:var(--warn); background:rgba(232,93,93,.12); }
+.check-btn:disabled{ cursor:default; }
+
+/* ---------- jars ---------- */
+.jar-row{ display:flex; justify-content:center; gap:.7rem; margin:1rem 0; }
+.jar{ width:80px; }
+.jar-fill{ transition:height .5s ease; }
+.jar-label{ font-family:var(--font-display); font-size:.72rem; margin-top:.3rem; color:var(--ink-soft); }
+.jar-amount{ font-family:var(--font-display); font-weight:700; font-size:.85rem; color:var(--coral-shadow); }
+
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(--ink-soft); position:relative; z-index:1; }
+</style>
+
+</head>
+<body>
+
+<div class="ambient-field" id="ambientField"></div>
+<div class="top-bar-wrap">
+  <a href="money-matters.html" class="exit-btn">All Journeys</a>
+  <div class="progress-pill" id="counter">1 / 1</div>
+  <div class="bikefund-pill" id="bikeFundPill" style="display:none;"></div>
+</div>
+
+<div class="deck-viewport">
+<div id="deck">
+
+    <section class="session hero orchard-scope active" data-chapter="orchardhub" style="border-radius:0;">
+      <div class="hi-name" style="color:var(--orch-brown);">Hi Melissa</div>
+      <h1>The Orchard</h1>
+      <p class="big-text">You found an old, overgrown orchard behind a gate that was never locked, and a note pinned to the fence: "Come find me, Hazel." Let's see what grows here.</p>
+      <div class="tap-circle" id="orchardIntroZone" onclick="waveOrchardTree()" style="width:170px; height:170px; margin:1rem auto; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <svg id="orchardHeroTree" class="orch-sway" width="140" height="140" viewBox="0 0 140 140">
+          <ellipse cx="70" cy="128" rx="38" ry="7" fill="#DCD3B4"/>
+          <rect x="62" y="72" width="16" height="53" rx="4" fill="var(--orch-brown)"/>
+          <circle cx="70" cy="58" r="46" fill="var(--orch-green)"/>
+          <circle cx="46" cy="72" r="28" fill="var(--orch-green-light)"/>
+          <circle cx="94" cy="72" r="28" fill="var(--orch-green-light)"/>
+          <g id="orchardHeroLeaves"></g>
+        </svg>
+      </div>
+      <div class="tap-hint" style="color:var(--orch-ink-soft);">Tap the tree to see it grow!</div>
+      <div id="orchardJournalCard"></div>
+      <div id="orchardChapterPicker" style="margin-top:.4rem"></div>
+    </section>
+
+
+    <section class="session orchard-scope" data-chapter="otree">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 1 of 13: The Money Tree and the Weed</div>
+      <div class="orch-card">
+        <h2>Plant It Right</h2>
+        <p class="big-text">Hazel kneels beside two empty garden beds. "Every choice about money is either a Money Tree or a Weed," she says. "A Money Tree puts coins IN your pocket, again and again. A Weed just drinks your water and gives nothing back. Let's sort a few together."</p>
+        <div class="orch-stage-label" id="otreeRoundLabel">Round 1 of 6</div>
+        <div id="otreeItemCard" style="text-align:center; margin:.7rem 0; font-size:.95rem; font-weight:700; color:var(--orch-ink);"></div>
+        <div style="display:flex; gap:1.2rem; justify-content:center; margin-top:.4rem;">
+          <div onclick="answerOtree('tree')" style="cursor:pointer; text-align:center;">
+            <svg id="otreeSideTree" width="72" height="72" viewBox="0 0 72 72">
+              <ellipse cx="36" cy="64" rx="20" ry="4" fill="#DCD3B4"/>
+              <rect x="32" y="42" width="8" height="20" rx="2" fill="var(--orch-brown)"/>
+              <circle cx="36" cy="30" r="22" fill="var(--orch-green)"/>
+            </svg>
+            <div class="orch-stage-label">Money Tree</div>
+          </div>
+          <div onclick="answerOtree('weed')" style="cursor:pointer; text-align:center;">
+            <svg id="otreeSideWeed" width="72" height="72" viewBox="0 0 72 72">
+              <ellipse cx="36" cy="64" rx="20" ry="4" fill="#DCD3B4"/>
+              <path d="M36 62 V30" stroke="var(--orch-red)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M36 46 C26 46 22 38 24 32 M36 38 C46 38 50 30 48 24 M36 30 C28 30 25 22 27 16 M36 34 C44 34 48 26 46 20" fill="none" stroke="var(--orch-red)" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+            <div class="orch-stage-label">Weed</div>
+          </div>
+        </div>
+        <div class="orch-reveal" id="otreeReveal"></div>
+        <button class="orch-btn amber" id="otreeRoundNextBtn" onclick="otreeNextRound()" style="display:none; margin-top:.7rem;">Next Item</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="otreeNextBtn" onclick="jumpToChapter('check-otree')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="otree"></div>
+
+    <!-- ============ ORCHARD CHAPTER 2: THE SAPLING'S SECRET ============ -->
+    <section class="session orchard-scope" data-chapter="osapling">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 2 of 13: The Sapling's Secret</div>
+      <div class="orch-card">
+        <h2>The Secret of Growing Money</h2>
+        <p class="big-text">"Here's my favorite trick," Hazel winks. "Money that earns money on its OWN earnings grows faster than you'd think. Watch these two starts of $100 over the years: one just sits, one grows a Money Tree. Tap and see!"</p>
+        <div style="display:flex; justify-content:space-around; align-items:flex-end; margin:1rem 0; min-height:150px;">
+          <div style="text-align:center;">
+            <svg width="56" height="56" viewBox="0 0 56 56">
+              <ellipse cx="28" cy="34" rx="22" ry="16" fill="var(--orch-gold)"/>
+              <circle cx="14" cy="26" r="5" fill="var(--orch-gold)"/>
+              <rect x="24" y="14" width="3" height="8" fill="var(--orch-brown)"/>
+              <circle cx="8" cy="32" r="2" fill="var(--orch-ink)"/>
+            </svg>
+            <div class="orch-stage-label" id="osaplingPiggyLabel">$100</div>
+            <div style="font-size:.68rem; color:var(--orch-ink-soft);">Piggy Bank</div>
+          </div>
+          <div style="text-align:center;">
+            <svg id="osaplingTree" width="70" height="100" viewBox="0 0 70 100" style="transform:scale(1); transition:transform .5s cubic-bezier(.34,1.2,.64,1); transform-origin:bottom center;">
+              <ellipse cx="35" cy="96" rx="24" ry="4" fill="#DCD3B4"/>
+              <rect x="30" y="60" width="10" height="34" rx="2" fill="var(--orch-brown)"/>
+              <circle cx="35" cy="42" r="30" fill="var(--orch-green)"/>
+            </svg>
+            <div class="orch-stage-label" id="osaplingTreeLabel">$100</div>
+            <div style="font-size:.68rem; color:var(--orch-ink-soft);">Money Tree (10% a year)</div>
+          </div>
+        </div>
+        <div class="orch-stage-label" id="osaplingYearLabel">Year 0</div>
+        <button class="orch-btn" id="osaplingBtn" onclick="tickOsapling()">One Year Passes</button>
+        <div class="orch-reveal" id="osaplingReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="osaplingNextBtn" onclick="jumpToChapter('check-osapling')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="osapling"></div>
+
+    <!-- ============ ORCHARD CHAPTER 3: SMALL SEEDS, STEADY HANDS ============ -->
+    <section class="session orchard-scope" data-chapter="oseeds">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 3 of 13: Small Seeds, Steady Hands</div>
+      <div class="orch-card">
+        <h2>A Little, Often, Adds Up</h2>
+        <p class="big-text">"You don't need a fortune to start," Hazel says. "Just plant one seed at a time, steadily. Tap 'Plant a Seed' each week and watch the row fill in."</p>
+        <div id="oseedsRow" style="display:flex; gap:.4rem; justify-content:center; flex-wrap:wrap; min-height:44px; margin:.8rem 0; align-items:flex-end;"></div>
+        <div class="orch-stage-label" id="oseedsTotalLabel">Saved so far: $0</div>
+        <button class="orch-btn" id="oseedsBtn" onclick="tickOseeds()">Plant a Seed ($5/week)</button>
+        <div class="orch-reveal" id="oseedsReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="oseedsNextBtn" onclick="jumpToChapter('check-oseeds')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="oseeds"></div>
+
+    <!-- ============ ORCHARD CHAPTER 4: WEATHER AND WOBBLE ============ -->
+    <section class="session orchard-scope" data-chapter="oweather">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 4 of 13: Weather and Wobble</div>
+      <div class="orch-card">
+        <h2>Calm Meadow or Windy Hilltop?</h2>
+        <p class="big-text">"Every plot has its own weather," says Hazel. "Some are calm and steady. Others are wild and windy: bigger risk, but bigger possible reward. Let's plant in both and see what a few seasons bring."</p>
+        <div style="display:flex; justify-content:space-around; margin:1rem 0; gap:.6rem;">
+          <div style="text-align:center; flex:1;">
+            <svg class="orch-drift" width="60" height="50" viewBox="0 0 60 50"><path d="M4 40 Q15 30 30 38 Q45 30 56 40 V46 H4 Z" fill="var(--orch-green-light)"/><circle cx="46" cy="12" r="8" fill="var(--orch-gold)"/></svg>
+            <div class="orch-stage-label">Calm Meadow</div>
+            <div id="oweatherMeadowTotal" style="font-family:var(--font-display); font-weight:800; color:var(--orch-green);">$100</div>
+            <div id="oweatherMeadowResult" style="font-size:.72rem; color:var(--orch-ink-soft); min-height:1rem;"></div>
+          </div>
+          <div style="text-align:center; flex:1;">
+            <svg class="orch-drift" width="60" height="50" viewBox="0 0 60 50" style="animation-duration:1.6s;"><path d="M8 44 L22 16 L30 30 L38 10 L52 44 Z" fill="var(--orch-amber)"/><path d="M6 20 q6 -6 10 0 M40 14 q6 -6 10 0" fill="none" stroke="var(--orch-ink-soft)" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <div class="orch-stage-label">Windy Hilltop</div>
+            <div id="oweatherHillTotal" style="font-family:var(--font-display); font-weight:800; color:var(--orch-amber-shadow);">$100</div>
+            <div id="oweatherHillResult" style="font-size:.72rem; color:var(--orch-ink-soft); min-height:1rem;"></div>
+          </div>
+        </div>
+        <div class="orch-stage-label" id="oweatherSeasonLabel">Season 0 of 4</div>
+        <button class="orch-btn" id="oweatherBtn" onclick="tickOweather()">Let a Season Pass</button>
+        <div class="orch-reveal" id="oweatherReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="oweatherNextBtn" onclick="jumpToChapter('check-oweather')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="oweather"></div>
+
+    <!-- ============ ORCHARD CHAPTER 5: A SLICE OF THE ORCHARD ============ -->
+    <section class="session orchard-scope" data-chapter="oslice">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 5 of 13: A Slice of the Orchard</div>
+      <div class="orch-card">
+        <h2>Owning a Piece of Something Bigger</h2>
+        <p class="big-text">"See that big shared orchard over the hill?" Hazel points. "It's split into 10 equal slices. If you own a slice, you own a little piece of the WHOLE thing, and when the orchard grows, so does your slice. That's what a stock is."</p>
+        <div style="display:flex; align-items:center; justify-content:center; gap:.9rem; margin:.7rem 0;">
+          <div id="osliceCoin" class="draggable orch-drag-hint" style="width:52px; height:52px; border-radius:50%; background:var(--orch-gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#fff; box-shadow:0 3px 0 var(--orch-gold-shadow); font-size:.85rem;">$10</div>
+          <div style="font-size:.72rem; color:var(--orch-ink-soft); max-width:110px;">Drag the coin onto the grid to buy a slice!</div>
+        </div>
+        <div id="osliceGrid" class="orch-drop-zone" style="display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; max-width:220px; margin:.5rem auto; padding:.5rem;"></div>
+        <div class="orch-stage-label" id="osliceOwnedLabel">You own: 0 of 10 slices</div>
+        <div class="orch-reveal" id="osliceReveal"></div>
+        <div id="osliceGrowSection" style="display:none; margin-top:1rem; border-top:2px dashed var(--orch-green); padding-top:1rem;">
+          <p class="big-text">The whole orchard just had an amazing harvest and grew 50% in value! What happens to your slices?</p>
+          <button class="orch-btn amber" onclick="growOslice()">See What Happens!</button>
+          <div class="orch-reveal" id="osliceGrowReveal"></div>
+        </div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="osliceNextBtn" onclick="jumpToChapter('check-oslice')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="oslice"></div>
+
+    <!-- ============ ORCHARD CHAPTER 6: THE BIG BASKET ============ -->
+    <section class="session orchard-scope" data-chapter="obasket">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 6 of 13: The Big Basket</div>
+      <div class="orch-card">
+        <h2>Don't Plant Just One Tree</h2>
+        <p class="big-text">"What if a frost hits your ONE tree?" Hazel asks. "You'd lose everything. But if you planted a whole basket of different trees, one bad frost couldn't wipe you out. Let's test it."</p>
+        <div style="display:flex; justify-content:space-around; margin:1rem 0; gap:.6rem;">
+          <div style="text-align:center; flex:1;">
+            <svg id="obasketSingleTree" width="60" height="60" viewBox="0 0 60 60">
+              <rect x="27" y="34" width="6" height="20" fill="var(--orch-brown)"/>
+              <circle cx="30" cy="24" r="18" fill="var(--orch-green)"/>
+            </svg>
+            <div class="orch-stage-label">One Tree</div>
+            <div id="obasketSingleVal" style="font-family:var(--font-display); font-weight:800;">$100</div>
+          </div>
+          <div style="text-align:center; flex:1;">
+            <div id="obasketFiveTrees" style="display:flex; justify-content:center; gap:.15rem; align-items:flex-end; height:60px;"></div>
+            <div class="orch-stage-label">Basket of 5</div>
+            <div id="obasketFiveVal" style="font-family:var(--font-display); font-weight:800;">$100</div>
+          </div>
+        </div>
+        <button class="orch-btn amber" id="obasketBtn" onclick="strikeObasketFrost()">A Frost Hits!</button>
+        <div class="orch-reveal" id="obasketReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="obasketNextBtn" onclick="jumpToChapter('check-obasket')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="obasket"></div>
+
+    <!-- ============ ORCHARD CHAPTER 7: THE STEADY LENDER ============ -->
+    <section class="session orchard-scope" data-chapter="olender">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 7 of 13: The Steady Lender</div>
+      <div class="orch-card">
+        <h2>Lend It, Don't Just Give It</h2>
+        <p class="big-text">"Sometimes neighbors need help buying young trees," Hazel says. "You could just GIVE them the money, or you could LEND it, and they promise to pay you back a little extra for the favor. That promise is called a bond."</p>
+        <svg width="90" height="70" viewBox="0 0 90 70" style="display:block; margin:.6rem auto;">
+          <rect x="15" y="8" width="60" height="54" rx="3" fill="#fff" stroke="var(--orch-green)" stroke-width="2.4"/>
+          <line x1="24" y1="20" x2="66" y2="20" stroke="var(--orch-green)" stroke-width="2"/>
+          <line x1="24" y1="28" x2="66" y2="28" stroke="var(--orch-green)" stroke-width="2"/>
+          <line x1="24" y1="36" x2="52" y2="36" stroke="var(--orch-green)" stroke-width="2"/>
+          <circle cx="60" cy="48" r="10" fill="var(--orch-gold)"/>
+          <path d="M55 48 l4 4 8 -8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <button class="orch-btn" id="olenderBtn" onclick="lendOlender()">Lend $50 for 1 Season</button>
+        <div class="orch-reveal" id="olenderReveal"></div>
+        <div id="olenderSaveSpend" style="display:none; margin-top:1rem; border-top:2px dashed var(--orch-green); padding-top:1rem;">
+          <p class="big-text">Your neighbor pays you back $55! What will you do with it?</p>
+          <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <div class="orch-tile" onclick="answerSaveOrSpend('spend',55,'olenderChoiceReveal','olenderNextBtn','Candy at the market')">Spend it on candy</div>
+            <div class="orch-tile" onclick="answerSaveOrSpend('save',55,'olenderChoiceReveal','olenderNextBtn')">Add it to your Orchard Fund</div>
+          </div>
+          <div class="orch-reveal" id="olenderChoiceReveal"></div>
+        </div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="olenderNextBtn" onclick="jumpToChapter('check-olender')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="olender"></div>
+
+    <!-- ============ ORCHARD CHAPTER 8: THE RENTAL COTTAGE ============ -->
+    <section class="session orchard-scope" data-chapter="ocottage">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 8 of 13: The Rental Cottage</div>
+      <div class="orch-card">
+        <h2>A House That Pays You</h2>
+        <p class="big-text">"This little cottage isn't just a place to live," Hazel says. "If you rent it out, someone pays YOU to stay there every month. Let's collect a few months of rent and see."</p>
+        <svg width="80" height="66" viewBox="0 0 80 66" style="display:block; margin:.4rem auto;">
+          <path d="M12 30 L40 10 L68 30" fill="none" stroke="var(--orch-brown)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="18" y="30" width="44" height="28" fill="none" stroke="var(--orch-brown)" stroke-width="2.6"/>
+          <rect x="34" y="40" width="12" height="18" fill="var(--orch-amber)"/>
+          <rect x="22" y="36" width="8" height="8" fill="var(--orch-green-light)"/>
+          <rect x="50" y="36" width="8" height="8" fill="var(--orch-green-light)"/>
+        </svg>
+        <div class="orch-stage-label" id="ocottageMonthLabel">Month 0 of 4</div>
+        <div class="orch-stage-label" id="ocottageRentLabel">Rent collected: $0</div>
+        <button class="orch-btn" id="ocottageBtn" onclick="collectOcottageRent()">Collect a Month's Rent ($15)</button>
+        <div class="orch-reveal" id="ocottageReveal"></div>
+        <div id="ocottageSaveSpend" style="display:none; margin-top:1rem; border-top:2px dashed var(--orch-green); padding-top:1rem;">
+          <p class="big-text">You've collected $60 in rent! What will you do with it?</p>
+          <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <div class="orch-tile" onclick="answerSaveOrSpend('spend',60,'ocottageChoiceReveal','ocottageNextBtn','A trip to the arcade')">Spend it at the arcade</div>
+            <div class="orch-tile" onclick="answerSaveOrSpend('save',60,'ocottageChoiceReveal','ocottageNextBtn')">Add it to your Orchard Fund</div>
+          </div>
+          <div class="orch-reveal" id="ocottageChoiceReveal"></div>
+        </div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="ocottageNextBtn" onclick="jumpToChapter('check-ocottage')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="ocottage"></div>
+
+    <!-- ============ ORCHARD CHAPTER 9: BUILDING SOMETHING OF YOUR OWN ============ -->
+    <section class="session orchard-scope" data-chapter="obuild">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 9 of 13: Building Something of Your Own</div>
+      <div class="orch-card">
+        <h2>Working FOR Money vs. Owning Something That Works</h2>
+        <p class="big-text">"There's a big difference between earning money and owning something that earns," Hazel says. "Try both paths and watch closely."</p>
+        <div style="display:flex; justify-content:space-around; gap:.6rem; margin:1rem 0;">
+          <div style="text-align:center; flex:1;">
+            <svg width="50" height="60" viewBox="0 0 50 60"><circle cx="25" cy="14" r="9" fill="var(--orch-brown)"/><path d="M10 50 C10 32 40 32 40 50" fill="none" stroke="var(--orch-brown)" stroke-width="5" stroke-linecap="round"/></svg>
+            <div class="orch-stage-label">Working for Wages</div>
+            <button class="orch-btn" id="obuildWorkBtn" onclick="workObuildHour()">Work 1 Hour ($8)</button>
+            <div id="obuildWorkTotal" style="font-family:var(--font-display); font-weight:800; margin-top:.3rem;">$0</div>
+          </div>
+          <div style="text-align:center; flex:1;">
+            <svg width="56" height="50" viewBox="0 0 56 50"><rect x="8" y="22" width="40" height="24" fill="none" stroke="var(--orch-amber)" stroke-width="2.4"/><path d="M4 22 L28 6 L52 22" fill="none" stroke="var(--orch-amber)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="22" y="32" width="12" height="14" fill="var(--orch-amber)"/></svg>
+            <div class="orch-stage-label">Owning a Stand</div>
+            <button class="orch-btn amber" id="obuildBuildBtn" onclick="buildObuildStand()">Build It (once)</button>
+            <div id="obuildOwnTotal" style="font-family:var(--font-display); font-weight:800; margin-top:.3rem;">$0</div>
+          </div>
+        </div>
+        <div class="orch-reveal" id="obuildReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="obuildNextBtn" onclick="jumpToChapter('check-obuild')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="obuild"></div>
+
+    <!-- ============ ORCHARD CHAPTER 10: THE PATIENT GARDENER ============ -->
+    <section class="session orchard-scope" data-chapter="opatient">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 10 of 13: The Patient Gardener</div>
+      <div class="orch-card">
+        <h2>The Patience Test</h2>
+        <p class="big-text">"This might be the hardest lesson of all," Hazel says softly. "Waiting. Every round, you'll choose: enjoy it now, or let it grow. Let's see what patience is really worth."</p>
+        <div class="orch-stage-label" id="opatientRoundLabel">Round 1 of 4</div>
+        <div id="opatientScenario" style="margin:.8rem 0;"></div>
+        <div class="orch-reveal" id="opatientReveal"></div>
+        <button class="orch-btn" id="opatientRoundNextBtn" onclick="opatientNextRound()" style="display:none; margin-top:.6rem;">Next Round</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="opatientNextBtn" onclick="jumpToChapter('check-opatient')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="opatient"></div>
+
+    <!-- ============ ORCHARD CHAPTER 11: READING THE SOIL ============ -->
+    <section class="session orchard-scope" data-chapter="osoil">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 11 of 13: Reading the Soil</div>
+      <div class="orch-card">
+        <h2>What's Really Yours?</h2>
+        <p class="big-text">"To know how healthy your garden truly is, you check what's growing AND what's draining it," Hazel explains. "That's called net worth: everything you own, minus everything you owe. Drag each card into the right pile."</p>
+        <div id="osoilPool" style="display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin:.7rem 0;"></div>
+        <div style="display:flex; gap:.6rem; margin-top:.4rem;">
+          <div id="osoilOwnZone" class="orch-drop-zone" style="flex:1; min-height:64px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:var(--orch-green); background:var(--orch-green-pale); padding:.4rem;">I Own</div>
+          <div id="osoilOweZone" class="orch-drop-zone" style="flex:1; min-height:64px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:var(--orch-red); background:#FBE7E2; padding:.4rem;">I Owe</div>
+        </div>
+        <div class="orch-stage-label" id="osoilTotalLabel">Net Worth: $0</div>
+        <div class="orch-reveal" id="osoilReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="osoilNextBtn" onclick="jumpToChapter('check-osoil')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="osoil"></div>
+
+    <!-- ============ ORCHARD CHAPTER 12: FAIR-WEATHER FRIENDS ============ -->
+    <section class="session orchard-scope" data-chapter="ostorm">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 12 of 13: Fair-Weather Friends</div>
+      <div class="orch-card">
+        <h2>Watch for the Wrong Kind of Storm</h2>
+        <p class="big-text">Hazel's voice turns serious. "Some visitors to the orchard aren't here to help it grow. They promise amazing things to trick you out of your money. Let's learn to spot them."</p>
+        <div class="orch-stage-label" id="ostormRoundLabel">Round 1 of 5</div>
+        <div id="ostormItemCard" style="text-align:center; margin:.7rem 0; font-size:.92rem; font-weight:700; color:var(--orch-ink); font-style:italic;"></div>
+        <div style="display:flex; gap:1rem; justify-content:center;">
+          <div class="orch-tile" onclick="answerOstorm('safe')" style="border-color:var(--orch-green); color:var(--orch-green);">Trustworthy</div>
+          <div class="orch-tile" onclick="answerOstorm('scam')" style="border-color:var(--orch-red); color:var(--orch-red);">Red Flag!</div>
+        </div>
+        <div class="orch-reveal" id="ostormReveal"></div>
+        <button class="orch-btn" id="ostormRoundNextBtn" onclick="ostormNextRound()" style="display:none; margin-top:.6rem;">Next</button>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="ostormNextBtn" onclick="jumpToChapter('check-ostorm')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="ostorm"></div>
+
+    <!-- ============ ORCHARD CHAPTER 13: THE GRAND ORCHARD PLAN (CAPSTONE) ============ -->
+    <section class="session orchard-scope" data-chapter="ocapstone">
+      <div class="chapter-badge" style="background:var(--orch-green);">Chapter 13 of 13: The Grand Orchard Plan</div>
+      <div class="orch-card">
+        <h2>Plant Your Own Orchard</h2>
+        <p class="big-text" id="ocapstoneIntro">"You've learned so much," Hazel smiles, "and your patience and good choices have grown your Orchard Fund. Add this season's harvest bonus, and it's time to plant YOUR own diversified orchard. Drag the coin onto a plot to invest $10 at a time. Spread it around, just like Chapter 6 taught you!"</p>
+        <div class="orch-stage-label" id="ocapstoneAvailableLabel">Available to plant: $0</div>
+        <button class="orch-btn amber" id="ocapstoneStartBtn" onclick="startOcapstone()">Count My Harvest!</button>
+        <div id="ocapstoneCoinRow" style="display:none; justify-content:center; margin:.6rem 0;">
+          <div id="ocapstoneCoin" class="draggable orch-drag-hint" style="width:52px; height:52px; border-radius:50%; background:var(--orch-gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; color:#fff; box-shadow:0 3px 0 var(--orch-gold-shadow); font-size:.85rem;">$10</div>
+        </div>
+        <div id="ocapstonePlots" style="display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; margin:.8rem 0;"></div>
+        <div class="orch-reveal" id="ocapstoneReveal"></div>
+      </div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="ocapstoneNextBtn" onclick="jumpToChapter('check-ocapstone')" disabled>Next</button></div>
+    </section>
+    <div class="quiz-anchor" data-anchor="ocapstone"></div>
+
+</div>
+</div>
+
+<script>
+let audioCtx = null;
+function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  }catch(e){}
+}
+function playBlip(freq, duration){
+  if(!audioCtx) initAudio();
+  if(!audioCtx) return;
+  if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+  freq = freq || (520 + Math.random()*90);
+  duration = duration || 0.11;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  g.gain.value = 0.14;
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start();
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.stop(audioCtx.currentTime + duration + 0.02);
+}
+let justFinishedDrag = false;
+document.addEventListener('click', e=>{
+  if(justFinishedDrag){ e.stopPropagation(); e.preventDefault(); }
+}, true);
+document.addEventListener('click', initAudio, {once:true});
+document.addEventListener('click', (e)=>{
+  const el = e.target.closest('button, [onclick]');
+  if(el) playBlip();
+}, true);
+document.addEventListener('change', (e)=>{
+  if(e.target.tagName === 'INPUT' && e.target.type === 'range') playBlip(420, 0.09);
+});
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
+function burst(wrapId, colors, count){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 5 + Math.random()*9;
+    p.style.width = p.style.height = size+'px';
+    p.style.left = (rect.width/2) + 'px';
+    p.style.top = (rect.height/2) + 'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const angle = Math.random()*2*Math.PI;
+    const dist = 50 + Math.random()*70;
+    p.style.setProperty('--dx', (Math.cos(angle)*dist)+'px');
+    p.style.setProperty('--dy', (Math.sin(angle)*dist)+'px');
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(), 1000);
+  }
+}
+
+const ORCHARD_FUND_KEY = 'melissaMoneyOrchardFund_v1';
+function loadOrchardFund(){
+  try{ const v = parseFloat(localStorage.getItem(ORCHARD_FUND_KEY)); return isNaN(v) ? 0 : v; }catch(e){ return 0; }
+}
+let orchardFund = loadOrchardFund();
+function saveOrchardFund(){ try{ localStorage.setItem(ORCHARD_FUND_KEY, String(orchardFund)); }catch(e){} }
+function addToOrchardFund(amount){
+  orchardFund = Math.round((orchardFund + amount)*100)/100;
+  saveOrchardFund();
+  updateFundPill();
+  try{ renderOrchardJournalCard(); }catch(e){}
+}
+
+function updateFundPill(){
+  const pill = document.getElementById('bikeFundPill');
+  if(!pill) return;
+  pill.style.display = 'none';
+}
+
+function waveOrchardTree(){
+  const svg = document.getElementById('orchardHeroTree');
+  if(!svg) return;
+  svg.classList.remove('orch-sway');
+  void svg.offsetWidth;
+  svg.style.animation = 'orchSprout .4s ease';
+  burst('orchardIntroZone', ['#2D5F3F','#D4A24C','#C97B4A'], 10);
+  playBlip(600,0.12);
+  setTimeout(()=>{ svg.style.animation = ''; svg.classList.add('orch-sway'); }, 450);
+}
+let trailPage = 0;
+
+
+const AZUL_IMAGES = { azul_greeting: "data:image/png;base64,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" };
+
+const ORCHARD_CHAPTER_ORDER = ['otree','osapling','oseeds','oweather','oslice','obasket','olender','ocottage','obuild','opatient','osoil','ostorm','ocapstone'];
+const ORCHARD_CHAPTER_LABELS = {
+  otree:'The Money Tree and the Weed', osapling:"The Sapling's Secret", oseeds:'Small Seeds, Steady Hands',
+  oweather:'Weather and Wobble', oslice:'A Slice of the Orchard', obasket:'The Big Basket',
+  olender:'The Steady Lender', ocottage:'The Rental Cottage', obuild:'Building Something of Your Own',
+  opatient:'The Patient Gardener', osoil:'Reading the Soil', ostorm:'Fair-Weather Friends',
+  ocapstone:'The Grand Orchard Plan'
+};
+
+const ORCHARD_CHECKS_DONE_KEY = 'melissaMoneyOrchardChecksDone_v1';
+function loadOrchardChecksDone(){
+  try{
+    const v = JSON.parse(localStorage.getItem(ORCHARD_CHECKS_DONE_KEY) || 'null');
+    if(Array.isArray(v) && v.length === ORCHARD_CHAPTER_ORDER.length) return v;
+  }catch(e){}
+  return ORCHARD_CHAPTER_ORDER.map(()=>false);
+}
+let orchardChecksDone = loadOrchardChecksDone();
+
+
+function persistCheckDone(key){
+  const idx = ORCHARD_CHAPTER_ORDER.indexOf(key);
+  if(idx === -1) return;
+  orchardChecksDone[idx] = true;
+  try{ localStorage.setItem(ORCHARD_CHECKS_DONE_KEY, JSON.stringify(orchardChecksDone)); }catch(e){}
+  try{ renderOrchardChapterPicker(); }catch(e){}
+}
+
+
+const TRAIL_PAGE_SIZE = 6;
+
+const ORCHARD_TRAIL_BADGES = {
+  otree:    { color:'#2D5F3F', icon:'<circle cx="16" cy="16" r="9" fill="#fff"/><rect x="13.5" y="24" width="5" height="10" fill="#fff"/><path d="M31 34 C27 34 25 31 26 27 C23 27 22 24 24 21 C22 20 23 16 27 16 C27 12 32 11 34 15 C37 13 40 17 38 20 C41 21 40 26 37 26 C38 30 34 34 31 34 Z" fill="none" stroke="#fff" stroke-width="2.2"/>' },
+  osapling: { color:'#4F8C63', icon:'<rect x="20" y="26" width="4" height="10" fill="#fff"/><path d="M22 26 C14 26 12 18 12 18 C12 18 18 15 22 22 C26 15 32 18 32 18 C32 18 30 26 22 26 Z" fill="#fff"/><circle cx="22" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="1.4"/><circle cx="22" cy="10" r="4.5" fill="none" stroke="#fff" stroke-width="1.2" opacity=".6"/>' },
+  oseeds:   { color:'#C97B4A', icon:'<path d="M12 14 C12 14 26 10 34 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="16" cy="28" rx="3.4" ry="4.6" fill="#fff" transform="rotate(-20 16 28)"/><ellipse cx="24" cy="31" rx="3.4" ry="4.6" fill="#fff" transform="rotate(-10 24 31)"/><ellipse cx="32" cy="27" rx="3.4" ry="4.6" fill="#fff" transform="rotate(10 32 27)"/>' },
+  oweather: { color:'#5AA9E6', icon:'<circle cx="29" cy="14" r="7" fill="#fff" opacity=".85"/><path d="M12 26 a7 7 0 0 1 2 -13.7 A9 9 0 0 1 31 15 a6 6 0 0 1 -1 12 H14 a7 7 0 0 1 -2 -1 Z" fill="#fff"/>' },
+  oslice:   { color:'#D4A24C', icon:'<circle cx="22" cy="22" r="13" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M22 22 L22 9 A13 13 0 0 1 33.3 28.5 Z" fill="#fff"/>' },
+  obasket:  { color:'#C97B4A', icon:'<path d="M10 20 h24 l-3 13 a3 3 0 0 1 -3 2.5 H16 a3 3 0 0 1 -3 -2.5 Z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><path d="M13 20 C13 12 31 12 31 20" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="17" cy="24" r="2.6" fill="#fff"/><circle cx="22" cy="26" r="2.6" fill="#fff"/><circle cx="27" cy="24" r="2.6" fill="#fff"/>' },
+  olender:  { color:'#9B7FD4', icon:'<rect x="11" y="9" width="22" height="26" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><line x1="15" y1="16" x2="29" y2="16" stroke="#fff" stroke-width="2"/><line x1="15" y1="21" x2="29" y2="21" stroke="#fff" stroke-width="2"/><line x1="15" y1="26" x2="24" y2="26" stroke="#fff" stroke-width="2"/><circle cx="29" cy="29" r="4" fill="#fff"/>' },
+  ocottage: { color:'#B5533C', icon:'<path d="M9 20 L22 9 L35 20" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="20" width="18" height="15" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="19" y="26" width="6" height="9" fill="#fff"/>' },
+  obuild:   { color:'#6B4226', icon:'<rect x="10" y="24" width="24" height="11" rx="1.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M13 24 V17 h18 v7" fill="none" stroke="#fff" stroke-width="2.4"/><line x1="22" y1="24" x2="22" y2="35" stroke="#fff" stroke-width="2"/><circle cx="22" cy="11" r="3" fill="#fff"/>' },
+  opatient: { color:'#D4A24C', icon:'<path d="M14 9 h16 M14 35 h16" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M15 9 v4 a7 7 0 0 0 14 0 V9 M15 35 v-4 a7 7 0 0 1 14 0 v4" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M22 20 l-3 4 h6 l-3 4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
+  osoil:    { color:'#6B5D48', icon:'<circle cx="18" cy="17" r="8" fill="none" stroke="#fff" stroke-width="2.4"/><line x1="24" y1="23" x2="32" y2="31" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M14 17 q4 -4 8 0" fill="none" stroke="#fff" stroke-width="1.8"/>' },
+  ostorm:   { color:'#B5533C', icon:'<path d="M11 22 a6 6 0 0 1 1.5 -11.8 A8 8 0 0 1 28 12 a5.5 5.5 0 0 1 -1 11 H13 a6 6 0 0 1 -2 -1 Z" fill="#fff"/><path d="M20 24 l-4 7 h5 l-3 6" fill="none" stroke="var(--orch-red,#B5533C)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' },
+  ocapstone:{ color:'#2D5F3F', icon:'<circle cx="12" cy="16" r="6" fill="#fff"/><rect x="10.5" y="22" width="3" height="8" fill="#fff"/><circle cx="22" cy="12" r="8" fill="#fff"/><rect x="20.3" y="20" width="3.4" height="10" fill="#fff"/><circle cx="32" cy="16" r="6" fill="#fff"/><rect x="30.5" y="22" width="3" height="8" fill="#fff"/>', big:true }
+};
+function renderGoalCard(){
+  const el = document.getElementById('goalCard');
+  if(!el) return;
+  const maxScale = Math.max(bikeFund, bikePrice, 1);
+  const currentPct = Math.min(100, Math.max(2, (bikeFund/maxScale)*100));
+  const goalPct = Math.min(100, Math.max(2, (bikePrice/maxScale)*100));
+  el.innerHTML = `
+    <div class="goal-card">
+      <div class="goal-card-top">
+        <div class="goal-card-title">Your Bike Fund Journey</div>
+      </div>
+      <div class="journey-track-wrap">
+        <div class="journey-marker" style="left:${currentPct}%">
+          <div class="journey-marker-badge" style="background:${TRAIL_BADGES.bike.color}"><svg width="22" height="22" viewBox="0 0 44 44">${TRAIL_BADGES.bike.icon}</svg></div>
+          <div class="journey-arrow"></div>
+        </div>
+        <div class="journey-marker goal-marker" style="left:${goalPct}%">
+          <div class="journey-marker-badge" style="background:#fff"><svg width="22" height="22" viewBox="0 0 44 44">${GOAL_FLAG_ICON}</svg></div>
+          <div class="journey-arrow"></div>
+        </div>
+        <div class="goal-track"><div class="goal-fill" style="width:${currentPct}%"></div></div>
+      </div>
+      <div class="goal-amounts"><span>$${bikeFund.toFixed(0)} saved</span><span>Goal: $${bikePrice}</span></div>
+    </div>`;
+}
+function renderDollhouseGoalCard(){
+  const el = document.getElementById('dollhouseGoalCard');
+  if(!el) return;
+  const maxScale = Math.max(dollhouseFund, dollhousePrice, 1);
+  const currentPct = Math.min(100, Math.max(2, (dollhouseFund/maxScale)*100));
+  const goalPct = Math.min(100, Math.max(2, (dollhousePrice/maxScale)*100));
+  el.innerHTML = `
+    <div class="goal-card">
+      <div class="goal-card-top">
+        <div class="goal-card-title">Your Dollhouse Fund Journey</div>
+      </div>
+      <div class="journey-track-wrap">
+        <div class="journey-marker" style="left:${currentPct}%">
+          <div class="journey-marker-badge" style="background:${DOLLHOUSE_TRAIL_BADGES.ddream.color}"><svg width="22" height="22" viewBox="0 0 44 44">${DOLLHOUSE_TRAIL_BADGES.ddream.icon}</svg></div>
+          <div class="journey-arrow"></div>
+        </div>
+        <div class="journey-marker goal-marker" style="left:${goalPct}%">
+          <div class="journey-marker-badge" style="background:#fff"><svg width="22" height="22" viewBox="0 0 44 44">${GOAL_FLAG_ICON}</svg></div>
+          <div class="journey-arrow"></div>
+        </div>
+        <div class="goal-track"><div class="goal-fill" style="width:${currentPct}%"></div></div>
+      </div>
+      <div class="goal-amounts"><span>$${dollhouseFund.toFixed(0)} saved</span><span>Goal: $${dollhousePrice}</span></div>
+    </div>`;
+}
+function renderDollhouseChapterPicker(){
+  const wrap = document.getElementById('dollhouseChapterPicker');
+  if(!wrap) return;
+  const stopsHTML = DOLLHOUSE_CHAPTER_ORDER.map((key,i)=>{
+    const done = dollhouseChecksDone[i];
+    const b = DOLLHOUSE_TRAIL_BADGES[key];
+    const delay = (i*0.06).toFixed(2);
+    return `
+      <div class="trail-stop">
+        <button class="trail-badge-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${key}')">
+          <div class="trail-badge ${b.big?'big':''}" style="background:${b.color}">
+            <svg width="${b.big?44:36}" height="${b.big?44:36}" viewBox="0 0 44 44">${b.icon}</svg>
+            ${done ? `<div class="trail-check"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7 L5.5 10.5 L12 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+          </div>
+        </button>
+        <div class="trail-num">Ch. ${i+1}</div>
+        <div class="trail-name">${DOLLHOUSE_CHAPTER_LABELS[key]}</div>
+        ${done ? '<div class="trail-status">Completed</div>' : ''}
+      </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="trail-wrap"><div class="trail-page" style="flex-wrap:wrap; height:auto;">${stopsHTML}</div></div>`;
+  renderDollhouseGoalCard();
+}
+function renderWorldPassportCard(){
+  const card = document.getElementById('worldPassportCard');
+  if(!card) return;
+  const stampsHTML = WORLD_CHAPTER_ORDER.map((k,i)=>{
+    const done = worldChecksDone[i];
+    return `<div class="passport-stamp ${done?'stamped':''}">${done ? WORLD_TRAIL_BADGES[k].stampIcon : ''}</div>`;
+  }).join('');
+  const doneCount = worldChecksDone.filter(Boolean).length;
+  card.innerHTML = `<div class="passport-card"><div class="passport-title">Royal Record Book (${doneCount}/${WORLD_CHAPTER_ORDER.length} seals)</div><div class="passport-stamps-grid">${stampsHTML}</div></div>`;
+}
+function renderWorldChapterPicker(){
+  const wrap = document.getElementById('worldChapterPicker');
+  if(!wrap) return;
+  const stopsHTML = WORLD_CHAPTER_ORDER.map((key,i)=>{
+    const done = worldChecksDone[i];
+    const b = WORLD_TRAIL_BADGES[key];
+    const delay = (i*0.06).toFixed(2);
+    return `
+      <div class="trail-stop">
+        <button class="trail-badge-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${key}')">
+          <div class="trail-badge ${b.big?'big':''}" style="background:${b.color}">
+            <svg width="${b.big?44:36}" height="${b.big?44:36}" viewBox="0 0 44 44">${b.icon}</svg>
+            ${done ? `<div class="trail-check"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7 L5.5 10.5 L12 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+          </div>
+        </button>
+        <div class="trail-num">Ch. ${i+1}</div>
+        <div class="trail-name">${WORLD_CHAPTER_LABELS[key]}</div>
+        ${done ? '<div class="trail-status">Completed</div>' : ''}
+      </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="trail-wrap"><div class="trail-page" style="flex-wrap:wrap; height:auto;">${stopsHTML}</div></div>`;
+  renderWorldPassportCard();
+}
+
+
+function renderOrchardJournalCard(){
+  const card = document.getElementById('orchardJournalCard');
+  if(!card) return;
+  const slotsHTML = ORCHARD_CHAPTER_ORDER.map((k,i)=>{
+    const done = orchardChecksDone[i];
+    const b = ORCHARD_TRAIL_BADGES[k];
+    return `<div class="orch-leaf-slot ${done?'grown':''}">${done ? `<svg width="20" height="20" viewBox="0 0 44 44">${b.icon.replace(/#fff/g,'var(--orch-green)')}</svg>` : ''}</div>`;
+  }).join('');
+  const doneCount = orchardChecksDone.filter(Boolean).length;
+  card.innerHTML = `<div class="orch-journal-card"><div class="orch-journal-title">Growth Journal (${doneCount}/${ORCHARD_CHAPTER_ORDER.length} grown)</div><div class="orch-leaf-grid">${slotsHTML}</div><div style="text-align:center; margin-top:.7rem; padding-top:.6rem; border-top:2px dashed var(--orch-gold); font-family:var(--font-display); font-weight:800; color:var(--orch-brown);">Orchard Fund: $${orchardFund.toFixed(2).replace(/\.00$/,'')}</div></div>`;
+}
+
+function renderOrchardChapterPicker(){
+  const wrap = document.getElementById('orchardChapterPicker');
+  if(!wrap) return;
+  const stopsHTML = ORCHARD_CHAPTER_ORDER.map((key,i)=>{
+    const done = orchardChecksDone[i];
+    const b = ORCHARD_TRAIL_BADGES[key];
+    const delay = (i*0.06).toFixed(2);
+    return `
+      <div class="trail-stop">
+        <button class="trail-badge-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${key}')">
+          <div class="trail-badge ${b.big?'big':''}" style="background:${b.color}">
+            <svg width="${b.big?44:36}" height="${b.big?44:36}" viewBox="0 0 44 44">${b.icon}</svg>
+            ${done ? `<div class="trail-check"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 7 L5.5 10.5 L12 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+          </div>
+        </button>
+        <div class="trail-num">Ch. ${i+1}</div>
+        <div class="trail-name">${ORCHARD_CHAPTER_LABELS[key]}</div>
+        ${done ? '<div class="trail-status">Grown</div>' : ''}
+      </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="trail-wrap"><div class="trail-page" style="flex-wrap:wrap; height:auto;">${stopsHTML}</div></div>`;
+  renderOrchardJournalCard();
+}
+
+
+const CHECK_ICONS = {
+  bike: '<circle cx="10" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><circle cx="26" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><path d="M10 24 L18 10 L26 24 M18 10 L15 24" stroke="#FF8A5B" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
+  toy: '<rect x="6" y="12" width="24" height="18" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="30" r="4" fill="#4A3520"/><circle cx="24" cy="30" r="4" fill="#4A3520"/>',
+  work: '<circle cx="17" cy="10" r="6" fill="#F2C79A" stroke="#B08A5A" stroke-width="1.5"/><rect x="7" y="17" width="20" height="14" rx="4" fill="#3CAA6B"/>',
+  magic: '<path d="M8 28 L26 10" stroke="#8AB6D6" stroke-width="3" stroke-linecap="round"/><path d="M24 6 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z" fill="#FFC93C"/>',
+  swap: '<path d="M6 12 h18 M20 7 l4 5 -4 5" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 24 H10 M14 19 l-4 5 4 5" stroke="#E85D5D" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  bank: '<polygon points="17,4 30,12 4,12" fill="#8AB6D6"/><rect x="6" y="14" width="4" height="14" fill="#8AB6D6"/><rect x="15" y="14" width="4" height="14" fill="#8AB6D6"/><rect x="24" y="14" width="4" height="14" fill="#8AB6D6"/><rect x="4" y="28" width="26" height="4" fill="#5A87A8"/>',
+  coin: '<circle cx="17" cy="17" r="13" fill="#FFC93C" stroke="#D9A31C" stroke-width="2"/><text x="17" y="23" font-family="Baloo 2" font-size="15" fill="#5A3E00" text-anchor="middle" font-weight="700">$</text>',
+  card: '<rect x="4" y="9" width="26" height="17" rx="3" fill="#8AB6D6" stroke="#5A87A8" stroke-width="1.5"/><rect x="4" y="13" width="26" height="4" fill="#4A3520"/>',
+  scale: '<line x1="17" y1="6" x2="17" y2="26" stroke="#8A7350" stroke-width="2"/><line x1="6" y1="10" x2="28" y2="10" stroke="#8A7350" stroke-width="2"/><circle cx="6" cy="18" r="6" fill="none" stroke="#8A7350" stroke-width="2"/><circle cx="28" cy="18" r="6" fill="none" stroke="#8A7350" stroke-width="2"/>',
+  house: '<polygon points="17,4 30,15 4,15" fill="#E85D5D"/><rect x="8" y="15" width="18" height="14" fill="#F2C79A"/>',
+  jar: '<rect x="9" y="9" width="16" height="20" rx="4" fill="#fff" stroke="#D9A31C" stroke-width="2"/><rect x="9" y="20" width="16" height="9" rx="2" fill="#3CAA6B"/><rect x="12" y="4" width="10" height="6" rx="2" fill="#D9A31C"/>',
+  clock: '<circle cx="17" cy="17" r="13" fill="#fff" stroke="#8A7350" stroke-width="2"/><line x1="17" y1="17" x2="17" y2="9" stroke="#8A7350" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="17" x2="22" y2="19" stroke="#8A7350" stroke-width="2" stroke-linecap="round"/>'
+};
+function iconSvg(key){ return `<svg viewBox="0 0 34 34" width="44" height="44">${CHECK_ICONS[key]||''}</svg>`; }
+
+// ================= DYNAMIC QUESTION GENERATORS (3 fresh questions per chapter, every visit) =================
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function tilesFrom(pool){ return pick(pool); }
+
+
+const CHAPTER_CHECK_GENERATORS = {
+  otree(){
+    const q1pool = [
+      {type:'tiles', prompt:"What does a Money Tree (an asset) do for you?", options:[{icon:'coin', text:"It puts money in your pocket, again and again", correct:true},{icon:'jar', text:"It just sits there looking nice", correct:false}], explain:"An asset is something that keeps putting money in your pocket over time."},
+      {type:'tiles', prompt:"What does a Weed (a liability) do?", options:[{icon:'coin', text:"It takes money out of your pocket and gives nothing back", correct:true},{icon:'jar', text:"It earns you interest every month", correct:false}], explain:"A liability takes money out of your pocket without paying you back."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: A savings account that pays interest is a Money Tree.", correct:true, explain:"True \u2014 it keeps putting a little more money in your pocket over time."},
+      {type:'lever', prompt:"True or false: A brand new toy that just sits in your room is a Money Tree.", correct:false, explain:"False \u2014 it cost money once and never pays you back, so it's a Weed."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Why is a lemonade stand considered a Money Tree?", options:[{icon:'coin', text:"It earns money every time you sell a cup", correct:true},{icon:'jar', text:"It's fun to run", correct:false}], explain:"What makes something a Money Tree is that it keeps earning, not just that it's fun."},
+      {type:'lever', prompt:"True or false: Borrowing money you have to pay back with extra is a Money Tree.", correct:false, explain:"False \u2014 that debt drains your pocket over time, making it a Weed."},
+      {type:'dragq', prompt:"Drag the toy to where it belongs.", icon:'toy', zones:[{label:'Money Tree', correct:false},{label:'Weed', correct:true}], explain:"A toy is fun, but it doesn't pay you back \u2014 that makes it a Weed, not a Money Tree."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  osapling(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is compound interest?", options:[{icon:'coin', text:"Earning interest on your interest, not just your original money", correct:true},{icon:'jar', text:"Interest that never changes", correct:false}], explain:"Compound interest means you earn returns on your original money AND on the interest it already earned."},
+      {type:'tiles', prompt:"In the story, why did the Money Tree grow so much more than the Piggy Bank?", options:[{icon:'coin', text:"It earned interest on its interest, year after year", correct:true},{icon:'jar', text:"It got lucky", correct:false}], explain:"Each year, the Money Tree's interest was calculated on the NEW, bigger amount, not just the original $100."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Money sitting in a piggy bank with no interest grows over time.", correct:false, explain:"False \u2014 without interest, it stays exactly the same amount."},
+      {type:'lever', prompt:"True or false: The longer money compounds, the bigger the difference becomes.", correct:true, explain:"True \u2014 compound growth speeds up more and more the longer it continues."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Which grows your money the most over many years?", options:[{icon:'coin', text:"Compound interest", correct:true},{icon:'jar', text:"Keeping cash with no interest at all", correct:false}], explain:"Compound interest is one of the most powerful tools for growing money over time."},
+      {type:'lever', prompt:"True or false: Starting to save early gives compound interest more time to work.", correct:true, explain:"True \u2014 the earlier you start, the more years compounding has to grow your money."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  oseeds(){
+    const q1pool = [
+      {type:'tiles', prompt:"What's the main idea behind saving a little bit regularly?", options:[{icon:'coin', text:"Small amounts, saved consistently, add up over time", correct:true},{icon:'jar', text:"You should wait until you have a lot of money to start", correct:false}], explain:"You don't need a big lump sum to start \u2014 steady small amounts add up."},
+      {type:'tiles', prompt:"What might happen if you wait to save until you have a large amount all at once?", options:[{icon:'coin', text:"You might end up waiting a very long time", correct:true},{icon:'jar', text:"Nothing changes either way", correct:false}], explain:"Waiting for a big lump sum often means missing out on time your money could have been growing."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Saving $5 a week can add up to a meaningful amount over time.", correct:true, explain:"True \u2014 ten weeks of $5 already adds up to $50, and it keeps growing from there."},
+      {type:'lever', prompt:"True or false: You need to be rich to start saving or investing.", correct:false, explain:"False \u2014 starting small and staying consistent is one of the most powerful habits in personal finance."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"What habit did this chapter's garden metaphor represent?", options:[{icon:'coin', text:"Saving small amounts regularly", correct:true},{icon:'jar', text:"Spending everything right away", correct:false}], explain:"Planting one seed at a time, steadily, represents saving small amounts on a regular basis."},
+      {type:'lever', prompt:"True or false: Regular saving habits combined with compound interest can grow money even faster.", correct:true, explain:"True \u2014 consistent saving plus compound interest work together to build wealth over time."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  oweather(){
+    const q1pool = [
+      {type:'tiles', prompt:"What's the trade-off between the Calm Meadow and the Windy Hilltop?", options:[{icon:'coin', text:"Lower risk/steadier growth vs. higher risk/bigger possible swings", correct:true},{icon:'jar', text:"There's no real difference between them", correct:false}], explain:"The Calm Meadow is steadier but slower; the Windy Hilltop can grow faster but can also drop more."},
+      {type:'tiles', prompt:"What does 'risk' mean in investing?", options:[{icon:'coin', text:"The chance that an investment's value could go up or down a lot", correct:true},{icon:'jar', text:"A guarantee that you'll lose money", correct:false}], explain:"Risk describes how much an investment's value might swing, not a guarantee of loss."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Riskier investments can sometimes grow faster than safer ones.", correct:true, explain:"True \u2014 but they can also lose value faster, which is the trade-off."},
+      {type:'lever', prompt:"True or false: A 'safe' investment always grows just as fast as a riskier one.", correct:false, explain:"False \u2014 safer investments usually grow more slowly and steadily in exchange for less risk."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Why might a real investor put some money in calm investments AND some in riskier ones?", options:[{icon:'coin', text:"To balance steady growth with a chance at bigger gains", correct:true},{icon:'jar', text:"It doesn't matter how you mix them", correct:false}], explain:"Balancing safer and riskier investments is a common strategy to manage risk while still growing money."},
+      {type:'lever', prompt:"True or false: There's a 'best' amount of risk that's right for everyone.", correct:false, explain:"False \u2014 how much risk feels comfortable is different for each person and situation."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  oslice(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is a stock?", options:[{icon:'coin', text:"A small ownership slice of a real company", correct:true},{icon:'jar', text:"A loan you give to a company", correct:false}], explain:"A stock represents part ownership in a company \u2014 you own a slice of it."},
+      {type:'tiles', prompt:"If you own stock in a company and the company grows in value, what happens to your shares?", options:[{icon:'coin', text:"Your shares grow in value too", correct:true},{icon:'jar', text:"Nothing changes for you", correct:false}], explain:"As a part-owner, the company's growth becomes your growth too, since you own a piece of it."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Owning a stock makes you a small owner of that company.", correct:true, explain:"True \u2014 that's exactly what a share of stock represents."},
+      {type:'lever', prompt:"True or false: Buying a stock is the same as being a customer who buys the company's products.", correct:false, explain:"False \u2014 being a customer and being an owner are different things; owning stock makes you a part-owner."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"If you own 10% of a company's shares and its total value doubles, what happens to your slice's value?", options:[{icon:'coin', text:"It doubles too", correct:true},{icon:'jar', text:"It stays exactly the same", correct:false}], explain:"Your ownership percentage stays the same, but the value of your slice moves with the whole company's value."},
+      {type:'lever', prompt:"True or false: The word 'shares' in stock investing refers to shared ownership.", correct:true, explain:"True \u2014 each share represents a small, equal slice of ownership in the company."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  obasket(){
+    const q1pool = [
+      {type:'tiles', prompt:"Why is it risky to put all your money into just ONE investment?", options:[{icon:'coin', text:"If that one investment does badly, you could lose everything", correct:true},{icon:'jar', text:"There's no extra risk at all", correct:false}], explain:"Putting everything into one investment means you have nothing to fall back on if it struggles."},
+      {type:'tiles', prompt:"What is diversification?", options:[{icon:'coin', text:"Spreading your money across many different investments", correct:true},{icon:'jar', text:"Putting all your money in one place", correct:false}], explain:"Diversification means spreading money across many investments so one bad outcome doesn't wipe you out."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: If one investment in a diversified basket does poorly, the whole basket usually loses everything.", correct:false, explain:"False \u2014 the other investments in the basket can help balance out one that does poorly."},
+      {type:'lever', prompt:"True or false: An index fund is a way to own tiny pieces of many companies at once.", correct:true, explain:"True \u2014 that's exactly what an index fund does, spreading your money across many companies."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"In the story, why did the Basket of 5 lose much less than the One Tree during the frost?", options:[{icon:'coin', text:"Only one of the five trees was affected, so the rest were fine", correct:true},{icon:'jar', text:"The basket was magically protected", correct:false}], explain:"Since only one investment in the basket was hurt, the other four kept most of the value safe."},
+      {type:'lever', prompt:"True or false: Diversification is often summarized as 'don't put all your eggs in one basket.'", correct:true, explain:"True \u2014 that's a common, accurate way to describe the idea of diversification."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  olender(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is a bond?", options:[{icon:'coin', text:"A promise to pay back borrowed money, plus a little extra", correct:true},{icon:'jar', text:"A gift you never get back", correct:false}], explain:"A bond is essentially a loan \u2014 you lend money and get paid back with interest over time."},
+      {type:'tiles', prompt:"Compared to stocks, bonds are usually...", options:[{icon:'coin', text:"Steadier, but typically slower-growing", correct:true},{icon:'jar', text:"Always faster-growing", correct:false}], explain:"Bonds tend to be more predictable than stocks, often in exchange for smaller potential returns."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: When you buy a bond, you're lending money.", correct:true, explain:"True \u2014 buying a bond means you're the lender, and you expect to be paid back with interest."},
+      {type:'lever', prompt:"True or false: Bonds and stocks work in exactly the same way.", correct:false, explain:"False \u2014 a stock is ownership in a company, while a bond is a loan to a company or government."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"What does the 'extra' money paid back on a bond represent?", options:[{icon:'coin', text:"Interest, as a thank-you for lending the money", correct:true},{icon:'jar', text:"A random bonus with no reason", correct:false}], explain:"The extra amount is interest \u2014 payment for the use of your money over time."},
+      {type:'lever', prompt:"True or false: Choosing to save money instead of spending it right away can help it grow over time.", correct:true, explain:"True \u2014 money that's saved or invested has the chance to grow, while spent money is simply gone."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  ocottage(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is 'cash flow' in real estate?", options:[{icon:'coin', text:"Regular income, like rent, that an asset pays you", correct:true},{icon:'jar', text:"The cost to build a house", correct:false}], explain:"Cash flow is the regular income a property produces, like monthly rent."},
+      {type:'tiles', prompt:"What is 'appreciation' when it comes to real estate?", options:[{icon:'coin', text:"The property becoming worth more over time", correct:true},{icon:'jar', text:"Saying thank you to your tenant", correct:false}], explain:"Appreciation means the property's value grows over time, separate from any rent it earns."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: A rental property can earn money in two different ways at once.", correct:true, explain:"True \u2014 through regular rent (cash flow) and through the property's value growing (appreciation)."},
+      {type:'lever', prompt:"True or false: Rent is a one-time payment.", correct:false, explain:"False \u2014 rent is typically a regular, repeating payment, like every month."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"If a rental cottage earns $15 a month for 4 months, how much cash flow was that in total?", options:[{icon:'coin', text:"$60", correct:true},{icon:'jar', text:"$15", correct:false}], explain:"$15 \u00d7 4 months = $60 in total rental income."},
+      {type:'lever', prompt:"True or false: Owning a rental property is one example of owning an asset.", correct:true, explain:"True \u2014 it puts money in your pocket, which is exactly what makes something an asset."},
+      {type:'dragq', prompt:"Drag the house to where it belongs.", icon:'house', zones:[{label:'Money Tree', correct:true},{label:'Weed', correct:false}], explain:"A rental house that earns you regular rent is a Money Tree \u2014 it puts money in your pocket again and again."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  obuild(){
+    const q1pool = [
+      {type:'tiles', prompt:"What's the main difference between working for wages and owning a business?", options:[{icon:'coin', text:"Owning something can keep earning even when you're not actively working", correct:true},{icon:'jar', text:"There's no difference at all", correct:false}], explain:"Working for wages requires your direct time; owning something that earns can work even when you're not."},
+      {type:'tiles', prompt:"In the story, what happened to the lemonade stand after it was built?", options:[{icon:'coin', text:"It kept earning money automatically", correct:true},{icon:'jar', text:"It needed to be rebuilt every time to earn again", correct:false}], explain:"Once built, the stand kept generating income without needing to be rebuilt each time."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Trading your time directly for money is the only way to earn.", correct:false, explain:"False \u2014 owning assets or businesses is another way money can be earned, without trading time directly."},
+      {type:'lever', prompt:"True or false: Both working for wages and owning something that earns can be valid ways to make money.", correct:true, explain:"True \u2014 they're just different approaches, each with its own trade-offs."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Why might owning something that earns be considered powerful?", options:[{icon:'coin', text:"It can generate income without requiring your constant, direct effort", correct:true},{icon:'jar', text:"It requires no effort to set up at all", correct:false}], explain:"The power comes from the income continuing to flow in without needing ongoing, direct effort every time."},
+      {type:'lever', prompt:"True or false: Building something once and having it keep earning is an example of an asset at work.", correct:true, explain:"True \u2014 that's exactly the kind of asset behavior explored in this chapter."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  opatient(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is 'delayed gratification'?", options:[{icon:'coin', text:"Choosing to wait for a bigger reward instead of a smaller one now", correct:true},{icon:'jar', text:"Spending money as fast as possible", correct:false}], explain:"Delayed gratification means waiting for a bigger future reward instead of taking a smaller reward right away."},
+      {type:'tiles', prompt:"In this chapter, what did waiting longer generally do to the reward?", options:[{icon:'coin', text:"It grew the reward bigger, thanks to compound growth", correct:true},{icon:'jar', text:"It made no difference at all", correct:false}], explain:"The longer the money grew, the bigger the reward became, thanks to compounding."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Spending money right away is always the wrong choice.", correct:false, explain:"False \u2014 spending isn't wrong, but choosing to save sometimes leads to a bigger reward later."},
+      {type:'lever', prompt:"True or false: Patience can literally be worth more money over time.", correct:true, explain:"True \u2014 because of compound growth, waiting can turn a smaller amount into a bigger one."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Why does letting money grow for MORE years usually lead to a bigger reward?", options:[{icon:'coin', text:"Compound growth has more time to work", correct:true},{icon:'jar', text:"Waiting longer doesn't actually change anything", correct:false}], explain:"The longer money compounds, the more it grows \u2014 time is one of the most powerful ingredients in investing."},
+      {type:'lever', prompt:"True or false: There's no real trade-off involved in choosing to save instead of spend.", correct:false, explain:"False \u2014 the trade-off is giving up enjoying something now, in exchange for more later."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  osoil(){
+    const q1pool = [
+      {type:'tiles', prompt:"What is net worth?", options:[{icon:'coin', text:"Everything you own minus everything you owe", correct:true},{icon:'jar', text:"Just the cash in your pocket", correct:false}], explain:"Net worth is calculated by adding up what you own and subtracting what you owe."},
+      {type:'tiles', prompt:"If you own $300 in assets and owe $50, what's your net worth?", options:[{icon:'coin', text:"$250", correct:true},{icon:'jar', text:"$300", correct:false}], explain:"$300 owned \u2212 $50 owed = $250 net worth."},
+      {type:'dragq', prompt:"Drag the coin to where it belongs when calculating net worth.", icon:'coin', zones:[{label:'Add it (Own)', correct:true},{label:'Subtract it (Owe)', correct:false}], explain:"Money you own gets ADDED when figuring out your net worth."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: Money you owe (debt) is subtracted when calculating net worth.", correct:true, explain:"True \u2014 debts reduce your net worth since they're money you'll eventually have to pay."},
+      {type:'lever', prompt:"True or false: Net worth only counts cash, not other things you own.", correct:false, explain:"False \u2014 net worth includes everything of value you own, like savings, investments, and belongings."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"Why is net worth a useful number to track?", options:[{icon:'coin', text:"It shows the true overall picture of your finances, not just spare cash", correct:true},{icon:'jar', text:"It only matters for adults, never for kids", correct:false}], explain:"Net worth gives a fuller picture of financial health than just looking at cash on hand."},
+      {type:'lever', prompt:"True or false: Growing your assets and reducing your debts both increase your net worth.", correct:true, explain:"True \u2014 both actions move your net worth in a positive direction."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  ostorm(){
+    const q1pool = [
+      {type:'tiles', prompt:"What's a major red flag in an investment offer?", options:[{icon:'coin', text:"A guarantee of fast, huge returns with no risk", correct:true},{icon:'jar', text:"A clear explanation of how it works and its risks", correct:false}], explain:"No real investment can honestly guarantee big, fast returns \u2014 all investing carries risk."},
+      {type:'tiles', prompt:"Why is being pressured to 'decide right now' a warning sign?", options:[{icon:'coin', text:"It doesn't give you time to think it through or ask questions", correct:true},{icon:'jar', text:"It's always a sign of a great deal", correct:false}], explain:"Trustworthy opportunities don't usually require snap decisions under pressure."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: If an investment sounds too good to be true, it's worth being extra cautious.", correct:true, explain:"True \u2014 that's one of the most reliable warning signs of a scam."},
+      {type:'lever', prompt:"True or false: Getting paid mainly for recruiting new investors, rather than from a real product, is a good sign.", correct:false, explain:"False \u2014 that's a classic sign of a pyramid or Ponzi scheme, not a legitimate investment."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"What's a sign that an investment opportunity is more likely trustworthy?", options:[{icon:'coin', text:"It's open and clear about how it works and what the risks are", correct:true},{icon:'jar', text:"It promises there's zero risk at all", correct:false}], explain:"Openness about risks is a good sign; claims of zero risk are not."},
+      {type:'lever', prompt:"True or false: It's smart to ask questions and take your time before investing in something new.", correct:true, explain:"True \u2014 taking time to understand something before investing is a wise habit."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  },
+  ocapstone(){
+    const q1pool = [
+      {type:'tiles', prompt:"Why did Melissa spread her Orchard Fund across different plots instead of putting it all in one?", options:[{icon:'coin', text:"To diversify, so one bad season wouldn't wipe out everything", correct:true},{icon:'jar', text:"It doesn't matter how it's spread", correct:false}], explain:"Spreading investments across different types protects against any single one having a bad season."},
+      {type:'tiles', prompt:"Which of these is NOT one of the investment types covered in this journey?", options:[{icon:'coin', text:"Lottery tickets", correct:true},{icon:'jar', text:"Stocks, bonds, and real estate", correct:false}], explain:"Stocks, bonds, and real estate are real investment types; lottery tickets are games of chance, not investing."}
+    ];
+    const q2pool = [
+      {type:'lever', prompt:"True or false: A diversified plan usually includes more than one type of investment.", correct:true, explain:"True \u2014 that's the core idea of diversification."},
+      {type:'lever', prompt:"True or false: Patience and saving choices earlier in the journey had no effect on the final Orchard Fund.", correct:false, explain:"False \u2014 every time you chose to save instead of spend, your Orchard Fund grew, giving you more to plant at the end."}
+    ];
+    const q3pool = [
+      {type:'tiles', prompt:"What's one benefit of understanding assets, risk, and diversification together?", options:[{icon:'coin', text:"It helps you build a thoughtful, balanced financial plan", correct:true},{icon:'jar', text:"It guarantees you'll never lose money", correct:false}], explain:"Understanding these ideas together helps you make balanced, thoughtful decisions \u2014 though no plan removes all risk."},
+      {type:'lever', prompt:"True or false: Everything learned in this journey \u2014 assets, compounding, risk, stocks, bonds, real estate, and diversification \u2014 works together in real investing.", correct:true, explain:"True \u2014 real investors weigh all of these ideas together when making decisions."}
+    ];
+    return [pick(q1pool), pick(q2pool), pick(q3pool)];
+  }
+
+};
+
+const OTREE_ITEMS = [
+  {text: "Running a lemonade stand every summer", correct: 'tree', explain: "A lemonade stand keeps earning money each time you sell a cup \u2014 it puts coins in your pocket again and again. That's a Money Tree!"},
+  {text: "A brand new video game you really want", correct: 'weed', explain: "The video game is fun, but it only takes money OUT of your pocket \u2014 it never pays you back. That makes it a Weed."},
+  {text: "A savings account that pays you interest", correct: 'tree', explain: "Every bit of interest it earns puts a little more money in your pocket, all by itself. That's a Money Tree!"},
+  {text: "Borrowing money and having to pay back extra", correct: 'weed', explain: "When you owe MORE than you borrowed, that debt drains your pocket over time. That's a Weed."},
+  {text: "Owning a small vending machine that sells snacks", correct: 'tree', explain: "Every snack it sells puts a few more coins in your pocket. That's a Money Tree!"},
+  {text: "A fancy pair of shoes sitting in your closet", correct: 'weed', explain: "Shoes are nice to have, but they don't pay you back \u2014 they just took money out once. That's a Weed."}
+];
+let otreeRound = 0;
+let otreeScore = 0;
+let otreeAnswered = false;
+function renderOtreeRound(){
+  const area = document.getElementById('otreeItemCard');
+  if(!area) return;
+  const item = OTREE_ITEMS[otreeRound];
+  document.getElementById('otreeRoundLabel').textContent = `Round ${otreeRound+1} of ${OTREE_ITEMS.length}`;
+  area.textContent = `"${item.text}"`;
+  area.classList.remove('orch-flip');
+  void area.offsetWidth;
+  area.classList.add('orch-flip');
+  otreeAnswered = false;
+  const reveal = document.getElementById('otreeReveal');
+  reveal.classList.remove('shown','wrong');
+  document.getElementById('otreeRoundNextBtn').style.display = 'none';
+}
+function answerOtree(choice){
+  if(otreeAnswered) return;
+  otreeAnswered = true;
+  const item = OTREE_ITEMS[otreeRound];
+  const correct = choice === item.correct;
+  const reveal = document.getElementById('otreeReveal');
+  const chosenSvg = document.getElementById(choice === 'tree' ? 'otreeSideTree' : 'otreeSideWeed');
+  if(correct){
+    otreeScore++;
+    chosenSvg.style.animation = 'orchSprout .5s ease';
+    burst(choice === 'tree' ? 'otreeSideTree' : 'otreeSideWeed', ['#2D5F3F','#D4A24C'], 8);
+    playBlip(700,0.15);
+    reveal.innerHTML = item.explain;
+    reveal.classList.remove('wrong');
+  } else {
+    chosenSvg.style.animation = 'orchShake .4s ease';
+    playBlip(260,0.15);
+    reveal.innerHTML = `Not quite. ${item.explain}`;
+    reveal.classList.add('wrong');
+  }
+  reveal.classList.add('shown');
+  setTimeout(()=>{ chosenSvg.style.animation = ''; }, 500);
+  if(otreeRound < OTREE_ITEMS.length - 1){
+    document.getElementById('otreeRoundNextBtn').style.display = '';
+  } else {
+    document.getElementById('otreeNextBtn').disabled = false;
+  }
+}
+function otreeNextRound(){
+  otreeRound++;
+  renderOtreeRound();
+}
+renderOtreeRound();
+
+// ================= ORCHARD CHAPTER 2: THE SAPLING'S SECRET =================
+let osaplingYear = 0;
+let osaplingTreeAmount = 100;
+const OSAPLING_MAX_YEARS = 6;
+function tickOsapling(){
+  if(osaplingYear >= OSAPLING_MAX_YEARS) return;
+  osaplingYear++;
+  osaplingTreeAmount = Math.round(osaplingTreeAmount * 1.1 * 100) / 100;
+  document.getElementById('osaplingYearLabel').textContent = `Year ${osaplingYear}`;
+  document.getElementById('osaplingTreeLabel').textContent = `$${osaplingTreeAmount.toFixed(2)}`;
+  const scale = 1 + (osaplingTreeAmount - 100) / 100 * 0.55;
+  document.getElementById('osaplingTree').style.transform = `scale(${scale})`;
+  playBlip(500 + osaplingYear*20, 0.08);
+  burst('osaplingTree', ['#2D5F3F','#D4A24C'], 5);
+  if(osaplingYear >= OSAPLING_MAX_YEARS){
+    document.getElementById('osaplingBtn').disabled = true;
+    const reveal = document.getElementById('osaplingReveal');
+    reveal.innerHTML = `After ${OSAPLING_MAX_YEARS} years, the Piggy Bank is still exactly $100 \u2014 but the Money Tree grew all the way to $${osaplingTreeAmount.toFixed(2)}! That's because each year, the Money Tree earns interest not just on the first $100, but on ALL the money it already grew \u2014 including last year's interest. This is called <strong>compound interest</strong>, and it's one of the most powerful ideas in money.`;
+    reveal.classList.add('shown');
+    document.getElementById('osaplingNextBtn').disabled = false;
+  }
+}
+
+// ================= ORCHARD CHAPTER 3: SMALL SEEDS, STEADY HANDS =================
+let oseedsCount = 0;
+const OSEEDS_MAX = 10;
+function tickOseeds(){
+  if(oseedsCount >= OSEEDS_MAX) return;
+  oseedsCount++;
+  const row = document.getElementById('oseedsRow');
+  const seed = document.createElement('div');
+  seed.className = 'orch-sprout-in';
+  seed.innerHTML = `<svg width="22" height="26" viewBox="0 0 22 26"><rect x="9" y="14" width="4" height="12" fill="var(--orch-brown)"/><path d="M11 14 C6 14 5 9 5 9 C5 9 9 7 11 12 C13 7 17 9 17 9 C17 9 16 14 11 14 Z" fill="var(--orch-green)"/></svg>`;
+  row.appendChild(seed);
+  document.getElementById('oseedsTotalLabel').textContent = `Saved so far: $${oseedsCount*5}`;
+  playBlip(600 + oseedsCount*10, 0.08);
+  if(oseedsCount >= OSEEDS_MAX){
+    document.getElementById('oseedsBtn').disabled = true;
+    const reveal = document.getElementById('oseedsReveal');
+    reveal.innerHTML = `Ten weeks, five dollars at a time \u2014 and you've already saved $${OSEEDS_MAX*5}! If you'd waited until you had a big pile of cash all at once, you might still be waiting. Small, steady amounts add up faster than most people expect, especially once they start earning compound interest too.`;
+    reveal.classList.add('shown');
+    document.getElementById('oseedsNextBtn').disabled = false;
+  }
+}
+
+// ================= ORCHARD CHAPTER 4: WEATHER AND WOBBLE =================
+let oweatherSeason = 0;
+let oweatherMeadowTotal = 100;
+let oweatherHillTotal = 100;
+const OWEATHER_MAX_SEASONS = 4;
+function tickOweather(){
+  if(oweatherSeason >= OWEATHER_MAX_SEASONS) return;
+  oweatherSeason++;
+  const meadowPct = 2 + Math.random()*2;
+  const hillPct = -15 + Math.random()*45;
+  oweatherMeadowTotal = Math.round(oweatherMeadowTotal * (1 + meadowPct/100) * 100)/100;
+  oweatherHillTotal = Math.round(oweatherHillTotal * (1 + hillPct/100) * 100)/100;
+  document.getElementById('oweatherSeasonLabel').textContent = `Season ${oweatherSeason} of ${OWEATHER_MAX_SEASONS}`;
+  document.getElementById('oweatherMeadowTotal').textContent = `$${oweatherMeadowTotal.toFixed(2)}`;
+  document.getElementById('oweatherHillTotal').textContent = `$${oweatherHillTotal.toFixed(2)}`;
+  document.getElementById('oweatherMeadowResult').textContent = `${meadowPct >= 0 ? '+' : ''}${meadowPct.toFixed(1)}%`;
+  document.getElementById('oweatherHillResult').textContent = `${hillPct >= 0 ? '+' : ''}${hillPct.toFixed(1)}%`;
+  playBlip(hillPct >= 0 ? 700 : 320, 0.1);
+  if(oweatherSeason >= OWEATHER_MAX_SEASONS){
+    document.getElementById('oweatherBtn').disabled = true;
+    const reveal = document.getElementById('oweatherReveal');
+    reveal.innerHTML = `The Calm Meadow moved in small, steady steps and ended at $${oweatherMeadowTotal.toFixed(2)}. The Windy Hilltop bounced around a lot more \u2014 sometimes up a LOT, sometimes down \u2014 and ended at $${oweatherHillTotal.toFixed(2)}. Neither zone is "better" all the time: calmer investments give steadier, more predictable results, while riskier ones can grow faster but can also drop more. Most real investors mix both, based on how much wobble they're comfortable with.`;
+    reveal.classList.add('shown');
+    document.getElementById('oweatherNextBtn').disabled = false;
+  }
+}
+
+// ================= ORCHARD CHAPTER 5: A SLICE OF THE ORCHARD =================
+let osliceOwned = 0;
+const OSLICE_TOTAL = 10;
+const OSLICE_PRICE = 10;
+function renderOsliceGrid(){
+  const grid = document.getElementById('osliceGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  for(let i=0;i<OSLICE_TOTAL;i++){
+    const cell = document.createElement('div');
+    cell.id = `oslice-${i}`;
+    cell.style.cssText = 'aspect-ratio:1; border-radius:8px; border:2px solid var(--orch-green); background:#fff;';
+    grid.appendChild(cell);
+  }
+  const coin = document.getElementById('osliceCoin');
+  if(coin){
+    makeDraggable(coin, ()=>[grid], (zone, el)=>{
+      buyOsliceShare();
+      return false;
+    });
+  }
+}
+function buyOsliceShare(){
+  if(osliceOwned >= OSLICE_TOTAL) return;
+  const cell = document.getElementById(`oslice-${osliceOwned}`);
+  cell.style.background = 'var(--orch-green)';
+  cell.classList.add('orch-pop');
+  osliceOwned++;
+  playBlip(700,0.12);
+  document.getElementById('osliceOwnedLabel').textContent = `You own: ${osliceOwned} of ${OSLICE_TOTAL} slices (${osliceOwned*10}%)`;
+  if(osliceOwned >= 3){
+    const coin = document.getElementById('osliceCoin');
+    coin.style.opacity = '0.3';
+    coin.style.pointerEvents = 'none';
+    coin.classList.remove('orch-drag-hint');
+    const reveal = document.getElementById('osliceReveal');
+    reveal.innerHTML = `You now own ${osliceOwned} out of ${OSLICE_TOTAL} slices \u2014 that's ${osliceOwned*10}% of the whole orchard! This is exactly what a stock is: a small ownership slice of a real company. When you own stock, you're a part-owner, not just a customer.`;
+    reveal.classList.add('shown');
+    document.getElementById('osliceGrowSection').style.display = '';
+  }
+}
+function growOslice(){
+  const reveal = document.getElementById('osliceGrowReveal');
+  const oldValue = (osliceOwned * OSLICE_PRICE).toFixed(2);
+  const newValue = (osliceOwned * OSLICE_PRICE * 1.5).toFixed(2);
+  reveal.innerHTML = `Your ${osliceOwned} slices were worth $${oldValue}. Since the WHOLE orchard grew by 50%, your slices grew right along with it \u2014 now they're worth $${newValue}! When you own a piece of something, its growth becomes YOUR growth too.`;
+  reveal.classList.add('shown');
+  burst('osliceGrid', ['#2D5F3F','#D4A24C'], 12);
+  playBlip(750,0.18);
+  document.getElementById('osliceNextBtn').disabled = false;
+}
+renderOsliceGrid();
+
+// ================= ORCHARD CHAPTER 6: THE BIG BASKET =================
+function renderObasketFiveTrees(){
+  const area = document.getElementById('obasketFiveTrees');
+  if(!area) return;
+  area.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('id', `obasketTree-${i}`);
+    svg.setAttribute('width','20'); svg.setAttribute('height','44'); svg.setAttribute('viewBox','0 0 20 44');
+    svg.innerHTML = '<rect x="8" y="26" width="4" height="16" fill="var(--orch-brown)"/><circle cx="10" cy="16" r="13" fill="var(--orch-green)"/>';
+    area.appendChild(svg);
+  }
+}
+function strikeObasketFrost(){
+  document.getElementById('obasketBtn').disabled = true;
+  const frostIndex = Math.floor(Math.random()*5);
+  document.getElementById('obasketSingleTree').style.animation = 'orchShake .5s ease';
+  document.getElementById('obasketSingleTree').querySelector('circle').setAttribute('fill', '#B0A489');
+  document.getElementById('obasketSingleVal').textContent = '$0';
+  document.getElementById(`obasketTree-${frostIndex}`).style.animation = 'orchShake .5s ease';
+  document.getElementById(`obasketTree-${frostIndex}`).querySelector('circle').setAttribute('fill', '#B0A489');
+  document.getElementById('obasketFiveVal').textContent = '$80';
+  playBlip(280,0.18);
+  const reveal = document.getElementById('obasketReveal');
+  reveal.innerHTML = `The frost hit! Your One Tree was your WHOLE investment \u2014 when it got hit, you lost everything: $100 became $0. But in the Basket of 5, the frost only hit ONE tree out of five. The other four were just fine, so you still have $80 out of your original $100. Spreading your money across many investments \u2014 called diversification \u2014 protects you when any single one has a bad year. This is exactly how index funds work: instead of betting on one company, you own a little piece of hundreds or thousands of them at once.`;
+  reveal.classList.add('shown');
+  document.getElementById('obasketNextBtn').disabled = false;
+}
+renderObasketFiveTrees();
+
+// ================= SHARED: SAVE OR SPEND SCENARIOS (reward saving to the Orchard Fund) =================
+function answerSaveOrSpend(choice, amount, revealElId, nextBtnId, spendLabel){
+  const reveal = document.getElementById(revealElId);
+  if(reveal.dataset.answered) return;
+  reveal.dataset.answered = 'true';
+  if(choice === 'spend'){
+    reveal.innerHTML = `${spendLabel || 'That treat'} was fun for a moment! But it's gone now, and your Orchard Fund didn't grow this time.`;
+    playBlip(350,0.12);
+  } else {
+    addToOrchardFund(amount);
+    reveal.innerHTML = `You added $${amount} to your Orchard Fund! Because it's invested instead of spent, it can keep growing on its own \u2014 just like the Money Tree from Chapter 2.`;
+    playBlip(750,0.18);
+    burst(revealElId, ['#D4A24C','#2D5F3F'], 10);
+  }
+  reveal.classList.add('shown');
+  if(nextBtnId) document.getElementById(nextBtnId).disabled = false;
+}
+
+// ================= ORCHARD CHAPTER 7: THE STEADY LENDER =================
+function lendOlender(){
+  document.getElementById('olenderBtn').disabled = true;
+  const reveal = document.getElementById('olenderReveal');
+  reveal.innerHTML = `A season passes. Your neighbor comes back with $55 \u2014 your original $50, plus $5 extra for lending it to them. That extra bit is called interest, and the promise to pay it is called a bond. Bonds are usually steadier than stocks, though they typically grow more slowly.`;
+  reveal.classList.add('shown');
+  playBlip(700,0.15);
+  burst('olenderBtn', ['#2D5F3F','#D4A24C'], 8);
+  setTimeout(()=>{ document.getElementById('olenderSaveSpend').style.display = ''; }, 700);
+}
+
+// ================= ORCHARD CHAPTER 8: THE RENTAL COTTAGE =================
+let ocottageMonth = 0;
+let ocottageRent = 0;
+const OCOTTAGE_MAX_MONTHS = 4;
+function collectOcottageRent(){
+  if(ocottageMonth >= OCOTTAGE_MAX_MONTHS) return;
+  ocottageMonth++;
+  ocottageRent += 15;
+  document.getElementById('ocottageMonthLabel').textContent = `Month ${ocottageMonth} of ${OCOTTAGE_MAX_MONTHS}`;
+  document.getElementById('ocottageRentLabel').textContent = `Rent collected: $${ocottageRent}`;
+  playBlip(650,0.1);
+  burst('ocottageBtn', ['#D4A24C'], 5);
+  if(ocottageMonth >= OCOTTAGE_MAX_MONTHS){
+    document.getElementById('ocottageBtn').disabled = true;
+    const reveal = document.getElementById('ocottageReveal');
+    reveal.innerHTML = `Four months, $15 each \u2014 that's $60 in rent, just for owning the cottage! This is called cash flow: regular income an asset pays you. And there's a second way real estate can pay off too: the cottage itself can become worth MORE over time as the neighborhood grows, which is called appreciation. Real estate can earn you money two ways at once.`;
+    reveal.classList.add('shown');
+    setTimeout(()=>{ document.getElementById('ocottageSaveSpend').style.display = ''; }, 700);
+  }
+}
+
+// ================= ORCHARD CHAPTER 9: BUILDING SOMETHING OF YOUR OWN =================
+let obuildWorkHours = 0;
+let obuildWorkTotal = 0;
+let obuildBuilt = false;
+let obuildOwnTotal = 0;
+let obuildOwnTicks = 0;
+function workObuildHour(){
+  if(obuildWorkHours >= 5) return;
+  obuildWorkHours++;
+  obuildWorkTotal += 8;
+  document.getElementById('obuildWorkTotal').textContent = `$${obuildWorkTotal}`;
+  playBlip(600,0.1);
+  if(obuildWorkHours >= 5){
+    document.getElementById('obuildWorkBtn').disabled = true;
+  }
+  checkObuildDone();
+}
+function buildObuildStand(){
+  if(obuildBuilt) return;
+  obuildBuilt = true;
+  document.getElementById('obuildBuildBtn').disabled = true;
+  document.getElementById('obuildBuildBtn').textContent = 'Built!';
+  playBlip(700,0.15);
+  burst('obuildBuildBtn', ['#C97B4A','#D4A24C'], 8);
+  const timer = setInterval(()=>{
+    obuildOwnTicks++;
+    obuildOwnTotal += 10;
+    document.getElementById('obuildOwnTotal').textContent = `$${obuildOwnTotal}`;
+    playBlip(700 + obuildOwnTicks*10, 0.08);
+    if(obuildOwnTicks >= 5){
+      clearInterval(timer);
+      checkObuildDone();
+    }
+  }, 600);
+}
+function checkObuildDone(){
+  if(obuildWorkHours >= 5 && obuildOwnTicks >= 5){
+    const reveal = document.getElementById('obuildReveal');
+    reveal.innerHTML = `Notice what happened? To earn money working, you had to tap "Work" every single time \u2014 no tap, no pay. But once you built the stand, it kept earning money automatically, even while you weren't doing anything else. That's the difference between trading your OWN time for money, and owning something that earns FOR you. Both are valid ways to earn \u2014 but owning something that works even when you're not is a powerful idea.`;
+    reveal.classList.add('shown');
+    document.getElementById('obuildNextBtn').disabled = false;
+  }
+}
+
+// ================= ORCHARD CHAPTER 10: THE PATIENT GARDENER =================
+const OPATIENT_ROUNDS = [
+  {amount:10, years:1, item:'a small toy'},
+  {amount:20, years:2, item:'a video game'},
+  {amount:30, years:3, item:'a party with friends'},
+  {amount:50, years:4, item:'a fancy pair of shoes'}
+];
+let opatientRound = 0;
+let opatientAnswered = false;
+function renderOpatientRound(){
+  const r = OPATIENT_ROUNDS[opatientRound];
+  const grown = (r.amount * Math.pow(1.1, r.years)).toFixed(2);
+  document.getElementById('opatientRoundLabel').textContent = `Round ${opatientRound+1} of ${OPATIENT_ROUNDS.length}`;
+  opatientAnswered = false;
+  document.getElementById('opatientScenario').innerHTML = `
+    <p class="big-text">You have $${r.amount}. You could spend it now on ${r.item}, or plant it in your Orchard Fund and wait ${r.years} year${r.years>1?'s':''}.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:.6rem;">
+      <div class="orch-tile" onclick="answerOpatient('spend', ${r.amount})">Spend it now</div>
+      <div class="orch-tile" onclick="answerOpatient('save', ${r.amount}, ${r.years})">Let it grow ${r.years} year${r.years>1?'s':''}</div>
+    </div>`;
+  const reveal = document.getElementById('opatientReveal');
+  reveal.classList.remove('shown','wrong');
+  document.getElementById('opatientRoundNextBtn').style.display = 'none';
+}
+function answerOpatient(choice, amount, years){
+  if(opatientAnswered) return;
+  opatientAnswered = true;
+  const reveal = document.getElementById('opatientReveal');
+  if(choice === 'spend'){
+    reveal.innerHTML = `You enjoyed it right away \u2014 that's real, too! But the $${amount} is gone now, and it won't be growing in your Orchard Fund.`;
+    playBlip(400,0.12);
+  } else {
+    const grown = Math.round(amount * Math.pow(1.1, years) * 100) / 100;
+    addToOrchardFund(grown);
+    reveal.innerHTML = `You waited ${years} year${years>1?'s':''}, and your $${amount} grew into $${grown.toFixed(2)} in your Orchard Fund! That's the reward for patience \u2014 the longer money is invested, the more time compound growth has to work.`;
+    playBlip(750,0.18);
+    burst('opatientScenario', ['#D4A24C','#2D5F3F'], 10);
+  }
+  reveal.classList.add('shown');
+  if(opatientRound < OPATIENT_ROUNDS.length - 1){
+    document.getElementById('opatientRoundNextBtn').style.display = '';
+  } else {
+    document.getElementById('opatientNextBtn').disabled = false;
+  }
+}
+function opatientNextRound(){
+  opatientRound++;
+  renderOpatientRound();
+}
+renderOpatientRound();
+
+// ================= ORCHARD CHAPTER 11: READING THE SOIL =================
+const OSOIL_ITEMS = [
+  {name:'Savings account', value:200, type:'own'},
+  {name:'Your bike', value:80, type:'own'},
+  {name:'Money borrowed from a friend', value:30, type:'owe'},
+  {name:'A small stock investment', value:50, type:'own'},
+  {name:'Allowance still owed to your sibling', value:10, type:'owe'},
+  {name:'A rare sticker collection', value:15, type:'own'}
+];
+let osoilNetWorth = 0;
+let osoilSorted = 0;
+function renderOsoilItems(){
+  const pool = document.getElementById('osoilPool');
+  if(!pool) return;
+  pool.innerHTML = OSOIL_ITEMS.map((it,i)=>
+    `<div class="draggable orch-fade-in" id="osoil-${i}" style="background:#fff; border:2px solid var(--orch-green); border-radius:10px; padding:.5rem .7rem; box-shadow:2px 2px 0 var(--orch-green); font-size:.78rem; text-align:center; max-width:130px;">
+      ${it.name} <span style="opacity:.6; font-size:.68rem; display:block;">($${it.value})</span>
+    </div>`
+  ).join('');
+  const ownZone = document.getElementById('osoilOwnZone');
+  const oweZone = document.getElementById('osoilOweZone');
+  makeDraggablePool(pool, '.draggable', ()=>[ownZone, oweZone], (zone, el)=>{
+    const i = parseInt(el.id.split('-')[1]);
+    const choice = zone === ownZone ? 'own' : 'owe';
+    zone.appendChild(el);
+    Object.assign(el.style, {position:'', left:'', top:'', width:'', margin:'.2rem', zIndex:''});
+    sortOsoil(i, choice, el);
+    return true;
+  });
+}
+function sortOsoil(i, choice, el){
+  if(el.dataset.sorted) return;
+  el.dataset.sorted = 'true';
+  const it = OSOIL_ITEMS[i];
+  const correct = choice === it.type;
+  el.style.opacity = '0.75';
+  el.style.pointerEvents = 'none';
+  el.classList.add(correct ? 'orch-pop' : 'orch-rise-in');
+  if(it.type === 'own'){
+    osoilNetWorth += it.value;
+  } else {
+    osoilNetWorth -= it.value;
+  }
+  document.getElementById('osoilTotalLabel').textContent = `Net Worth: $${osoilNetWorth}`;
+  playBlip(correct ? 700 : 400, 0.12);
+  osoilSorted++;
+  if(osoilSorted >= OSOIL_ITEMS.length){
+    const reveal = document.getElementById('osoilReveal');
+    reveal.innerHTML = `Adding up everything you OWN and subtracting everything you OWE gives you your net worth: $${osoilNetWorth}. This single number is one of the best ways to check the true health of your money \u2014 not just how much cash you're holding, but everything you own minus everything you still owe.`;
+    reveal.classList.add('shown');
+    document.getElementById('osoilNextBtn').disabled = false;
+  }
+}
+renderOsoilItems();
+
+// ================= ORCHARD CHAPTER 12: FAIR-WEATHER FRIENDS =================
+const OSTORM_ITEMS = [
+  {text: "\u201cInvest $10 and DOUBLE your money in just 3 days, guaranteed!\u201d", correct: 'scam', explain: "Nobody can honestly GUARANTEE fast, huge returns \u2014 all real investing involves risk. Promises like this are a major red flag."},
+  {text: "A savings account that pays a small, steady amount of interest each year.", correct: 'safe', explain: "Steady, modest, clearly explained returns are how real, trustworthy investments usually work."},
+  {text: "\u201cYou must decide RIGHT NOW or you'll miss this once-in-a-lifetime deal!\u201d", correct: 'scam', explain: "Pressuring you to decide instantly, without time to think or ask questions, is a classic scam tactic."},
+  {text: "A company explains clearly how their business works and openly shares the real risks involved.", correct: 'safe', explain: "Being open and clear about how something works, including its risks, is a strong sign of trustworthiness."},
+  {text: "Someone offers you a bonus for recruiting new investors to join, rather than for any real product.", correct: 'scam', explain: "Earning money mainly by recruiting others, rather than from a real product or service, is the sign of a pyramid scheme."}
+];
+let ostormRound = 0;
+let ostormAnswered = false;
+function renderOstormRound(){
+  const item = OSTORM_ITEMS[ostormRound];
+  document.getElementById('ostormRoundLabel').textContent = `Round ${ostormRound+1} of ${OSTORM_ITEMS.length}`;
+  const card = document.getElementById('ostormItemCard');
+  card.textContent = item.text;
+  card.classList.remove('orch-pop','orch-flip');
+  ostormAnswered = false;
+  const reveal = document.getElementById('ostormReveal');
+  reveal.classList.remove('shown','wrong');
+  document.getElementById('ostormRoundNextBtn').style.display = 'none';
+}
+function answerOstorm(choice){
+  if(ostormAnswered) return;
+  ostormAnswered = true;
+  const item = OSTORM_ITEMS[ostormRound];
+  const correct = choice === item.correct;
+  const reveal = document.getElementById('ostormReveal');
+  const card = document.getElementById('ostormItemCard');
+  if(correct){
+    playBlip(700,0.15);
+    reveal.innerHTML = item.explain;
+    reveal.classList.remove('wrong');
+    card.classList.add('orch-pop');
+  } else {
+    playBlip(260,0.15);
+    reveal.innerHTML = `Not quite. ${item.explain}`;
+    reveal.classList.add('wrong');
+    card.classList.add('orch-flip');
+  }
+  reveal.classList.add('shown');
+  if(ostormRound < OSTORM_ITEMS.length - 1){
+    document.getElementById('ostormRoundNextBtn').style.display = '';
+  } else {
+    document.getElementById('ostormNextBtn').disabled = false;
+  }
+}
+function ostormNextRound(){
+  ostormRound++;
+  renderOstormRound();
+}
+renderOstormRound();
+
+// ================= ORCHARD CHAPTER 13: THE GRAND ORCHARD PLAN (CAPSTONE) =================
+const OCAPSTONE_HARVEST_BONUS = 40;
+let ocapstoneAvailable = 0;
+let ocapstoneAllocations = {stocks:0, bonds:0, realestate:0, savings:0};
+const OCAPSTONE_PLOTS = [
+  {id:'stocks', label:'Stock Slices', color:'var(--orch-gold)'},
+  {id:'bonds', label:'Steady Loans', color:'#9B7FD4'},
+  {id:'realestate', label:'Rental Cottage', color:'var(--orch-red)'},
+  {id:'savings', label:'Savings', color:'var(--orch-green)'}
+];
+function startOcapstone(){
+  document.getElementById('ocapstoneStartBtn').disabled = true;
+  document.getElementById('ocapstoneCoinRow').style.display = 'flex';
+  renderOcapstonePlots();
+}
+function renderOcapstonePlots(){
+  const area = document.getElementById('ocapstonePlots');
+  if(!area) return;
+  ocapstoneAvailable = Math.round((orchardFund + OCAPSTONE_HARVEST_BONUS) * 100) / 100;
+  document.getElementById('ocapstoneAvailableLabel').textContent = `Available to plant: $${ocapstoneAvailable}`;
+  area.innerHTML = OCAPSTONE_PLOTS.map(p=>
+    `<div class="orch-tile orch-drop-zone" id="ocapPlot-${p.id}" style="width:130px; border-color:${p.color}; cursor:default;">
+      <div>${p.label}</div>
+      <div id="ocapAmount-${p.id}" style="font-family:var(--font-display); font-weight:800; color:${p.color}; margin-top:.2rem;">$0</div>
+    </div>`
+  ).join('');
+  const coin = document.getElementById('ocapstoneCoin');
+  const zones = OCAPSTONE_PLOTS.map(p => document.getElementById(`ocapPlot-${p.id}`));
+  makeDraggable(coin, ()=>zones, (zone, el)=>{
+    const p = OCAPSTONE_PLOTS.find(pp => document.getElementById(`ocapPlot-${pp.id}`) === zone);
+    if(p) allocateOcapstone(p.id);
+    return false;
+  });
+}
+function allocateOcapstone(category){
+  if(ocapstoneAvailable < 10) return;
+  ocapstoneAvailable = Math.round((ocapstoneAvailable - 10) * 100) / 100;
+  ocapstoneAllocations[category] += 10;
+  document.getElementById(`ocapAmount-${category}`).textContent = `$${ocapstoneAllocations[category]}`;
+  document.getElementById(`ocapPlot-${category}`).classList.add('orch-pop');
+  document.getElementById('ocapstoneAvailableLabel').textContent = `Available to plant: $${ocapstoneAvailable}`;
+  playBlip(650,0.1);
+  burst(`ocapPlot-${category}`, ['#2D5F3F','#D4A24C'], 6);
+  const categoriesUsed = Object.values(ocapstoneAllocations).filter(v=>v>0).length;
+  if(ocapstoneAvailable < 10){
+    OCAPSTONE_PLOTS.forEach(p=>{ document.getElementById(`ocapPlot-${p.id}`).style.opacity = '0.7'; });
+    const coin = document.getElementById('ocapstoneCoin');
+    coin.style.opacity = '0.3';
+    coin.style.pointerEvents = 'none';
+    coin.classList.remove('orch-drag-hint');
+    const reveal = document.getElementById('ocapstoneReveal');
+    const summary = OCAPSTONE_PLOTS.filter(p=>ocapstoneAllocations[p.id]>0).map(p=>`${p.label}: $${ocapstoneAllocations[p.id]}`).join(', ');
+    if(categoriesUsed >= 2){
+      reveal.innerHTML = `Your orchard is planted: ${summary}. By spreading your money across different kinds of investments, you built a diversified portfolio \u2014 exactly like the Big Basket taught you. From the Money Tree and the Weed, all the way to reading the soil and spotting fair-weather friends, you now understand how real people grow real wealth. Well planted, Leader.`;
+    } else {
+      reveal.innerHTML = `Your orchard is planted: ${summary}. Next time, remember the Big Basket lesson \u2014 spreading your money across different kinds of investments helps protect you if one has a rough season.`;
+    }
+    reveal.classList.add('shown');
+    document.getElementById('ocapstoneNextBtn').disabled = false;
+  }
+}
+
+
+function goToOrchardFinale(){ jumpToChapter('orchardhub'); }
+
+let CHAPTER_CHECKS = {};
+
+// ================= DYNAMIC CHECK BUILDING (one per chapter) =================
+let sessions = [];
+function rebuildSessions(){ sessions = Array.from(document.querySelectorAll('.session')); }
+let checkScores = {};
+
+function renderQuestionBody(q, key, qIndex){
+  if(q.type === 'lever'){
+    return `
+        <p class="big-text">${q.prompt}</p>
+        <div class="lever-track" id="leverTrack-${key}-${qIndex}">
+          <div class="lever-zone left drop-zone" id="leverZoneFalse-${key}-${qIndex}"></div>
+          <div class="lever-zone right drop-zone" id="leverZoneTrue-${key}-${qIndex}"></div>
+          <span class="lever-label left">False</span>
+          <span class="lever-label right">True</span>
+          <div class="lever-knob draggable" id="leverKnob-${key}-${qIndex}">?</div>
+        </div>
+        <button class="action-btn" onclick="submitLever('${key}',${qIndex},${q.correct})">Lock It In</button>
+        <div class="reveal"></div>`;
+  }
+  if(q.type === 'dragq'){
+    const zoneHTML = q.zones.map((z,zi)=>`<div class="dragq-zone drop-zone" id="dragzone-${key}-${qIndex}-${zi}"><div class="dragq-zone-label">${z.label}</div></div>`).join('');
+    return `
+        <p class="big-text">${q.prompt}</p>
+        <div class="dragq-item draggable idle-bob" id="dragitem-${key}-${qIndex}">${iconSvg(q.icon)}</div>
+        <div class="dragq-zones">${zoneHTML}</div>
+        <div class="reveal"></div>`;
+  }
+  // default: tiles
+  const optsHTML = q.options.map((o,oi)=>`<div class="qtile" id="tile-${key}-${qIndex}-${oi}" onclick="answerTile('${key}',${qIndex},${oi},${o.correct})"><div class="qtile-icon">${iconSvg(o.icon)}</div><div class="qtile-text">${o.text}</div></div>`).join('');
+  return `
+        <p class="big-text">${q.prompt}</p>
+        <div class="qtile-row">${optsHTML}</div>
+        <div class="reveal"></div>`;
+}
+
+function getChapterMeta(key){
+  return {order:ORCHARD_CHAPTER_ORDER, labels:ORCHARD_CHAPTER_LABELS, finaleFn:goToOrchardFinale};
+}
+function buildCheckForChapter(key){
+  document.querySelectorAll(`.session[data-chapter="check-${key}"]`).forEach(el=>el.remove());
+  const questions = CHAPTER_CHECK_GENERATORS[key] ? CHAPTER_CHECK_GENERATORS[key]() : [];
+  CHAPTER_CHECKS[key] = questions;
+  const anchor = document.querySelector(`.quiz-anchor[data-anchor="${key}"]`);
+  const meta = getChapterMeta(key);
+  const idx = meta.order.indexOf(key);
+  const nextKey = meta.order[idx+1];
+  checkScores[key] = 0;
+
+  questions.forEach((q,i)=>{
+    const section = document.createElement('section');
+    section.className = 'session quiz-card';
+    section.dataset.chapter = `check-${key}`;
+    section.innerHTML = `
+      <div class="chapter-badge">${meta.labels[key]}: Let's Check!</div>
+      <div class="card">${renderQuestionBody(q, key, i)}</div>
+      <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn next-btn" id="nextbtn-${key}-${i}" onclick="nextCard()" disabled>Next</button></div>`;
+    anchor.parentNode.insertBefore(section, anchor);
+    if(q.type === 'dragq'){
+      const item = document.getElementById(`dragitem-${key}-${i}`);
+      makeDraggable(item, ()=>q.zones.map((z,zi)=>document.getElementById(`dragzone-${key}-${i}-${zi}`)), (zone, el)=>{
+        const zi = parseInt(zone.id.split('-').pop());
+        answerDragq(key, i, zi, q.zones[zi].correct);
+        zone.appendChild(el);
+        Object.assign(el.style,{position:'', left:'', top:'', width:'', margin:''});
+        el.classList.add('drop-settled');
+        return true;
+      });
+    }
+    if(q.type === 'lever'){
+      initLeverControl(key, i);
+    }
+  });
+
+  const nextBtnHTML = nextKey
+    ? `<button class="nav-btn" onclick="jumpToChapter('${nextKey}')">Continue the Story</button>`
+    : `<button class="nav-btn" onclick="(${meta.finaleFn.name})()">Finish</button>`;
+  const resultSection = document.createElement('section');
+  resultSection.className = 'session';
+  resultSection.dataset.chapter = `check-${key}`;
+  resultSection.dataset.role = 'result';
+  resultSection.innerHTML = `
+    <div class="chapter-badge">${meta.labels[key]}: Nice Work!</div>
+    <div class="card">
+      <p class="big-text" id="checktext-${key}"></p>
+    </div>
+    <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button>${nextBtnHTML}</div>`;
+  anchor.parentNode.insertBefore(resultSection, anchor);
+}
+
+function markAnswered(key, qIndex, correct){
+  if(correct) checkScores[key] = (checkScores[key]||0) + 1;
+  const nextBtn = document.getElementById(`nextbtn-${key}-${qIndex}`);
+  if(nextBtn) nextBtn.disabled = false;
+}
+function answerTile(key, qIndex, oIndex, correct){
+  const tile = document.getElementById(`tile-${key}-${qIndex}-${oIndex}`);
+  const card = tile.closest('.card');
+  const allTiles = card.querySelectorAll('.qtile');
+  if(allTiles[0].classList.contains('yes') || allTiles[0].classList.contains('no')) return;
+  allTiles.forEach(t=>t.style.pointerEvents='none');
+  const reveal = card.querySelector('.reveal');
+  if(correct){
+    tile.classList.add('yes');
+    reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
+    playBlip(700,0.15);
+  } else {
+    tile.classList.add('no');
+    allTiles.forEach(t=>{ if(t.getAttribute('onclick').includes(',true)')) t.classList.add('yes'); });
+    const q = CHAPTER_CHECKS[key][qIndex];
+    reveal.textContent = `Not quite! ${q.explain || ''}`;
+    reveal.classList.add('wrong');
+    playBlip(260,0.15);
+  }
+  reveal.classList.add('shown');
+  markAnswered(key, qIndex, correct);
+}
+function submitLever(key, qIndex, correctAnswer){
+  const knob = document.getElementById(`leverKnob-${key}-${qIndex}`);
+  const track = document.getElementById(`leverTrack-${key}-${qIndex}`);
+  if(track.dataset.locked) return;
+  track.dataset.locked = 'true';
+  const chosen = knob.dataset.value === 'true';
+  const card = knob.closest('.card');
+  const reveal = card.querySelector('.reveal');
+  const correct = chosen === correctAnswer;
+  const q = CHAPTER_CHECKS[key][qIndex];
+  if(correct){
+    reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
+    playBlip(700,0.15);
+  } else {
+    reveal.textContent = `Not quite \u2014 the answer is ${correctAnswer ? 'True' : 'False'}. ${q.explain || ''}`;
+    reveal.classList.add('wrong');
+    playBlip(260,0.15);
+  }
+  reveal.classList.add('shown');
+  markAnswered(key, qIndex, correct);
+}
+function answerDragq(key, qIndex, zoneIndex, correct){
+  const q = CHAPTER_CHECKS[key][qIndex];
+  const card = document.getElementById(`dragzone-${key}-${qIndex}-${zoneIndex}`).closest('.card');
+  const reveal = card.querySelector('.reveal');
+  if(correct){
+    reveal.textContent = "That's right!";
+    reveal.classList.remove('wrong');
+    playBlip(700,0.15);
+  } else {
+    const correctZoneIndex = q.zones.findIndex(z=>z.correct);
+    reveal.textContent = `Not quite! It belongs with "${q.zones[correctZoneIndex].label}". ${q.explain || ''}`;
+    reveal.classList.add('wrong');
+    playBlip(260,0.15);
+  }
+  reveal.classList.add('shown');
+  markAnswered(key, qIndex, correct);
+}
+
+// ================= DECK NAVIGATION =================
+let current = 0;
+function updateNav(){ document.getElementById('counter').textContent = (current+1) + ' / ' + sessions.length; }
+
+function goTo(idx){
+  if(idx < 0 || idx >= sessions.length || idx === current) return;
+  const dir = idx > current ? 'next' : 'prev';
+  const curEl = sessions[current];
+  const nextEl = sessions[idx];
+  curEl.classList.add(dir === 'next' ? 'leaving-next' : 'leaving-prev');
+  setTimeout(()=>{
+    curEl.classList.remove('active','leaving-next','leaving-prev');
+    nextEl.classList.add('active', dir === 'next' ? 'entering-next' : 'entering-prev');
+    setTimeout(()=> nextEl.classList.remove('entering-next','entering-prev'), 260);
+    current = idx;
+    updateNav();
+    updateFundPill();
+    window.scrollTo({top:0, behavior:'auto'});
+    if(nextEl.dataset.role === 'result'){
+      const key = nextEl.dataset.chapter.replace('check-','');
+      const total = CHAPTER_CHECKS[key].length;
+      const score = checkScores[key] || 0;
+      let phrase;
+      if(score === total) phrase = "Perfect! You remembered everything.";
+      else phrase = "Good try! Every lesson makes you a little wiser.";
+      document.getElementById(`checktext-${key}`).textContent = `${phrase} (${score} / ${total})`;
+      persistCheckDone(key);
+    }
+    if(nextEl.classList.contains('hero')){
+      setTimeout(drawTrailConnector, 300);
+    }
+  }, 240);
+}
+function nextCard(){ goTo(current+1); }
+function prevCard(){ goTo(current-1); }
+function goHome(){ window.location.href = 'money-matters.html'; }
+function goToJourneyMap(){ jumpToChapter('orchardhub'); }
+function jumpToChapter(key){
+  if(key.startsWith('check-')){
+    const chKey = key.replace('check-','');
+    buildCheckForChapter(chKey);
+    rebuildSessions();
+  }
+  const idx = sessions.findIndex(s => s.dataset.chapter === key);
+  if(idx >= 0) goTo(idx);
+}
+
+let touchStartX = 0;
+let touchStartedOnSlider = false;
+document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{
+  touchStartX = e.changedTouches[0].screenX;
+  const isSlider = e.target.tagName === 'INPUT' && e.target.type === 'range';
+  const isDragArea = !!e.target.closest('.draggable, .drop-zone, .sort-bin, .jar, .dragq-zone');
+  touchStartedOnSlider = isSlider || isDragArea;
+}, {passive:true});
+document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
+  if(touchStartedOnSlider) return;
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if(dx < -50) nextCard(); else if(dx > 50) prevCard();
+}, {passive:true});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+});
+
+// ================= REUSABLE POINTER DRAG-AND-DROP (mouse + touch + pen, one API) =================
+// onDrop(zone, el) must return true if the drop is accepted (caller places the element);
+// returning false/falsy makes the element glide back to where it started.
+
+function makeDraggable(el, getDropZones, onDrop){
+  el.addEventListener('mousedown', e=>startDragFor(el, e, getDropZones, onDrop));
+  el.addEventListener('touchstart', e=>startDragFor(el, e, getDropZones, onDrop), {passive:false});
+}
+// ================= LEVER (TRUE/FALSE) CONSTRAINED SLIDER DRAG =================
+function initLeverControl(key, qIndex){
+  const track = document.getElementById(`leverTrack-${key}-${qIndex}`);
+  const knob = document.getElementById(`leverKnob-${key}-${qIndex}`);
+  const zoneFalse = document.getElementById(`leverZoneFalse-${key}-${qIndex}`);
+  const zoneTrue = document.getElementById(`leverZoneTrue-${key}-${qIndex}`);
+  const knobWidth = 54;
+
+  function setKnobValue(isTrue, animate){
+    if(track.dataset.locked) return;
+    knob.dataset.value = isTrue ? 'true' : 'false';
+    knob.textContent = isTrue ? 'T' : 'F';
+    knob.style.transition = animate ? 'left .25s cubic-bezier(.34,1.56,.64,1)' : 'none';
+    const trackWidth = track.clientWidth;
+    knob.style.left = (isTrue ? (trackWidth - knobWidth) : 0) + 'px';
+  }
+
+  zoneFalse.style.cursor = 'pointer';
+  zoneTrue.style.cursor = 'pointer';
+  zoneFalse.addEventListener('click', ()=> setKnobValue(false, true));
+  zoneTrue.addEventListener('click', ()=> setKnobValue(true, true));
+
+  function getX(e){
+    if(e.touches && e.touches.length) return e.touches[0].clientX;
+    if(e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+    return e.clientX;
+  }
+  let dragging = false, trackRect;
+  function onDown(e){
+    if(track.dataset.locked) return;
+    dragging = true;
+    trackRect = track.getBoundingClientRect();
+    knob.style.transition = 'none';
+    e.preventDefault();
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onUp);
+  }
+  function onMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const x = getX(e);
+    let left = x - trackRect.left - knobWidth/2;
+    left = Math.max(0, Math.min(trackRect.width - knobWidth, left));
+    knob.style.left = left + 'px';
+    const isTrue = left > (trackRect.width - knobWidth) / 2;
+    knob.textContent = isTrue ? 'T' : 'F';
+    knob.dataset.value = isTrue ? 'true' : 'false';
+  }
+  function onUp(){
+    if(!dragging) return;
+    dragging = false;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+    setKnobValue(knob.dataset.value === 'true', true);
+  }
+  knob.addEventListener('mousedown', onDown);
+  knob.addEventListener('touchstart', onDown, {passive:false});
+}
+function makeDraggablePool(container, itemSelector, getDropZones, onDrop){
+  container.addEventListener('mousedown', e=>{
+    const item = e.target.closest(itemSelector);
+    if(item) startDragFor(item, e, getDropZones, onDrop);
+  });
+  container.addEventListener('touchstart', e=>{
+    const item = e.target.closest(itemSelector);
+    if(item) startDragFor(item, e, getDropZones, onDrop);
+  }, {passive:false});
+}
+function startDragFor(el, downEvent, getDropZones, onDrop){
+  let startX, startY, dragging=false, origParent, origNextSibling, origRect;
+  function getPoint(e){
+    if(e.touches && e.touches.length) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    if(e.changedTouches && e.changedTouches.length) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
+  function snapBack(){
+    el.style.transition = 'left .3s ease, top .3s ease';
+    el.style.left = origRect.left+'px';
+    el.style.top = origRect.top+'px';
+    setTimeout(()=>{
+      el.style.position=''; el.style.left=''; el.style.top=''; el.style.width=''; el.style.margin=''; el.style.transition=''; el.style.zIndex='';
+      if(origNextSibling && origNextSibling.parentNode===origParent) origParent.insertBefore(el, origNextSibling);
+      else origParent.appendChild(el);
+    },300);
+  }
+  function moveDrag(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const pt = getPoint(e);
+    el.style.left=(pt.x-startX)+'px';
+    el.style.top=(pt.y-startY)+'px';
+    const zones=getDropZones();
+    zones.forEach(z=>z.classList.remove('drag-over'));
+    el.style.pointerEvents='none';
+    const under=document.elementFromPoint(pt.x,pt.y);
+    el.style.pointerEvents='';
+    const zone=zones.find(z=>z===under||z.contains(under));
+    if(zone) zone.classList.add('drag-over');
+  }
+  function endDrag(e){
+    if(!dragging) return;
+    dragging=false;
+    document.removeEventListener('mousemove', moveDrag);
+    document.removeEventListener('mouseup', endDrag);
+    document.removeEventListener('touchmove', moveDrag);
+    document.removeEventListener('touchend', endDrag);
+    document.removeEventListener('touchcancel', endDrag);
+    el.classList.remove('dragging');
+    const pt = getPoint(e);
+    const zones=getDropZones();
+    zones.forEach(z=>z.classList.remove('drag-over'));
+    el.style.pointerEvents='none';
+    const under=document.elementFromPoint(pt.x,pt.y);
+    el.style.pointerEvents='';
+    const zone=zones.find(z=>z===under||z.contains(under));
+    let accepted=false;
+    if(zone) accepted = onDrop(zone, el);
+    if(!accepted) snapBack();
+    justFinishedDrag = true;
+    setTimeout(()=>{ justFinishedDrag = false; }, 50);
+  }
+  downEvent.preventDefault();
+  const pt = getPoint(downEvent);
+  dragging=true;
+  origParent=el.parentNode; origNextSibling=el.nextSibling;
+  origRect = el.getBoundingClientRect();
+  el.classList.add('dragging');
+  document.body.appendChild(el);
+  Object.assign(el.style,{position:'fixed', left:origRect.left+'px', top:origRect.top+'px', width:origRect.width+'px', margin:'0', zIndex:'9999'});
+  startX = pt.x-origRect.left; startY = pt.y-origRect.top;
+  document.addEventListener('mousemove', moveDrag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchmove', moveDrag, {passive:false});
+  document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchcancel', endDrag);
+}
+
+// ================= CHAPTER 1: Needs vs Wants (real drag-and-drop) =================
+const NEEDWANT_ICONS = {
+  Food: '<circle cx="17" cy="19" r="11" fill="#E85D5D"/><path d="M17 8 Q19 4 23 5" stroke="#3CAA6B" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+  Water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
+  Coat: '<path d="M11 8 L17 4 L23 8 L27 12 L23 15 L23 30 H11 V15 L7 12 Z" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.5"/>',
+  Shoes: '<path d="M4 26 h26 v-5 q-4 0 -6 -3 l-5 -7 h-6 v9 q0 3 -3 4 z" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/>',
+  'Toy Car': '<rect x="6" y="12" width="24" height="14" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="28" r="4" fill="#4A3520"/><circle cx="24" cy="28" r="4" fill="#4A3520"/>',
+  Candy: '<circle cx="17" cy="17" r="8" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><path d="M9 17 L3 12 v10 Z" fill="#FFC93C"/><path d="M25 17 L31 12 v10 Z" fill="#FFC93C"/>',
+  'Video Game': '<rect x="5" y="12" width="24" height="14" rx="7" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.5"/><circle cx="12" cy="19" r="2" fill="#fff"/><rect x="9" y="17" width="2" height="4" fill="#fff"/><circle cx="24" cy="16" r="2" fill="#fff"/><circle cx="24" cy="22" r="2" fill="#fff"/>',
+  Stickers: '<path d="M17 3 l3.5 8 8.5 1 -6.5 6 1.5 8.5 -7 -4.5 -7 4.5 1.5 -8.5 -6.5 -6 8.5 -1 Z" fill="#FFC93C" stroke="#D9A31C" stroke-width="1"/>'
+};
+const NEED_ITEMS = ['Food','Water','Coat','Shoes'];
+const WANT_ITEMS = ['Toy Car','Candy','Video Game','Stickers'];
+let needWantSortedCount = 0;
+
+
+ORCHARD_CHAPTER_ORDER.forEach(key => { buildCheckForChapter(key); });
+rebuildSessions();
+renderOrchardChapterPicker();
+</script>
+</body>
+</html>
