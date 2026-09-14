@@ -178,6 +178,7 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .trail-num{ font-family:var(--font-display); font-size:.62rem; color:var(--ink-soft); font-weight:700; }
 .trail-name{ font-family:var(--font-display); font-weight:700; font-size:.76rem; color:var(--ink); text-align:center; line-height:1.15; }
 .trail-status{ font-family:var(--font-display); font-size:.6rem; color:var(--ok); }
+.trail-status-locked{ font-family:var(--font-display); font-size:.6rem; color:#9a948c; }
 @keyframes badgePop{ from{ transform:scale(0); opacity:0;} to{ transform:scale(1); opacity:1;} }
 .trail-badge-btn{ animation:badgePop .35s ease backwards; }
 .trail-pager{ display:flex; align-items:center; justify-content:center; gap:1rem; margin-top:1.1rem; }
@@ -914,13 +915,31 @@ function renderOrchardJournalCard(){
   card.innerHTML = `<div class="orch-journal-card"><div class="orch-journal-title">Growth Journal (${doneCount}/${ORCHARD_CHAPTER_ORDER.length} grown)</div><div class="orch-leaf-grid">${slotsHTML}</div><div style="text-align:center; margin-top:.7rem; padding-top:.6rem; border-top:2px dashed var(--orch-gold); font-family:var(--font-display); font-weight:800; color:var(--orch-brown);">Orchard Fund: $${orchardFund.toFixed(2).replace(/\.00$/,'')}</div></div>`;
 }
 
+function isOrchardChapterUnlocked(i){
+  if(i <= 0) return true;
+  return !!orchardChecksDone[i-1];
+}
 function renderOrchardChapterPicker(){
   const wrap = document.getElementById('orchardChapterPicker');
   if(!wrap) return;
   const stopsHTML = ORCHARD_CHAPTER_ORDER.map((key,i)=>{
     const done = orchardChecksDone[i];
+    const unlocked = isOrchardChapterUnlocked(i);
     const b = ORCHARD_TRAIL_BADGES[key];
     const delay = (i*0.06).toFixed(2);
+    if(!unlocked){
+      return `
+      <div class="trail-stop">
+        <button class="trail-badge-btn" style="animation-delay:${delay}s; cursor:default;">
+          <div class="trail-badge" style="background:#d8d2c4;">
+            <svg width="26" height="26" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#fff" stroke-width="1.8"/></svg>
+          </div>
+        </button>
+        <div class="trail-num">Ch. ${i+1}</div>
+        <div class="trail-name">${ORCHARD_CHAPTER_LABELS[key]}</div>
+        <div class="trail-status-locked">Score 2/3 to unlock</div>
+      </div>`;
+    }
     return `
       <div class="trail-stop">
         <button class="trail-badge-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${key}')">
@@ -940,6 +959,22 @@ function renderOrchardChapterPicker(){
 
 
 const CHECK_ICONS = {
+  price_up: '<path d="M6 26 L14 18 L20 22 L28 8" stroke="#D9463C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 8 L28 8 L28 14" stroke="#D9463C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  price_down: '<path d="M6 10 L14 18 L20 14 L28 26" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 26 L28 26 L28 20" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  price_tag: '<path d="M6 8 h12 l12 12 -14 14 -12 -12 Z" fill="#FFCC33" stroke="#C99000" stroke-width="2"/><circle cx="12" cy="14" r="2.4" fill="#fff"/>',
+  oops: '<circle cx="17" cy="17" r="13" fill="#F0DCB0" stroke="#C9972E" stroke-width="1.5"/><text x="17" y="23" font-size="16" font-weight="800" text-anchor="middle" fill="#C9463C">!</text>',
+  thinking: '<circle cx="17" cy="15" r="9" fill="#FFF4D6" stroke="#C9972E" stroke-width="1.5"/><text x="17" y="20" font-size="14" font-weight="800" text-anchor="middle" fill="#5A3E20">?</text>',
+  compare_scale: '<path d="M17 6 v20" stroke="#8C6B4F" stroke-width="2"/><path d="M6 12 L17 8 L28 12" stroke="#8C6B4F" stroke-width="2" fill="none"/><circle cx="6" cy="16" r="4" fill="none" stroke="#8C6B4F" stroke-width="1.8"/><circle cx="28" cy="16" r="4" fill="none" stroke="#8C6B4F" stroke-width="1.8"/>',
+  grow_plant: '<path d="M17 28 V16" stroke="#3CAA6B" stroke-width="2.5" stroke-linecap="round"/><path d="M17 16 Q10 14 9 8 Q16 8 17 16 Q18 8 25 8 Q24 14 17 16" fill="#3CAA6B"/>',
+  no_change: '<path d="M8 17 h18" stroke="#8C6B4F" stroke-width="2.5" stroke-linecap="round"/><path d="M22 12 l5 5 -5 5 M12 12 l-5 5 5 5" stroke="#8C6B4F" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  coin_stack: '<ellipse cx="17" cy="26" rx="10" ry="3" fill="#C99000"/><ellipse cx="17" cy="21" rx="10" ry="3" fill="#FFCC33" stroke="#C99000" stroke-width="1"/><ellipse cx="17" cy="16" rx="10" ry="3" fill="#FFCC33" stroke="#C99000" stroke-width="1"/><ellipse cx="17" cy="11" rx="10" ry="3" fill="#FFDD66" stroke="#C99000" stroke-width="1"/>',
+  goal_target: '<circle cx="17" cy="17" r="12" fill="none" stroke="#D9463C" stroke-width="2"/><circle cx="17" cy="17" r="7" fill="none" stroke="#D9463C" stroke-width="2"/><circle cx="17" cy="17" r="2.5" fill="#D9463C"/>',
+  wait_patience: '<circle cx="17" cy="17" r="12" fill="none" stroke="#8C6B4F" stroke-width="2"/><path d="M17 10 V17 L22 20" stroke="#8C6B4F" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  bank_fee: '<rect x="6" y="16" width="22" height="12" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/><path d="M6 16 L17 7 L28 16 Z" fill="#2E7BB8"/><text x="17" y="26" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">$</text>',
+  lemonade_biz: '<path d="M10 12 h14 l-2 16 h-10 Z" fill="#FFCC33" stroke="#C99000" stroke-width="1.5"/><path d="M10 12 h14" stroke="#C99000" stroke-width="1.5"/><circle cx="17" cy="9" r="2.5" fill="#FF8A5B"/>',
+  chores_broom: '<path d="M22 6 L12 24" stroke="#8C6B4F" stroke-width="2.5" stroke-linecap="round"/><path d="M8 30 L12 24 L18 26 L14 32 Z" fill="#FFCC33" stroke="#C99000" stroke-width="1.2"/>',
+  factors_balance: '<path d="M17 6 v20" stroke="#9B7FD4" stroke-width="2"/><path d="M6 12 L17 8 L28 12" stroke="#9B7FD4" stroke-width="2" fill="none"/><rect x="2" y="12" width="8" height="6" fill="none" stroke="#9B7FD4" stroke-width="1.8"/><rect x="24" y="12" width="8" height="6" fill="none" stroke="#9B7FD4" stroke-width="1.8"/>',
+  risk_dice: '<rect x="7" y="7" width="20" height="20" rx="3" fill="#D9463C" stroke="#A8322A" stroke-width="1.5"/><circle cx="12" cy="12" r="1.8" fill="#fff"/><circle cx="22" cy="12" r="1.8" fill="#fff"/><circle cx="17" cy="17" r="1.8" fill="#fff"/><circle cx="12" cy="22" r="1.8" fill="#fff"/><circle cx="22" cy="22" r="1.8" fill="#fff"/>',
   bike: '<circle cx="10" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><circle cx="26" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><path d="M10 24 L18 10 L26 24 M18 10 L15 24" stroke="#FF8A5B" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
   water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
   toy: '<rect x="6" y="12" width="24" height="18" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="30" r="4" fill="#4A3520"/><circle cx="24" cy="30" r="4" fill="#4A3520"/>',
@@ -964,15 +999,15 @@ function tilesFrom(pool){ return pick(pool); }
 const CHAPTER_CHECK_GENERATORS = {
   otree(){
     const q1pool = [
-      {type:'tiles', prompt:"What does a Money Tree (an asset) do for you?", options:[{icon:'coin', text:"It puts money in your pocket, again and again", correct:true},{icon:'jar', text:"It just sits there looking nice", correct:false}], explain:"An asset is something that keeps putting money in your pocket over time."},
-      {type:'tiles', prompt:"What does a Weed (a liability) do?", options:[{icon:'coin', text:"It takes money out of your pocket and gives nothing back", correct:true},{icon:'jar', text:"It earns you interest every month", correct:false}], explain:"A liability takes money out of your pocket without paying you back."}
+      {type:'tiles', prompt:"What does a Money Tree (an asset) do for you?", options:[{icon:'coin_stack', text:"It puts money in your pocket, again and again", correct:true},{icon:'oops', text:"It just sits there looking nice", correct:false}], explain:"An asset is something that keeps putting money in your pocket over time."},
+      {type:'tiles', prompt:"What does a Weed (a liability) do?", options:[{icon:'price_down', text:"It takes money out of your pocket and gives nothing back", correct:true},{icon:'grow_plant', text:"It earns you interest every month", correct:false}], explain:"A liability takes money out of your pocket without paying you back."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: A savings account that pays interest is a Money Tree.", correct:true, explain:"True \u2014 it keeps putting a little more money in your pocket over time."},
       {type:'lever', prompt:"True or false: A brand new toy that just sits in your room is a Money Tree.", correct:false, explain:"False \u2014 it cost money once and never pays you back, so it's a Weed."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why is a lemonade stand considered a Money Tree?", options:[{icon:'coin', text:"It earns money every time you sell a cup", correct:true},{icon:'jar', text:"It's fun to run", correct:false}], explain:"What makes something a Money Tree is that it keeps earning, not just that it's fun."},
+      {type:'tiles', prompt:"Why is a lemonade stand considered a Money Tree?", options:[{icon:'lemonade_biz', text:"It earns money every time you sell a cup", correct:true},{icon:'oops', text:"It's fun to run", correct:false}], explain:"What makes something a Money Tree is that it keeps earning, not just that it's fun."},
       {type:'lever', prompt:"True or false: Borrowing money you have to pay back with extra is a Money Tree.", correct:false, explain:"False \u2014 that debt drains your pocket over time, making it a Weed."},
       {type:'dragq', prompt:"Drag the toy to where it belongs.", icon:'toy', zones:[{label:'Money Tree', correct:false},{label:'Weed', correct:true}], explain:"A toy is fun, but it doesn't pay you back \u2014 that makes it a Weed, not a Money Tree."}
     ];
@@ -980,105 +1015,105 @@ const CHAPTER_CHECK_GENERATORS = {
   },
   osapling(){
     const q1pool = [
-      {type:'tiles', prompt:"What is compound interest?", options:[{icon:'coin', text:"Earning interest on your interest, not just your original money", correct:true},{icon:'jar', text:"Interest that never changes", correct:false}], explain:"Compound interest means you earn returns on your original money AND on the interest it already earned."},
-      {type:'tiles', prompt:"In the story, why did the Money Tree grow so much more than the Piggy Bank?", options:[{icon:'coin', text:"It earned interest on its interest, year after year", correct:true},{icon:'jar', text:"It got lucky", correct:false}], explain:"Each year, the Money Tree's interest was calculated on the NEW, bigger amount, not just the original $100."}
+      {type:'tiles', prompt:"What is compound interest?", options:[{icon:'grow_plant', text:"Earning interest on your interest, not just your original money", correct:true},{icon:'no_change', text:"Interest that never changes", correct:false}], explain:"Compound interest means you earn returns on your original money AND on the interest it already earned."},
+      {type:'tiles', prompt:"In the story, why did the Money Tree grow so much more than the Piggy Bank?", options:[{icon:'grow_plant', text:"It earned interest on its interest, year after year", correct:true},{icon:'risk_dice', text:"It got lucky", correct:false}], explain:"Each year, the Money Tree's interest was calculated on the NEW, bigger amount, not just the original $100."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Money sitting in a piggy bank with no interest grows over time.", correct:false, explain:"False \u2014 without interest, it stays exactly the same amount."},
       {type:'lever', prompt:"True or false: The longer money compounds, the bigger the difference becomes.", correct:true, explain:"True \u2014 compound growth speeds up more and more the longer it continues."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Which grows your money the most over many years?", options:[{icon:'coin', text:"Compound interest", correct:true},{icon:'jar', text:"Keeping cash with no interest at all", correct:false}], explain:"Compound interest is one of the most powerful tools for growing money over time."},
+      {type:'tiles', prompt:"Which grows your money the most over many years?", options:[{icon:'grow_plant', text:"Compound interest", correct:true},{icon:'no_change', text:"Keeping cash with no interest at all", correct:false}], explain:"Compound interest is one of the most powerful tools for growing money over time."},
       {type:'lever', prompt:"True or false: Starting to save early gives compound interest more time to work.", correct:true, explain:"True \u2014 the earlier you start, the more years compounding has to grow your money."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   oseeds(){
     const q1pool = [
-      {type:'tiles', prompt:"What's the main idea behind saving a little bit regularly?", options:[{icon:'coin', text:"Small amounts, saved consistently, add up over time", correct:true},{icon:'jar', text:"You should wait until you have a lot of money to start", correct:false}], explain:"You don't need a big lump sum to start \u2014 steady small amounts add up."},
-      {type:'tiles', prompt:"What might happen if you wait to save until you have a large amount all at once?", options:[{icon:'coin', text:"You might end up waiting a very long time", correct:true},{icon:'jar', text:"Nothing changes either way", correct:false}], explain:"Waiting for a big lump sum often means missing out on time your money could have been growing."}
+      {type:'tiles', prompt:"What's the main idea behind saving a little bit regularly?", options:[{icon:'grow_plant', text:"Small amounts, saved consistently, add up over time", correct:true},{icon:'oops', text:"You should wait until you have a lot of money to start", correct:false}], explain:"You don't need a big lump sum to start \u2014 steady small amounts add up."},
+      {type:'tiles', prompt:"What might happen if you wait to save until you have a large amount all at once?", options:[{icon:'wait_patience', text:"You might end up waiting a very long time", correct:true},{icon:'no_change', text:"Nothing changes either way", correct:false}], explain:"Waiting for a big lump sum often means missing out on time your money could have been growing."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Saving $5 a week can add up to a meaningful amount over time.", correct:true, explain:"True \u2014 ten weeks of $5 already adds up to $50, and it keeps growing from there."},
       {type:'lever', prompt:"True or false: You need to be rich to start saving or investing.", correct:false, explain:"False \u2014 starting small and staying consistent is one of the most powerful habits in personal finance."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"What habit did this chapter's garden metaphor represent?", options:[{icon:'coin', text:"Saving small amounts regularly", correct:true},{icon:'jar', text:"Spending everything right away", correct:false}], explain:"Planting one seed at a time, steadily, represents saving small amounts on a regular basis."},
+      {type:'tiles', prompt:"What habit did this chapter's garden metaphor represent?", options:[{icon:'goal_target', text:"Saving small amounts regularly", correct:true},{icon:'price_down', text:"Spending everything right away", correct:false}], explain:"Planting one seed at a time, steadily, represents saving small amounts on a regular basis."},
       {type:'lever', prompt:"True or false: Regular saving habits combined with compound interest can grow money even faster.", correct:true, explain:"True \u2014 consistent saving plus compound interest work together to build wealth over time."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   oweather(){
     const q1pool = [
-      {type:'tiles', prompt:"What's the trade-off between the Calm Meadow and the Windy Hilltop?", options:[{icon:'coin', text:"Lower risk/steadier growth vs. higher risk/bigger possible swings", correct:true},{icon:'jar', text:"There's no real difference between them", correct:false}], explain:"The Calm Meadow is steadier but slower; the Windy Hilltop can grow faster but can also drop more."},
-      {type:'tiles', prompt:"What does 'risk' mean in investing?", options:[{icon:'coin', text:"The chance that an investment's value could go up or down a lot", correct:true},{icon:'jar', text:"A guarantee that you'll lose money", correct:false}], explain:"Risk describes how much an investment's value might swing, not a guarantee of loss."}
+      {type:'tiles', prompt:"What's the trade-off between the Calm Meadow and the Windy Hilltop?", options:[{icon:'factors_balance', text:"Lower risk/steadier growth vs. higher risk/bigger possible swings", correct:true},{icon:'no_change', text:"There's no real difference between them", correct:false}], explain:"The Calm Meadow is steadier but slower; the Windy Hilltop can grow faster but can also drop more."},
+      {type:'tiles', prompt:"What does 'risk' mean in investing?", options:[{icon:'risk_dice', text:"The chance that an investment's value could go up or down a lot", correct:true},{icon:'oops', text:"A guarantee that you'll lose money", correct:false}], explain:"Risk describes how much an investment's value might swing, not a guarantee of loss."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Riskier investments can sometimes grow faster than safer ones.", correct:true, explain:"True \u2014 but they can also lose value faster, which is the trade-off."},
       {type:'lever', prompt:"True or false: A 'safe' investment always grows just as fast as a riskier one.", correct:false, explain:"False \u2014 safer investments usually grow more slowly and steadily in exchange for less risk."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why might a real investor put some money in calm investments AND some in riskier ones?", options:[{icon:'coin', text:"To balance steady growth with a chance at bigger gains", correct:true},{icon:'jar', text:"It doesn't matter how you mix them", correct:false}], explain:"Balancing safer and riskier investments is a common strategy to manage risk while still growing money."},
+      {type:'tiles', prompt:"Why might a real investor put some money in calm investments AND some in riskier ones?", options:[{icon:'factors_balance', text:"To balance steady growth with a chance at bigger gains", correct:true},{icon:'oops', text:"It doesn't matter how you mix them", correct:false}], explain:"Balancing safer and riskier investments is a common strategy to manage risk while still growing money."},
       {type:'lever', prompt:"True or false: There's a 'best' amount of risk that's right for everyone.", correct:false, explain:"False \u2014 how much risk feels comfortable is different for each person and situation."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   oslice(){
     const q1pool = [
-      {type:'tiles', prompt:"What is a stock?", options:[{icon:'coin', text:"A small ownership slice of a real company", correct:true},{icon:'jar', text:"A loan you give to a company", correct:false}], explain:"A stock represents part ownership in a company \u2014 you own a slice of it."},
-      {type:'tiles', prompt:"If you own stock in a company and the company grows in value, what happens to your shares?", options:[{icon:'coin', text:"Your shares grow in value too", correct:true},{icon:'jar', text:"Nothing changes for you", correct:false}], explain:"As a part-owner, the company's growth becomes your growth too, since you own a piece of it."}
+      {type:'tiles', prompt:"What is a stock?", options:[{icon:'goal_target', text:"A small ownership slice of a real company", correct:true},{icon:'bank_fee', text:"A loan you give to a company", correct:false}], explain:"A stock represents part ownership in a company \u2014 you own a slice of it."},
+      {type:'tiles', prompt:"If you own stock in a company and the company grows in value, what happens to your shares?", options:[{icon:'grow_plant', text:"Your shares grow in value too", correct:true},{icon:'no_change', text:"Nothing changes for you", correct:false}], explain:"As a part-owner, the company's growth becomes your growth too, since you own a piece of it."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Owning a stock makes you a small owner of that company.", correct:true, explain:"True \u2014 that's exactly what a share of stock represents."},
       {type:'lever', prompt:"True or false: Buying a stock is the same as being a customer who buys the company's products.", correct:false, explain:"False \u2014 being a customer and being an owner are different things; owning stock makes you a part-owner."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"If you own 10% of a company's shares and its total value doubles, what happens to your slice's value?", options:[{icon:'coin', text:"It doubles too", correct:true},{icon:'jar', text:"It stays exactly the same", correct:false}], explain:"Your ownership percentage stays the same, but the value of your slice moves with the whole company's value."},
+      {type:'tiles', prompt:"If you own 10% of a company's shares and its total value doubles, what happens to your slice's value?", options:[{icon:'grow_plant', text:"It doubles too", correct:true},{icon:'no_change', text:"It stays exactly the same", correct:false}], explain:"Your ownership percentage stays the same, but the value of your slice moves with the whole company's value."},
       {type:'lever', prompt:"True or false: The word 'shares' in stock investing refers to shared ownership.", correct:true, explain:"True \u2014 each share represents a small, equal slice of ownership in the company."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   obasket(){
     const q1pool = [
-      {type:'tiles', prompt:"Why is it risky to put all your money into just ONE investment?", options:[{icon:'coin', text:"If that one investment does badly, you could lose everything", correct:true},{icon:'jar', text:"There's no extra risk at all", correct:false}], explain:"Putting everything into one investment means you have nothing to fall back on if it struggles."},
-      {type:'tiles', prompt:"What is diversification?", options:[{icon:'coin', text:"Spreading your money across many different investments", correct:true},{icon:'jar', text:"Putting all your money in one place", correct:false}], explain:"Diversification means spreading money across many investments so one bad outcome doesn't wipe you out."}
+      {type:'tiles', prompt:"Why is it risky to put all your money into just ONE investment?", options:[{icon:'risk_dice', text:"If that one investment does badly, you could lose everything", correct:true},{icon:'oops', text:"There's no extra risk at all", correct:false}], explain:"Putting everything into one investment means you have nothing to fall back on if it struggles."},
+      {type:'tiles', prompt:"What is diversification?", options:[{icon:'factors_balance', text:"Spreading your money across many different investments", correct:true},{icon:'risk_dice', text:"Putting all your money in one place", correct:false}], explain:"Diversification means spreading money across many investments so one bad outcome doesn't wipe you out."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: If one investment in a diversified basket does poorly, the whole basket usually loses everything.", correct:false, explain:"False \u2014 the other investments in the basket can help balance out one that does poorly."},
       {type:'lever', prompt:"True or false: An index fund is a way to own tiny pieces of many companies at once.", correct:true, explain:"True \u2014 that's exactly what an index fund does, spreading your money across many companies."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"In the story, why did the Basket of 5 lose much less than the One Tree during the frost?", options:[{icon:'coin', text:"Only one of the five trees was affected, so the rest were fine", correct:true},{icon:'jar', text:"The basket was magically protected", correct:false}], explain:"Since only one investment in the basket was hurt, the other four kept most of the value safe."},
+      {type:'tiles', prompt:"In the story, why did the Basket of 5 lose much less than the One Tree during the frost?", options:[{icon:'grow_plant', text:"Only one of the five trees was affected, so the rest were fine", correct:true},{icon:'oops', text:"The basket was magically protected", correct:false}], explain:"Since only one investment in the basket was hurt, the other four kept most of the value safe."},
       {type:'lever', prompt:"True or false: Diversification is often summarized as 'don't put all your eggs in one basket.'", correct:true, explain:"True \u2014 that's a common, accurate way to describe the idea of diversification."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   olender(){
     const q1pool = [
-      {type:'tiles', prompt:"What is a bond?", options:[{icon:'coin', text:"A promise to pay back borrowed money, plus a little extra", correct:true},{icon:'jar', text:"A gift you never get back", correct:false}], explain:"A bond is essentially a loan \u2014 you lend money and get paid back with interest over time."},
-      {type:'tiles', prompt:"Compared to stocks, bonds are usually...", options:[{icon:'coin', text:"Steadier, but typically slower-growing", correct:true},{icon:'jar', text:"Always faster-growing", correct:false}], explain:"Bonds tend to be more predictable than stocks, often in exchange for smaller potential returns."}
+      {type:'tiles', prompt:"What is a bond?", options:[{icon:'bank_fee', text:"A promise to pay back borrowed money, plus a little extra", correct:true},{icon:'oops', text:"A gift you never get back", correct:false}], explain:"A bond is essentially a loan \u2014 you lend money and get paid back with interest over time."},
+      {type:'tiles', prompt:"Compared to stocks, bonds are usually...", options:[{icon:'wait_patience', text:"Steadier, but typically slower-growing", correct:true},{icon:'oops', text:"Always faster-growing", correct:false}], explain:"Bonds tend to be more predictable than stocks, often in exchange for smaller potential returns."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: When you buy a bond, you're lending money.", correct:true, explain:"True \u2014 buying a bond means you're the lender, and you expect to be paid back with interest."},
       {type:'lever', prompt:"True or false: Bonds and stocks work in exactly the same way.", correct:false, explain:"False \u2014 a stock is ownership in a company, while a bond is a loan to a company or government."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"What does the 'extra' money paid back on a bond represent?", options:[{icon:'coin', text:"Interest, as a thank-you for lending the money", correct:true},{icon:'jar', text:"A random bonus with no reason", correct:false}], explain:"The extra amount is interest \u2014 payment for the use of your money over time."},
+      {type:'tiles', prompt:"What does the 'extra' money paid back on a bond represent?", options:[{icon:'coin_stack', text:"Interest, as a thank-you for lending the money", correct:true},{icon:'oops', text:"A random bonus with no reason", correct:false}], explain:"The extra amount is interest \u2014 payment for the use of your money over time."},
       {type:'lever', prompt:"True or false: Choosing to save money instead of spending it right away can help it grow over time.", correct:true, explain:"True \u2014 money that's saved or invested has the chance to grow, while spent money is simply gone."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   ocottage(){
     const q1pool = [
-      {type:'tiles', prompt:"What is 'cash flow' in real estate?", options:[{icon:'coin', text:"Regular income, like rent, that an asset pays you", correct:true},{icon:'jar', text:"The cost to build a house", correct:false}], explain:"Cash flow is the regular income a property produces, like monthly rent."},
-      {type:'tiles', prompt:"What is 'appreciation' when it comes to real estate?", options:[{icon:'coin', text:"The property becoming worth more over time", correct:true},{icon:'jar', text:"Saying thank you to your tenant", correct:false}], explain:"Appreciation means the property's value grows over time, separate from any rent it earns."}
+      {type:'tiles', prompt:"What is 'cash flow' in real estate?", options:[{icon:'coin_stack', text:"Regular income, like rent, that an asset pays you", correct:true},{icon:'price_tag', text:"The cost to build a house", correct:false}], explain:"Cash flow is the regular income a property produces, like monthly rent."},
+      {type:'tiles', prompt:"What is 'appreciation' when it comes to real estate?", options:[{icon:'price_up', text:"The property becoming worth more over time", correct:true},{icon:'oops', text:"Saying thank you to your tenant", correct:false}], explain:"Appreciation means the property's value grows over time, separate from any rent it earns."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: A rental property can earn money in two different ways at once.", correct:true, explain:"True \u2014 through regular rent (cash flow) and through the property's value growing (appreciation)."},
       {type:'lever', prompt:"True or false: Rent is a one-time payment.", correct:false, explain:"False \u2014 rent is typically a regular, repeating payment, like every month."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"If a rental cottage earns $15 a month for 4 months, how much cash flow was that in total?", options:[{icon:'coin', text:"$60", correct:true},{icon:'jar', text:"$15", correct:false}], explain:"$15 \u00d7 4 months = $60 in total rental income."},
+      {type:'tiles', prompt:"If a rental cottage earns $15 a month for 4 months, how much cash flow was that in total?", options:[{icon:'coin_stack', text:"$60", correct:true},{icon:'coin_stack', text:"$15", correct:false}], explain:"$15 \u00d7 4 months = $60 in total rental income."},
       {type:'lever', prompt:"True or false: Owning a rental property is one example of owning an asset.", correct:true, explain:"True \u2014 it puts money in your pocket, which is exactly what makes something an asset."},
       {type:'dragq', prompt:"Drag the house to where it belongs.", icon:'house', zones:[{label:'Money Tree', correct:true},{label:'Weed', correct:false}], explain:"A rental house that earns you regular rent is a Money Tree \u2014 it puts money in your pocket again and again."}
     ];
@@ -1086,38 +1121,38 @@ const CHAPTER_CHECK_GENERATORS = {
   },
   obuild(){
     const q1pool = [
-      {type:'tiles', prompt:"What's the main difference between working for wages and owning a business?", options:[{icon:'coin', text:"Owning something can keep earning even when you're not actively working", correct:true},{icon:'jar', text:"There's no difference at all", correct:false}], explain:"Working for wages requires your direct time; owning something that earns can work even when you're not."},
-      {type:'tiles', prompt:"In the story, what happened to the lemonade stand after it was built?", options:[{icon:'coin', text:"It kept earning money automatically", correct:true},{icon:'jar', text:"It needed to be rebuilt every time to earn again", correct:false}], explain:"Once built, the stand kept generating income without needing to be rebuilt each time."}
+      {type:'tiles', prompt:"What's the main difference between working for wages and owning a business?", options:[{icon:'grow_plant', text:"Owning something can keep earning even when you're not actively working", correct:true},{icon:'no_change', text:"There's no difference at all", correct:false}], explain:"Working for wages requires your direct time; owning something that earns can work even when you're not."},
+      {type:'tiles', prompt:"In the story, what happened to the lemonade stand after it was built?", options:[{icon:'grow_plant', text:"It kept earning money automatically", correct:true},{icon:'chores_broom', text:"It needed to be rebuilt every time to earn again", correct:false}], explain:"Once built, the stand kept generating income without needing to be rebuilt each time."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Trading your time directly for money is the only way to earn.", correct:false, explain:"False \u2014 owning assets or businesses is another way money can be earned, without trading time directly."},
       {type:'lever', prompt:"True or false: Both working for wages and owning something that earns can be valid ways to make money.", correct:true, explain:"True \u2014 they're just different approaches, each with its own trade-offs."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why might owning something that earns be considered powerful?", options:[{icon:'coin', text:"It can generate income without requiring your constant, direct effort", correct:true},{icon:'jar', text:"It requires no effort to set up at all", correct:false}], explain:"The power comes from the income continuing to flow in without needing ongoing, direct effort every time."},
+      {type:'tiles', prompt:"Why might owning something that earns be considered powerful?", options:[{icon:'grow_plant', text:"It can generate income without requiring your constant, direct effort", correct:true},{icon:'oops', text:"It requires no effort to set up at all", correct:false}], explain:"The power comes from the income continuing to flow in without needing ongoing, direct effort every time."},
       {type:'lever', prompt:"True or false: Building something once and having it keep earning is an example of an asset at work.", correct:true, explain:"True \u2014 that's exactly the kind of asset behavior explored in this chapter."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   opatient(){
     const q1pool = [
-      {type:'tiles', prompt:"What is 'delayed gratification'?", options:[{icon:'coin', text:"Choosing to wait for a bigger reward instead of a smaller one now", correct:true},{icon:'jar', text:"Spending money as fast as possible", correct:false}], explain:"Delayed gratification means waiting for a bigger future reward instead of taking a smaller reward right away."},
-      {type:'tiles', prompt:"In this chapter, what did waiting longer generally do to the reward?", options:[{icon:'coin', text:"It grew the reward bigger, thanks to compound growth", correct:true},{icon:'jar', text:"It made no difference at all", correct:false}], explain:"The longer the money grew, the bigger the reward became, thanks to compounding."}
+      {type:'tiles', prompt:"What is 'delayed gratification'?", options:[{icon:'wait_patience', text:"Choosing to wait for a bigger reward instead of a smaller one now", correct:true},{icon:'price_down', text:"Spending money as fast as possible", correct:false}], explain:"Delayed gratification means waiting for a bigger future reward instead of taking a smaller reward right away."},
+      {type:'tiles', prompt:"In this chapter, what did waiting longer generally do to the reward?", options:[{icon:'grow_plant', text:"It grew the reward bigger, thanks to compound growth", correct:true},{icon:'no_change', text:"It made no difference at all", correct:false}], explain:"The longer the money grew, the bigger the reward became, thanks to compounding."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: Spending money right away is always the wrong choice.", correct:false, explain:"False \u2014 spending isn't wrong, but choosing to save sometimes leads to a bigger reward later."},
       {type:'lever', prompt:"True or false: Patience can literally be worth more money over time.", correct:true, explain:"True \u2014 because of compound growth, waiting can turn a smaller amount into a bigger one."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why does letting money grow for MORE years usually lead to a bigger reward?", options:[{icon:'coin', text:"Compound growth has more time to work", correct:true},{icon:'jar', text:"Waiting longer doesn't actually change anything", correct:false}], explain:"The longer money compounds, the more it grows \u2014 time is one of the most powerful ingredients in investing."},
+      {type:'tiles', prompt:"Why does letting money grow for MORE years usually lead to a bigger reward?", options:[{icon:'grow_plant', text:"Compound growth has more time to work", correct:true},{icon:'oops', text:"Waiting longer doesn't actually change anything", correct:false}], explain:"The longer money compounds, the more it grows \u2014 time is one of the most powerful ingredients in investing."},
       {type:'lever', prompt:"True or false: There's no real trade-off involved in choosing to save instead of spend.", correct:false, explain:"False \u2014 the trade-off is giving up enjoying something now, in exchange for more later."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   osoil(){
     const q1pool = [
-      {type:'tiles', prompt:"What is net worth?", options:[{icon:'coin', text:"Everything you own minus everything you owe", correct:true},{icon:'jar', text:"Just the cash in your pocket", correct:false}], explain:"Net worth is calculated by adding up what you own and subtracting what you owe."},
-      {type:'tiles', prompt:"If you own $300 in assets and owe $50, what's your net worth?", options:[{icon:'coin', text:"$250", correct:true},{icon:'jar', text:"$300", correct:false}], explain:"$300 owned \u2212 $50 owed = $250 net worth."},
+      {type:'tiles', prompt:"What is net worth?", options:[{icon:'compare_scale', text:"Everything you own minus everything you owe", correct:true},{icon:'coin_stack', text:"Just the cash in your pocket", correct:false}], explain:"Net worth is calculated by adding up what you own and subtracting what you owe."},
+      {type:'tiles', prompt:"If you own $300 in assets and owe $50, what's your net worth?", options:[{icon:'coin_stack', text:"$250", correct:true},{icon:'coin_stack', text:"$300", correct:false}], explain:"$300 owned \u2212 $50 owed = $250 net worth."},
       {type:'dragq', prompt:"Drag the coin to where it belongs when calculating net worth.", icon:'coin', zones:[{label:'Add it (Own)', correct:true},{label:'Subtract it (Owe)', correct:false}], explain:"Money you own gets ADDED when figuring out your net worth."}
     ];
     const q2pool = [
@@ -1125,37 +1160,37 @@ const CHAPTER_CHECK_GENERATORS = {
       {type:'lever', prompt:"True or false: Net worth only counts cash, not other things you own.", correct:false, explain:"False \u2014 net worth includes everything of value you own, like savings, investments, and belongings."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why is net worth a useful number to track?", options:[{icon:'coin', text:"It shows the true overall picture of your finances, not just spare cash", correct:true},{icon:'jar', text:"It only matters for adults, never for kids", correct:false}], explain:"Net worth gives a fuller picture of financial health than just looking at cash on hand."},
+      {type:'tiles', prompt:"Why is net worth a useful number to track?", options:[{icon:'compare_scale', text:"It shows the true overall picture of your finances, not just spare cash", correct:true},{icon:'oops', text:"It only matters for adults, never for kids", correct:false}], explain:"Net worth gives a fuller picture of financial health than just looking at cash on hand."},
       {type:'lever', prompt:"True or false: Growing your assets and reducing your debts both increase your net worth.", correct:true, explain:"True \u2014 both actions move your net worth in a positive direction."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   ostorm(){
     const q1pool = [
-      {type:'tiles', prompt:"What's a major red flag in an investment offer?", options:[{icon:'coin', text:"A guarantee of fast, huge returns with no risk", correct:true},{icon:'jar', text:"A clear explanation of how it works and its risks", correct:false}], explain:"No real investment can honestly guarantee big, fast returns \u2014 all investing carries risk."},
-      {type:'tiles', prompt:"Why is being pressured to 'decide right now' a warning sign?", options:[{icon:'coin', text:"It doesn't give you time to think it through or ask questions", correct:true},{icon:'jar', text:"It's always a sign of a great deal", correct:false}], explain:"Trustworthy opportunities don't usually require snap decisions under pressure."}
+      {type:'tiles', prompt:"What's a major red flag in an investment offer?", options:[{icon:'oops', text:"A guarantee of fast, huge returns with no risk", correct:true},{icon:'thinking', text:"A clear explanation of how it works and its risks", correct:false}], explain:"No real investment can honestly guarantee big, fast returns \u2014 all investing carries risk."},
+      {type:'tiles', prompt:"Why is being pressured to 'decide right now' a warning sign?", options:[{icon:'oops', text:"It doesn't give you time to think it through or ask questions", correct:true},{icon:'oops', text:"It's always a sign of a great deal", correct:false}], explain:"Trustworthy opportunities don't usually require snap decisions under pressure."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: If an investment sounds too good to be true, it's worth being extra cautious.", correct:true, explain:"True \u2014 that's one of the most reliable warning signs of a scam."},
       {type:'lever', prompt:"True or false: Getting paid mainly for recruiting new investors, rather than from a real product, is a good sign.", correct:false, explain:"False \u2014 that's a classic sign of a pyramid or Ponzi scheme, not a legitimate investment."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"What's a sign that an investment opportunity is more likely trustworthy?", options:[{icon:'coin', text:"It's open and clear about how it works and what the risks are", correct:true},{icon:'jar', text:"It promises there's zero risk at all", correct:false}], explain:"Openness about risks is a good sign; claims of zero risk are not."},
+      {type:'tiles', prompt:"What's a sign that an investment opportunity is more likely trustworthy?", options:[{icon:'thinking', text:"It's open and clear about how it works and what the risks are", correct:true},{icon:'oops', text:"It promises there's zero risk at all", correct:false}], explain:"Openness about risks is a good sign; claims of zero risk are not."},
       {type:'lever', prompt:"True or false: It's smart to ask questions and take your time before investing in something new.", correct:true, explain:"True \u2014 taking time to understand something before investing is a wise habit."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   ocapstone(){
     const q1pool = [
-      {type:'tiles', prompt:"Why did Melissa spread her Orchard Fund across different plots instead of putting it all in one?", options:[{icon:'coin', text:"To diversify, so one bad season wouldn't wipe out everything", correct:true},{icon:'jar', text:"It doesn't matter how it's spread", correct:false}], explain:"Spreading investments across different types protects against any single one having a bad season."},
-      {type:'tiles', prompt:"Which of these is NOT one of the investment types covered in this journey?", options:[{icon:'coin', text:"Lottery tickets", correct:true},{icon:'jar', text:"Stocks, bonds, and real estate", correct:false}], explain:"Stocks, bonds, and real estate are real investment types; lottery tickets are games of chance, not investing."}
+      {type:'tiles', prompt:"Why did Melissa spread her Orchard Fund across different plots instead of putting it all in one?", options:[{icon:'factors_balance', text:"To diversify, so one bad season wouldn't wipe out everything", correct:true},{icon:'oops', text:"It doesn't matter how it's spread", correct:false}], explain:"Spreading investments across different types protects against any single one having a bad season."},
+      {type:'tiles', prompt:"Which of these is NOT one of the investment types covered in this journey?", options:[{icon:'risk_dice', text:"Lottery tickets", correct:true},{icon:'coin_stack', text:"Stocks, bonds, and real estate", correct:false}], explain:"Stocks, bonds, and real estate are real investment types; lottery tickets are games of chance, not investing."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: A diversified plan usually includes more than one type of investment.", correct:true, explain:"True \u2014 that's the core idea of diversification."},
       {type:'lever', prompt:"True or false: Patience and saving choices earlier in the journey had no effect on the final Orchard Fund.", correct:false, explain:"False \u2014 every time you chose to save instead of spend, your Orchard Fund grew, giving you more to plant at the end."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"What's one benefit of understanding assets, risk, and diversification together?", options:[{icon:'coin', text:"It helps you build a thoughtful, balanced financial plan", correct:true},{icon:'jar', text:"It guarantees you'll never lose money", correct:false}], explain:"Understanding these ideas together helps you make balanced, thoughtful decisions \u2014 though no plan removes all risk."},
+      {type:'tiles', prompt:"What's one benefit of understanding assets, risk, and diversification together?", options:[{icon:'factors_balance', text:"It helps you build a thoughtful, balanced financial plan", correct:true},{icon:'oops', text:"It guarantees you'll never lose money", correct:false}], explain:"Understanding these ideas together helps you make balanced, thoughtful decisions \u2014 though no plan removes all risk."},
       {type:'lever', prompt:"True or false: Everything learned in this journey \u2014 assets, compounding, risk, stocks, bonds, real estate, and diversification \u2014 works together in real investing.", correct:true, explain:"True \u2014 real investors weigh all of these ideas together when making decisions."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
@@ -1769,20 +1804,26 @@ function buildCheckForChapter(key){
     }
   });
 
+  const passThreshold = Math.ceil(questions.length * 2/3);
   const nextBtnHTML = nextKey
-    ? `<button class="nav-btn" onclick="jumpToChapter('${nextKey}')">Continue the Story</button>`
-    : `<button class="nav-btn" onclick="(${meta.finaleFn.name})()">Finish</button>`;
+    ? `<button class="nav-btn" id="checkNextBtn-${key}" onclick="jumpToChapter('${nextKey}')">Continue the Story</button>`
+    : `<button class="nav-btn" id="checkNextBtn-${key}" onclick="(${meta.finaleFn.name})()">Finish</button>`;
+  const retryBtnHTML = `<button class="nav-btn" id="checkRetryBtn-${key}" onclick="retryCheck('${key}')" style="display:none;">Try Again</button>`;
   const resultSection = document.createElement('section');
   resultSection.className = 'session';
   resultSection.dataset.chapter = `check-${key}`;
   resultSection.dataset.role = 'result';
+  resultSection.dataset.passThreshold = passThreshold;
   resultSection.innerHTML = `
     <div class="chapter-badge">${meta.labels[key]}: Nice Work!</div>
     <div class="card">
       <p class="big-text" id="checktext-${key}"></p>
     </div>
-    <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button>${nextBtnHTML}</div>`;
+    <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button>${nextBtnHTML}${retryBtnHTML}</div>`;
   anchor.parentNode.insertBefore(resultSection, anchor);
+}
+function retryCheck(key){
+  jumpToChapter('check-'+key);
 }
 
 function markAnswered(key, qIndex, correct){
@@ -1817,6 +1858,7 @@ function submitLever(key, qIndex, correctAnswer){
   const knob = document.getElementById(`leverKnob-${key}-${qIndex}`);
   const track = document.getElementById(`leverTrack-${key}-${qIndex}`);
   if(track.dataset.locked) return;
+  if(knob.dataset.value !== 'true' && knob.dataset.value !== 'false') return;
   track.dataset.locked = 'true';
   const chosen = knob.dataset.value === 'true';
   const card = knob.closest('.card');
@@ -1875,11 +1917,23 @@ function goTo(idx){
       const key = nextEl.dataset.chapter.replace('check-','');
       const total = CHAPTER_CHECKS[key].length;
       const score = checkScores[key] || 0;
+      const passThreshold = parseInt(nextEl.dataset.passThreshold) || Math.ceil(total*2/3);
+      const passed = score >= passThreshold;
       let phrase;
       if(score === total) phrase = "Perfect! You remembered everything.";
-      else phrase = "Good try! Every lesson makes you a little wiser.";
+      else if(passed) phrase = "Good job! You've got this.";
+      else phrase = "Almost there! Let's try again to make sure it sticks.";
       document.getElementById(`checktext-${key}`).textContent = `${phrase} (${score} / ${total})`;
-      persistCheckDone(key);
+      const nextBtn = document.getElementById(`checkNextBtn-${key}`);
+      const retryBtn = document.getElementById(`checkRetryBtn-${key}`);
+      if(passed){
+        if(nextBtn) nextBtn.style.display = '';
+        if(retryBtn) retryBtn.style.display = 'none';
+        persistCheckDone(key);
+      } else {
+        if(nextBtn) nextBtn.style.display = 'none';
+        if(retryBtn) retryBtn.style.display = '';
+      }
     }
     if(nextEl.classList.contains('hero')){
       setTimeout(drawTrailConnector, 300);
@@ -1895,6 +1949,9 @@ function jumpToChapter(key){
     const chKey = key.replace('check-','');
     buildCheckForChapter(chKey);
     rebuildSessions();
+  } else {
+    const chapterIdx = ORCHARD_CHAPTER_ORDER.indexOf(key);
+    if(chapterIdx > 0 && !isOrchardChapterUnlocked(chapterIdx)) return;
   }
   const idx = sessions.findIndex(s => s.dataset.chapter === key);
   if(idx >= 0) goTo(idx);

@@ -178,6 +178,7 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .trail-num{ font-family:var(--font-display); font-size:.62rem; color:var(--ink-soft); font-weight:700; }
 .trail-name{ font-family:var(--font-display); font-weight:700; font-size:.76rem; color:var(--ink); text-align:center; line-height:1.15; }
 .trail-status{ font-family:var(--font-display); font-size:.6rem; color:var(--ok); }
+.trail-status-locked{ font-family:var(--font-display); font-size:.6rem; color:#9a948c; }
 @keyframes badgePop{ from{ transform:scale(0); opacity:0;} to{ transform:scale(1); opacity:1;} }
 .trail-badge-btn{ animation:badgePop .35s ease backwards; }
 .trail-pager{ display:flex; align-items:center; justify-content:center; gap:1rem; margin-top:1.1rem; }
@@ -908,6 +909,10 @@ function renderGoalCard(){
 
 let trailPage = 0;
 const TRAIL_PAGE_SIZE = 6;
+function isBikeChapterUnlocked(i){
+  if(i <= 0) return true;
+  return !!checksDone[i-1];
+}
 function renderChapterPicker(){
   const wrap = document.getElementById('chapterPicker');
   const totalPages = Math.ceil(CHAPTER_ORDER.length / TRAIL_PAGE_SIZE);
@@ -917,8 +922,22 @@ function renderChapterPicker(){
   const stopsHTML = pageKeys.map((key,localI)=>{
     const i = start + localI;
     const done = checksDone[i];
+    const unlocked = isBikeChapterUnlocked(i);
     const b = TRAIL_BADGES[key];
     const delay = (localI*0.06).toFixed(2);
+    if(!unlocked){
+      return `
+      <div class="trail-stop">
+        <button class="trail-badge-btn" style="animation-delay:${delay}s; cursor:default;">
+          <div class="trail-badge" style="background:#d8d2c4;">
+            <svg width="26" height="26" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#fff" stroke-width="1.8"/></svg>
+          </div>
+        </button>
+        <div class="trail-num">Ch. ${i+1}</div>
+        <div class="trail-name">${CHAPTER_LABELS[key]}</div>
+        <div class="trail-status-locked">Score 2/3 to unlock</div>
+      </div>`;
+    }
     return `
       <div class="trail-stop">
         <button class="trail-badge-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${key}')">
@@ -985,6 +1004,34 @@ function trailPrevPage(){ trailPage--; renderChapterPicker(); }
 
 
 const CHECK_ICONS = {
+  price_up: '<path d="M6 26 L14 18 L20 22 L28 8" stroke="#D9463C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 8 L28 8 L28 14" stroke="#D9463C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  price_down: '<path d="M6 10 L14 18 L20 14 L28 26" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 26 L28 26 L28 20" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  price_tag: '<path d="M6 8 h12 l12 12 -14 14 -12 -12 Z" fill="#FFCC33" stroke="#C99000" stroke-width="2"/><circle cx="12" cy="14" r="2.4" fill="#fff"/>',
+  discount: '<circle cx="17" cy="17" r="13" fill="#3CAA6B" stroke="#2A8054" stroke-width="1.5"/><text x="17" y="22" font-size="13" font-weight="800" text-anchor="middle" fill="#fff">%</text>',
+  star_quality: '<path d="M17 4 l4 9 10 1 -7.5 7 2 10 -8.5 -5.5 -8.5 5.5 2 -10 -7.5 -7 10 -1 Z" fill="#FFCC33" stroke="#C99000" stroke-width="1.2"/>',
+  sturdy: '<rect x="8" y="14" width="18" height="14" rx="2" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.5"/><path d="M8 14 L17 6 L26 14" fill="none" stroke="#6E4FA8" stroke-width="2"/>',
+  chores_broom: '<path d="M22 6 L12 24" stroke="#8C6B4F" stroke-width="2.5" stroke-linecap="round"/><path d="M8 30 L12 24 L18 26 L14 32 Z" fill="#FFCC33" stroke="#C99000" stroke-width="1.2"/>',
+  lemonade_biz: '<path d="M10 12 h14 l-2 16 h-10 Z" fill="#FFCC33" stroke="#C99000" stroke-width="1.5"/><path d="M10 12 h14" stroke="#C99000" stroke-width="1.5"/><circle cx="17" cy="9" r="2.5" fill="#FF8A5B"/>',
+  store_bakery: '<rect x="6" y="16" width="22" height="12" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><path d="M6 16 L17 6 L28 16 Z" fill="#D9683A"/><rect x="14" y="20" width="6" height="8" fill="#fff"/>',
+  chain_stores: '<rect x="4" y="18" width="8" height="10" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.2"/><rect x="14" y="14" width="8" height="14" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.2"/><rect x="24" y="18" width="8" height="10" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.2"/>',
+  oops: '<circle cx="17" cy="17" r="13" fill="#F0DCB0" stroke="#C9972E" stroke-width="1.5"/><text x="17" y="23" font-size="16" font-weight="800" text-anchor="middle" fill="#C9463C">!</text>',
+  thinking: '<circle cx="17" cy="15" r="9" fill="#FFF4D6" stroke="#C9972E" stroke-width="1.5"/><text x="17" y="20" font-size="14" font-weight="800" text-anchor="middle" fill="#5A3E20">?</text>',
+  umbrella: '<path d="M6 18 a11 11 0 0 1 22 0 Z" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.5"/><line x1="17" y1="18" x2="17" y2="30" stroke="#6E4FA8" stroke-width="2"/><path d="M17 30 q3 2 5 -1" stroke="#6E4FA8" stroke-width="2" fill="none"/>',
+  ice_cream: '<path d="M12 16 h10 l-5 14 Z" fill="#F0C9A0" stroke="#C99060" stroke-width="1.2"/><circle cx="17" cy="12" r="7" fill="#FFB6C1" stroke="#E88FA8" stroke-width="1.2"/>',
+  crowd_demand: '<circle cx="10" cy="14" r="4" fill="#FF8A5B"/><circle cx="20" cy="12" r="4" fill="#5AA9E6"/><circle cx="15" cy="22" r="4" fill="#9B7FD4"/><circle cx="25" cy="22" r="4" fill="#3CAA6B"/>',
+  low_supply: '<rect x="10" y="18" width="14" height="10" fill="#D9463C" stroke="#A8322A" stroke-width="1.5"/><rect x="10" y="18" width="14" height="3" fill="#fff" opacity=".5"/>',
+  compare_scale: '<path d="M17 6 v20" stroke="#8C6B4F" stroke-width="2"/><path d="M6 12 L17 8 L28 12" stroke="#8C6B4F" stroke-width="2" fill="none"/><circle cx="6" cy="16" r="4" fill="none" stroke="#8C6B4F" stroke-width="1.8"/><circle cx="28" cy="16" r="4" fill="none" stroke="#8C6B4F" stroke-width="1.8"/>',
+  grow_plant: '<path d="M17 28 V16" stroke="#3CAA6B" stroke-width="2.5" stroke-linecap="round"/><path d="M17 16 Q10 14 9 8 Q16 8 17 16 Q18 8 25 8 Q24 14 17 16" fill="#3CAA6B"/>',
+  buried_money: '<ellipse cx="17" cy="26" rx="12" ry="4" fill="#8C6B4F"/><rect x="13" y="12" width="8" height="10" rx="1" fill="#FFCC33" stroke="#C99000" stroke-width="1.2"/><path d="M6 26 Q17 20 28 26" fill="none" stroke="#6B5440" stroke-width="1.5"/>',
+  bartering: '<path d="M6 14 L14 14 L14 20 L6 20 Z" fill="#FF8A5B"/><path d="M20 14 L28 14 L28 20 L20 20 Z" fill="#5AA9E6"/><path d="M14 17 L20 17" stroke="#8C6B4F" stroke-width="2"/>',
+  no_change: '<path d="M8 17 h18" stroke="#8C6B4F" stroke-width="2.5" stroke-linecap="round"/><path d="M22 12 l5 5 -5 5 M12 12 l-5 5 5 5" stroke="#8C6B4F" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  coin_stack: '<ellipse cx="17" cy="26" rx="10" ry="3" fill="#C99000"/><ellipse cx="17" cy="21" rx="10" ry="3" fill="#FFCC33" stroke="#C99000" stroke-width="1"/><ellipse cx="17" cy="16" rx="10" ry="3" fill="#FFCC33" stroke="#C99000" stroke-width="1"/><ellipse cx="17" cy="11" rx="10" ry="3" fill="#FFDD66" stroke="#C99000" stroke-width="1"/>',
+  goal_target: '<circle cx="17" cy="17" r="12" fill="none" stroke="#D9463C" stroke-width="2"/><circle cx="17" cy="17" r="7" fill="none" stroke="#D9463C" stroke-width="2"/><circle cx="17" cy="17" r="2.5" fill="#D9463C"/>',
+  wait_patience: '<circle cx="17" cy="17" r="12" fill="none" stroke="#8C6B4F" stroke-width="2"/><path d="M17 10 V17 L22 20" stroke="#8C6B4F" stroke-width="2" fill="none" stroke-linecap="round"/>',
+  bank_fee: '<rect x="6" y="16" width="22" height="12" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/><path d="M6 16 L17 7 L28 16 Z" fill="#2E7BB8"/><text x="17" y="26" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">$</text>',
+  law_gavel: '<rect x="8" y="24" width="18" height="4" fill="#8C6B4F"/><rect x="14" y="10" width="10" height="8" rx="1" fill="#9B7FD4" stroke="#6E4FA8" stroke-width="1.2" transform="rotate(-30 19 14)"/><line x1="10" y1="20" x2="20" y2="10" stroke="#6E4FA8" stroke-width="2.5"/>',
+  debt: '<circle cx="17" cy="17" r="13" fill="#D9463C" stroke="#A8322A" stroke-width="1.5"/><text x="17" y="23" font-size="16" font-weight="800" text-anchor="middle" fill="#fff">-</text>',
+  tax_receipt: '<rect x="9" y="6" width="16" height="24" fill="#fff" stroke="#8C6B4F" stroke-width="1.5"/><line x1="12" y1="12" x2="22" y2="12" stroke="#8C6B4F" stroke-width="1.5"/><line x1="12" y1="17" x2="22" y2="17" stroke="#8C6B4F" stroke-width="1.5"/><line x1="12" y1="22" x2="18" y2="22" stroke="#8C6B4F" stroke-width="1.5"/>',
   bike: '<circle cx="10" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><circle cx="26" cy="24" r="7" fill="none" stroke="#FF8A5B" stroke-width="2.8"/><path d="M10 24 L18 10 L26 24 M18 10 L15 24" stroke="#FF8A5B" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
   water: '<path d="M17 4 C10 14 7 18 7 22 a10 10 0 0 0 20 0 C27 18 24 14 17 4 Z" fill="#5AA9E6" stroke="#2E7BB8" stroke-width="1.5"/>',
   toy: '<rect x="6" y="12" width="24" height="18" rx="4" fill="#FF8A5B" stroke="#D9683A" stroke-width="1.5"/><circle cx="12" cy="30" r="4" fill="#4A3520"/><circle cx="24" cy="30" r="4" fill="#4A3520"/>',
@@ -1037,9 +1084,9 @@ const CHAPTER_CHECK_GENERATORS = {
       {type:'lever', prompt:"True or false: You can earn income by doing a job well.", correct:true, explain:"Right, income is the money you earn from working, and doing a good job is exactly how you earn it."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why do people usually get PAID MORE for harder or more skilled work?", options:[{icon:'work', text:"It takes more effort, time, or skill", correct:true},{icon:'coin', text:"Harder jobs are always shorter", correct:false}], explain:"Jobs that need more skill, time, or effort usually pay more because they're worth more to the person paying for them."},
+      {type:'tiles', prompt:"Why do people usually get PAID MORE for harder or more skilled work?", options:[{icon:'work', text:"It takes more effort, time, or skill", correct:true},{icon:'oops', text:"Harder jobs are always shorter", correct:false}], explain:"Jobs that need more skill, time, or effort usually pay more because they're worth more to the person paying for them."},
       {type:'lever', prompt:"True or false: Every job pays exactly the same amount, no matter how hard it is.", correct:false, explain:"False. Different jobs pay differently based on how much skill, time, or effort they take."},
-      {type:'tiles', prompt:"If two chores take the same time but one is much harder, what usually happens to the pay?", options:[{icon:'work', text:"The harder chore usually pays more", correct:true},{icon:'coin', text:"They always pay exactly the same", correct:false}], explain:"Harder work is usually worth more, so it often earns more money."}
+      {type:'tiles', prompt:"If two chores take the same time but one is much harder, what usually happens to the pay?", options:[{icon:'work', text:"The harder chore usually pays more", correct:true},{icon:'no_change', text:"They always pay exactly the same", correct:false}], explain:"Harder work is usually worth more, so it often earns more money."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
@@ -1053,7 +1100,7 @@ const CHAPTER_CHECK_GENERATORS = {
       {type:'lever', prompt:"True or false: For a barter trade to work, both people need to want what the other person has.", correct:true, explain:"Exactly, that's what makes bartering tricky compared to just using money."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why is money usually easier to use than bartering?", options:[{icon:'coin', text:"Everyone accepts money, so you don't need to find a perfect match", correct:true},{icon:'swap', text:"Money makes items taste better", correct:false}], explain:"Money solves the tricky part of bartering. You don't need to find someone who wants exactly what you have."},
+      {type:'tiles', prompt:"Why is money usually easier to use than bartering?", options:[{icon:'coin_stack', text:"Everyone accepts money, so you don't need to find a perfect match", correct:true},{icon:'swap', text:"Money makes items taste better", correct:false}], explain:"Money solves the tricky part of bartering. You don't need to find someone who wants exactly what you have."},
       {type:'lever', prompt:"True or false: Long ago, before money existed, people used bartering to trade.", correct:true, explain:"True! Bartering came before coins and paper money were invented."},
       {type:'tiles', prompt:"Which is a modern example of something similar to bartering?", options:[{icon:'swap', text:"Trading lunch items with a friend", correct:true},{icon:'bank', text:"Paying with a debit card", correct:false}], explain:"Swapping lunch items directly, without money, is a small everyday example of bartering."}
     ];
@@ -1061,8 +1108,8 @@ const CHAPTER_CHECK_GENERATORS = {
   },
   money(){
     const q1pool = [
-      {type:'tiles', prompt:"What is currency?", options:[{icon:'coin', text:"The money used in a country", correct:true},{icon:'swap', text:"A type of trade", correct:false}], explain:"Currency is simply the official money a country uses, like dollars or coins."},
-      {type:'tiles', prompt:"Which word means the official money a country uses?", options:[{icon:'coin', text:"Currency", correct:true},{icon:'swap', text:"Barter", correct:false}], explain:"Currency is the term for a country's official money."}
+      {type:'tiles', prompt:"What is currency?", options:[{icon:'coin_stack', text:"The money used in a country", correct:true},{icon:'swap', text:"A type of trade", correct:false}], explain:"Currency is simply the official money a country uses, like dollars or coins."},
+      {type:'tiles', prompt:"Which word means the official money a country uses?", options:[{icon:'coin_stack', text:"Currency", correct:true},{icon:'swap', text:"Barter", correct:false}], explain:"Currency is the term for a country's official money."}
     ];
     const q2pool = [
       {type:'dragq', prompt:"Drag the shiny coin to when it was used.", icon:'coin', zones:[{label:'Long Ago', correct:true},{label:'Just Today', correct:false}], explain:"Coins have been used for thousands of years. Bank cards and digital payments are much newer!"},
@@ -1070,7 +1117,7 @@ const CHAPTER_CHECK_GENERATORS = {
     ];
     const q3pool = [
       {type:'lever', prompt:"True or false: Different countries can have different currencies.", correct:true, explain:"True! The US uses dollars, Japan uses yen, and many other countries have their own currency."},
-      {type:'tiles', prompt:"Why do countries use currency instead of just bartering?", options:[{icon:'coin', text:"It makes buying and selling much simpler", correct:true},{icon:'swap', text:"It makes trading illegal", correct:false}], explain:"Currency makes trading simple because everyone agrees on its value, no more searching for a perfect barter match."},
+      {type:'tiles', prompt:"Why do countries use currency instead of just bartering?", options:[{icon:'coin_stack', text:"It makes buying and selling much simpler", correct:true},{icon:'swap', text:"It makes trading illegal", correct:false}], explain:"Currency makes trading simple because everyone agrees on its value, no more searching for a perfect barter match."},
       {type:'lever', prompt:"True or false: Paper money and coins are both types of currency.", correct:true, explain:"True, currency includes both coins and paper bills, plus digital money too."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
@@ -1085,32 +1132,32 @@ const CHAPTER_CHECK_GENERATORS = {
       {type:'lever', prompt:"True or false: If you had unlimited money, you would never need to make trade-offs.", correct:true, explain:"True! Trade-offs exist because resources like money and time are limited."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"Why do people have to make trade-offs almost every day?", options:[{icon:'scale', text:"Because time and money are both limited", correct:true},{icon:'coin', text:"Because stores close on weekends", correct:false}], explain:"Since nobody has unlimited time or money, we constantly choose between options, that's a trade-off."},
+      {type:'tiles', prompt:"Why do people have to make trade-offs almost every day?", options:[{icon:'scale', text:"Because time and money are both limited", correct:true},{icon:'store_bakery', text:"Because stores close on weekends", correct:false}], explain:"Since nobody has unlimited time or money, we constantly choose between options, that's a trade-off."},
       {type:'lever', prompt:"True or false: Making a trade-off means giving up one option to get another.", correct:true, explain:"Yes, a trade-off always means letting go of one choice in order to have a different one."},
-      {type:'tiles', prompt:"If you spend your whole allowance on candy, what trade-off are you making?", options:[{icon:'scale', text:"You give up buying something else later", correct:true},{icon:'coin', text:"You give up nothing at all", correct:false}], explain:"Spending money on one thing means you no longer have that money for something else, that's the trade-off."}
+      {type:'tiles', prompt:"If you spend your whole allowance on candy, what trade-off are you making?", options:[{icon:'scale', text:"You give up buying something else later", correct:true},{icon:'oops', text:"You give up nothing at all", correct:false}], explain:"Spending money on one thing means you no longer have that money for something else, that's the trade-off."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   oppcost(){
     const q1pool = [
-      {type:'tiles', prompt:"The opportunity cost of a choice is...", options:[{icon:'scale', text:"The next-best thing you gave up", correct:true},{icon:'coin', text:"The tax you pay at a store", correct:false}], explain:"Opportunity cost is the value of the next-best option you gave up to make your choice."},
-      {type:'tiles', prompt:"Opportunity cost means...", options:[{icon:'scale', text:"What you miss out on by choosing something else", correct:true},{icon:'coin', text:"The exact price shown on a tag", correct:false}], explain:"It's not about the price tag. Opportunity cost is about what you gave up instead."}
+      {type:'tiles', prompt:"The opportunity cost of a choice is...", options:[{icon:'scale', text:"The next-best thing you gave up", correct:true},{icon:'tax_receipt', text:"The tax you pay at a store", correct:false}], explain:"Opportunity cost is the value of the next-best option you gave up to make your choice."},
+      {type:'tiles', prompt:"Opportunity cost means...", options:[{icon:'scale', text:"What you miss out on by choosing something else", correct:true},{icon:'price_tag', text:"The exact price shown on a tag", correct:false}], explain:"It's not about the price tag. Opportunity cost is about what you gave up instead."}
     ];
     const q2pool = [
-      {type:'tiles', prompt:"If you pick a coloring book over a toy car, the opportunity cost is...", options:[{icon:'toy', text:"The fun of the toy car", correct:true},{icon:'coin', text:"The $5 you spent", correct:false}], explain:"The $5 is just the price. The opportunity cost is the fun of the toy car you didn't get to have."},
-      {type:'tiles', prompt:"If you choose to play a board game instead of watching a movie, the opportunity cost is...", options:[{icon:'toy', text:"The fun of watching the movie", correct:true},{icon:'coin', text:"The cost of the board game", correct:false}], explain:"The opportunity cost is what you gave up, in this case, the movie you didn't watch."}
+      {type:'tiles', prompt:"If you pick a coloring book over a toy car, the opportunity cost is...", options:[{icon:'toy', text:"The fun of the toy car", correct:true},{icon:'price_tag', text:"The $5 you spent", correct:false}], explain:"The $5 is just the price. The opportunity cost is the fun of the toy car you didn't get to have."},
+      {type:'tiles', prompt:"If you choose to play a board game instead of watching a movie, the opportunity cost is...", options:[{icon:'toy', text:"The fun of watching the movie", correct:true},{icon:'price_tag', text:"The cost of the board game", correct:false}], explain:"The opportunity cost is what you gave up, in this case, the movie you didn't watch."}
     ];
     const q3pool = [
       {type:'lever', prompt:"True or false: Opportunity cost only matters when you're spending money.", correct:false, explain:"False! Opportunity cost applies to time too, like choosing one activity over another."},
-      {type:'tiles', prompt:"You have one hour of free time. You choose to read instead of playing outside. What's the opportunity cost?", options:[{icon:'toy', text:"The fun of playing outside", correct:true},{icon:'coin', text:"The price of the book", correct:false}], explain:"Time is a resource too. The opportunity cost here is the outdoor fun you gave up."},
+      {type:'tiles', prompt:"You have one hour of free time. You choose to read instead of playing outside. What's the opportunity cost?", options:[{icon:'toy', text:"The fun of playing outside", correct:true},{icon:'price_tag', text:"The price of the book", correct:false}], explain:"Time is a resource too. The opportunity cost here is the outdoor fun you gave up."},
       {type:'lever', prompt:"True or false: Every choice you make has an opportunity cost, even small ones.", correct:true, explain:"True, anytime you pick one option, you give up something else, even if it's a small choice."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   lemonade(){
     const q1pool = [
-      {type:'tiles', prompt:"If lots of people want lemonade and there's not much of it, the price tends to...", options:[{icon:'coin', text:"Go up", correct:true},{icon:'water', text:"Disappear", correct:false}], explain:"When demand is high and supply is low, prices usually rise, that's supply and demand at work!"},
-      {type:'tiles', prompt:"If there's tons of lemonade but hardly anyone wants it, the price tends to...", options:[{icon:'coin', text:"Go down", correct:true},{icon:'water', text:"Stay exactly the same forever", correct:false}], explain:"When supply is high but demand is low, sellers usually lower the price to attract buyers."}
+      {type:'tiles', prompt:"If lots of people want lemonade and there's not much of it, the price tends to...", options:[{icon:'price_up', text:"Go up", correct:true},{icon:'water', text:"Disappear", correct:false}], explain:"When demand is high and supply is low, prices usually rise, that's supply and demand at work!"},
+      {type:'tiles', prompt:"If there's tons of lemonade but hardly anyone wants it, the price tends to...", options:[{icon:'price_down', text:"Go down", correct:true},{icon:'water', text:"Stay exactly the same forever", correct:false}], explain:"When supply is high but demand is low, sellers usually lower the price to attract buyers."}
     ];
     const q2pool = [
       {type:'dragq', prompt:"Only 1 cup left and everyone wants it! Drag the cup to the right price.", icon:'water', zones:[{label:'High Price', correct:true},{label:'Low Price', correct:false}], explain:"When there's only a little of something and lots of people want it, sellers can charge more, that's supply and demand!"},
@@ -1119,7 +1166,7 @@ const CHAPTER_CHECK_GENERATORS = {
     const q3pool = [
       {type:'lever', prompt:"True or false: 'Demand' means how much people want something.", correct:true, explain:"True! Demand is simply how much people want to buy something."},
       {type:'lever', prompt:"True or false: 'Supply' means how much of something is available.", correct:true, explain:"True, supply is the amount of something that's available to sell or use."},
-      {type:'tiles', prompt:"What are the two forces that decide how prices change?", options:[{icon:'water', text:"Supply and demand", correct:true},{icon:'coin', text:"Weather and luck", correct:false}], explain:"Supply (how much is available) and demand (how much people want it) work together to set prices."}
+      {type:'tiles', prompt:"What are the two forces that decide how prices change?", options:[{icon:'water', text:"Supply and demand", correct:true},{icon:'umbrella', text:"Weather and luck", correct:false}], explain:"Supply (how much is available) and demand (how much people want it) work together to set prices."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
@@ -1134,24 +1181,24 @@ const CHAPTER_CHECK_GENERATORS = {
     ];
     const q3pool = [
       {type:'lever', prompt:"True or false: Splitting money into jars like Save, Spend, and Give can help you plan.", correct:true, explain:"True! Sorting money into jars helps you balance saving, spending, and generosity."},
-      {type:'tiles', prompt:"Why might someone split their money into different jars?", options:[{icon:'jar', text:"To plan for saving, spending, and giving separately", correct:true},{icon:'coin', text:"Jars make coins shinier", correct:false}], explain:"Splitting money into jars helps you balance different goals instead of spending it all at once."},
+      {type:'tiles', prompt:"Why might someone split their money into different jars?", options:[{icon:'jar', text:"To plan for saving, spending, and giving separately", correct:true},{icon:'oops', text:"Jars make coins shinier", correct:false}], explain:"Splitting money into jars helps you balance different goals instead of spending it all at once."},
       {type:'lever', prompt:"True or false: All your money should always go into just one jar.", correct:false, explain:"False. Spreading money across jars for saving, spending, and giving is a smart way to plan."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
   bank(){
     const q1pool = [
-      {type:'tiles', prompt:"Interest is...", options:[{icon:'bank', text:"Extra money a bank pays you", correct:true},{icon:'coin', text:"A fee for talking to a banker", correct:false}], explain:"Interest is the little bit of extra money a bank pays you just for keeping your savings there."},
-      {type:'tiles', prompt:"Which best describes interest on a savings account?", options:[{icon:'bank', text:"A small reward the bank adds to your savings", correct:true},{icon:'coin', text:"Money you owe the bank", correct:false}], explain:"When you save money in the bank, it pays you a little extra over time, that's interest."}
+      {type:'tiles', prompt:"Interest is...", options:[{icon:'bank', text:"Extra money a bank pays you", correct:true},{icon:'bank_fee', text:"A fee for talking to a banker", correct:false}], explain:"Interest is the little bit of extra money a bank pays you just for keeping your savings there."},
+      {type:'tiles', prompt:"Which best describes interest on a savings account?", options:[{icon:'bank', text:"A small reward the bank adds to your savings", correct:true},{icon:'debt', text:"Money you owe the bank", correct:false}], explain:"When you save money in the bank, it pays you a little extra over time, that's interest."}
     ];
     const q2pool = [
       {type:'lever', prompt:"True or false: A bank keeps your money safe AND helps it grow.", correct:true, explain:"Right, banks protect your money and pay you interest, which helps it grow a little over time."},
       {type:'lever', prompt:"True or false: Money in a bank can never earn any extra money at all.", correct:false, explain:"False! Banks pay interest, so money saved there can slowly grow over time."}
     ];
     const q3pool = [
-      {type:'tiles', prompt:"If you leave money in a savings account for a long time, what usually happens?", options:[{icon:'bank', text:"It slowly grows thanks to interest", correct:true},{icon:'coin', text:"It shrinks every month", correct:false}], explain:"The longer you save, the more interest adds up, so your money slowly grows."},
+      {type:'tiles', prompt:"If you leave money in a savings account for a long time, what usually happens?", options:[{icon:'bank', text:"It slowly grows thanks to interest", correct:true},{icon:'price_down', text:"It shrinks every month", correct:false}], explain:"The longer you save, the more interest adds up, so your money slowly grows."},
       {type:'lever', prompt:"True or false: Interest usually adds up faster the more money you have saved.", correct:true, explain:"True! Interest is often a small percentage, so a bigger savings balance earns more interest."},
-      {type:'tiles', prompt:"Why do banks pay you interest at all?", options:[{icon:'bank', text:"To encourage people to save money there", correct:true},{icon:'coin', text:"Because it's the law everywhere", correct:false}], explain:"Banks pay interest as a reward to encourage people to keep their savings with them."}
+      {type:'tiles', prompt:"Why do banks pay you interest at all?", options:[{icon:'bank', text:"To encourage people to save money there", correct:true},{icon:'law_gavel', text:"Because it's the law everywhere", correct:false}], explain:"Banks pay interest as a reward to encourage people to keep their savings with them."}
     ];
     return [pick(q1pool), pick(q2pool), pick(q3pool)];
   },
@@ -1633,20 +1680,26 @@ function buildCheckForChapter(key){
     }
   });
 
+  const passThreshold = Math.ceil(questions.length * 2/3);
   const nextBtnHTML = nextKey
-    ? `<button class="nav-btn" onclick="jumpToChapter('${nextKey}')">Continue the Story</button>`
-    : `<button class="nav-btn" onclick="(${meta.finaleFn.name})()">Finish</button>`;
+    ? `<button class="nav-btn" id="checkNextBtn-${key}" onclick="jumpToChapter('${nextKey}')">Continue the Story</button>`
+    : `<button class="nav-btn" id="checkNextBtn-${key}" onclick="(${meta.finaleFn.name})()">Finish</button>`;
+  const retryBtnHTML = `<button class="nav-btn" id="checkRetryBtn-${key}" onclick="retryCheck('${key}')" style="display:none;">Try Again</button>`;
   const resultSection = document.createElement('section');
   resultSection.className = 'session';
   resultSection.dataset.chapter = `check-${key}`;
   resultSection.dataset.role = 'result';
+  resultSection.dataset.passThreshold = passThreshold;
   resultSection.innerHTML = `
     <div class="chapter-badge">${CHAPTER_LABELS[key]}: Nice Work!</div>
     <div class="card">
       <p class="big-text" id="checktext-${key}"></p>
     </div>
-    <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button>${nextBtnHTML}</div>`;
+    <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button>${nextBtnHTML}${retryBtnHTML}</div>`;
   anchor.parentNode.insertBefore(resultSection, anchor);
+}
+function retryCheck(key){
+  jumpToChapter('check-'+key);
 }
 CHAPTER_ORDER.forEach(key => { if(CHAPTER_CHECKS[key]) buildCheckForChapter(key); });
 rebuildSessions();
@@ -1683,6 +1736,7 @@ function submitLever(key, qIndex, correctAnswer){
   const knob = document.getElementById(`leverKnob-${key}-${qIndex}`);
   const track = document.getElementById(`leverTrack-${key}-${qIndex}`);
   if(track.dataset.locked) return;
+  if(knob.dataset.value !== 'true' && knob.dataset.value !== 'false') return;
   track.dataset.locked = 'true';
   const chosen = knob.dataset.value === 'true';
   const card = knob.closest('.card');
@@ -1741,11 +1795,23 @@ function goTo(idx){
       const key = nextEl.dataset.chapter.replace('check-','');
       const total = CHAPTER_CHECKS[key].length;
       const score = checkScores[key] || 0;
+      const passThreshold = parseInt(nextEl.dataset.passThreshold) || Math.ceil(total*2/3);
+      const passed = score >= passThreshold;
       let phrase;
       if(score === total) phrase = "Perfect! You remembered everything.";
-      else phrase = "Good try! Every lesson makes you a little wiser.";
+      else if(passed) phrase = "Good job! You've got this.";
+      else phrase = "Almost there! Let's try again to make sure it sticks.";
       document.getElementById(`checktext-${key}`).textContent = `${phrase} (${score} / ${total})`;
-      persistCheckDone(key);
+      const nextBtn = document.getElementById(`checkNextBtn-${key}`);
+      const retryBtn = document.getElementById(`checkRetryBtn-${key}`);
+      if(passed){
+        if(nextBtn) nextBtn.style.display = '';
+        if(retryBtn) retryBtn.style.display = 'none';
+        persistCheckDone(key);
+      } else {
+        if(nextBtn) nextBtn.style.display = 'none';
+        if(retryBtn) retryBtn.style.display = '';
+      }
     }
     if(nextEl.classList.contains('hero')){
       setTimeout(drawTrailConnector, 300);
@@ -1761,6 +1827,9 @@ function jumpToChapter(key){
     const chKey = key.replace('check-','');
     buildCheckForChapter(chKey);
     rebuildSessions();
+  } else {
+    const chapterIdx = CHAPTER_ORDER.indexOf(key);
+    if(chapterIdx > 0 && !isBikeChapterUnlocked(chapterIdx)) return;
   }
   const idx = sessions.findIndex(s => s.dataset.chapter === key);
   if(idx >= 0) goTo(idx);

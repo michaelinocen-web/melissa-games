@@ -86,13 +86,13 @@ h1,h2{ font-family:var(--font-display); font-weight:600; margin:0 0 .3em; color:
 .quiz-btn:disabled{ cursor:default; }
 
 .card-nav{ display:flex; justify-content:center; gap:1rem; margin-top:1.6rem; flex-wrap:wrap; }
-.nav-btn{ font-family:var(--font-display); font-weight:500; font-size:1.02rem; background:var(--coral); color:#fff; border:none; border-radius:999px; padding:.7rem 1.4rem; cursor:pointer; box-shadow:0 4px 0 var(--coral-shadow); }
-.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--coral-shadow); }
+.nav-btn{ font-family:var(--font-display); font-weight:500; font-size:1.02rem; background:#3CAA6B; color:#fff; border:none; border-radius:999px; padding:.7rem 1.4rem; cursor:pointer; box-shadow:0 4px 0 #2A8054; }
+.nav-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #2A8054; }
 .nav-btn:disabled{ opacity:.35; cursor:default; box-shadow:none; }
 .nav-btn.back-btn{ background:#fff; color:var(--navy); border:2px solid var(--navy); box-shadow:0 4px 0 var(--sky-deep); }
 .nav-btn.back-btn:active{ box-shadow:0 1px 0 var(--sky-deep); }
-.nav-btn.home-btn{ background:var(--teal); box-shadow:0 4px 0 var(--teal-shadow); }
-.nav-btn.home-btn:active{ box-shadow:0 1px 0 var(--teal-shadow); }
+.nav-btn.home-btn{ background:#c9c4ba; color:#5c584f; box-shadow:0 4px 0 #a8a397; }
+.nav-btn.home-btn:active{ box-shadow:0 1px 0 #a8a397; }
 .action-btn{ font-family:var(--font-display); font-weight:500; font-size:1.1rem; background:var(--teal); color:#fff; border:none; border-radius:999px; padding:.7rem 1.3rem; margin:.4rem; cursor:pointer; box-shadow:0 5px 0 var(--teal-shadow); }
 .action-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--teal-shadow); }
 
@@ -547,8 +547,9 @@ LEVELS.forEach(level => level.countries.forEach(c => {
 
 function levelBadgeTierFromScore(score){
   if(!score || score < 7) return null;
-  if(score === 10) return 'gold';
-  return 'silver';
+  if(score === 7) return 'bronze';
+  if(score === 8) return 'silver';
+  return 'gold';
 }
 function levelBadgeTier(li){
   return levelBadgeTierFromScore(bestScores[li] || 0);
@@ -711,10 +712,15 @@ function buildQuizForLevel(li){
   // shuffle the 10 countries fresh each time; since each of the 10 questions
   // maps to one distinct country, no flag can repeat within the quiz
   const quizOrder = shuffle(level.countries);
+  // exactly 7 "name" questions and 3 "continent" questions per round, shuffled in order
+  const questionTypes = shuffle([
+    'name','name','name','name','name','name','name',
+    'continent','continent','continent'
+  ]);
   quizOrder.forEach((c, ci)=>{
     const session = sessions[startIdx + ci];
     if(!session) return;
-    const askContinent = Math.random() < 0.5;
+    const askContinent = questionTypes[ci] === 'continent';
     const safeName = c.name.replace(/'/g,"\\'");
     let promptText, optsHTML;
     if(askContinent){
@@ -846,11 +852,13 @@ function updateLevelResult(sessionEl){
   const passed = score >= 7;
 
   if(passed){
+    const tier = levelBadgeTierFromScore(score);
+    const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
     stampEl.className = 'result-badge-stamp passed';
     stampEl.innerHTML = score === 10
       ? '<svg class="icon-lg" viewBox="0 0 24 24"><use href="#ic-trophy"/></svg>'
       : LEVELS[idx].emoji;
-    textEl.textContent = `You earned the ${LEVELS[idx].name} badge!`;
+    textEl.textContent = `${tierLabel}! You earned the ${LEVELS[idx].name} badge!`;
     subEl.textContent = `${score} out of 10 flags right, great job!`;
     retryBtn.style.display = 'none';
     nextBtn.disabled = false;
@@ -874,8 +882,8 @@ function retryLevel(li){
   levelScores[li] = 0;
   newlyCompletedContinents = [];
   buildQuizForLevel(li);
-  // jump to first quiz card of this level
-  goTo(levelIntroIndex(li) + 1 + 10);
+  // jump back to the start of the level's flags (first fact card), not straight into the quiz
+  goTo(levelIntroIndex(li) + 1);
 }
 
 function updateFinalScore(){
