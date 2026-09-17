@@ -1618,7 +1618,7 @@ function goTo(idx){
         if(retryBtn) retryBtn.style.display = '';
       }
     }
-    if(nextEl.classList.contains('hero')){
+    if(nextEl.classList.contains('hero') && typeof drawTrailConnector === 'function'){
       setTimeout(drawTrailConnector, 300);
     }
   }, 240);

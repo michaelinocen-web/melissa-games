@@ -266,8 +266,10 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 
 /* ---------- kid-friendly slider ---------- */
 input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:40px; background:transparent; margin:1rem 0 .4rem; cursor:pointer; touch-action:pan-y; }
-input[type=range]::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
-input[type=range]::-moz-range-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
+input[type=range]::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--coral), var(--gold), var(--accent)); }
+input[type=range]::-moz-range-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--coral), var(--gold), var(--accent)); }
+input[type=range].reverse-gradient::-webkit-slider-runnable-track{ background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
+input[type=range].reverse-gradient::-moz-range-track{ background:linear-gradient(90deg, var(--accent), var(--gold), var(--coral)); }
 input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; margin-top:-14px; width:40px; height:40px; border-radius:50%;
   background:radial-gradient(circle at 35% 30%, #ffffff, var(--gold) 55%, var(--gold-shadow) 100%);
   border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 6px rgba(255,201,60,.3); cursor:pointer; transition:transform .15s ease; }
@@ -334,11 +336,14 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="card">
         <h2>Learning From Other Nations</h2>
         <div class="scene" style="width:130px; height:130px; margin:.4rem auto;"><img src="" id="img-char-wintro" style="width:95%; height:95%; object-fit:contain"></div>
-        <p class="big-text">"Before you can lead Starland's economy," says Azul, "you should learn how other nations handle their money. Almost every country has its own special currency!" Tap a flag, then tap its matching currency to connect them!</p>
-        <div style="display:flex; justify-content:space-between; gap:1rem; max-width:360px; margin:.8rem auto;">
-          <div id="wintroFlags" style="display:flex; flex-direction:column; gap:.5rem; flex:1;"></div>
-          <div id="wintroCurrencies" style="display:flex; flex-direction:column; gap:.5rem; flex:1;"></div>
+        <p class="big-text">"Before you can lead Starland's economy," says Azul, "you should learn how other nations handle their money. Almost every country has its own special currency!" Drag from a flag to its matching currency to connect them!</p>
+        <div id="wintroMatchWrap" style="position:relative; display:flex; justify-content:space-between; gap:2.2rem; max-width:400px; margin:.8rem auto;">
+          <svg id="wintroLinesSvg" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;"></svg>
+          <div id="wintroFlags" style="display:flex; flex-direction:column; gap:.5rem; flex:1; position:relative; z-index:2;"></div>
+          <div id="wintroCurrencies" style="display:flex; flex-direction:column; gap:.5rem; flex:1; position:relative; z-index:2;"></div>
         </div>
+        <div class="stage-label" id="wintroRoundLabel">Round 1 of 2</div>
+        <button class="nav-btn" id="wintroNextRoundBtn" onclick="wintroAdvanceRound()" style="display:none; margin-top:.5rem;">Next Round &#8594;</button>
         <div class="reveal" id="wintroSummary"></div>
       </div>
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="wintroNextBtn" onclick="jumpToChapter('check-wintro')" disabled>Next</button></div>
@@ -437,7 +442,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
             <span>&#128176; Money Printed</span>
             <span id="winflationMoneyLabel">A Little</span>
           </div>
-          <input type="range" min="0" max="100" value="0" id="winflationMoneySlider" oninput="updateWinflation()" style="width:100%; margin-top:.3rem;">
+          <input type="range" min="0" max="100" value="0" id="winflationMoneySlider" oninput="updateWinflation()" class="reverse-gradient" style="width:100%; margin-top:.3rem;">
         </div>
         <div style="margin:1.1rem 0;">
           <div style="display:flex; justify-content:space-between; font-size:.82rem; font-weight:700;">
@@ -484,7 +489,7 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
             <span>&#128179; Government Debt</span>
             <span id="wforcesDebtLabel">Very Low</span>
           </div>
-          <input type="range" min="0" max="100" value="20" id="wforcesDebtSlider" oninput="updateWforces()" style="width:100%; margin-top:.3rem;">
+          <input type="range" min="0" max="100" value="20" id="wforcesDebtSlider" oninput="updateWforces()" class="reverse-gradient" style="width:100%; margin-top:.3rem;">
         </div>
         <div style="margin-top:1.2rem; border-top:2px dashed var(--line); padding-top:1rem;">
           <div class="stage-label" id="wforcesLabel" style="font-size:1.05rem;">Star Strength: Weak</div>
@@ -635,6 +640,17 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
       <div class="card-nav"><button class="nav-btn back-btn" onclick="prevCard()">Back</button><button class="nav-btn map-btn" onclick="goToJourneyMap()">Map</button><button class="nav-btn" id="wcapstoneNextBtn" onclick="jumpToChapter('check-wcapstone')" disabled>Next</button></div>
     </section>
     <div class="quiz-anchor" data-anchor="wcapstone"></div>
+
+    <!-- ============ STARLAND FINALE ============ -->
+    <section class="session" data-chapter="worldfinale">
+      <div class="card" style="text-align:center;">
+        <h2>&#127881; Congratulations, Leader! &#127881;</h2>
+        <div class="scene" style="width:180px; height:180px; margin:.6rem auto;" id="worldFinaleScene"><img src="" id="img-char-worldfinale" style="width:100%; height:100%; object-fit:contain;"></div>
+        <p class="big-text">You did it! You've learned how nations trade, how currencies rise and fall, and how to lead Starland's whole economy. Azul couldn't be prouder of you!</p>
+        <div class="reveal shown" style="background:var(--card); border:2px solid var(--gold); margin-top:.8rem;">You are now an official Starland Economy Expert! &#128081;</div>
+      </div>
+      <div class="card-nav" style="justify-content:center;"><button class="nav-btn" onclick="jumpToChapter('worldhub')">Back to Starland</button></div>
+    </section>
 
 </div>
 </div>
@@ -1097,60 +1113,160 @@ const CHAPTER_CHECK_GENERATORS = {
 
 };
 
-const WINTRO_PAIRS = [
-  {flag:'\u{1F1FA}\u{1F1F8}', country:'United States', currency:'US Dollar'},
-  {flag:'\u{1F1EF}\u{1F1F5}', country:'Japan', currency:'Japanese Yen'},
-  {flag:'\u{1F1EC}\u{1F1E7}', country:'United Kingdom', currency:'British Pound'},
-  {flag:'\u{1F1F2}\u{1F1FD}', country:'Mexico', currency:'Mexican Peso'}
+const WINTRO_ROUNDS = [
+  [
+    {flag:'\u{1F1FA}\u{1F1F8}', country:'United States', currency:'US Dollar'},
+    {flag:'\u{1F1EF}\u{1F1F5}', country:'Japan', currency:'Japanese Yen'},
+    {flag:'\u{1F1EC}\u{1F1E7}', country:'United Kingdom', currency:'British Pound'},
+    {flag:'\u{1F1F2}\u{1F1FD}', country:'Mexico', currency:'Mexican Peso'}
+  ],
+  [
+    {flag:'\u{1F1E7}\u{1F1F7}', country:'Brazil', currency:'Brazilian Real'},
+    {flag:'\u{1F1E8}\u{1F1E6}', country:'Canada', currency:'Canadian Dollar'},
+    {flag:'\u{1F1EE}\u{1F1F3}', country:'India', currency:'Indian Rupee'},
+    {flag:'\u{1F1F0}\u{1F1F7}', country:'South Korea', currency:'Korean Won'}
+  ]
 ];
+const WINTRO_PAIR_COLORS = ['#5AA9E6','#9B7FD4','#FF8A5B','#3CAA6B'];
+let wintroRound = 0;
 let wintroSelectedFlag = null;
 let wintroMatched = 0;
+let wintroDragFrom = null;
+let wintroPermLines = [];
+function wintroSvgPoint(el){
+  const wrap = document.getElementById('wintroMatchWrap');
+  const wrapRect = wrap.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  return { x: r.left - wrapRect.left + (el.classList.contains('wintro-flag') ? r.width : 0), y: r.top - wrapRect.top + r.height/2 };
+}
+function wintroRedrawLines(){
+  const svg = document.getElementById('wintroLinesSvg');
+  if(!svg) return;
+  const permHTML = wintroPermLines.map(l=>`<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" stroke="${l.color}" stroke-width="4" stroke-linecap="round"/>`).join('');
+  svg.innerHTML = permHTML + '<line id="wintroTempLine" x1="0" y1="0" x2="0" y2="0" stroke="#5AA9E6" stroke-width="4" stroke-linecap="round" stroke-dasharray="6,5" style="display:none;"/>';
+}
 function renderWintroGame(){
   const flagsCol = document.getElementById('wintroFlags');
   if(!flagsCol) return;
   const currCol = document.getElementById('wintroCurrencies');
-  const shuffled = WINTRO_PAIRS.map((p,i)=>({...p, idx:i})).sort(()=>Math.random()-0.5);
-  flagsCol.innerHTML = WINTRO_PAIRS.map((p,i)=>
-    `<div class="qtile wintro-flag" data-idx="${i}" onclick="selectWintroFlag(${i})" style="background:#fff; border:3px solid var(--line); border-radius:12px; padding:.6rem; text-align:center; cursor:pointer; box-shadow:2px 2px 0 var(--line);">
+  const pairs = WINTRO_ROUNDS[wintroRound];
+  const shuffled = pairs.map((p,i)=>({...p, idx:i})).sort(()=>Math.random()-0.5);
+  wintroPermLines = [];
+  wintroMatched = 0;
+  wintroDragFrom = null;
+  wintroSelectedFlag = null;
+  document.getElementById('wintroRoundLabel').textContent = `Round ${wintroRound+1} of ${WINTRO_ROUNDS.length}`;
+  flagsCol.innerHTML = pairs.map((p,i)=>
+    `<div class="qtile wintro-flag" data-idx="${i}" style="background:#fff; border:3px solid var(--line); border-radius:12px; padding:.6rem; text-align:center; cursor:grab; box-shadow:2px 2px 0 var(--line); touch-action:none; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:6.8rem; box-sizing:border-box;">
       <span style="font-size:1.5rem;">${p.flag}</span><br><span style="font-size:.72rem; font-weight:700;">${p.country}</span>
     </div>`).join('');
   currCol.innerHTML = shuffled.map(p=>
-    `<div class="qtile wintro-currency" data-idx="${p.idx}" onclick="selectWintroCurrency(${p.idx})" style="background:#fff; border:3px solid var(--line); border-radius:12px; padding:.6rem; text-align:center; cursor:pointer; box-shadow:2px 2px 0 var(--line); font-size:.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; min-height:2.6rem;">${p.currency}</div>`).join('');
+    `<div class="qtile wintro-currency" data-idx="${p.idx}" style="background:#fff; border:3px solid var(--line); border-radius:12px; padding:.6rem; text-align:center; cursor:pointer; box-shadow:2px 2px 0 var(--line); font-size:.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; min-height:6.8rem; box-sizing:border-box;">${p.currency}</div>`).join('');
+  wintroRedrawLines();
+  flagsCol.querySelectorAll('.wintro-flag').forEach(el=>{
+    el.addEventListener('pointerdown', (e)=>wintroPointerDown(e, el));
+    el.addEventListener('click', ()=>wintroClickFlag(el));
+  });
+  currCol.querySelectorAll('.wintro-currency').forEach(el=>{
+    el.addEventListener('click', ()=>wintroClickCurrency(el));
+  });
 }
-function selectWintroFlag(i){
-  const el = document.querySelector(`.wintro-flag[data-idx="${i}"]`);
-  if(el.dataset.matched) return;
+function wintroClickFlag(el){
+  if(el.dataset.matched || wintroDragFrom !== null) return;
   document.querySelectorAll('.wintro-flag').forEach(e=>e.style.outline='');
-  wintroSelectedFlag = i;
+  wintroSelectedFlag = parseInt(el.dataset.idx);
   el.style.outline = '3px solid #5AA9E6';
   playBlip(600,0.08);
 }
-function selectWintroCurrency(i){
-  if(wintroSelectedFlag === null) return;
-  const currEl = document.querySelector(`.wintro-currency[data-idx="${i}"]`);
-  if(currEl.dataset.matched) return;
+function wintroClickCurrency(el){
+  if(wintroSelectedFlag === null || el.dataset.matched) return;
   const flagEl = document.querySelector(`.wintro-flag[data-idx="${wintroSelectedFlag}"]`);
-  if(wintroSelectedFlag === i){
+  wintroResolveMatch(flagEl, el, parseInt(el.dataset.idx));
+}
+function wintroPointerDown(e, el){
+  if(el.dataset.matched) return;
+  e.preventDefault();
+  e.stopPropagation();
+  wintroDragFrom = parseInt(el.dataset.idx);
+  document.querySelectorAll('.wintro-flag').forEach(x=>x.style.outline='');
+  el.style.outline = '3px solid #5AA9E6';
+  const tempLine = document.getElementById('wintroTempLine');
+  const start = wintroSvgPoint(el);
+  tempLine.setAttribute('x1', start.x); tempLine.setAttribute('y1', start.y);
+  tempLine.setAttribute('x2', start.x); tempLine.setAttribute('y2', start.y);
+  tempLine.style.display = '';
+  playBlip(600,0.08);
+  document.addEventListener('pointermove', wintroPointerMove);
+  document.addEventListener('pointerup', wintroPointerUp, {once:true});
+}
+function wintroPointerMove(e){
+  if(wintroDragFrom === null) return;
+  const wrap = document.getElementById('wintroMatchWrap');
+  const wrapRect = wrap.getBoundingClientRect();
+  const tempLine = document.getElementById('wintroTempLine');
+  tempLine.setAttribute('x2', e.clientX - wrapRect.left);
+  tempLine.setAttribute('y2', e.clientY - wrapRect.top);
+}
+function wintroPointerUp(e){
+  document.removeEventListener('pointermove', wintroPointerMove);
+  const tempLine = document.getElementById('wintroTempLine');
+  tempLine.style.display = 'none';
+  if(wintroDragFrom === null) return;
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const currEl = target ? target.closest('.wintro-currency') : null;
+  const flagEl = document.querySelector(`.wintro-flag[data-idx="${wintroDragFrom}"]`);
+  wintroDragFrom = null;
+  if(currEl && !currEl.dataset.matched){
+    wintroResolveMatch(flagEl, currEl, parseInt(currEl.dataset.idx));
+  } else {
+    flagEl.style.outline = '';
+  }
+}
+function wintroResolveMatch(flagEl, currEl, currIdx){
+  const flagIdx = parseInt(flagEl.dataset.idx);
+  if(flagIdx === currIdx){
+    const color = WINTRO_PAIR_COLORS[wintroMatched % WINTRO_PAIR_COLORS.length];
     flagEl.dataset.matched = 'true';
     currEl.dataset.matched = 'true';
     flagEl.style.outline = '';
-    [flagEl, currEl].forEach(e=>{ e.style.background = '#EAFBF0'; e.style.borderColor = 'var(--accent)'; e.style.pointerEvents = 'none'; });
+    [flagEl, currEl].forEach(el=>{ el.style.background = color+'22'; el.style.borderColor = color; el.style.color = color; el.style.cursor = 'default'; });
+    const p1 = wintroSvgPoint(flagEl), p2 = wintroSvgPoint(currEl);
+    wintroPermLines.push({x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, color});
+    wintroRedrawLines();
     wintroMatched++;
-    playBlip(700,0.15);
-    burst('wintroFlags', ['#3CAA6B'], 6);
     wintroSelectedFlag = null;
-    if(wintroMatched >= WINTRO_PAIRS.length){
-      const summary = document.getElementById('wintroSummary');
-      summary.innerHTML = `Every nation you just matched has its OWN special money \u2014 that's because each country makes its own choices about its economy! Soon, Starland will need its own currency policy too, and Azul will help you decide how to run it.`;
-      summary.classList.add('shown');
-      document.getElementById('wintroNextBtn').disabled = false;
+    playBlip(700,0.15);
+    burst('wintroFlags', [color], 6);
+    const pairs = WINTRO_ROUNDS[wintroRound];
+    if(wintroMatched >= pairs.length){
+      if(wintroRound < WINTRO_ROUNDS.length - 1){
+        const nextRoundBtn = document.getElementById('wintroNextRoundBtn');
+        nextRoundBtn.style.display = 'inline-block';
+      } else {
+        const summary = document.getElementById('wintroSummary');
+        summary.innerHTML = `Every nation you just matched has its OWN special money \u2014 that's because each country makes its own choices about its economy! Soon, Starland will need its own currency policy too, and Azul will help you decide how to run it.`;
+        summary.classList.add('shown');
+        document.getElementById('wintroNextBtn').disabled = false;
+      }
     }
   } else {
-    flagEl.style.outline = '3px solid #E85D5D';
-    setTimeout(()=>{ if(!flagEl.dataset.matched) flagEl.style.outline = ''; }, 400);
+    [flagEl, currEl].forEach(el=>{
+      el.style.transition = 'background .15s ease, border-color .15s ease';
+      el.style.background = '#FBE1DE'; el.style.borderColor = '#E85D5D';
+    });
+    flagEl.style.outline = '';
+    setTimeout(()=>{
+      if(!flagEl.dataset.matched){ flagEl.style.background = '#fff'; flagEl.style.borderColor = 'var(--line)'; }
+      if(!currEl.dataset.matched){ currEl.style.background = '#fff'; currEl.style.borderColor = 'var(--line)'; }
+    }, 500);
     playBlip(260,0.15);
     wintroSelectedFlag = null;
   }
+}
+function wintroAdvanceRound(){
+  document.getElementById('wintroNextRoundBtn').style.display = 'none';
+  wintroRound++;
+  renderWintroGame();
 }
 renderWintroGame();
 
@@ -1502,7 +1618,7 @@ function renderWsummarySliders(){
         <span>${f.icon} ${f.label}</span>
         <span id="wsummaryVal-${f.id}">50</span>
       </div>
-      <input type="range" min="0" max="100" value="50" id="wsummarySlider-${f.id}" oninput="updateWsummaryFactor('${f.id}', this.value)" style="width:100%; margin-top:.2rem;">
+      <input type="range" min="0" max="100" value="50" id="wsummarySlider-${f.id}" oninput="updateWsummaryFactor('${f.id}', this.value)" class="${f.sign === -1 ? 'reverse-gradient' : ''}" style="width:100%; margin-top:.2rem;">
     </div>`).join('');
 }
 function updateWsummaryFactor(id, val){
@@ -1779,7 +1895,15 @@ function buyWcapstoneItem(i){
 
 
 
-function goToWorldFinale(){ jumpToChapter('worldhub'); }
+function goToWorldFinale(){
+  jumpToChapter('worldfinale');
+  setTimeout(()=>{
+    const img = document.getElementById('img-char-worldfinale');
+    if(img) img.src = AZUL_IMAGES.wgrowth;
+    burst('worldFinaleScene', ['#3CAA6B','#FFC93C','#FF8A5B','#5AA9E6'], 18);
+    playBlip(700,0.2);
+  }, 300);
+}
 
 let CHAPTER_CHECKS = {};
 
@@ -1987,7 +2111,7 @@ function goTo(idx){
         if(retryBtn) retryBtn.style.display = '';
       }
     }
-    if(nextEl.classList.contains('hero')){
+    if(nextEl.classList.contains('hero') && typeof drawTrailConnector === 'function'){
       setTimeout(drawTrailConnector, 300);
     }
   }, 240);
@@ -2014,7 +2138,7 @@ let touchStartedOnSlider = false;
 document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{
   touchStartX = e.changedTouches[0].screenX;
   const isSlider = e.target.tagName === 'INPUT' && e.target.type === 'range';
-  const isDragArea = !!e.target.closest('.draggable, .drop-zone, .sort-bin, .jar, .dragq-zone');
+  const isDragArea = !!e.target.closest('.draggable, .drop-zone, .sort-bin, .jar, .dragq-zone, .wintro-flag, .wintro-currency, #wintroMatchWrap');
   touchStartedOnSlider = isSlider || isDragArea;
 }, {passive:true});
 document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
