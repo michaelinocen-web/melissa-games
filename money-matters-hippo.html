@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>William's Workshop</title>
+<style>
+:root{
+  --bg:#FFF7E8; --ink:#4A3520; --ink-soft:#8A7350;
+  --font-display:'Baloo 2','Trebuchet MS','Verdana',sans-serif;
+  --font-body:'Nunito','Trebuchet MS','Verdana',sans-serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--will-bg); color:var(--will-ink); font-family:var(--font-body); font-size:19px; line-height:1.45; overflow-x:hidden; position:relative; }
+h1,h2{ font-family:var(--font-display); font-weight:700; margin:0 0 .3em; }
+.big-text{ font-size:1.06rem; font-weight:600; }
+svg{ display:block; margin:0 auto; max-width:100%; }
+
+/* William's subtle idle animation: a gentle head sway and an occasional blink,
+   wherever he appears. Different cycle lengths (5.4s / 6.8s) so the two drift in
+   and out of phase instead of always firing together, which reads more alive. */
+.w-head-wrap{ transform-box: fill-box; transform-origin: 50% 55%; animation: williamHeadSway 6.8s ease-in-out infinite; }
+.w-eyes-wrap{ transform-box: fill-box; transform-origin: 50% 50%; animation: williamBlink 5.4s ease-in-out infinite; }
+@keyframes williamHeadSway{
+  0%, 80%, 100% { transform: rotate(0deg); }
+  87% { transform: rotate(-3deg); }
+  94% { transform: rotate(1deg); }
+}
+@keyframes williamBlink{
+  0%, 90%, 100% { transform: scaleY(1); }
+  92%, 96% { transform: scaleY(0.08); }
+}
+
+.deck-viewport{ max-width:700px; margin:0 auto; padding:2.1rem 1.2rem 3rem; min-height:100vh; position:relative; z-index:1; }
+.session{ display:none; text-align:center; }
+.session.active{ display:block; }
+@keyframes fadeInCard{ from{ opacity:0; } to{ opacity:1; } }
+.entering-next, .entering-prev{ animation:fadeInCard .15s ease-out; }
+
+/* ============ WILLIAM'S WORKSHOP: visual identity ============ */
+:root{
+  --will-bg:#EAF7FB; --will-card:#FFFFFF;
+  --will-blue:#2F8FB0; --will-blue-dark:#1E5F78; --will-blue-light:#8FDCEF; --will-blue-pale:#DCF3FA;
+  --will-gold:#D9A544; --will-gold-dark:#A97C2B; --will-sand:#F6EAC9;
+  --will-ink:#1F3A44; --will-ink-soft:#5E7B85;
+  --will-coral:#E8734F; --will-coral-dark:#C1552F;
+  --will-ok:#3CAA6B; --will-warn:#E85D5D;
+}
+.will-scope{ background:var(--will-bg); }
+.will-scope h1, .will-scope h2{ color:var(--will-blue-dark); }
+.will-scope .big-text{ color:var(--will-ink-soft); }
+.hi-name{ font-family:var(--font-display); font-weight:700; color:var(--will-coral-dark); font-size:1.2rem; margin-bottom:.2rem; }
+
+.top-bar-wrap{ position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem; background:rgba(234,247,251,.92); backdrop-filter:blur(6px); border-bottom:2px solid var(--will-blue-pale); }
+.exit-btn{ font-family:var(--font-display); font-weight:700; font-size:.82rem; color:var(--will-blue-dark); text-decoration:none; background:#fff; border:2px solid var(--will-blue-pale); border-radius:12px; padding:.4rem .7rem; }
+.progress-pill{ font-family:var(--font-display); font-weight:800; font-size:.82rem; color:#fff; background:var(--will-blue); border-radius:14px; padding:.4rem .8rem; }
+.map-btn{ font-family:var(--font-display); font-weight:700; font-size:.82rem; color:#fff; background:var(--will-coral); border:none; border-radius:12px; padding:.4rem .7rem; cursor:pointer; }
+
+.will-card{ background:#fff; border:3px solid var(--will-blue); border-radius:20px; padding:1.2rem 1.1rem; box-shadow:0 6px 0 var(--will-blue); margin:.9rem 0; position:relative; overflow:hidden; text-align:left; }
+.will-card h2{ font-size:1.15rem; }
+.will-btn{ font-family:var(--font-display); font-weight:800; background:var(--will-blue); color:#fff; border:none; border-radius:16px; padding:.75rem 1.4rem; font-size:.95rem; box-shadow:0 4px 0 var(--will-blue-dark); cursor:pointer; transition:transform .1s; }
+.will-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--will-blue-dark); }
+.will-btn:disabled{ background:#C9D6DA; box-shadow:0 4px 0 #A7B7BC; cursor:default; opacity:.7; }
+.will-btn.gold{ background:var(--will-gold); box-shadow:0 4px 0 var(--will-gold-dark); }
+.will-btn.gold:active{ box-shadow:0 1px 0 var(--will-gold-dark); }
+.will-btn.coral{ background:var(--will-coral); box-shadow:0 4px 0 var(--will-coral-dark); }
+.will-btn.coral:active{ box-shadow:0 1px 0 var(--will-coral-dark); }
+.will-btn-row{ display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; margin-top:1rem; }
+.will-nav-row{ display:flex; justify-content:space-between; margin-top:1.4rem; }
+
+.fact-box{ background:var(--will-sand); border-left:5px solid var(--will-gold); border-radius:10px; padding:.7rem .9rem; margin-top:.8rem; font-size:.86rem; color:var(--will-ink); }
+.fact-box b{ color:var(--will-gold-dark); }
+.will-reveal{ background:var(--will-blue-pale); border-left:4px solid var(--will-blue); border-radius:10px; padding:.8rem 1rem; margin-top:.8rem; font-size:.88rem; color:var(--will-ink); opacity:0; max-height:0; overflow:hidden; transition:opacity .35s ease, max-height .35s ease, padding .35s ease; }
+.will-reveal.shown{ opacity:1; max-height:400px; padding:.8rem 1rem; }
+.will-reveal.wrong{ background:#FBE7E2; border-left-color:var(--will-warn); }
+.will-stage-label{ font-family:var(--font-display); font-weight:800; color:var(--will-coral-dark); font-size:.85rem; text-align:center; margin:.4rem 0; }
+.result-badge-wrap{ margin:.4rem 0; position:relative; min-height:60px; }
+.result-badge-wrap .trail-badge{ margin:0 auto; animation:badgePop .4s cubic-bezier(.34,1.56,.64,1); }
+.chapter-art-wrap{ border-radius:22px; padding:.6rem; margin:.4rem 0 .9rem; display:flex; justify-content:center; overflow:hidden; }
+.chapter-art-svg{ width:100%; max-width:320px; height:auto; }
+
+/* tiles / quiz */
+.will-tile{ background:#fff; border:3px solid var(--will-blue); border-radius:14px; padding:.7rem .9rem; cursor:pointer; text-align:center; box-shadow:3px 3px 0 var(--will-blue); font-family:var(--font-display); font-weight:700; color:var(--will-ink); transition:transform .1s; margin:.3rem; }
+.will-tile:active{ transform:translateY(2px); box-shadow:1px 1px 0 var(--will-blue); }
+.will-tile.correct-flash{ animation:willPop .4s ease; border-color:var(--will-ok); background:rgba(60,170,107,.15); }
+.will-tile.wrong-flash{ animation:willShake .4s ease; border-color:var(--will-warn); }
+.will-tile.disabled{ opacity:.5; pointer-events:none; }
+.quiz-opts{ display:flex; flex-direction:column; gap:.55rem; margin-top:.9rem; }
+@keyframes willShake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+@keyframes willPop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
+
+/* drag & drop bins */
+.drop-zone{ transition:background .2s, transform .2s, border-color .2s; }
+.drop-zone.drag-over{ background:rgba(47,143,176,.18) !important; transform:scale(1.03); border-color:var(--will-blue) !important; }
+.will-bin{ flex:1; background:var(--will-blue-pale); border:2px dashed var(--will-blue); border-radius:14px; padding:.6rem; min-height:120px; }
+.order-row{ display:flex; gap:.6rem; overflow-x:auto; padding:.4rem .2rem 1rem; -webkit-overflow-scrolling:touch; }
+.order-bin{ flex:0 0 auto; width:104px; background:var(--will-blue-pale); border:2px dashed var(--will-blue); border-radius:14px; padding:.5rem .4rem; min-height:100px; text-align:center; }
+.order-bin .will-bin-title{ font-size:.72rem; }
+.order-bin .drag-chip{ display:flex; flex-direction:column; font-size:.66rem; text-align:center; padding:.3rem; }
+.order-bin .drag-chip svg{ width:26px; height:26px; }
+
+/* ---------- true/false lever (matches the other Money Matters journeys) ---------- */
+.lever-track{ width:210px; height:60px; background:var(--will-blue-pale); border:3px solid var(--will-blue); border-radius:999px; margin:1rem auto; position:relative; }
+.lever-zone{ position:absolute; top:0; width:50%; height:100%; }
+.lever-zone.left{ left:0; border-radius:999px 0 0 999px; }
+.lever-zone.right{ right:0; border-radius:0 999px 999px 0; }
+.lever-knob{ width:54px; height:54px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,var(--will-gold) 55%,var(--will-gold-dark)); border:3px solid #fff; position:absolute; top:0; left:calc(50% - 27px); transition:left .25s cubic-bezier(.34,1.56,.64,1); box-shadow:0 3px 6px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; color:#5A3E00; z-index:2; cursor:grab; }
+.lever-label{ position:absolute; top:50%; transform:translateY(-50%); font-family:var(--font-display); font-weight:700; font-size:.85rem; color:var(--will-ink-soft); }
+.lever-label.left{ left:16px; }
+.lever-label.right{ right:16px; }
+.lever-lockin{ margin-top:.8rem; }
+.will-bin-title{ font-family:var(--font-display); font-weight:700; font-size:.82rem; margin-bottom:.4rem; text-align:center; color:var(--will-blue-dark); }
+.will-pool{ display:flex; flex-wrap:wrap; justify-content:center; gap:.4rem; margin:.7rem 0; min-height:50px; }
+.drag-chip{ font-family:var(--font-display); font-size:.82rem; font-weight:700; background:#fff; border:2px solid var(--will-blue); border-radius:12px; padding:.4rem .65rem; cursor:grab; user-select:none; touch-action:none; box-shadow:2px 2px 0 var(--will-blue); display:inline-flex; align-items:center; gap:.4rem; }
+.drag-chip svg{ width:22px; height:22px; flex-shrink:0; }
+.drag-chip.placed{ display:flex; margin-bottom:.3rem; animation:willPopIn .3s ease; box-shadow:none; cursor:default; }
+@keyframes willPopIn{ from{ transform:scale(.5); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.dragging{ opacity:.9; }
+
+/* link-match (click-to-connect) */
+.link-match-wrap{ position:relative; display:flex; justify-content:space-between; gap:2rem; margin-top:.8rem; }
+.link-match-col{ display:flex; flex-direction:column; gap:.6rem; flex:1; min-width:0; }
+.link-item{ font-family:var(--font-display); font-weight:700; font-size:.8rem; line-height:1.15; background:#fff; border:3px solid var(--will-blue-pale); border-radius:12px; padding:.5rem .5rem; cursor:grab; text-align:center; box-shadow:2px 2px 0 var(--will-blue-pale); touch-action:none; height:5.4rem; box-sizing:border-box; overflow:hidden; display:flex; align-items:center; justify-content:center; transition:background .15s ease, border-color .15s ease; }
+.link-item.matched{ cursor:default; }
+.link-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+@keyframes particleFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.particle{ position:absolute; border-radius:50%; animation:particleFly 1s ease-out forwards; pointer-events:none; }
+
+/* sliders / bars */
+input[type=range].will-slider{ -webkit-appearance:none; appearance:none; width:100%; height:40px; background:transparent; margin:1rem 0 .4rem; cursor:pointer; touch-action:pan-y; }
+input[type=range].will-slider::-webkit-slider-runnable-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--will-coral), var(--will-gold), var(--will-ok)); }
+input[type=range].will-slider::-moz-range-track{ height:12px; border-radius:999px; background:linear-gradient(90deg, var(--will-coral), var(--will-gold), var(--will-ok)); }
+input[type=range].will-slider.reverse-gradient::-webkit-slider-runnable-track{ background:linear-gradient(90deg, var(--will-ok), var(--will-gold), var(--will-coral)); }
+input[type=range].will-slider.reverse-gradient::-moz-range-track{ background:linear-gradient(90deg, var(--will-ok), var(--will-gold), var(--will-coral)); }
+input[type=range].will-slider::-webkit-slider-thumb{ -webkit-appearance:none; margin-top:-14px; width:40px; height:40px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--will-gold) 55%, var(--will-gold-dark) 100%);
+  border:3px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 6px rgba(217,165,68,.3); cursor:pointer; transition:transform .15s ease; }
+input[type=range].will-slider::-moz-range-thumb{ width:40px; height:40px; border-radius:50%; border:3px solid #fff;
+  background:radial-gradient(circle at 35% 30%, #ffffff, var(--will-gold) 55%, var(--will-gold-dark) 100%);
+  box-shadow:0 3px 8px rgba(0,0,0,.25), 0 0 0 6px rgba(217,165,68,.3); cursor:pointer; transition:transform .15s ease; }
+input[type=range].will-slider:active::-webkit-slider-thumb{ transform:scale(1.2); }
+input[type=range].will-slider:active::-moz-range-thumb{ transform:scale(1.2); }
+input[type=range].will-slider:focus{ outline:none; }
+.bar-stack{ display:flex; flex-direction:column-reverse; width:70px; height:180px; border-radius:10px; overflow:hidden; border:3px solid var(--will-ink); background:#fff; margin:0 auto; }
+.bar-seg{ transition:height .35s ease; width:100%; }
+.bar-row{ display:flex; justify-content:center; gap:1.6rem; align-items:flex-end; margin:1rem 0; }
+.bar-col{ text-align:center; }
+.bar-col-label{ font-family:var(--font-display); font-weight:700; font-size:.78rem; margin-top:.4rem; color:var(--will-ink-soft); }
+.slider-row{ display:flex; align-items:center; gap:.6rem; margin:.5rem 0; }
+.slider-row label{ font-family:var(--font-display); font-weight:700; font-size:.82rem; width:92px; flex-shrink:0; }
+.slider-val{ font-family:var(--font-display); font-weight:800; width:52px; text-align:right; color:var(--will-blue-dark); font-size:.85rem; }
+
+.ship-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; max-width:280px; margin:0 auto; padding:.7rem; }
+.ship-slot{ aspect-ratio:1; border-radius:8px; border:2px dashed rgba(255,255,255,.5); display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.12); }
+.ship-slot.filled{ border-style:solid; border-color:#fff; background:#fff; animation:willPopIn .35s ease; }
+.shipping-container{ max-width:320px; margin:.6rem auto 0; background:linear-gradient(180deg,#E8734F,#C1552F); border-radius:10px; padding:.9rem .6rem 1rem; box-shadow:0 6px 0 #9C4324, inset 0 0 0 3px rgba(255,255,255,.25); position:relative; }
+.shipping-container::before{ content:'WILLIAM CO.'; display:block; text-align:center; font-family:var(--font-display); font-weight:800; font-size:.7rem; letter-spacing:.06em; color:rgba(255,255,255,.85); margin-bottom:.4rem; }
+.ship-container-ridges{ position:absolute; inset:8px 6px auto 6px; height:6px; background:repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 8px, transparent 8px 16px); border-radius:3px; }
+
+/* ---------- Build Your Own William ---------- */
+.build-stage-wrap{ background:var(--will-blue-pale); border:3px dashed var(--will-blue); border-radius:18px; padding:.8rem; margin:.6rem auto; max-width:320px; position:relative; min-height:230px; display:flex; align-items:center; justify-content:center; }
+.build-part{ opacity:0; transform:scale(.6); transform-origin:center; transition:opacity .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1); }
+.build-part.on{ opacity:1; transform:scale(1); }
+@keyframes buildPulse{ 0%{ transform:scale(1);} 35%{ transform:scale(1.06);} 100%{ transform:scale(1);} }
+.build-pulse{ animation:buildPulse .5s ease; }
+.build-scene-box{ opacity:0; transform:scale(.5); transition:opacity .45s ease, transform .45s cubic-bezier(.34,1.56,.64,1); }
+.build-scene-box.on{ opacity:1; transform:scale(1); }
+.build-william-group{ transition:opacity .45s ease, transform .45s ease; transform-origin:center; }
+.build-william-group.hidden{ opacity:0; transform:scale(.2) translateY(30px); }
+.build-truck-group{ transition:transform 1.1s cubic-bezier(.55,0,.85,.35); }
+.build-truck-group.drive-off{ transform:translateX(340px); }
+.build-progress{ display:flex; justify-content:center; gap:.3rem; margin:.6rem 0; flex-wrap:wrap; }
+.build-progress-dot{ width:14px; height:14px; border-radius:50%; background:#D6E6EA; border:2px solid #fff; }
+.build-progress-dot.done{ background:var(--will-ok); }
+
+/* chapter map */
+.chapter-map-list{ display:flex; flex-direction:column; gap:.75rem; margin:1rem 0; }
+.chapter-card{ position:relative; display:flex; align-items:center; gap:.85rem; background:#fff; border:3px solid var(--will-blue-pale); border-radius:22px; padding:.8rem .9rem; cursor:pointer; box-shadow:0 5px 0 var(--will-blue-pale); text-align:left; transition:transform .12s ease; }
+.chapter-card:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--will-blue-pale); }
+.chapter-card.locked{ opacity:.55; cursor:default; }
+.chapter-card.locked:active{ transform:none; box-shadow:0 5px 0 var(--will-blue-pale); }
+.chapter-card.done{ border-color:var(--will-ok); box-shadow:0 5px 0 rgba(60,170,107,.35); }
+.chapter-icon-badge{ width:56px; height:56px; border-radius:18px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.6rem; box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-6deg); border:3px solid #fff; }
+.chapter-card-title{ font-family:var(--font-display); font-weight:800; font-size:1rem; margin-bottom:.1rem; color:var(--will-ink); }
+.chapter-card-desc{ font-size:.76rem; color:var(--will-ink-soft); line-height:1.3; }
+.chapter-card-status{ margin-left:auto; flex-shrink:0; font-size:1.2rem; padding-left:.4rem; }
+
+.badge-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-top:.8rem; }
+.will-badge{ text-align:center; opacity:.4; }
+.will-badge.unlocked{ opacity:1; }
+.will-badge-icon{ width:52px; height:52px; border-radius:50%; margin:0 auto .3rem; display:flex; align-items:center; justify-content:center; font-size:1.5rem; background:#eee; }
+.will-badge-label{ font-family:var(--font-display); font-weight:700; font-size:.68rem; color:var(--will-ink-soft); }
+
+/* ---------- trail badge grid + passport (matches Starland's home screen) ---------- */
+.passport-card{ max-width:320px; margin:1rem auto 0; padding:1rem; background:linear-gradient(160deg,var(--will-blue-pale),#C9ECF7); border:3px solid var(--will-blue); border-radius:16px; box-shadow:0 5px 0 var(--will-blue-dark); }
+.passport-title{ font-family:var(--font-display); font-weight:800; text-align:center; color:var(--will-blue-dark); margin-bottom:.5rem; }
+.passport-stamps-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:.4rem; }
+.passport-stamp{ aspect-ratio:1; border-radius:8px; border:2px dashed #A8C8E8; display:flex; align-items:center; justify-content:center; font-size:1.1rem; opacity:.3; }
+.passport-stamp.stamped{ opacity:1; border-style:solid; border-color:var(--will-blue); background:#fff; transform:rotate(-4deg); box-shadow:0 2px 0 rgba(0,0,0,.1); }
+@keyframes badgePop{ from{ transform:scale(0); opacity:0;} to{ transform:scale(1); opacity:1;} }
+.trail-wrap{ position:relative; padding:.3rem 0 .5rem; }
+.trail-page{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem .5rem; position:relative; }
+.trail-stop{ display:flex; flex-direction:column; align-items:center; gap:.3rem; position:relative; }
+.trail-badge-btn{ background:none; border:none; cursor:pointer; flex-shrink:0; position:relative; z-index:1; padding:0; animation:badgePop .35s ease backwards; }
+.trail-badge-btn:active{ transform:scale(.93); }
+.trail-badge{ width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:4px solid #fff; box-shadow:0 5px 0 rgba(0,0,0,.15); position:relative; }
+.trail-badge.big{ width:76px; height:76px; }
+.trail-check{ position:absolute; top:-6px; right:-6px; width:24px; height:24px; border-radius:50%; background:var(--will-ok); border:3px solid #fff; display:flex; align-items:center; justify-content:center; }
+.trail-num{ font-family:var(--font-display); font-size:.62rem; color:var(--will-ink-soft); font-weight:700; }
+.trail-name{ font-family:var(--font-display); font-weight:700; font-size:.76rem; color:var(--will-ink); text-align:center; line-height:1.15; }
+.trail-status{ font-family:var(--font-display); font-size:.6rem; color:var(--will-ok); }
+.trail-status-locked{ font-family:var(--font-display); font-size:.6rem; color:#9a948c; }
+
+/* ---------- world trade-route journey map (home screen) ---------- */
+/* ---------- full-screen factory & shipping-yard journey map (home screen) ---------- */
+.session[data-chapter="willhub"]{ position:fixed; inset:0; z-index:6; text-align:left; padding:0; margin:0; background:#2B2F33; }
+.factory-map-viewport{ position:absolute; inset:0; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; cursor:grab; background:linear-gradient(180deg,#8A9199 0%,#6B7278 46%,#52585D 100%); }
+.factory-map-viewport.grabbing{ cursor:grabbing; }
+.journey-map-canvas{ position:relative; height:100%; }
+.journey-map-bg-svg{ position:absolute; inset:0; width:100%; height:100%; }
+.journey-stop{ position:absolute; display:flex; flex-direction:column; align-items:center; gap:.22rem; width:100px; margin-left:-50px; transform:translateY(-50%); }
+.journey-stop-btn{ background:none; border:none; cursor:pointer; flex-shrink:0; position:relative; z-index:1; padding:0; animation:badgePop .4s ease backwards; }
+.journey-stop-btn:active{ transform:scale(.93); }
+.journey-flag-pole{ width:6px; height:22px; background:repeating-linear-gradient(180deg,#FFCC33 0 5px,#2B2F33 5px 10px); margin:0 auto -2px; border-radius:1px; }
+.journey-badge{ width:58px; height:58px; border-radius:12px; display:flex; align-items:center; justify-content:center; border:4px solid #fff; box-shadow:0 5px 0 rgba(0,0,0,.35); position:relative; background:#8a8478; }
+.journey-badge.big{ width:68px; height:68px; }
+.journey-check{ position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--will-ok); border:3px solid #fff; display:flex; align-items:center; justify-content:center; }
+.journey-num-pill{ font-family:var(--font-display); font-weight:800; font-size:.58rem; color:#2B2F33; background:#FFCC33; border-radius:4px; padding:.08rem .5rem; box-shadow:0 2px 0 rgba(0,0,0,.25); }
+.journey-name{ font-family:var(--font-display); font-weight:800; font-size:.68rem; color:#fff; text-align:center; line-height:1.15; text-shadow:0 1px 3px rgba(0,0,0,.6); background:rgba(20,22,24,.45); border-radius:6px; padding:.05rem .35rem; }
+.journey-here-pin{ position:absolute; transform:translate(-50%,-100%); animation:hereBob 1.8s ease-in-out infinite; z-index:2; pointer-events:none; }
+@keyframes hereBob{ 0%,100%{ transform:translate(-50%,-100%) translateY(0); } 50%{ transform:translate(-50%,-100%) translateY(-8px); } }
+.factory-float-btn{ position:absolute; z-index:8; display:flex; align-items:center; gap:.4rem; font-family:var(--font-display); font-weight:800; font-size:.8rem; color:#2B2F33; background:#FFCC33; border:3px solid #2B2F33; border-radius:14px; padding:.55rem .8rem; cursor:pointer; box-shadow:0 4px 0 #C99000; }
+.factory-float-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #C99000; }
+.factory-float-btn.menu{ top:4.4rem; left:1rem; }
+.factory-float-btn.recenter{ top:4.4rem; right:1rem; }
+.factory-hero-note{ position:absolute; left:50%; bottom:1.1rem; transform:translateX(-50%); z-index:8; font-family:var(--font-display); font-weight:700; font-size:.78rem; color:#fff; background:rgba(20,22,24,.55); border-radius:12px; padding:.5rem 1rem; text-align:center; max-width:80%; }
+
+/* ---------- badges drawer (opened from home) ---------- */
+.will-drawer-overlay{ position:fixed; inset:0; background:rgba(20,40,50,.45); display:flex; align-items:flex-end; justify-content:center; z-index:60; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+.will-drawer-overlay.shown{ opacity:1; pointer-events:auto; }
+.will-drawer{ background:linear-gradient(160deg,#EAF7FB,#DCF3FA); width:100%; max-width:480px; max-height:82vh; overflow-y:auto; border-radius:24px 24px 0 0; border:3px solid var(--will-blue); border-bottom:none; box-shadow:0 -6px 0 rgba(0,0,0,.08); padding:.8rem 1.1rem 1.4rem; position:relative; transform:translateY(20px); transition:transform .25s ease; }
+.will-drawer-overlay.shown .will-drawer{ transform:translateY(0); }
+.will-drawer-handle{ width:44px; height:5px; border-radius:999px; background:var(--will-blue-pale); margin:.3rem auto .6rem; }
+.will-drawer-close{ position:absolute; top:.7rem; right:.9rem; width:32px; height:32px; border-radius:50%; background:#fff; border:2px solid var(--will-blue-pale); font-size:1rem; color:var(--will-blue-dark); cursor:pointer; line-height:1; }
+
+/* ---------- check your understanding (before every quiz) ---------- */
+.check-box{ background:linear-gradient(160deg,#FFF7E4,#FFEFC9); border:3px solid var(--will-gold); border-radius:20px; padding:1.1rem 1.1rem 1.2rem; margin:.9rem 0; box-shadow:0 6px 0 var(--will-gold-dark); position:relative; }
+.check-box-badge{ width:52px; height:52px; border-radius:50%; background:var(--will-gold); border:4px solid #fff; box-shadow:0 4px 0 rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; margin:-2.4rem auto .5rem; font-size:1.5rem; }
+.check-box-title{ font-family:var(--font-display); font-weight:800; color:var(--will-gold-dark); text-align:center; font-size:1rem; margin-bottom:.5rem; }
+.check-box-body{ font-size:.9rem; color:var(--will-ink); text-align:left; }
+.check-box-sentence{ font-family:var(--font-display); font-weight:800; color:var(--will-blue-dark); background:#fff; border:2px dashed var(--will-gold-dark); border-radius:12px; padding:.55rem .7rem; margin-top:.7rem; text-align:center; font-size:.86rem; }
+
+footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(--will-ink-soft); position:relative; z-index:1; }
+</style>
+</head>
+<body class="will-scope">
+
+<div class="top-bar-wrap">
+  <a href="money-matters.html" class="exit-btn">All Journeys</a>
+  <div class="progress-pill" id="counter">1 / 1</div>
+  <button class="map-btn" onclick="goToJourneyMap()">Map</button>
+</div>
+
+<svg width="0" height="0" style="position:absolute;">
+<defs>
+<symbol id="williamArt" viewBox="0 -14 340 274">
+  <defs>
+    <linearGradient id="wHeadGrad" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#B8ECF9"/>
+      <stop offset="60%" stop-color="#69C7E1"/>
+      <stop offset="100%" stop-color="#379AB8"/>
+    </linearGradient>
+    <linearGradient id="wBodyGrad" x1="0.1" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#8FDCEF"/>
+      <stop offset="55%" stop-color="#4FB4D4"/>
+      <stop offset="100%" stop-color="#2A82A2"/>
+    </linearGradient>
+    <linearGradient id="wLegGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2C82A0"/>
+      <stop offset="100%" stop-color="#1E5F78"/>
+    </linearGradient>
+    <radialGradient id="wSheen" cx="35%" cy="18%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".6"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- tail -->
+  <path d="M308 156 C324 154 334 164 336 180 C325 176 314 170 306 160 Z" fill="#4FB8D6"/>
+
+  <!-- legs (behind body): a far pair (tucked inward, mostly hidden by the body) plus the
+       near pair in front, so all four legs read clearly even from the side -->
+  <path d="M128 190 q-4 26 -1 46 q2 8 10 8 h13 q8 0 9 -8 q3 -20 -2 -44 Z" fill="url(#wLegGrad)"/>
+  <path d="M222 182 q-6 28 -2 50 q2 9 12 9 h18 q10 0 11 -9 q3 -22 -2 -48 Z" fill="url(#wLegGrad)"/>
+  <ellipse cx="142" cy="232" rx="15" ry="7" fill="#173F51"/>
+  <ellipse cx="238" cy="228" rx="18" ry="7" fill="#173F51"/>
+  <path d="M96 182 q-5 32 -2 56 q2 10 12 10 h18 q10 0 11 -10 q3 -26 -2 -54 Z" fill="url(#wLegGrad)"/>
+  <path d="M252 172 q-7 36 -3 64 q2 12 16 12 h24 q13 0 14 -12 q4 -30 -3 -62 Z" fill="url(#wLegGrad)"/>
+  <ellipse cx="118" cy="242" rx="20" ry="9" fill="#173F51"/>
+  <ellipse cx="272" cy="244" rx="28" ry="10" fill="#173F51"/>
+  <g stroke="#0E2C3A" stroke-width="1.2" stroke-linecap="round" opacity=".7">
+    <path d="M135 228 v6 M142 229 v6 M149 228 v6"/>
+    <path d="M230 224 v6 M238 225 v6 M246 224 v6"/>
+  </g>
+  <g stroke="#0E2C3A" stroke-width="1.4" stroke-linecap="round" opacity=".8">
+    <path d="M105 238 v8 M118 240 v8 M131 238 v8"/>
+    <path d="M256 240 v8 M272 242 v8 M288 240 v8"/>
+  </g>
+
+  <!-- BODY (rear + haunch), a shape distinct from the head, drawn first so the head overlaps it -->
+  <path d="M104,196 C98,168 106,138 128,116 C150,94 182,78 220,72
+           C258,66 292,76 312,100 C328,120 332,148 326,176
+           C320,202 302,220 270,228 C236,237 198,236 168,226
+           C140,217 114,214 104,196 Z" fill="url(#wBodyGrad)"/>
+  <path d="M120,205 C150,224 196,230 232,227 C260,224 284,216 302,202
+           C288,218 258,229 222,232 C186,235 150,229 126,216 Z" fill="#1B6E8E" opacity=".3"/>
+
+  <!-- HEAD (drawn on top of the body, creating a clear seam where the two overlap) -->
+  <g class="w-head-wrap">
+  <path d="M12,150 C5,126 6,90 22,66 C38,44 60,28 96,21 C122,16 146,22 156,40
+           C164,55 164,74 159,94 C154,118 143,144 124,164
+           C104,183 78,193 54,188 C34,184 20,172 13,158 Z" fill="url(#wHeadGrad)"/>
+
+  <!-- seam between head and body -->
+  <path d="M156,40 C165,58 165,80 158,102 C151,128 137,152 118,170 C104,183 88,190 72,190"
+        stroke="#12384A" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".38"/>
+
+  <!-- ears -->
+  <path d="M70 34 C60 18 60 0 72 -6 C86 4 90 24 80 40 Z" fill="#3AA2C2"/>
+  <path d="M112 26 C108 8 116 -6 130 -8 C138 6 134 26 118 38 Z" fill="#3AA2C2"/>
+  <path d="M71 30 C64 18 64 6 71 0 C80 8 82 20 77 32 Z" fill="#175A73"/>
+  <path d="M115 24 C113 10 118 -2 127 -4 C132 6 130 20 120 30 Z" fill="#175A73"/>
+
+  <!-- center face seam: from crown, between the eyes, down to the snout -->
+  <path d="M92 18 C82 36 74 56 70 78 C65 104 52 126 32 140" stroke="#12384A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".32"/>
+
+  <!-- eyes, close together like the plush -->
+  <g class="w-eyes-wrap">
+  <circle cx="53" cy="88" r="10" fill="#0E1E26"/>
+  <circle cx="86" cy="80" r="10" fill="#0E1E26"/>
+  <circle cx="49.5" cy="84" r="2.8" fill="#fff"/>
+  <circle cx="82.5" cy="76" r="2.8" fill="#fff"/>
+  </g>
+
+  <!-- nostrils + mouth -->
+  <ellipse cx="17" cy="126" rx="2.6" ry="1.9" fill="#0E2C3A"/>
+  <ellipse cx="22" cy="136" rx="2.6" ry="1.9" fill="#0E2C3A"/>
+  <path d="M10 144 q16 18 42 10" stroke="#0E2C3A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- small decorative pattern on top of the head, like the plush -->
+  <g stroke="#0E2C3A" stroke-width="1.2" fill="none" opacity=".75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M104 34 L104 16 M104 16 l-8 12 M104 16 l8 12 M104 16 l-13 8 M104 16 l13 8"/>
+    <g fill="#0E2C3A" stroke="none"><circle cx="104" cy="38" r="1.4"/><circle cx="99" cy="32" r="1.4"/><circle cx="109" cy="32" r="1.4"/></g>
+  </g>
+  </g>
+
+  <!-- glaze sheen highlight -->
+  <ellipse cx="90" cy="62" rx="78" ry="56" fill="url(#wSheen)"/>
+  <ellipse cx="230" cy="100" rx="70" ry="46" fill="url(#wSheen)" opacity=".5"/>
+
+  <!-- decorative lotus + papyrus line art on back/flank -->
+  <g stroke="#0E2C3A" stroke-width="1.35" fill="none" opacity=".82" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M188 108 L188 76 M188 76 l-10 17 M188 76 l10 17 M188 76 l-18 10 M188 76 l18 10"/>
+    <path d="M176 92 q12 -11 24 0"/>
+    <path d="M242 122 L246 82 M246 82 l-11 15 M246 82 l11 15 M246 82 l-17 8 M246 82 l17 8"/>
+    <path d="M278 140 L286 100 M286 100 l-10 14 M286 100 l10 14 M286 100 l-15 7 M286 100 l15 7"/>
+    <path d="M214 166 L208 128 M208 128 l-9 13 M208 128 l9 13 M208 128 l-14 6 M208 128 l14 6"/>
+    <g fill="#0E2C3A" stroke="none">
+      <circle cx="188" cy="114" r="1.7"/><circle cx="182" cy="107" r="1.7"/><circle cx="194" cy="107" r="1.7"/>
+      <circle cx="242" cy="128" r="1.7"/><circle cx="236" cy="119" r="1.7"/><circle cx="248" cy="119" r="1.7"/>
+      <circle cx="278" cy="146" r="1.7"/><circle cx="272" cy="136" r="1.7"/><circle cx="284" cy="136" r="1.7"/>
+    </g>
+    <path d="M262 190 l9 -15 l9 15 Z M284 194 l9 -15 l9 15 Z M240 194 l9 -15 l9 15 Z"/>
+  </g>
+</symbol>
+<symbol id="williamMini" viewBox="0 -14 340 274">
+  <use href="#williamArt"/>
+</symbol>
+
+<symbol id="williamArtFront" viewBox="0 -6 260 266">
+  <!-- legs: a rear pair tucked inward (mostly behind the body, feet peeking below) plus the
+       front pair, so all four legs are visible even head-on -->
+  <path d="M100 198 q-4 24 -1 42 q2 8 10 8 h12 q7 0 8 -8 q2 -18 -1 -40 Z" fill="url(#wLegGrad)"/>
+  <path d="M148 198 q-4 24 -1 42 q2 8 10 8 h12 q7 0 8 -8 q2 -18 -1 -40 Z" fill="url(#wLegGrad)"/>
+  <ellipse cx="112" cy="238" rx="14" ry="7" fill="#173F51"/>
+  <ellipse cx="160" cy="238" rx="14" ry="7" fill="#173F51"/>
+  <path d="M78 190 q-5 30 -2 52 q2 10 12 10 h16 q9 0 10 -10 q3 -24 -2 -50 Z" fill="url(#wLegGrad)"/>
+  <path d="M144 190 q-5 30 -2 52 q2 10 12 10 h16 q9 0 10 -10 q3 -24 -2 -50 Z" fill="url(#wLegGrad)"/>
+  <ellipse cx="94" cy="250" rx="19" ry="9" fill="#173F51"/>
+  <ellipse cx="172" cy="250" rx="19" ry="9" fill="#173F51"/>
+  <g stroke="#0E2C3A" stroke-width="1.1" stroke-linecap="round" opacity=".7">
+    <path d="M106 234 v6 M112 235 v6 M118 234 v6"/>
+    <path d="M154 234 v6 M160 235 v6 M166 234 v6"/>
+  </g>
+  <g stroke="#0E2C3A" stroke-width="1.3" stroke-linecap="round" opacity=".8">
+    <path d="M84 246 v8 M94 248 v8 M104 246 v8"/>
+    <path d="M162 246 v8 M172 248 v8 M182 246 v8"/>
+  </g>
+
+  <!-- body/head combined mass, seen face-on -->
+  <path d="M130,18 C185,18 222,55 222,110 C222,165 195,205 130,205 C65,205 38,165 38,110 C38,55 75,18 130,18 Z" fill="url(#wBodyGrad)"/>
+  <path d="M62,178 C90,198 168,198 198,178 C186,196 158,208 130,208 C102,208 74,196 62,178 Z" fill="#1B6E8E" opacity=".28"/>
+
+  <!-- glaze sheen -->
+  <ellipse cx="95" cy="60" rx="55" ry="42" fill="url(#wSheen)"/>
+
+  <g class="w-head-wrap" style="transform-origin:50% 42%;">
+  <!-- ears -->
+  <path d="M85 36 C72 24 68 6 78 -2 C92 6 96 26 90 42 Z" fill="#2F8FB0"/>
+  <path d="M175 36 C188 24 192 6 182 -2 C168 6 164 26 170 42 Z" fill="#2F8FB0"/>
+  <path d="M86 32 C78 22 76 10 82 4 C90 10 92 22 88 34 Z" fill="#175A73"/>
+  <path d="M174 32 C182 22 184 10 178 4 C170 10 168 22 172 34 Z" fill="#175A73"/>
+
+  <!-- center face seam -->
+  <path d="M130 22 V205" stroke="#0E2C3A" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".28"/>
+
+  <!-- eyes, close together like the plush -->
+  <g class="w-eyes-wrap">
+  <circle cx="103" cy="95" r="10" fill="#0E1E26"/>
+  <circle cx="157" cy="95" r="10" fill="#0E1E26"/>
+  <circle cx="99.5" cy="91" r="2.7" fill="#fff"/>
+  <circle cx="153.5" cy="91" r="2.7" fill="#fff"/>
+  </g>
+  <path d="M92 82 q10 -8 20 -1" stroke="#0E2C3A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".6"/>
+  <path d="M148 82 q10 -8 20 -1" stroke="#0E2C3A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".6"/>
+
+  <!-- nostrils + mouth -->
+  <ellipse cx="122" cy="128" rx="2.4" ry="1.8" fill="#0E2C3A"/>
+  <ellipse cx="138" cy="128" rx="2.4" ry="1.8" fill="#0E2C3A"/>
+  <path d="M108 140 q22 16 44 0" stroke="#0E2C3A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- decorative pattern, symmetric like the plush's front panel -->
+  <g stroke="#0E2C3A" stroke-width="1.3" fill="none" opacity=".8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 175 L78 155 M78 155 l-8 12 M78 155 l8 12 M78 155 l-13 6 M78 155 l13 6"/>
+    <path d="M182 175 L182 155 M182 155 l-8 12 M182 155 l8 12 M182 155 l-13 6 M182 155 l13 6"/>
+    <g fill="#0E2C3A" stroke="none">
+      <circle cx="78" cy="180" r="1.5"/><circle cx="72" cy="172" r="1.5"/><circle cx="84" cy="172" r="1.5"/>
+      <circle cx="182" cy="180" r="1.5"/><circle cx="176" cy="172" r="1.5"/><circle cx="188" cy="172" r="1.5"/>
+    </g>
+  </g>
+</symbol>
+</defs>
+</svg>
+
+<div class="deck-viewport">
+<div id="deck">
+
+<section class="session will-scope active" data-chapter="willhub" id="willhubSection">
+  <div class="factory-map-viewport" id="journeyMapViewport">
+    <div class="journey-map-canvas" id="journeyMapCanvas"></div>
+  </div>
+  <button class="factory-float-btn menu" onclick="toggleWillDrawer(true)">
+    <svg width="16" height="16" viewBox="0 0 20 20"><line x1="2" y1="5" x2="18" y2="5" stroke="#2B2F33" stroke-width="2.2" stroke-linecap="round"/><line x1="2" y1="10" x2="18" y2="10" stroke="#2B2F33" stroke-width="2.2" stroke-linecap="round"/><line x1="2" y1="15" x2="18" y2="15" stroke="#2B2F33" stroke-width="2.2" stroke-linecap="round"/></svg>
+    Menu
+  </button>
+  <button class="factory-float-btn recenter" onclick="recenterJourneyMap()" title="Find my next stop">
+    <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#2B2F33" stroke-width="2"/><circle cx="12" cy="12" r="2.2" fill="#2B2F33"/><line x1="12" y1="1" x2="12" y2="5" stroke="#2B2F33" stroke-width="2"/><line x1="12" y1="19" x2="12" y2="23" stroke="#2B2F33" stroke-width="2"/><line x1="1" y1="12" x2="5" y2="12" stroke="#2B2F33" stroke-width="2"/><line x1="19" y1="12" x2="23" y2="12" stroke="#2B2F33" stroke-width="2"/></svg>
+    Find My Stop
+  </button>
+  <div class="factory-hero-note">Tap a loading dock to begin. Finish one to unlock the next!</div>
+</section>
+
+<div class="will-drawer-overlay" id="willDrawerOverlay" onclick="if(event.target===this) toggleWillDrawer(false)">
+  <div class="will-drawer">
+    <div class="will-drawer-handle"></div>
+    <button class="will-drawer-close" onclick="toggleWillDrawer(false)" aria-label="Close">&#10005;</button>
+    <div class="hi-name">Hi Melissa</div>
+    <h1>William's Workshop</h1>
+    <p class="big-text">Before William was a soft blue hippo sitting on your shelf, he was an idea, then some materials, then a lot of people's work. Let's follow his whole journey around the world, from raw materials to your room!</p>
+    <svg width="160" height="122" viewBox="0 -14 340 274" style="margin:.4rem auto; display:block;"><use href="#williamArt"/></svg>
+    <div class="will-card" id="badgeCaseCard" style="margin-top:.6rem;"></div>
+  </div>
+</div>
+
+<section class="session will-scope" data-chapter="finale" style="text-align:center; position:relative;" id="finaleWrap">
+  <h1>You Did It!</h1>
+  <svg width="220" height="177" viewBox="0 -14 340 274" style="margin:.4rem auto;"><use href="#williamArt"/></svg>
+  <div class="will-card">
+    <h2 style="text-align:center;">Global Trade Master</h2>
+    <p class="big-text" style="text-align:center;">You followed William all the way around the world, from raw materials to a factory, onto a ship, across borders, and into your room. You learned how resources, labor, cost, trade, currency, supply and demand, and inflation all connect. William couldn't have done it without you!</p>
+    <div class="passport-stamps-grid" id="finaleStampsGrid" style="margin-top:.8rem;"></div>
+  </div>
+  <div class="will-btn-row"><button class="will-btn coral" onclick="goToJourneyMap()">Back to the Map</button></div>
+</section>
+
+</div>
+</div>
+
+<footer>Made for Melissa. William's story is inspired by the real "William the Hippo," an ancient Egyptian faience statuette at The Metropolitan Museum of Art, and by how toys travel the world today.</footer>
+
+<script>
+/* ================= REUSABLE POINTER DRAG-AND-DROP (mouse + touch, one API) ================= */
+const _snapbackPending = new WeakMap();
+function startDragFor(el, downEvent, getDropZones, onDrop){
+  // If this element is still mid-flight from a previous rejected drop (animating back to
+  // its slot), finish that instantly instead of letting a fast re-grab start from a
+  // half-animated, still-detached, wrongly-parented element.
+  const pending = _snapbackPending.get(el);
+  if(pending){
+    clearTimeout(pending.timeoutId);
+    el.style.transition = ''; el.style.position=''; el.style.left=''; el.style.top=''; el.style.width=''; el.style.margin=''; el.style.zIndex='';
+    if(pending.origNextSibling && pending.origNextSibling.parentNode===pending.origParent) pending.origParent.insertBefore(el, pending.origNextSibling);
+    else pending.origParent.appendChild(el);
+    _snapbackPending.delete(el);
+  }
+  let startX, startY, dragging=false, origParent, origNextSibling, origRect;
+  function getPoint(e){
+    if(e.touches && e.touches.length) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    if(e.changedTouches && e.changedTouches.length) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
+  function snapBack(){
+    el.style.transition = 'left .3s ease, top .3s ease';
+    el.style.left = origRect.left+'px';
+    el.style.top = origRect.top+'px';
+    const timeoutId = setTimeout(()=>{
+      el.style.position=''; el.style.left=''; el.style.top=''; el.style.width=''; el.style.margin=''; el.style.transition=''; el.style.zIndex='';
+      if(origNextSibling && origNextSibling.parentNode===origParent) origParent.insertBefore(el, origNextSibling);
+      else origParent.appendChild(el);
+      _snapbackPending.delete(el);
+    },300);
+    _snapbackPending.set(el, {timeoutId, origParent, origNextSibling});
+  }
+  function moveDrag(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const pt = getPoint(e);
+    el.style.left=(pt.x-startX)+'px';
+    el.style.top=(pt.y-startY)+'px';
+    const zones=getDropZones();
+    zones.forEach(z=>z.classList.remove('drag-over'));
+    el.style.pointerEvents='none';
+    const under=document.elementFromPoint(pt.x,pt.y);
+    el.style.pointerEvents='';
+    const zone=zones.find(z=>z===under||z.contains(under));
+    if(zone) zone.classList.add('drag-over');
+  }
+  function endDrag(e){
+    if(!dragging) return;
+    dragging=false;
+    document.removeEventListener('mousemove', moveDrag);
+    document.removeEventListener('mouseup', endDrag);
+    document.removeEventListener('touchmove', moveDrag);
+    document.removeEventListener('touchend', endDrag);
+    document.removeEventListener('touchcancel', endDrag);
+    el.classList.remove('dragging');
+    const pt = getPoint(e);
+    const zones=getDropZones();
+    zones.forEach(z=>z.classList.remove('drag-over'));
+    el.style.pointerEvents='none';
+    const under=document.elementFromPoint(pt.x,pt.y);
+    el.style.pointerEvents='';
+    const zone=zones.find(z=>z===under||z.contains(under));
+    let accepted=false;
+    if(zone) accepted = onDrop(zone, el);
+    if(accepted){
+      // el has been re-parented into its new home by onDrop; clear the "floating" drag
+      // styles now, otherwise it stays visually pinned at the drop coordinates (fixed
+      // position) even though it's now a DOM child of the drop zone.
+      el.style.position=''; el.style.left=''; el.style.top=''; el.style.width=''; el.style.margin=''; el.style.transition=''; el.style.zIndex='';
+    } else {
+      snapBack();
+    }
+    justFinishedDrag = true;
+    dragActive = false;
+    setTimeout(()=>{ justFinishedDrag = false; }, 50);
+  }
+  downEvent.preventDefault();
+  const pt = getPoint(downEvent);
+  dragging=true;
+  dragActive = true;
+  origParent=el.parentNode; origNextSibling=el.nextSibling;
+  origRect = el.getBoundingClientRect();
+  el.classList.add('dragging');
+  document.body.appendChild(el);
+  Object.assign(el.style,{position:'fixed', left:origRect.left+'px', top:origRect.top+'px', width:origRect.width+'px', margin:'0', zIndex:'9999'});
+  startX = pt.x-origRect.left; startY = pt.y-origRect.top;
+  document.addEventListener('mousemove', moveDrag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchmove', moveDrag, {passive:false});
+  document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchcancel', endDrag);
+}
+// A dragged (or snapping-back) chip is temporarily reparented to <body> so position:fixed
+// escapes the deck's 3D "perspective" containing block. That means a listener bound to the
+// chip's original container would stop receiving its events the moment it's mid-flight, so
+// drag handling is delegated from `document` instead (bound exactly once, ever) and each
+// chip's current drop-zones/onDrop are looked up by chip element, refreshed every time an
+// activity is (re)built. This also means revisiting a chapter can never stack up duplicate
+// listeners, since nothing new is ever attached to any per-chapter DOM node.
+const _chipHandlers = new WeakMap();
+let _globalDragBound = false;
+function _globalDragHandler(e){
+  const item = e.target.closest('.drag-chip');
+  if(!item) return;
+  const handlers = _chipHandlers.get(item);
+  if(!handlers) return;
+  startDragFor(item, e, handlers.getDropZones, handlers.onDrop);
+}
+function makeDraggablePool(container, itemSelector, getDropZones, onDrop){
+  container.querySelectorAll(itemSelector).forEach(chip=>{
+    _chipHandlers.set(chip, {getDropZones, onDrop});
+  });
+  if(!_globalDragBound){
+    document.addEventListener('mousedown', _globalDragHandler);
+    document.addEventListener('touchstart', _globalDragHandler, {passive:false});
+    _globalDragBound = true;
+  }
+}
+let justFinishedDrag = false;
+let dragActive = false;
+
+function playBlip(freq, dur){
+  try{
+    const ctx = window.__willAudioCtx || (window.__willAudioCtx = new (window.AudioContext||window.webkitAudioContext)());
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = freq; o.type='sine';
+    g.gain.setValueAtTime(0.08, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+
+/* ================= GENERIC DRAG-SORT (items into labeled bins) ================= */
+function buildDragSort(containerId, items, bins, onComplete, layout){
+  const root = document.getElementById(containerId);
+  const shuffled = items.slice().sort(()=>Math.random()-0.5);
+  const binsHTML = layout === 'horizontal'
+    ? `<div class="order-row">${bins.map(b=>`<div class="order-bin drop-zone" id="${containerId}-bin-${b.id}"><div class="will-bin-title">${b.label}</div></div>`).join('')}</div>`
+    : `<div style="display:flex; gap:.6rem; flex-wrap:wrap;">${bins.map(b=>`<div class="will-bin drop-zone" id="${containerId}-bin-${b.id}"><div class="will-bin-title">${b.label}</div></div>`).join('')}</div>`;
+  root.innerHTML = `
+    <div class="will-pool" id="${containerId}-pool">${shuffled.map(it=>`<div class="drag-chip" id="${containerId}-item-${it.id}" data-id="${it.id}">${ITEM_ICONS[it.id]||''}<span>${it.label}</span></div>`).join('')}</div>
+    ${binsHTML}`;
+  let placedCount = 0;
+  const pool = document.getElementById(`${containerId}-pool`);
+  function getZones(){ return bins.map(b=>document.getElementById(`${containerId}-bin-${b.id}`)); }
+  makeDraggablePool(root, '.drag-chip', getZones, (zone, el)=>{
+    const itemId = el.dataset.id;
+    const bin = bins.find(b=> `${containerId}-bin-${b.id}` === zone.id);
+    const item = items.find(i=>i.id===itemId);
+    if(bin.accepts.includes(itemId)){
+      zone.appendChild(el);
+      el.classList.add('placed');
+      el.style.cursor = 'default';
+      playBlip(700,0.15);
+      placedCount++;
+      if(placedCount === items.length){ setTimeout(()=>onComplete(), 200); }
+      return true;
+    } else {
+      el.classList.add('wrong-flash');
+      playBlip(260,0.15);
+      setTimeout(()=>el.classList.remove('wrong-flash'), 400);
+      return false;
+    }
+  });
+}
+
+/* ================= GENERIC LINK-MATCH (ported exactly from Starland's match game:
+   real pointer-drag with a live connecting line, click-to-select fallback, permanent
+   colored lines per matched pair, wrong-match shake+reset, confetti burst) ================= */
+const LINK_MATCH_PAIR_COLORS = ['#5AA9E6','#9B7FD4','#FF8A5B','#3CAA6B','#D9A544','#E85D5D'];
+function burst(wrapId, colors, count){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 5 + Math.random()*9;
+    p.style.width = p.style.height = size+'px';
+    p.style.left = (rect.width/2) + 'px';
+    p.style.top = (rect.height/2) + 'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const angle = Math.random()*2*Math.PI;
+    const dist = 50 + Math.random()*70;
+    p.style.setProperty('--dx', (Math.cos(angle)*dist)+'px');
+    p.style.setProperty('--dy', (Math.sin(angle)*dist)+'px');
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(), 1000);
+  }
+}
+function buildLinkMatch(containerId, pairs, onComplete){
+  const root = document.getElementById(containerId);
+  const lefts = pairs.map((p,i)=>({id:'L'+i, label:p.left, matchId:'R'+i}));
+  const rights = pairs.map((p,i)=>({id:'R'+i, label:p.right})).sort(()=>Math.random()-0.5);
+  const wrapId = `${containerId}-wrap`;
+  root.innerHTML = `<div class="link-match-wrap" id="${wrapId}">
+    <svg class="link-svg" id="${containerId}-svg"></svg>
+    <div class="link-match-col" id="${containerId}-lefts"></div>
+    <div class="link-match-col" id="${containerId}-rights"></div>
+  </div>`;
+  const wrap = document.getElementById(wrapId);
+  const leftsCol = document.getElementById(`${containerId}-lefts`);
+  const rightsCol = document.getElementById(`${containerId}-rights`);
+  leftsCol.innerHTML = lefts.map(l=>`<div class="link-item" data-id="${l.id}">${l.label}</div>`).join('');
+  rightsCol.innerHTML = rights.map(r=>`<div class="link-item" data-id="${r.id}">${r.label}</div>`).join('');
+
+  let selectedLeftId = null, dragFromId = null, matchedCount = 0, permLines = [];
+
+  function svgPoint(el){
+    const wr = wrap.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const isLeft = leftsCol.contains(el);
+    return { x: r.left - wr.left + (isLeft ? r.width : 0), y: r.top - wr.top + r.height/2 };
+  }
+  function redrawLines(){
+    const svg = document.getElementById(`${containerId}-svg`);
+    if(!svg) return;
+    const permHTML = permLines.map(l=>`<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" stroke="${l.color}" stroke-width="4" stroke-linecap="round"/>`).join('');
+    svg.innerHTML = permHTML + `<line id="${containerId}-templine" x1="0" y1="0" x2="0" y2="0" stroke="${LINK_MATCH_PAIR_COLORS[0]}" stroke-width="4" stroke-linecap="round" stroke-dasharray="6,5" style="display:none;"/>`;
+  }
+  redrawLines();
+
+  function leftEl(id){ return leftsCol.querySelector(`[data-id="${id}"]`); }
+  function rightEl(id){ return rightsCol.querySelector(`[data-id="${id}"]`); }
+
+  function clickLeft(el){
+    if(el.dataset.matched || dragFromId !== null) return;
+    leftsCol.querySelectorAll('.link-item').forEach(x=>x.style.outline='');
+    selectedLeftId = el.dataset.id;
+    el.style.outline = '3px solid #5AA9E6';
+    playBlip(600,0.08);
+  }
+  function clickRight(el){
+    if(selectedLeftId === null || el.dataset.matched) return;
+    resolveMatch(leftEl(selectedLeftId), el);
+  }
+  leftsCol.addEventListener('click', e=>{ const el = e.target.closest('.link-item'); if(el) clickLeft(el); });
+  rightsCol.addEventListener('click', e=>{ const el = e.target.closest('.link-item'); if(el) clickRight(el); });
+
+  function getPointerXY(e){
+    if(e.touches && e.touches.length) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    if(e.changedTouches && e.changedTouches.length) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
+  function pointerDown(e, el){
+    if(el.dataset.matched) return;
+    e.preventDefault(); e.stopPropagation();
+    dragActive = true;
+    dragFromId = el.dataset.id;
+    leftsCol.querySelectorAll('.link-item').forEach(x=>x.style.outline='');
+    el.style.outline = '3px solid #5AA9E6';
+    const tempLine = document.getElementById(`${containerId}-templine`);
+    const start = svgPoint(el);
+    tempLine.setAttribute('x1', start.x); tempLine.setAttribute('y1', start.y);
+    tempLine.setAttribute('x2', start.x); tempLine.setAttribute('y2', start.y);
+    tempLine.style.display = '';
+    playBlip(600,0.08);
+    document.addEventListener('pointermove', pointerMove);
+    document.addEventListener('pointerup', pointerUp, {once:true});
+    document.addEventListener('touchmove', pointerMove, {passive:false});
+    document.addEventListener('touchend', pointerUp, {once:true});
+  }
+  function pointerMove(e){
+    if(dragFromId === null) return;
+    const pt = getPointerXY(e);
+    const wr = wrap.getBoundingClientRect();
+    const tempLine = document.getElementById(`${containerId}-templine`);
+    if(tempLine){ tempLine.setAttribute('x2', pt.x - wr.left); tempLine.setAttribute('y2', pt.y - wr.top); }
+  }
+  function pointerUp(e){
+    document.removeEventListener('pointermove', pointerMove);
+    document.removeEventListener('touchmove', pointerMove);
+    const tempLine = document.getElementById(`${containerId}-templine`);
+    if(tempLine) tempLine.style.display = 'none';
+    dragActive = false;
+    if(dragFromId === null) return;
+    const pt = getPointerXY(e);
+    const target = document.elementFromPoint(pt.x, pt.y);
+    const rEl = target ? target.closest('.link-item') : null;
+    const lEl = leftEl(dragFromId);
+    const wasFrom = dragFromId;
+    dragFromId = null;
+    if(rEl && rightsCol.contains(rEl) && !rEl.dataset.matched){
+      resolveMatch(lEl, rEl);
+    } else if(lEl){
+      lEl.style.outline = '';
+    }
+  }
+  leftsCol.querySelectorAll('.link-item').forEach(el=>{
+    el.addEventListener('pointerdown', e=>pointerDown(e, el));
+    el.addEventListener('touchstart', e=>pointerDown(e, el), {passive:false});
+  });
+
+  function resolveMatch(lEl, rEl){
+    const correct = lefts.find(l=>l.id===lEl.dataset.id).matchId === rEl.dataset.id;
+    if(correct){
+      const color = LINK_MATCH_PAIR_COLORS[matchedCount % LINK_MATCH_PAIR_COLORS.length];
+      lEl.dataset.matched = 'true'; rEl.dataset.matched = 'true';
+      lEl.style.outline = '';
+      [lEl, rEl].forEach(el=>{ el.style.background = color+'22'; el.style.borderColor = color; el.style.color = color; el.classList.add('matched'); });
+      const p1 = svgPoint(lEl), p2 = svgPoint(rEl);
+      permLines.push({x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, color});
+      redrawLines();
+      matchedCount++;
+      selectedLeftId = null;
+      playBlip(700,0.15);
+      burst(wrapId, [color], 6);
+      if(matchedCount === pairs.length){ setTimeout(()=>onComplete(), 250); }
+    } else {
+      [lEl, rEl].forEach(el=>{ el.style.transition = 'background .15s ease, border-color .15s ease'; el.style.background = '#FBE1DE'; el.style.borderColor = '#E85D5D'; });
+      lEl.style.outline = '';
+      setTimeout(()=>{
+        if(!lEl.dataset.matched){ lEl.style.background=''; lEl.style.borderColor=''; }
+        if(!rEl.dataset.matched){ rEl.style.background=''; rEl.style.borderColor=''; }
+      }, 500);
+      playBlip(260,0.15);
+      selectedLeftId = null;
+    }
+  }
+}
+
+/* ================= GENERIC TAP QUIZ TILES ================= */
+function buildQuizTiles(containerId, revealId, nextBtnWrapId, question, onAnswered){
+  const root = document.getElementById(containerId);
+  const reveal = document.getElementById(revealId);
+  const opts = question.options.slice().sort(()=>Math.random()-0.5);
+  root.innerHTML = opts.map((o,i)=>`<button class="will-tile" style="display:block; width:100%;" data-correct="${o.correct}" onclick="answerQuizTile(this,'${containerId}','${revealId}','${nextBtnWrapId}')">${o.text}</button>`).join('');
+  window[`__quizExplain_${containerId}`] = question.explain || '';
+  window[`__quizOnAnswered_${containerId}`] = onAnswered;
+}
+function answerQuizTile(btn, containerId, revealId, nextBtnWrapId){
+  const root = document.getElementById(containerId);
+  const tiles = root.querySelectorAll('.will-tile');
+  const correct = btn.dataset.correct === 'true';
+  tiles.forEach(t=>t.classList.add('disabled'));
+  if(correct){ btn.classList.add('correct-flash'); playBlip(700,0.15); }
+  else { btn.classList.add('wrong-flash'); playBlip(260,0.15);
+    tiles.forEach(t=>{ if(t.dataset.correct==='true') t.classList.add('correct-flash'); });
+  }
+  const reveal = document.getElementById(revealId);
+  reveal.textContent = correct ? "That's right!" : (window[`__quizExplain_${containerId}`] || 'Not quite, but now you know!');
+  reveal.classList.toggle('wrong', !correct);
+  reveal.classList.add('shown');
+  document.getElementById(nextBtnWrapId).style.display = '';
+  const cb = window[`__quizOnAnswered_${containerId}`];
+  if(cb) cb(correct);
+}
+
+/* ================= DECK NAVIGATION ================= */
+let sessions = [];
+let current = 0;
+let transitioning = false;
+function rebuildSessions(){ sessions = Array.from(document.querySelectorAll('.session')); }
+function updateNav(){ document.getElementById('counter').textContent = (current+1) + ' / ' + sessions.length; }
+function goTo(idx){
+  if(transitioning || dragActive) return; // never flip/switch the card while a transition or a drag is already happening
+  if(idx < 0 || idx >= sessions.length || idx === current) return;
+  transitioning = true;
+  const curEl = sessions[current];
+  const nextEl = sessions[idx];
+  curEl.classList.remove('active');
+  nextEl.classList.add('active', 'entering-next');
+  setTimeout(()=>{ nextEl.classList.remove('entering-next'); transitioning = false; }, 150);
+  current = idx;
+  updateNav();
+  window.scrollTo({top:0, behavior:'auto'});
+  if(nextEl.dataset.chapter === 'willhub'){ renderJourneyMap(); renderBadgeCase(); initFactoryMapDrag(); setTimeout(()=>{ if(!document.getElementById('journeyMapViewport').dataset.userScrolled) recenterJourneyMap(); }, 60); }
+  if(nextEl.dataset.chapter === 'finale') renderFinale();
+  if(nextEl.dataset.role === 'activity') activityRender(CHAPTERS_BY_KEY[nextEl.dataset.ckey]);
+  else if(nextEl.dataset.role === 'quiz') initQuizScreen(nextEl.dataset.ckey);
+  else if(nextEl.dataset.role === 'result') fillResult(nextEl.dataset.ckey);
+}
+function nextCard(){ goTo(current+1); }
+function prevCard(){ goTo(current-1); }
+function goHome(){ window.location.href = 'money-matters.html'; }
+function goToJourneyMap(){ jumpToChapter('willhub'); }
+function jumpToChapter(key){
+  const idx = sessions.findIndex(s => s.dataset.chapter === key);
+  if(idx >= 0) goTo(idx);
+}
+
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+});
+
+/* ================= PERSISTENCE ================= */
+const CHAPTER_ORDER = ['res','real','chain','labor','build','cost','profit','tax','ship','trade','tariff','currency','sd','inflation','recap'];
+function loadChecksDone(){
+  try{
+    const v = JSON.parse(localStorage.getItem('melissaMoneyHippoChecksDone_v1') || 'null');
+    if(Array.isArray(v) && v.length === CHAPTER_ORDER.length) return v;
+  }catch(e){}
+  return CHAPTER_ORDER.map(()=>false);
+}
+const checksDone = loadChecksDone();
+function persistDone(key){
+  const idx = CHAPTER_ORDER.indexOf(key);
+  if(idx >= 0){ checksDone[idx] = true; localStorage.setItem('melissaMoneyHippoChecksDone_v1', JSON.stringify(checksDone)); }
+}
+function isChapterUnlocked(i){ return i === 0 || checksDone[i-1]; }
+
+/* ================= CHAPTER CONTENT (fact-checked) ================= */
+const CHAPTERS = [
+{ key:'res', title:"Where It All Begins", icon:'\u{1F331}', desc:'Natural resources vs. man-made materials',
+  intro:`<p>Every toy starts as raw materials, the stuff nature or people provide before anything is built. Soft cotton comes from the fluffy pod of a cotton plant. The real ancient William was covered in a blue glaze called <b>faience</b>, made by grinding up quartz sand. Some materials come straight from nature. Others are made by people in factories, like plastic and dye.</p>
+  <div class="fact-box"><b>Real fact:</b> Faience isn't clay at all. It's made from crushed quartz mixed with minerals that turn bright blue-green when heated, a technique Egyptian crafters used over 4,000 years ago.</div>`,
+  activityTitle:'Sort the materials',
+  activity:{type:'dragsort',
+    items:[
+      {id:'cotton', label:'Cotton plant fluff'},
+      {id:'wool', label:"Sheep's wool"},
+      {id:'sand', label:'Quartz sand'},
+      {id:'wood', label:'Tree wood'},
+      {id:'poly', label:'Polyester stuffing'},
+      {id:'dye', label:'Fabric dye'},
+      {id:'plastic', label:'Plastic eyes'},
+      {id:'thread', label:'Nylon thread'}
+    ],
+    bins:[
+      {id:'nature', label:'Straight From Nature', accepts:['cotton','wool','sand','wood']},
+      {id:'made', label:'Made By People', accepts:['poly','dye','plastic','thread']}
+    ]},
+  quiz:[
+    {q:'What is faience made from?', options:[{text:'Crushed quartz sand',correct:true},{text:'Melted plastic',correct:false},{text:'Tree bark',correct:false}], explain:'Faience is a glassy material made from ground quartz, colored bright blue when fired.'},
+    {q:'Which of these comes straight from nature?', options:[{text:"Sheep's wool",correct:true},{text:'Polyester stuffing',correct:false},{text:'Nylon thread',correct:false}], explain:'Wool grows on sheep. Polyester and nylon are man-made from chemicals.'},
+    {type:'tf', statement:'Plastic stuffing comes straight from a plant, just like cotton.', answer:false, explain:'Plastic and polyester are man-made in factories from chemicals, not grown.'},
+    {q:'Where does cotton fluff come from?', options:[{text:'A cotton plant',correct:true},{text:'A factory machine',correct:false},{text:'An oil well',correct:false}], explain:'Cotton grows naturally on cotton plants before it\u2019s spun and woven.'}
+  ]},
+
+{ key:'real', title:'Meet the Real William', icon:'\u{1F3DB}\uFE0F', desc:'The 4,000-year-old hippo at the museum',
+  intro:`<p>Your soft blue hippo is named after a real statue! About 4,000 years ago in ancient Egypt, an artist made a small hippo out of faience for a tomb. In 1917, it came to The Metropolitan Museum of Art in New York, and in 1931 someone gave it the nickname "William." Today he's the museum's most famous unofficial mascot.</p>
+  <div class="fact-box"><b>Real fact:</b> The real William is only about 8 inches long, smaller than your plush hippo!</div>`,
+  activityTitle:'Match William to his story',
+  activity:{type:'linkmatch', pairs:[
+    {left:'Blue glaze', right:'Made from crushed quartz called faience'},
+    {left:'Lotus flowers', right:'Symbolize rebirth, since they close at night and reopen each morning'},
+    {left:'Three broken legs', right:'Broken on purpose in ancient times, so the statue "couldn\u2019t come to life"'}
+  ]},
+  quiz:[
+    {q:'Where does the real William live today?', options:[{text:'The Metropolitan Museum of Art',correct:true},{text:'A zoo in Egypt',correct:false},{text:'A toy factory',correct:false}], explain:'William has lived at The Met in New York City since 1917.'},
+    {q:'Why did ancient Egyptians paint lotus flowers on hippo statues?', options:[{text:'They symbolize rebirth',correct:true},{text:'Lotus flowers were the hippo\u2019s favorite food',correct:false},{text:'It was the artist\u2019s signature',correct:false}], explain:'Lotus flowers close every night and open again each morning, so they became a symbol of rebirth.'},
+    {type:'tf', statement:'The real William was made in ancient Egypt.', answer:true, explain:'He was made during Egypt\u2019s Middle Kingdom, about 4,000 years ago.'},
+    {q:'What is faience actually made from?', options:[{text:'Crushed quartz sand',correct:true},{text:'Melted glass bottles',correct:false},{text:'Clay from a river',correct:false}], explain:'Faience is made from ground quartz mixed with minerals, then fired until it turns blue.'}
+  ]},
+
+{ key:'chain', title:'From Farm to Factory', icon:'\u{1F69B}', desc:'The supply chain: how raw materials become a toy',
+  intro:`<p>The path a material takes on its way to becoming a finished product is called a <b>supply chain</b>. For a fabric toy like William, that chain has several steps, and each one happens in a different place, sometimes even in different countries.</p>
+  <div class="fact-box"><b>Real fact:</b> A single T-shirt or plush toy might cross several countries before it's finished: one country grows the cotton, another spins it into thread, another sews the final product.</div>`,
+  activityTitle:'Put the supply chain in order',
+  activity:{type:'dragorder', steps:[
+    'Cotton grows on a farm',
+    'Cotton is spun into thread',
+    'Thread is woven into soft fabric',
+    'Fabric is cut and sewn into a hippo shape',
+    'The hippo is stuffed, finished, and boxed'
+  ]},
+  quiz:[
+    {q:'What do we call the path materials take to become a finished product?', options:[{text:'A supply chain',correct:true},{text:'A shopping list',correct:false},{text:'A factory floor',correct:false}], explain:'A supply chain is every step and place a product passes through before it reaches you.'},
+    {q:'What happens right after cotton is spun into thread?', options:[{text:'It\u2019s woven into fabric',correct:true},{text:'It\u2019s shipped to a store',correct:false},{text:'It grows on a farm',correct:false}], explain:'Thread has to become fabric before it can be cut and sewn.'},
+    {type:'tf', statement:'A toy can be finished by a factory in a completely different country from where its cotton was grown.', answer:true, explain:'Supply chains often cross several countries before a product is finished.'},
+    {type:'tf', statement:'A supply chain always happens inside just one single factory.', answer:false, explain:'A supply chain usually involves many different places and steps, not just one factory.'}
+  ]},
+
+{ key:'labor', title:'Many Hands at Work', icon:'\u{1F477}', desc:'Labor, factories, and dividing up the job',
+  intro:`<p>No single person makes a whole toy by themselves in a factory. Instead, workers each focus on one job, called the <b>division of labor</b>. One person cuts fabric, another sews it, another stuffs it. Doing this lets factories make toys faster and more consistently. Every worker's time and skill is worth money, that's called <b>labor</b>, and it's a real cost of making anything.</p>
+  <div class="fact-box"><b>Real fact:</b> This idea of splitting a job into small specialized steps is called "division of labor," an idea that became especially important once factories were invented over 200 years ago.</div>`,
+  activityTitle:'Assign each worker to their station',
+  activity:{type:'dragsort', layout:'horizontal',
+    items:[
+      {id:'cutter', label:'Cutter'},
+      {id:'sewer', label:'Sewer'},
+      {id:'stuffer', label:'Stuffer'},
+      {id:'inspector', label:'Inspector'}
+    ],
+    bins:[
+      {id:'cut', label:'Cutting Station', accepts:['cutter']},
+      {id:'sew', label:'Sewing Station', accepts:['sewer']},
+      {id:'stuff', label:'Stuffing Station', accepts:['stuffer']},
+      {id:'check', label:'Checking Station', accepts:['inspector']}
+    ]},
+  quiz:[
+    {q:'Why do factories split work into small jobs for different people?', options:[{text:'It makes production faster and more consistent',correct:true},{text:'It\u2019s a rule in every country',correct:false},{text:'It uses less fabric',correct:false}], explain:'Specializing in one task lets each worker get fast and skilled at that one job.'},
+    {q:'What do we call paying people for the work and time they put in?', options:[{text:'Labor cost',correct:true},{text:'Import tax',correct:false},{text:'Profit',correct:false}], explain:'Labor is people\u2019s work, and paying for it is part of what it costs to make something.'},
+    {type:'tf', statement:'In most toy factories, one single worker builds the entire toy alone, start to finish.', answer:false, explain:'Factories usually split the job across many workers, each doing one step.'},
+    {q:'What do we call it when each worker specializes in one small job?', options:[{text:'Division of labor',correct:true},{text:'Assembly shopping',correct:false},{text:'Currency exchange',correct:false}], explain:'Division of labor means splitting a job into smaller specialized tasks.'}
+  ]},
+
+{ key:'build', title:'Build Your Own William!', desc:'Assemble him step by step, box him, and send him off',
+  intro:`<p>Now you know about materials and the workers who build toys. Let's actually build one! Drag each piece onto William in the right order to put him together, just like a real toy line. When he's finished, seal him in a box and load him onto the truck to be exported to a store.</p>
+  <div class="fact-box"><b>Real fact:</b> Factory workers follow the exact same order every single time. That's part of what division of labor and specialization are all about: doing your one step quickly and well, over and over.</div>`,
+  activityTitle:'Assemble, box, and ship William',
+  activity:{type:'buildwilliam'},
+  quiz:[
+    {q:'Why do workers build a toy in the same order every time?', options:[{text:'It keeps quality consistent and makes production faster',correct:true},{text:'It\u2019s required by international law',correct:false},{text:'It makes the toy lighter',correct:false}], explain:'Following the same steps in order helps workers get fast and consistent, so every toy comes out the same way.'},
+    {type:'tf', statement:'In a real toy factory, the toy is usually sewn together before it is stuffed.', answer:true, explain:'The fabric pieces are cut and sewn into a shape first, then turned right-side out and filled with stuffing.'},
+    {q:'What usually happens right after a toy is finished and checked?', options:[{text:'It gets boxed up for shipping',correct:true},{text:'It gets thrown away',correct:false},{text:'It turns back into raw material',correct:false}], explain:'Once a toy passes inspection, it\u2019s packaged so it can travel safely.'},
+    {type:'tf', statement:'Toys are usually loaded onto trucks or ships only after they\u2019re boxed.', answer:true, explain:'Boxing protects toys so they can be safely loaded and shipped toward stores.'}
+  ]},
+
+{ key:'cost', title:"What's Inside a Price?", icon:'\u{1F4B0}', desc:'Materials, labor, shipping, and the store\u2019s share',
+  intro:`<p>When you see a price tag on a toy, several costs are stacked inside it: the <b>materials</b> to make it, the <b>labor</b> to build it, the <b>shipping</b> to move it around the world, and a small share for the <b>store</b> that sells it. Try moving the sliders below to build your own hippo's price!</p>`,
+  activityTitle:'Build William\u2019s price',
+  activity:{type:'costbars'},
+  quiz:[
+    {q:'Which of these is NOT usually part of a toy\u2019s price?', options:[{text:'The weather that day',correct:true},{text:'The cost of materials',correct:false},{text:'The cost of shipping',correct:false}], explain:'Prices are built from real costs like materials, labor, and shipping, not the weather!'},
+    {q:'If you add up materials, labor, shipping, and the store\u2019s share, what do you get?', options:[{text:'The final price',correct:true},{text:'The profit only',correct:false},{text:'The tax rate',correct:false}], explain:'Those four pieces stack up to make the price you see on the tag.'},
+    {type:'tf', statement:'Shipping a toy across the ocean costs nothing.', answer:false, explain:'Shipping costs money too, which is part of why toys cost what they do.'},
+    {q:'What four things usually stack up to make a toy\u2019s price?', options:[{text:'Materials, labor, shipping, and the store\u2019s share',correct:true},{text:'Only the box color',correct:false},{text:'Only the weather',correct:false}], explain:'Those four pieces stack up together to make the price you see on the tag.'}
+  ]},
+
+{ key:'profit', title:'Cost, Price, and Profit', icon:'\u2696\uFE0F', desc:'The difference between what it costs and what it earns',
+  intro:`<p>These three words sound similar but mean different things. <b>Cost</b> is what it takes to make something. <b>Price</b> is what people pay for it. <b>Profit</b> is what's left over after you subtract the cost from the price, it's the reward for making and selling something well.</p>
+  <div class="fact-box"><b>Try it:</b> If William costs $6 to make and sells for $10, the profit is $10 \u2212 $6 = $4.</div>`,
+  activityTitle:'Find the profit',
+  activity:{type:'profit'},
+  quiz:[
+    {q:'If a toy costs $5 to make and sells for $9, what is the profit?', options:[{text:'$4',correct:true},{text:'$9',correct:false},{text:'$14',correct:false}], explain:'Profit = Price \u2212 Cost, so $9 \u2212 $5 = $4.'},
+    {q:'What happens if the price is lower than the cost?', options:[{text:'The seller loses money',correct:true},{text:'The seller earns extra profit',correct:false},{text:'Nothing changes',correct:false}], explain:'If price is less than cost, there\u2019s no profit, the seller actually loses money on each one sold.'},
+    {type:'tf', statement:'If the price equals the cost exactly, there is no profit.', answer:true, explain:'Profit only exists when price is higher than cost.'},
+    {q:'Which of these finds the profit?', options:[{text:'Price minus Cost',correct:true},{text:'Cost minus Price',correct:false},{text:'Price times Cost',correct:false}], explain:'Profit is always the price you sold it for minus what it cost to make.'}
+  ]},
+
+{ key:'tax', title:'Taxes: Everyone Chips In', icon:'\u{1F3DB}\uFE0F', desc:'Sales tax and what it helps pay for',
+  intro:`<p>When you buy something at a store, sometimes you pay a little extra money called <b>sales tax</b>. That money doesn't go to the store, it goes to the government to help pay for things everyone uses, like roads, schools, parks, and firefighters.</p>
+  <div class="fact-box"><b>Real fact:</b> Sales tax rates are different in every U.S. state, and a few states, like Oregon and Montana, don't charge a statewide sales tax at all!</div>`,
+  activityTitle:'Add the sales tax',
+  activity:{type:'taxbar'},
+  quiz:[
+    {q:'What does sales tax money usually help pay for?', options:[{text:'Shared things like roads, schools, and parks',correct:true},{text:'Making toys cost less',correct:false},{text:'Nothing, it just disappears',correct:false}], explain:'Governments use tax money to pay for things everyone shares and uses.'},
+    {type:'tf', statement:'Every state in the U.S. charges the exact same sales tax rate.', answer:false, explain:'Each state sets its own sales tax rate, so they\u2019re different across the country, and a few states charge none at all.'},
+    {q:'When do you usually pay sales tax?', options:[{text:'When you buy something at a store',correct:true},{text:'Only on your birthday',correct:false},{text:'Only in December',correct:false}], explain:'Sales tax is added at checkout on most purchases in the U.S.'},
+    {type:'tf', statement:'A few U.S. states charge no statewide sales tax at all.', answer:true, explain:'States like Oregon and Montana don\u2019t charge a statewide sales tax.'}
+  ]},
+
+{ key:'ship', title:'Loading the Ship', icon:'\u{1F6A2}', desc:'How toys travel across oceans',
+  intro:`<p>Once toys are made, they usually travel by truck, train, or giant cargo ship to reach stores around the world. Ships carry huge metal boxes called <b>shipping containers</b>. A single large container ship can carry thousands of containers at once, each one packed full of goods like toys, clothes, and electronics.</p>
+  <div class="fact-box"><b>Real fact:</b> One standard shipping container could hold many thousands of soft toys the size of William, all traveling together to save money on the trip.</div>`,
+  activityTitle:'Load William\u2019s container',
+  activity:{type:'shippack'},
+  quiz:[
+    {q:'What are the big metal boxes on cargo ships called?', options:[{text:'Shipping containers',correct:true},{text:'Suitcases',correct:false},{text:'Warehouses',correct:false}], explain:'Shipping containers are stacked by the thousands on huge cargo ships.'},
+    {q:'Why do companies pack many toys into one container instead of shipping them one at a time?', options:[{text:'It saves money and is more efficient',correct:true},{text:'It\u2019s required by law everywhere',correct:false},{text:'Ships can only carry one item',correct:false}], explain:'Packing full containers is much cheaper per toy than shipping items separately.'},
+    {type:'tf', statement:'A single cargo ship can carry thousands of shipping containers.', answer:true, explain:'The biggest container ships carry over 20,000 containers at once.'},
+    {type:'tf', statement:'A cargo ship can stack containers many layers high on top of each other.', answer:true, explain:'Modern container ships stack thousands of containers several layers high, both on deck and below it.'}
+  ]},
+
+{ key:'trade', title:'Crossing Borders', icon:'\u{1F30D}', desc:'Imports and exports around the world',
+  intro:`<p>When a country sends goods to another country, that's called an <b>export</b>. When a country receives goods from another country, that's called an <b>import</b>. Toys like William often cross an ocean between the two! China makes roughly 70% of the world's toys and exports them everywhere, while countries like the United States import a huge share of the toys sold in stores.</p>
+  <div class="fact-box"><b>Real fact:</b> India now exports toys to more than 150 countries around the world, a number that has grown quickly in recent years.</div>`,
+  activityTitle:'Sort import or export',
+  activity:{type:'dragsort',
+    items:[
+      {id:'chinamake', label:'A factory in China ships toys overseas'},
+      {id:'indiamake', label:'A factory in India sends toys abroad'},
+      {id:'usbuy', label:'A U.S. store brings toys in from overseas'},
+      {id:'ukbuy', label:'A UK shop brings in toys from another country'}
+    ],
+    bins:[
+      {id:'export', label:'Export (sending out)', accepts:['chinamake','indiamake']},
+      {id:'import', label:'Import (bringing in)', accepts:['usbuy','ukbuy']}
+    ]},
+  quiz:[
+    {q:'If a country sends goods to another country, that\u2019s called a(n)...', options:[{text:'Export',correct:true},{text:'Import',correct:false},{text:'Inflation',correct:false}], explain:'Export means sending goods out to another country.'},
+    {q:'About how much of the world\u2019s toys does China make?', options:[{text:'Around 70%',correct:true},{text:'Around 5%',correct:false},{text:'100%',correct:false}], explain:'China manufactures roughly 70% of the world\u2019s toys, more than any other country.'},
+    {type:'tf', statement:'When a country sends goods to another country, that is called an import.', answer:false, explain:'Sending goods out is an export. Bringing goods in is an import.'},
+    {q:'Which country exports toys to more than 150 other countries?', options:[{text:'India',correct:true},{text:'A country with no factories',correct:false},{text:'No country does this',correct:false}], explain:'India now exports toys to more than 150 countries, a number that has grown quickly.'}
+  ]},
+
+{ key:'tariff', title:'Crossing the Border: Tariffs', icon:'\u{1F6A2}', desc:'A special tax on goods entering a country',
+  intro:`<p>A <b>tariff</b> is a tax a government charges on goods that come in from another country. When a factory ships toys like William into a new country to sell, that country's government may charge a tariff before the toys can be sold there. Tariffs usually make imported goods cost a little more.</p>
+  <div class="fact-box"><b>Real fact:</b> Governments have used tariffs for hundreds of years, both to raise money and to help local companies compete with goods made elsewhere.</div>`,
+  activityTitle:'Add the tariff',
+  activity:{type:'tariffbar'},
+  quiz:[
+    {q:'What is a tariff?', options:[{text:'A tax on goods coming into a country',correct:true},{text:'A type of toy',correct:false},{text:'A kind of currency',correct:false}], explain:'A tariff is a tax a government charges on imported goods.'},
+    {type:'tf', statement:'Tariffs usually make imported goods cost less.', answer:false, explain:'Tariffs are a tax, so they usually make imported goods cost more, not less.'},
+    {q:'Who usually decides to charge a tariff?', options:[{text:'A country\u2019s government',correct:true},{text:'A single shopper',correct:false},{text:'The toy factory itself',correct:false}], explain:'Governments set the tariff rules for goods crossing their borders.'},
+    {type:'tf', statement:'Tariffs have been used by governments for a very long time.', answer:true, explain:'Tariffs are one of the oldest tools governments have used to raise money and support local businesses.'}
+  ]},
+
+{ key:'currency', title:'Money Around the World', icon:'\u{1F4B1}', desc:'Every country has its own kind of money',
+  intro:`<p>Different countries use different kinds of money, called <b>currency</b>. The United States uses the dollar ($), Japan uses the yen (\u00A5), Egypt (home of the real William!) uses the Egyptian pound (E\u00A3), and many European countries share the euro (\u20AC). When goods cross borders, money often has to be exchanged from one currency into another.</p>`,
+  activityTitle:'Match the country to its money',
+  activity:{type:'linkmatch', pairs:[
+    {left:'United States', right:'US Dollar ($)'},
+    {left:'Japan', right:'Japanese Yen (\u00A5)'},
+    {left:'Egypt', right:'Egyptian Pound (E\u00A3)'},
+    {left:'France & Germany', right:'Euro (\u20AC)'}
+  ]},
+  quiz:[
+    {q:'What do we call the money used in a particular country?', options:[{text:'Currency',correct:true},{text:'Export',correct:false},{text:'Inflation',correct:false}], explain:'Currency is the type of money a country officially uses.'},
+    {q:'Which currency do France and Germany share?', options:[{text:'The Euro',correct:true},{text:'The Dollar',correct:false},{text:'The Yen',correct:false}], explain:'The euro is used by many countries in Europe, including France and Germany.'},
+    {type:'tf', statement:'Japan\u2019s currency is called the yen.', answer:true, explain:'Japan\u2019s currency is the yen, written as \u00A5.'},
+    {type:'tf', statement:'Every country in the world uses the exact same currency.', answer:false, explain:'Most countries have their own unique currency.'}
+  ]},
+
+{ key:'sd', title:'Supply and Demand', icon:'\u{1F4CA}', desc:'Why prices go up and down',
+  intro:`<p><b>Supply</b> is how much of something is available. <b>Demand</b> is how much people want it. When lots of people want a toy but there aren't many left (high demand, low supply), the price often goes up. When there's plenty available and few people want it (low demand, high supply), the price often goes down. Try the sliders and watch the price change!</p>`,
+  activityTitle:'Explore supply and demand',
+  activity:{type:'supplydemand'},
+  quiz:[
+    {q:'If demand is high and supply is low, what usually happens to price?', options:[{text:'It goes up',correct:true},{text:'It goes down',correct:false},{text:'It never changes',correct:false}], explain:'When many people want something scarce, sellers can often charge more.'},
+    {q:'What is "supply"?', options:[{text:'How much of something is available',correct:true},{text:'How much people want something',correct:false},{text:'The cost to ship it',correct:false}], explain:'Supply is the amount available to sell or use.'},
+    {type:'tf', statement:'When supply is high and demand is low, prices usually go up.', answer:false, explain:'With lots available and few buyers, prices usually go down, not up.'},
+    {q:'If demand goes up but supply stays the same, what usually happens to the price?', options:[{text:'It goes up',correct:true},{text:'It goes down',correct:false},{text:'Nothing changes',correct:false}], explain:'More buyers chasing the same amount of stuff usually pushes the price up.'}
+  ]},
+
+{ key:'inflation', title:'When Prices Climb', icon:'\u{1F4C8}', desc:'What inflation means, with a real example',
+  intro:`<p><b>Inflation</b> means that, over time, the same item usually costs more money than it used to. It happens slowly, a little each year, almost everywhere in the world. Here's a real example: an average movie ticket in the United States cost about $2.69 in 1980. By 2025, the average ticket cost about $16.08! Try the time slider below.</p>`,
+  activityTitle:'Travel through time',
+  activity:{type:'inflation'},
+  quiz:[
+    {q:'What does "inflation" mean?', options:[{text:'Prices tend to rise over time',correct:true},{text:'Toys get bigger every year',correct:false},{text:'Money never changes in value',correct:false}], explain:'Inflation means the same goods and services usually cost more money as years go by.'},
+    {q:'About how much did an average U.S. movie ticket cost in 1980?', options:[{text:'About $2.69',correct:true},{text:'About $16.00',correct:false},{text:'About $0.25',correct:false}], explain:'Movie tickets averaged about $2.69 in 1980, compared to around $16 in 2025.'},
+    {type:'tf', statement:'Inflation means prices usually go down over time.', answer:false, explain:'Inflation means prices usually go up over time, not down.'},
+    {type:'tf', statement:'Inflation usually happens instantly, overnight.', answer:false, explain:'Inflation usually happens slowly, a little bit each year.'}
+  ]},
+
+{ key:'recap', title:"William's Big Picture", icon:'\u{1F3C6}', desc:'Everything connects, review time!',
+  intro:`<p>You followed William's whole journey: from raw materials, through a factory full of hardworking people, into a price tag, onto a cargo ship, across a border, through an exchange of currency, and finally into your hands, shaped along the way by supply, demand, and inflation. That's the global economy in action!</p>`,
+  activityTitle:'Match the big ideas',
+  activity:{type:'linkmatch', pairs:[
+    {left:'Resources', right:'The raw materials something is made from'},
+    {left:'Labor', right:'The work people do to make something'},
+    {left:'Import/Export', right:'Goods crossing borders between countries'},
+    {left:'Inflation', right:'Prices rising slowly over time'}
+  ]},
+  quiz:[
+    {q:'What connects a cotton farm, a factory, a cargo ship, and your toy shelf?', options:[{text:'A global supply chain',correct:true},{text:'A single company that does it all alone',correct:false},{text:'Nothing, they\u2019re unrelated',correct:false}], explain:'A supply chain links every step, in every country, that brings a product to you.'},
+    {q:'Which of these is part of what makes up a toy\u2019s price?', options:[{text:'Materials, labor, and shipping',correct:true},{text:'Only the color of the box',correct:false},{text:'The weather on the day it ships',correct:false}], explain:'Real costs like materials, labor, and shipping stack up into the final price.'},
+    {type:'tf', statement:'A supply chain can cross many different countries before a product reaches you.', answer:true, explain:'A single toy often passes through several countries before it\u2019s finished and shipped.'},
+    {q:'What connects a farm, a factory, a ship, and a store?', options:[{text:'A supply chain',correct:true},{text:'Nothing, they are unrelated',correct:false},{text:'Only luck',correct:false}], explain:'A supply chain links every step, in every country, that brings a product to you.'}
+  ]}
+];
+
+/* ================= SVG ICONS FOR DRAG ITEMS (no emoji) ================= */
+const ITEM_ICONS = {
+  cotton: `<svg viewBox="0 0 24 24"><path d="M12 22 L12 13" stroke="#3CAA6B" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="8" r="4.3" fill="#fff" stroke="#B9B9B9" stroke-width="1.2"/><circle cx="7" cy="11" r="3.3" fill="#fff" stroke="#B9B9B9" stroke-width="1.2"/><circle cx="17" cy="11" r="3.3" fill="#fff" stroke="#B9B9B9" stroke-width="1.2"/></svg>`,
+  wool: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#F4C9A0" stroke="#C1552F" stroke-width="1.3"/><path d="M6 10 q6 -5 12 0 M5 14 q7 4 14 0 M8 6 q4 8 0 14" stroke="#C1552F" stroke-width="1.1" fill="none"/></svg>`,
+  sand: `<svg viewBox="0 0 24 24"><path d="M3 20 L12 5 L21 20 Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.2"/><circle cx="9" cy="15" r="1" fill="#A97C2B"/><circle cx="15" cy="13" r="1" fill="#A97C2B"/><circle cx="12" cy="17" r="1" fill="#A97C2B"/></svg>`,
+  wood: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#C9955A" stroke="#8A6427" stroke-width="1.4"/><circle cx="12" cy="12" r="5.4" fill="none" stroke="#8A6427" stroke-width="1.1"/><circle cx="12" cy="12" r="2.1" fill="none" stroke="#8A6427" stroke-width="1"/></svg>`,
+  poly: `<svg viewBox="0 0 24 24"><path d="M6 15 a4 4 0 0 1 0 -8 a5 5 0 0 1 9.6 -1.4 A4.2 4.2 0 0 1 19 14.5 a3.5 3.5 0 0 1 -1 .5 Z" fill="#fff" stroke="#B9B9B9" stroke-width="1.3"/></svg>`,
+  dye: `<svg viewBox="0 0 24 24"><path d="M12 2 C16 9 19 12 19 16 a7 7 0 0 1 -14 0 C5 12 8 9 12 2 Z" fill="#E8734F" stroke="#C1552F" stroke-width="1.2"/></svg>`,
+  plastic: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#0E1E26"/><circle cx="9" cy="9" r="1.7" fill="#fff"/></svg>`,
+  thread: `<svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2" fill="#fff" stroke="#B9B9B9" stroke-width="1.2"/><path d="M6 7 h12 M6 17 h12" stroke="#B9B9B9" stroke-width="1.2"/><path d="M9 7 v10 M12 7 v10 M15 7 v10" stroke="#E8734F" stroke-width="1.3"/></svg>`,
+  cutter: `<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.3" fill="none" stroke="#5E7B85" stroke-width="1.6"/><circle cx="6" cy="18" r="2.3" fill="none" stroke="#5E7B85" stroke-width="1.6"/><path d="M8 8 L20 20 M8 16 L20 4" stroke="#5E7B85" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  sewer: `<svg viewBox="0 0 24 24"><path d="M4 20 L18 6" stroke="#5E7B85" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="5" r="1.6" fill="none" stroke="#5E7B85" stroke-width="1.4"/><path d="M4 20 q6 2 3 -6" stroke="#E8734F" stroke-width="1.3" fill="none"/></svg>`,
+  stuffer: `<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="4" fill="#fff" stroke="#B9B9B9" stroke-width="1.3"/><path d="M8 13 q4 -3 8 0" stroke="#B9B9B9" stroke-width="1.1" fill="none"/></svg>`,
+  inspector: `<svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" fill="none" stroke="#5E7B85" stroke-width="1.8"/><path d="M14.5 14.5 L20 20" stroke="#5E7B85" stroke-width="1.8" stroke-linecap="round"/><path d="M7 10 l2 2 l4 -4" stroke="#3CAA6B" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  chinamake: `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="10" height="9" fill="#2F8FB0"/><path d="M3 11 L8 6 L13 11 Z" fill="#1E5F78"/><path d="M15 12 h6 M18 9 l3 3 -3 3" stroke="#E8734F" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  indiamake: `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="10" height="9" fill="#2F8FB0"/><path d="M3 11 L8 6 L13 11 Z" fill="#1E5F78"/><path d="M15 12 h6 M18 9 l3 3 -3 3" stroke="#E8734F" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  usbuy: `<svg viewBox="0 0 24 24"><path d="M3 12 h6 M6 9 l-3 3 3 3" stroke="#3CAA6B" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 20 h9 l-1.5 -8 h-6 Z" fill="#D9A544" stroke="#A97C2B" stroke-width="1.1"/><circle cx="14" cy="10" r="2.4" fill="none" stroke="#A97C2B" stroke-width="1.1"/></svg>`,
+  ukbuy: `<svg viewBox="0 0 24 24"><path d="M3 12 h6 M6 9 l-3 3 3 3" stroke="#3CAA6B" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 20 h9 l-1.5 -8 h-6 Z" fill="#D9A544" stroke="#A97C2B" stroke-width="1.1"/><circle cx="14" cy="10" r="2.4" fill="none" stroke="#A97C2B" stroke-width="1.1"/></svg>`,
+  s0: `<svg viewBox="0 0 24 24"><rect x="2" y="12" width="9" height="8" fill="#E8D8A8"/><path d="M2 12 L6.5 8 L11 12 Z" fill="#C97B4A"/><path d="M16 20 v-9" stroke="#3CAA6B" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16" cy="9" r="3" fill="#fff" stroke="#B9B9B9" stroke-width="1.1"/></svg>`,
+  s1: `<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" fill="#fff" stroke="#B9B9B9" stroke-width="1.2"/><path d="M7 6 h10 M7 18 h10" stroke="#B9B9B9" stroke-width="1.1"/><path d="M10 6 v12 M14 6 v12" stroke="#E8734F" stroke-width="1.3"/></svg>`,
+  s2: `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="#fff" stroke="#B9B9B9" stroke-width="1.3"/><path d="M3 9 h18 M3 15 h18 M9 3 v18 M15 3 v18" stroke="#8FDCEF" stroke-width="1.1"/></svg>`,
+  s3: `<svg viewBox="0 0 24 24"><path d="M4 20 L18 6" stroke="#5E7B85" stroke-width="1.8" stroke-linecap="round"/><circle cx="19" cy="5" r="1.6" fill="none" stroke="#5E7B85" stroke-width="1.4"/><path d="M4 20 q6 2 3 -6" stroke="#E8734F" stroke-width="1.3" fill="none"/></svg>`,
+  s4: `<svg viewBox="0 0 24 24"><path d="M3 8 L12 4 L21 8 L12 12 Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.1"/><path d="M3 8 v9 l9 4 v-9 Z" fill="#D9C48E" stroke="#A97C2B" stroke-width="1.1"/><path d="M21 8 v9 l-9 4 v-9 Z" fill="#C9AA6E" stroke="#A97C2B" stroke-width="1.1"/></svg>`,
+  box: `<svg viewBox="0 0 24 24"><path d="M3 8 L12 4 L21 8 L12 12 Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.1"/><path d="M3 8 v9 l9 4 v-9 Z" fill="#D9C48E" stroke="#A97C2B" stroke-width="1.1"/><path d="M21 8 v9 l-9 4 v-9 Z" fill="#C9AA6E" stroke="#A97C2B" stroke-width="1.1"/></svg>`,
+  fabric: `<svg viewBox="0 0 24 24"><path d="M3 6 q3 -3 6 0 t6 0 t6 0 v12 q-3 3 -6 0 t-6 0 t-6 0 Z" fill="#8FDCEF" stroke="#2F8FB0" stroke-width="1.1"/></svg>`,
+  ear: `<svg viewBox="0 0 24 24"><path d="M12 3 C6 6 4 13 8 20 C14 18 16 8 12 3 Z" fill="#3AA2C2" stroke="#175A73" stroke-width="1.1"/></svg>`,
+  eyebtn: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#0E1E26"/><circle cx="9.5" cy="9.5" r="2" fill="#fff"/></svg>`,
+  stitch: `<svg viewBox="0 0 24 24"><path d="M3 12 h4 M9 12 h4 M15 12 h4" stroke="#E8734F" stroke-width="2.4" stroke-linecap="round"/><path d="M6 8 v8 M12 8 v8 M18 8 v8" stroke="#E8734F" stroke-width="1.3" stroke-dasharray="1 3"/></svg>`,
+  foot: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="8" ry="6" fill="#1E5F78"/><ellipse cx="12" cy="7" rx="4" ry="3" fill="#1E5F78"/></svg>`,
+  truck: `<svg viewBox="0 0 24 24"><rect x="1" y="9" width="12" height="8" rx="1" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.1"/><path d="M13 12 h5 l4 4 v1 h-9 Z" fill="#8FDCEF" stroke="#2F8FB0" stroke-width="1.1"/><circle cx="6" cy="18" r="2" fill="#2C2C2C"/><circle cx="18" cy="18" r="2" fill="#2C2C2C"/></svg>`
+};
+
+const CHAPTERS_BY_KEY = {}; CHAPTERS.forEach(c=>CHAPTERS_BY_KEY[c.key]=c);
+const quizState = {}; CHAPTERS.forEach(c=>quizState[c.key]={idx:0,score:0});
+
+/* ================= ILLUSTRATED PER-CHAPTER SCENES ================= */
+const CHAPTER_ART_BG = {
+  res:'#EAF6EA', real:'#FBF0DD', chain:'#EAF6EA', labor:'#E9F1F7', cost:'#FBF3DD',
+  profit:'#FBF3DD', tax:'#F3EAF7', ship:'#E6F5FA', trade:'#E6F5FA', tariff:'#E6F5FA', currency:'#FBF3DD', sd:'#F3EAF7',
+  inflation:'#FDEAE3', recap:'#EAF7FB', build:'#FBF0DD'
+};
+const CHAPTER_ART_SVG = {
+  res: ()=>`
+    <ellipse cx="150" cy="176" rx="128" ry="12" fill="#DCEEDD"/>
+    <path d="M40 172 C40 140 45 112 50 90" stroke="#3CAA6B" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="50" cy="82" r="14" fill="#fff" stroke="#D8D8D8" stroke-width="1.5"/>
+    <circle cx="35" cy="95" r="11" fill="#fff" stroke="#D8D8D8" stroke-width="1.5"/>
+    <circle cx="65" cy="96" r="11" fill="#fff" stroke="#D8D8D8" stroke-width="1.5"/>
+    <path d="M40 152 q-16 -6 -20 -22" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M48 156 q16 -6 20 -22" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M230 174 L258 120 L286 174 Z" fill="#E8D8A8"/>
+    <circle cx="248" cy="152" r="2" fill="#fff"/><circle cx="264" cy="142" r="2" fill="#fff"/><circle cx="258" cy="162" r="2" fill="#fff"/>
+    <rect x="212" y="160" width="46" height="16" rx="8" fill="#A9764F"/>
+    <ellipse cx="212" cy="168" rx="7" ry="8" fill="#C89468"/>
+    <use href="#williamArt" x="93" y="58" width="128" height="98"/>`,
+
+  real: ()=>`
+    <circle cx="252" cy="38" r="22" fill="#F4C979"/>
+    <ellipse cx="150" cy="172" rx="145" ry="14" fill="#EDD9A3"/>
+    <path d="M40 168 L78 118 L116 168 Z" fill="#E3C583"/>
+    <path d="M60 165 L200 40 L260 165 Z" fill="#D9A544"/>
+    <path d="M60 165 L200 40 L200 165 Z" fill="#C9903A" opacity=".55"/>
+    <g stroke="#A97C2B" stroke-width="2" opacity=".6">
+      <path d="M84 140 L216 140"/>
+      <path d="M104 112 L196 112"/>
+      <path d="M124 86 L176 86"/>
+      <path d="M146 60 L156 60"/>
+    </g>
+    <path d="M190 165 L200 140 L210 165 Z" fill="#8A6427"/>
+    <use href="#williamArtFront" x="92" y="98" width="118" height="90"/>`,
+
+  chain: ()=>`
+    <ellipse cx="150" cy="178" rx="135" ry="10" fill="#DCEEDD"/>
+    <rect x="18" y="130" width="46" height="34" rx="3" fill="#E8D8A8"/>
+    <path d="M15 130 L41 108 L67 130 Z" fill="#C97B4A"/>
+    <path d="M30 100 q3 -14 -4 -22" stroke="#3CAA6B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M80 150 q60 -10 120 0" stroke="#B7C4C9" stroke-width="3" stroke-dasharray="6 6" fill="none"/>
+    <path d="M198 146 l8 4 l-8 4" stroke="#B7C4C9" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="216" y="98" width="66" height="60" rx="4" fill="#2F8FB0"/>
+    <path d="M212 98 L249 74 L286 98 Z" fill="#1E5F78"/>
+    <rect x="228" y="112" width="14" height="14" fill="#DCF3FA"/>
+    <rect x="256" y="112" width="14" height="14" fill="#DCF3FA"/>
+    <rect x="244" y="62" width="8" height="16" fill="#8A8A8A"/>
+    <circle cx="248" cy="54" r="6" fill="#D8D8D8" opacity=".8"/>
+    <use href="#williamArt" x="95" y="112" width="90" height="69"/>`,
+
+  labor: ()=>`
+    <rect x="30" y="128" width="240" height="26" rx="6" fill="#8A8A8A"/>
+    <g fill="#5E7B85"><circle cx="55" cy="154" r="8"/><circle cx="110" cy="154" r="8"/><circle cx="165" cy="154" r="8"/><circle cx="220" cy="154" r="8"/></g>
+    <rect x="44" y="98" width="24" height="24" rx="4" fill="#D9A544"/>
+    <rect x="222" y="98" width="24" height="24" rx="4" fill="#E8734F"/>
+    <circle cx="35" cy="88" r="12" fill="#F4C9A0"/><rect x="24" y="98" width="22" height="26" rx="8" fill="#3CAA6B"/>
+    <circle cx="255" cy="88" r="12" fill="#F4C9A0"/><rect x="244" y="98" width="22" height="26" rx="8" fill="#D9A544"/>
+    <use href="#williamArt" x="108" y="82" width="84" height="64"/>`,
+
+  build: ()=>`
+    <rect x="20" y="140" width="260" height="14" rx="4" fill="#C9955A"/>
+    <ellipse cx="150" cy="105" rx="70" ry="52" fill="none" stroke="#B7C4C9" stroke-width="3" stroke-dasharray="6 6"/>
+    <circle cx="120" cy="90" r="5" fill="#D8D2E8"/><circle cx="150" cy="80" r="5" fill="#D8D2E8"/>
+    <rect x="40" y="60" width="30" height="20" rx="3" fill="#fff" stroke="#B9B9B9" stroke-width="1.5"/>
+    <path d="M42 64 h26 M42 70 h26 M42 76 h26" stroke="#E8734F" stroke-width="1.3"/>
+    <circle cx="235" cy="60" r="10" fill="#fff" stroke="#B9B9B9" stroke-width="1.5"/>
+    <path d="M228 92 L242 78" stroke="#5E7B85" stroke-width="2.6" stroke-linecap="round"/>
+    <use href="#williamArtFront" x="100" y="66" width="100" height="76"/>`,
+
+  cost: ()=>`
+    <path d="M70 40 h150 a14 14 0 0 1 14 14 v40 l-40 76 a10 10 0 0 1 -18 0 l-70 -40 a10 10 0 0 1 -4 -8 v-68 a14 14 0 0 1 14 -14 Z" fill="#FFF" stroke="#D9A544" stroke-width="4"/>
+    <circle cx="96" cy="66" r="9" fill="#FBF3DD" stroke="#D9A544" stroke-width="3"/>
+    <g transform="translate(120,150)"><rect x="0" y="-22" width="16" height="22" fill="#2F8FB0"/><rect x="20" y="-38" width="16" height="38" fill="#D9A544"/><rect x="40" y="-14" width="16" height="14" fill="#E8734F"/></g>
+    <use href="#williamArt" x="150" y="60" width="118" height="90"/>`,
+
+  profit: ()=>`
+    <path d="M150 60 v70" stroke="#5E7B85" stroke-width="4"/>
+    <path d="M110 60 h80" stroke="#5E7B85" stroke-width="4" stroke-linecap="round"/>
+    <path d="M90 58 L60 108 h60 Z" fill="none" stroke="#5E7B85" stroke-width="3"/>
+    <path d="M210 58 L180 108 h60 Z" fill="none" stroke="#5E7B85" stroke-width="3"/>
+    <ellipse cx="90" cy="112" rx="30" ry="8" fill="#DCF3FA"/>
+    <ellipse cx="210" cy="112" rx="30" ry="8" fill="#FBF3DD"/>
+    <circle cx="150" cy="52" r="10" fill="#D9A544"/>
+    <path d="M120 140 L180 140 L165 168 L135 168 Z" fill="#8A8A8A"/>
+    <use href="#williamArt" x="30" y="105" width="96" height="73"/>`,
+
+  tax: ()=>`
+    <rect x="90" y="30" width="100" height="130" rx="4" fill="#fff" stroke="#9B7FD4" stroke-width="3"/>
+    <path d="M98 44 h84 M98 58 h60 M98 72 h70 M98 86 h50" stroke="#D8D2E8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M98 104 h84" stroke="#9B7FD4" stroke-width="2" stroke-dasharray="3 4"/>
+    <path d="M98 116 h40 M158 116 h26" stroke="#9B7FD4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M98 134 h44 M156 134 h28" stroke="#3CAA6B" stroke-width="4" stroke-linecap="round"/>
+    <rect x="210" y="100" width="34" height="36" fill="#D9A544"/>
+    <path d="M206 100 L227 84 L248 100 Z" fill="#A97C2B"/>
+    <rect x="220" y="112" width="14" height="24" fill="#fff"/>
+    <use href="#williamArtFront" x="4" y="88" width="92" height="70"/>`,
+
+  ship: ()=>`
+    <path d="M20 150 q130 30 260 0 l-20 26 h-220 Z" fill="#2F8FB0"/>
+    <path d="M10 150 q140 18 280 0" stroke="#8FDCEF" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+    <rect x="60" y="98" width="34" height="34" rx="3" fill="#E8734F"/>
+    <rect x="98" y="90" width="34" height="42" rx="3" fill="#D9A544"/>
+    <rect x="136" y="98" width="34" height="34" rx="3" fill="#3CAA6B"/>
+    <rect x="174" y="86" width="34" height="46" rx="3" fill="#E8734F"/>
+    <circle cx="115" cy="107" r="16" fill="#0E2C3A" opacity=".15"/>
+    <use href="#williamArt" x="95" y="88" width="66" height="50"/>`,
+
+  trade: ()=>`
+    <circle cx="150" cy="105" r="65" fill="#8FDCEF"/>
+    <ellipse cx="150" cy="105" rx="65" ry="24" fill="none" stroke="#2F8FB0" stroke-width="2"/>
+    <ellipse cx="150" cy="105" rx="28" ry="65" fill="none" stroke="#2F8FB0" stroke-width="2"/>
+    <path d="M100 60 q50 90 100 0" stroke="#D9A544" stroke-width="3" stroke-dasharray="5 6" fill="none"/>
+    <path d="M96 58 l8 -6 l2 10" fill="#D9A544"/>
+    <rect x="80" y="34" width="4" height="20" fill="#8A8A8A"/><path d="M84 34 l16 6 l-16 6 Z" fill="#E8734F"/>
+    <rect x="216" y="34" width="4" height="20" fill="#8A8A8A"/><path d="M220 34 l16 6 l-16 6 Z" fill="#3CAA6B"/>
+    <use href="#williamArtFront" x="105" y="130" width="90" height="69"/>`,
+
+  tariff: ()=>`
+    <rect x="20" y="150" width="260" height="10" fill="#B7C4C9"/>
+    <rect x="134" y="60" width="10" height="96" fill="#8A8A8A"/>
+    <rect x="176" y="60" width="10" height="96" fill="#8A8A8A"/>
+    <rect x="128" y="70" width="64" height="14" rx="3" fill="#E8734F" transform="rotate(-8 160 77)"/>
+    <circle cx="150" cy="48" r="24" fill="#fff" stroke="#C1552F" stroke-width="3"/>
+    <text x="150" y="55" font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#C1552F" text-anchor="middle">TAX</text>
+    <rect x="210" y="110" width="40" height="34" rx="3" fill="#D9A544" stroke="#A97C2B" stroke-width="2"/>
+    <text x="230" y="132" font-family="Baloo 2, sans-serif" font-weight="800" font-size="13" fill="#fff" text-anchor="middle">+%</text>
+    <use href="#williamArt" x="10" y="98" width="100" height="76"/>`,
+
+  currency: ()=>`
+    <g font-family="Baloo 2, sans-serif" font-weight="800" text-anchor="middle">
+      <circle cx="60" cy="130" r="30" fill="#D9A544" stroke="#A97C2B" stroke-width="3"/><text x="60" y="140" font-size="26" fill="#fff">$</text>
+      <circle cx="130" cy="105" r="26" fill="#E8734F" stroke="#C1552F" stroke-width="3"/><text x="130" y="114" font-size="22" fill="#fff">\u00A5</text>
+      <circle cx="195" cy="120" r="28" fill="#3CAA6B" stroke="#2A7D4C" stroke-width="3"/><text x="195" y="130" font-size="24" fill="#fff">\u20AC</text>
+      <circle cx="250" cy="90" r="22" fill="#2F8FB0" stroke="#1E5F78" stroke-width="3"/><text x="250" y="98" font-size="18" fill="#fff">\u00A3</text>
+    </g>
+    <use href="#williamArtFront" x="95" y="60" width="90" height="69"/>`,
+
+  sd: ()=>`
+    <path d="M60 150 L150 90 L240 150 Z" fill="none" stroke="#5E7B85" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="140" y="60" width="20" height="34" fill="#8A8A8A"/>
+    <path d="M50 148 h200" stroke="#5E7B85" stroke-width="6" stroke-linecap="round"/>
+    <rect x="55" y="122" width="26" height="22" fill="#D9A544"/><rect x="83" y="108" width="26" height="36" fill="#E8734F"/>
+    <circle cx="200" cy="118" r="10" fill="#F4C9A0"/><rect x="190" y="128" width="20" height="20" rx="6" fill="#2F8FB0"/>
+    <circle cx="228" cy="122" r="9" fill="#F4C9A0"/><rect x="219" y="131" width="18" height="17" rx="6" fill="#3CAA6B"/>
+    <use href="#williamArtFront" x="112" y="68" width="76" height="58"/>`,
+
+  inflation: ()=>`
+    <rect x="30" y="150" width="46" height="20" fill="#E8D8A8"/>
+    <rect x="80" y="128" width="46" height="42" fill="#E8D8A8"/>
+    <rect x="130" y="100" width="46" height="70" fill="#E8D8A8"/>
+    <rect x="180" y="66" width="46" height="104" fill="#E8D8A8"/>
+    <path d="M60 60 q90 -20 150 -10" stroke="#E8734F" stroke-width="3" fill="none" stroke-dasharray="4 6"/>
+    <path d="M204 46 L214 52 L200 58 Z" fill="#E8734F"/>
+    <circle cx="215" cy="40" r="14" fill="#D9A544" stroke="#A97C2B" stroke-width="2"/>
+    <text x="215" y="45" font-family="Baloo 2, sans-serif" font-weight="800" font-size="14" fill="#fff" text-anchor="middle">$</text>
+    <use href="#williamArt" x="8" y="96" width="76" height="58"/>`,
+
+  recap: ()=>`
+    <g opacity=".9">
+      <rect x="22" y="40" width="30" height="26" rx="3" fill="#2F8FB0"/><path d="M20 40 L37 28 L54 40 Z" fill="#1E5F78"/>
+      <path d="M238 34 q60 14 40 40 l-10 10" fill="none"/>
+      <rect x="228" y="34" width="24" height="24" rx="3" fill="#E8734F"/>
+      <circle cx="255" cy="150" r="16" fill="#D9A544" stroke="#A97C2B" stroke-width="2"/>
+      <circle cx="34" cy="150" r="16" fill="#3CAA6B" stroke="#2A7D4C" stroke-width="2"/>
+      <path d="M60 40 q90 -12 150 4" stroke="#8FDCEF" stroke-width="3" fill="none" stroke-dasharray="4 6"/>
+    </g>
+    <use href="#williamArtFront" x="90" y="50" width="120" height="92"/>`
+};
+function chapterArt(key){
+  const bg = CHAPTER_ART_BG[key] || '#EAF7FB';
+  const svg = CHAPTER_ART_SVG[key] ? CHAPTER_ART_SVG[key]() : '';
+  return `<div class="chapter-art-wrap" style="background:${bg};"><svg class="chapter-art-svg" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg">${svg}</svg></div>`;
+}
+
+/* ================= BUILD CHAPTER SESSIONS ================= */
+const CHECK_CONTENT = {
+  res:      { icon:'\u{1F331}', body:'Some materials come <b>straight from nature</b>, like cotton, wool, wood, and quartz sand. Others are <b>made by people</b> in factories, like plastic, dye, and nylon thread.', sentence:'Natural materials grow or are mined — man-made materials are manufactured.' },
+  real:     { icon:'\u{1F3DB}️', body:'The real William is a 4,000-year-old <b>faience</b> hippo statue, made from crushed quartz, that has lived at The Metropolitan Museum of Art since 1917.', sentence:'Faience = crushed quartz sand, fired until it turns bright blue.' },
+  chain:    { icon:'\u{1F69B}', body:'A <b>supply chain</b> is every step a material passes through on its way to becoming a finished product — often crossing several different countries along the way.', sentence:'Farm → spun into thread → woven into fabric → cut & sewn → stuffed & boxed.' },
+  labor:    { icon:'\u{1F477}', body:'Factories split a big job into small specialized tasks, called <b>division of labor</b>. Paying people for their time and skill is called <b>labor</b>, and it’s a real cost of making anything.', sentence:'One worker cuts, another sews, another stuffs — each doing their one job well.' },
+  build:    { icon:'\u{1F9F5}', body:'Toys are built in the <b>same order every time</b>: cut, sew, stuff, inspect, box, ship. Following the same steps keeps quality consistent and production fast.', sentence:'Same steps, same order, every single time = consistent quality.' },
+  cost:     { icon:'\u{1F4B0}', body:'A price tag is built from several costs stacked together: <b>materials</b>, <b>labor</b>, <b>shipping</b>, and a small share for the <b>store</b> that sells it.', sentence:'Materials + Labor + Shipping + Store’s share = the price you see.' },
+  profit:   { icon:'⚖️', body:'<b>Cost</b> is what it takes to make something. <b>Price</b> is what people pay for it. <b>Profit</b> is what’s left over after subtracting cost from price.', sentence:'Profit = Price − Cost. (Example: $10 − $6 = $4 profit.)' },
+  tax:      { icon:'\u{1F3DB}️', body:'<b>Sales tax</b> is extra money added at checkout that goes to the government, not the store, to help pay for shared things like roads, schools, and parks.', sentence:'Sales tax rates are different in every U.S. state — a few states charge none at all.' },
+  ship:     { icon:'\u{1F6A2}', body:'Toys travel the world inside giant metal <b>shipping containers</b> stacked onto cargo ships. Packing many toys into one container saves money compared to shipping items one at a time.', sentence:'One big container ship can carry thousands of containers at once.' },
+  trade:    { icon:'\u{1F30D}', body:'When a country sends goods out to another country, that’s an <b>export</b>. When a country brings goods in from another country, that’s an <b>import</b>.', sentence:'Export = sending out. Import = bringing in. China exports roughly 70% of the world’s toys.' },
+  tariff:   { icon:'\u{1F6C2}', body:'A <b>tariff</b> is a tax a government charges on goods coming in from another country. Tariffs usually make imported goods cost a little more.', sentence:'Tariff = a tax on imports, charged by the receiving country’s government.' },
+  currency: { icon:'\u{1F4B1}', body:'Different countries use different kinds of money, called <b>currency</b>. When goods cross borders, money often has to be exchanged from one currency into another.', sentence:'USA = Dollar ($) · Japan = Yen (¥) · Egypt = Pound (E£) · much of Europe = Euro (€).' },
+  sd:       { icon:'\u{1F4CA}', body:'<b>Supply</b> is how much of something is available. <b>Demand</b> is how much people want it. High demand + low supply usually pushes price up; low demand + high supply usually pushes it down.', sentence:'High demand, low supply → price up. Low demand, high supply → price down.' },
+  inflation:{ icon:'\u{1F4C8}', body:'<b>Inflation</b> means the same item usually costs more money as time passes. It happens slowly, a little each year, almost everywhere in the world.', sentence:'A U.S. movie ticket cost about $2.69 in 1980, and about $16.08 by 2025.' },
+  recap:    { icon:'\u{1F3C6}', body:'William’s whole journey ties every idea together: <b>resources</b> become materials, <b>labor</b> builds the toy, <b>cost</b> and <b>profit</b> shape the price, and <b>trade</b>, <b>currency</b>, <b>supply/demand</b>, and <b>inflation</b> shape what happens next.', sentence:'One global supply chain connects a cotton farm all the way to your toy shelf.' }
+};
+function checkHTML(ch, num){
+  const c = CHECK_CONTENT[ch.key];
+  if(!c) return '';
+  return `
+  <section class="session will-scope" data-chapter="check-${ch.key}">
+    <div class="will-stage-label">Before the Quick Check</div>
+    <div class="check-box">
+      <div class="check-box-badge">${c.icon}</div>
+      <div class="check-box-title">Check Your Understanding!</div>
+      <div class="check-box-body">${c.body}</div>
+      <div class="check-box-sentence">${c.sentence}</div>
+    </div>
+    <div class="will-btn-row"><button class="will-btn coral" onclick="nextCard()">I've Got It — Start the Quiz!</button></div>
+    <div class="will-nav-row"><button class="will-btn gold" style="font-size:.78rem;padding:.5rem .9rem;" onclick="goToJourneyMap()">Back to Map</button><span></span></div>
+  </section>`;
+}
+function buildChapterHTML(ch, num){
+  const introHTML = `
+  <section class="session will-scope" data-chapter="${ch.key}">
+    <div class="will-stage-label">Chapter ${num} of ${CHAPTERS.length}</div>
+    <h1>${ch.title}</h1>
+    ${chapterArt(ch.key)}
+    <div class="will-card">${ch.intro}</div>
+    <div class="will-btn-row"><button class="will-btn" onclick="nextCard()">Continue</button></div>
+    <div class="will-nav-row"><button class="will-btn gold" style="font-size:.78rem;padding:.5rem .9rem;" onclick="goToJourneyMap()">Back to Map</button><span></span></div>
+  </section>`;
+  const activityHTML = `
+  <section class="session will-scope" data-role="activity" data-ckey="${ch.key}" data-chapter="${ch.key}-activity">
+    <div class="will-stage-label">Try it yourself</div>
+    <h2>${ch.activityTitle}</h2>
+    <div class="will-card" id="activity-${ch.key}"></div>
+    <div class="will-btn-row" id="activityNext-${ch.key}" style="display:none;"><button class="will-btn" onclick="nextCard()">Continue</button></div>
+  </section>`;
+  const checkScreenHTML = checkHTML(ch, num);
+  const quizHTML = `
+  <section class="session will-scope" data-role="quiz" data-ckey="${ch.key}" data-chapter="quiz-${ch.key}">
+    <div class="will-stage-label">Quick Check &middot; <span id="quizProgress-${ch.key}"></span></div>
+    <h2 id="quizQ-${ch.key}"></h2>
+    <div class="quiz-opts" id="quizOpts-${ch.key}"></div>
+    <div class="will-reveal" id="quizReveal-${ch.key}"></div>
+    <div class="will-btn-row" id="quizNextWrap-${ch.key}" style="display:none;"><button class="will-btn" onclick="advanceQuiz('${ch.key}')">Next</button></div>
+  </section>`;
+  const isLast = num === CHAPTERS.length;
+  const resultHTML = `
+  <section class="session will-scope" data-role="result" data-ckey="${ch.key}" data-chapter="result-${ch.key}" style="text-align:center;">
+    <div class="will-stage-label">Chapter ${num} of ${CHAPTERS.length}</div>
+    <div id="resultBadgeWrap-${ch.key}" class="result-badge-wrap" style="display:none;"></div>
+    ${chapterArt(ch.key)}
+    <h1 id="resultTitle-${ch.key}">Chapter Complete!</h1>
+    <p class="big-text" id="resultText-${ch.key}"></p>
+    <div class="will-btn-row">
+      <button class="will-btn coral" id="resultContinueBtn-${ch.key}" style="display:none;" onclick="continueFromResult('${ch.key}')">${isLast ? 'See Your Achievement!' : 'Continue to Next Chapter'}</button>
+      <button class="will-btn gold" id="resultRetryBtn-${ch.key}" style="display:none;" onclick="retryQuiz('${ch.key}')">Try Again</button>
+    </div>
+    <div class="will-nav-row" style="justify-content:center;"><button class="will-btn gold" style="font-size:.78rem;padding:.5rem .9rem; box-shadow:none; background:transparent; color:var(--will-blue-dark); border:none;" onclick="goToJourneyMap()">Or back to the Map</button></div>
+  </section>`;
+  return introHTML + activityHTML + checkScreenHTML + quizHTML + resultHTML;
+}
+const deckEl = document.getElementById('deck');
+CHAPTERS.forEach((ch,i)=> deckEl.insertAdjacentHTML('beforeend', buildChapterHTML(ch, i+1)));
+
+/* ================= ACTIVITY DISPATCH ================= */
+function activityDone(key){ const wrap = document.getElementById(`activityNext-${key}`); if(wrap) wrap.style.display=''; }
+function activityRender(ch){
+  const containerId = `activity-${ch.key}`;
+  const a = ch.activity;
+  if(a.type === 'dragsort'){ buildDragSort(containerId, a.items, a.bins, ()=>activityDone(ch.key), a.layout); }
+  else if(a.type === 'dragorder'){
+    const items = a.steps.map((s,i)=>({id:'s'+i, label:s}));
+    const bins = a.steps.map((s,i)=>({id:'slot'+i, label:'Step '+(i+1), accepts:['s'+i]}));
+    buildDragSort(containerId, items, bins, ()=>activityDone(ch.key), 'horizontal');
+  }
+  else if(a.type === 'linkmatch'){ buildLinkMatch(containerId, a.pairs, ()=>activityDone(ch.key)); }
+  else if(a.type === 'matchdrag'){
+    const items = a.pairs.map((p,i)=>({id:'m'+i, label:p.left}));
+    const bins = a.pairs.map((p,i)=>({id:'d'+i, label:p.right, accepts:['m'+i]}));
+    buildDragSort(containerId, items, bins, ()=>activityDone(ch.key));
+  }
+  else if(a.type === 'costbars'){ renderCostBars(containerId, ch.key); }
+  else if(a.type === 'taxbar'){ renderTaxBar(containerId, ch.key); }
+  else if(a.type === 'tariffbar'){ renderTariffBar(containerId, ch.key); }
+  else if(a.type === 'profit'){ renderProfitActivity(containerId, ch.key); }
+  else if(a.type === 'shippack'){ renderShipPack(containerId, ch.key); }
+  else if(a.type === 'buildwilliam'){ renderBuildWilliam(containerId, ch.key); }
+  else if(a.type === 'supplydemand'){ renderSupplyDemand(containerId, ch.key); }
+  else if(a.type === 'inflation'){ renderInflationActivity(containerId, ch.key); }
+}
+
+function renderCostBars(containerId, chKey){
+  const root = document.getElementById(containerId);
+  const cost = 6; // materials $2 + labor $2 + shipping $1 + store $1
+  const maxPrice = 12;
+  const stackHeight = 180; // matches .bar-stack CSS height
+  root.innerHTML = `
+    <p class="big-text" style="text-align:center; font-size:.9rem;">It costs $${cost} to make William (materials, labor, shipping, and the store's share). Drag the price slider, wherever you like, and watch the bar turn green when you're making a profit!</p>
+    <div class="bar-row"><div class="bar-col">
+      <div style="position:relative; display:inline-block;">
+        <div class="bar-stack" id="${containerId}-stack"><div class="bar-seg" id="${containerId}-seg" style="background:#E8734F;"></div></div>
+        <div id="${containerId}-costline" style="position:absolute; left:-8px; right:-8px; border-top:2px dashed #5E7B85;"></div>
+      </div>
+      <div class="bar-col-label">Price: $<span id="${containerId}-price"></span> &middot; Cost: $${cost}</div>
+      <div class="bar-col-label" id="${containerId}-profitLabel" style="font-weight:800; font-size:.85rem;"></div>
+    </div></div>
+    <input type="range" class="will-slider" min="0" max="${maxPrice}" step="1" value="3" id="${containerId}-slider">`;
+  const costLinePx = stackHeight - (cost/maxPrice*stackHeight);
+  document.getElementById(`${containerId}-costline`).style.top = costLinePx + 'px';
+  let interacted = false;
+  function update(){
+    const price = parseInt(document.getElementById(`${containerId}-slider`).value,10);
+    document.getElementById(`${containerId}-price`).textContent = price;
+    const seg = document.getElementById(`${containerId}-seg`);
+    seg.style.height = (price/maxPrice*stackHeight) + 'px';
+    const profit = price - cost;
+    const profitLabel = document.getElementById(`${containerId}-profitLabel`);
+    if(profit > 0){ seg.style.background = '#3CAA6B'; profitLabel.textContent = `Profit: $${profit}`; profitLabel.style.color = '#2A7D4C'; }
+    else { seg.style.background = '#E8734F'; profitLabel.textContent = profit === 0 ? `Breaking even: $0 profit` : `Losing money: -$${Math.abs(profit)}`; profitLabel.style.color = '#C1552F'; }
+  }
+  document.getElementById(`${containerId}-slider`).addEventListener('input', ()=>{ if(!interacted){interacted=true; activityDone(chKey);} update(); });
+  update();
+}
+function renderTaxBar(containerId, chKey){
+  const root = document.getElementById(containerId);
+  const price = 10; // base toy price
+  const maxTotal = 14;
+  const stackHeight = 180;
+  root.innerHTML = `
+    <p class="big-text" style="text-align:center; font-size:.9rem;">This toy costs $${price}. Drag the slider to set the sales tax rate and watch the total grow.</p>
+    <div class="bar-row"><div class="bar-col">
+      <div class="bar-stack" id="${containerId}-stack"><div class="bar-seg" id="${containerId}-segPrice" style="background:#2F8FB0; height:${(price/maxTotal*stackHeight)}px;"></div><div class="bar-seg" id="${containerId}-segTax" style="background:#9B7FD4;"></div></div>
+      <div class="bar-col-label">Price: $${price} + Tax: $<span id="${containerId}-taxAmt"></span></div>
+      <div class="bar-col-label" id="${containerId}-totalLabel" style="font-weight:800; font-size:.85rem;"></div>
+    </div></div>
+    <div class="slider-row"><label>Tax rate</label><input type="range" class="will-slider" min="0" max="10" step="1" value="0" id="${containerId}-slider"><span class="slider-val" id="${containerId}-pct">0%</span></div>`;
+  let interacted = false;
+  function update(){
+    const pct = parseInt(document.getElementById(`${containerId}-slider`).value,10);
+    document.getElementById(`${containerId}-pct`).textContent = pct+'%';
+    const taxAmt = Math.round(price*pct)/100;
+    document.getElementById(`${containerId}-taxAmt`).textContent = taxAmt.toFixed(2);
+    document.getElementById(`${containerId}-segTax`).style.height = (taxAmt/maxTotal*stackHeight)+'px';
+    document.getElementById(`${containerId}-totalLabel`).textContent = `Total: $${(price+taxAmt).toFixed(2)}`;
+  }
+  document.getElementById(`${containerId}-slider`).addEventListener('input', ()=>{ if(!interacted){interacted=true; activityDone(chKey);} update(); });
+  update();
+}
+function renderTariffBar(containerId, chKey){
+  const root = document.getElementById(containerId);
+  const price = 10; // base import price before tariff
+  const maxTotal = 16;
+  const stackHeight = 180;
+  root.innerHTML = `
+    <p class="big-text" style="text-align:center; font-size:.9rem;">A shipment of toys is worth $${price} before it crosses the border. Drag the slider to set the tariff rate and watch the price after the tariff.</p>
+    <div class="bar-row"><div class="bar-col">
+      <div class="bar-stack" id="${containerId}-stack"><div class="bar-seg" id="${containerId}-segPrice" style="background:#2F8FB0; height:${(price/maxTotal*stackHeight)}px;"></div><div class="bar-seg" id="${containerId}-segTariff" style="background:#E85D5D;"></div></div>
+      <div class="bar-col-label">Price: $${price} + Tariff: $<span id="${containerId}-tariffAmt"></span></div>
+      <div class="bar-col-label" id="${containerId}-totalLabel" style="font-weight:800; font-size:.85rem;"></div>
+    </div></div>
+    <div class="slider-row"><label>Tariff rate</label><input type="range" class="will-slider" min="0" max="30" step="5" value="0" id="${containerId}-slider"><span class="slider-val" id="${containerId}-pct">0%</span></div>`;
+  let interacted = false;
+  function update(){
+    const pct = parseInt(document.getElementById(`${containerId}-slider`).value,10);
+    document.getElementById(`${containerId}-pct`).textContent = pct+'%';
+    const tariffAmt = Math.round(price*pct)/100;
+    document.getElementById(`${containerId}-tariffAmt`).textContent = tariffAmt.toFixed(2);
+    document.getElementById(`${containerId}-segTariff`).style.height = (tariffAmt/maxTotal*stackHeight)+'px';
+    document.getElementById(`${containerId}-totalLabel`).textContent = `Total after tariff: $${(price+tariffAmt).toFixed(2)}`;
+  }
+  document.getElementById(`${containerId}-slider`).addEventListener('input', ()=>{ if(!interacted){interacted=true; activityDone(chKey);} update(); });
+  update();
+}
+function renderProfitActivity(containerId, chKey){
+  const root = document.getElementById(containerId);
+  const vals = [2,4,6].sort(()=>Math.random()-0.5);
+  root.innerHTML = `
+    <div class="bar-row">
+      <div class="bar-col"><div class="bar-stack" style="height:120px;"><div class="bar-seg" style="height:96px;background:#2F8FB0;"></div></div><div class="bar-col-label">Cost: $6</div></div>
+      <div class="bar-col"><div class="bar-stack" style="height:120px;"><div class="bar-seg" style="height:120px;background:#D9A544;"></div></div><div class="bar-col-label">Price: $10</div></div>
+    </div>
+    <p class="big-text" style="font-size:.95rem; text-align:center;">Tap the correct profit!</p>
+    <div style="display:flex; justify-content:center; gap:.5rem;" id="${containerId}-tiles">${vals.map(v=>`<button class="will-tile" data-v="${v}">$${v}</button>`).join('')}</div>
+    <div class="will-reveal" id="${containerId}-reveal"></div>`;
+  document.getElementById(`${containerId}-tiles`).addEventListener('click', e=>{
+    const btn = e.target.closest('.will-tile'); if(!btn) return;
+    const tiles = root.querySelectorAll('.will-tile'); tiles.forEach(t=>t.classList.add('disabled'));
+    const correct = btn.dataset.v === '4';
+    const reveal = document.getElementById(`${containerId}-reveal`);
+    if(correct){ btn.classList.add('correct-flash'); reveal.textContent="Right! $10 \u2212 $6 = $4 profit."; playBlip(700,.15); }
+    else { btn.classList.add('wrong-flash'); tiles.forEach(t=>{if(t.dataset.v==='4')t.classList.add('correct-flash');}); reveal.textContent="Profit = Price \u2212 Cost = $10 \u2212 $6 = $4."; playBlip(260,.15); }
+    reveal.classList.add('shown');
+    activityDone(chKey);
+  });
+}
+const BUILD_SEQUENCE = [
+  {id:'fabric', label:'Cut Fabric Pieces'},
+  {id:'ears', label:'Sew on the Ears'},
+  {id:'eyes', label:'Add the Eyes'},
+  {id:'pattern', label:'Stitch the Pattern'},
+  {id:'stuff', label:'Stuff Him Full'},
+  {id:'legs', label:'Attach the Feet'},
+  {id:'box', label:'Seal the Box'},
+  {id:'truck', label:'Load the Truck'}
+];
+function renderBuildWilliam(containerId, chKey){
+  const root = document.getElementById(containerId);
+  let stepIdx = 0;
+  root.innerHTML = `
+    <p class="big-text" style="text-align:center; font-size:.9rem;">Drag each piece onto William, in the right order, to build him, box him, and send him off!</p>
+    <div class="build-progress" id="${containerId}-progress"></div>
+    <div class="build-stage-wrap drop-zone" id="${containerId}-stage">
+      <div id="${containerId}-assemblyScene">
+        <svg viewBox="0 0 300 220" width="260" height="190">
+          <g id="${containerId}-williamGroup" class="build-william-group">
+            <ellipse cx="150" cy="110" rx="70" ry="52" fill="none" stroke="#B7C4C9" stroke-width="3" stroke-dasharray="6 6"/>
+            <g class="build-part" id="${containerId}-part-legs">
+              <ellipse cx="120" cy="166" rx="14" ry="10" fill="#1E5F78"/>
+              <ellipse cx="180" cy="166" rx="14" ry="10" fill="#1E5F78"/>
+            </g>
+            <g class="build-part" id="${containerId}-part-fabric">
+              <ellipse cx="150" cy="110" rx="70" ry="52" fill="#4FB4D4"/>
+            </g>
+            <g class="build-part" id="${containerId}-part-stuff">
+              <ellipse cx="150" cy="120" rx="46" ry="28" fill="#8FDCEF" opacity=".55"/>
+            </g>
+            <g class="build-part" id="${containerId}-part-ears">
+              <path d="M120 68 C110 52 112 38 122 34 C132 44 130 60 122 72 Z" fill="#2F8FB0"/>
+              <path d="M170 68 C168 50 176 36 186 34 C192 46 186 62 176 72 Z" fill="#2F8FB0"/>
+            </g>
+            <g class="build-part" id="${containerId}-part-eyes">
+              <circle cx="130" cy="98" r="9" fill="#0E1E26"/><circle cx="164" cy="94" r="9" fill="#0E1E26"/>
+              <circle cx="127" cy="95" r="2.4" fill="#fff"/><circle cx="161" cy="91" r="2.4" fill="#fff"/>
+            </g>
+            <g class="build-part" id="${containerId}-part-pattern" stroke="#0E2C3A" stroke-width="1.3" fill="none" stroke-linecap="round">
+              <path d="M170 86 L170 68 M170 68 l-8 12 M170 68 l8 12"/>
+              <circle cx="170" cy="90" r="1.5" fill="#0E2C3A" stroke="none"/>
+            </g>
+          </g>
+          <g id="${containerId}-boxGroup" class="build-scene-box">
+            <path d="M105 95 L150 74 L195 95 L150 116 Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="2"/>
+            <path d="M105 95 v48 l45 21 v-48 Z" fill="#D9C48E" stroke="#A97C2B" stroke-width="2"/>
+            <path d="M195 95 v48 l-45 21 v-48 Z" fill="#C9AA6E" stroke="#A97C2B" stroke-width="2"/>
+          </g>
+        </svg>
+      </div>
+      <div id="${containerId}-truckScene" style="display:none; overflow:hidden; width:100%;">
+        <svg viewBox="0 0 300 140" width="260" height="122">
+          <rect x="10" y="115" width="280" height="6" fill="#B7C4C9"/>
+          <g id="${containerId}-truckGroup" class="build-truck-group">
+            <rect x="60" y="55" width="90" height="55" rx="3" fill="#E8D8A8" stroke="#A97C2B" stroke-width="2"/>
+            <rect x="150" y="70" width="55" height="40" rx="3" fill="#8FDCEF" stroke="#2F8FB0" stroke-width="2"/>
+            <rect x="150" y="80" width="24" height="18" fill="#DCF3FA"/>
+            <circle cx="90" cy="112" r="12" fill="#2C2C2C"/><circle cx="90" cy="112" r="4" fill="#B7C4C9"/>
+            <circle cx="180" cy="112" r="12" fill="#2C2C2C"/><circle cx="180" cy="112" r="4" fill="#B7C4C9"/>
+            <g id="${containerId}-boxOnTruck" style="opacity:0; transition:opacity .3s ease;">
+              <path d="M75 45 L100 32 L125 45 L100 58 Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.6"/>
+              <path d="M75 45 v20 l25 12 v-20 Z" fill="#D9C48E" stroke="#A97C2B" stroke-width="1.6"/>
+              <path d="M125 45 v20 l-25 12 v-20 Z" fill="#C9AA6E" stroke="#A97C2B" stroke-width="1.6"/>
+            </g>
+          </g>
+        </svg>
+        <p class="big-text" id="${containerId}-exportedLabel" style="text-align:center; font-weight:800; opacity:0; transition:opacity .4s ease;">Exported! \u2708\uFE0F</p>
+      </div>
+    </div>
+    <div class="will-pool" id="${containerId}-pool"></div>`;
+  const progressEl = document.getElementById(`${containerId}-progress`);
+  progressEl.innerHTML = BUILD_SEQUENCE.map(()=>`<div class="build-progress-dot"></div>`).join('');
+  function renderPool(){
+    const remaining = BUILD_SEQUENCE.filter((it,i)=>i>=stepIdx);
+    const shuffled = remaining.slice().sort(()=>Math.random()-0.5);
+    document.getElementById(`${containerId}-pool`).innerHTML = shuffled.map(it=>
+      `<div class="drag-chip" id="${containerId}-item-${it.id}" data-id="${it.id}">${ITEM_ICONS[it.id]||''}<span>${it.label}</span></div>`
+    ).join('');
+    // re-register the freshly-created chips with the drag engine every time the pool is rebuilt
+    makeDraggablePool(root, '.drag-chip', ()=>[stage], onDrop);
+  }
+  const stage = document.getElementById(`${containerId}-stage`);
+  function onDrop(zone, el){
+    const expected = BUILD_SEQUENCE[stepIdx];
+    if(el.dataset.id !== expected.id){
+      el.classList.add('wrong-flash');
+      playBlip(260,0.15);
+      setTimeout(()=>el.classList.remove('wrong-flash'), 400);
+      return false;
+    }
+    el.remove();
+    playBlip(700,0.15);
+    const dots = progressEl.querySelectorAll('.build-progress-dot');
+    if(dots[stepIdx]) dots[stepIdx].classList.add('done');
+    if(expected.id === 'box'){
+      const wg = document.getElementById(`${containerId}-williamGroup`);
+      const bg = document.getElementById(`${containerId}-boxGroup`);
+      wg.classList.add('hidden');
+      bg.classList.add('on');
+      setTimeout(()=>{
+        document.getElementById(`${containerId}-assemblyScene`).style.display = 'none';
+        document.getElementById(`${containerId}-truckScene`).style.display = '';
+      }, 500);
+    } else if(expected.id === 'truck'){
+      const boxOnTruck = document.getElementById(`${containerId}-boxOnTruck`);
+      boxOnTruck.style.opacity = '1';
+      setTimeout(()=>{
+        const truckGroup = document.getElementById(`${containerId}-truckGroup`);
+        truckGroup.classList.add('drive-off');
+        playBlip(500,0.2);
+        setTimeout(()=>{
+          document.getElementById(`${containerId}-exportedLabel`).style.opacity = '1';
+          burst(`${containerId}-stage`, ['#FFC93C','#3CAA6B','#5AA9E6'], 20);
+          activityDone(chKey);
+        }, 900);
+      }, 450);
+    } else {
+      const part = document.getElementById(`${containerId}-part-${expected.id}`);
+      if(part){ part.classList.add('on'); }
+      const wg = document.getElementById(`${containerId}-williamGroup`);
+      wg.classList.remove('build-pulse');
+      void wg.offsetWidth;
+      wg.classList.add('build-pulse');
+    }
+    stepIdx++;
+    renderPool();
+    return true;
+  }
+  renderPool();
+}
+function renderShipPack(containerId, chKey){
+  const root = document.getElementById(containerId);
+  const N = 6;
+  const hippoIcon = `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="14" rx="9" ry="7" fill="#8FDCEF"/><path d="M7 9 L5 4 L10 7 Z" fill="#2F8FB0"/><path d="M17 9 L19 4 L14 7 Z" fill="#2F8FB0"/><circle cx="9" cy="13" r="1.4" fill="#0E1E26"/><circle cx="15" cy="13" r="1.4" fill="#0E1E26"/></svg>`;
+  root.innerHTML = `
+    <p class="big-text" style="text-align:center; font-size:.9rem;">Drag each box into the container. Watch it turn into a little William once it's safely loaded!</p>
+    <div class="will-pool" id="${containerId}-pool">${Array.from({length:N}).map((_,i)=>`<div class="drag-chip" id="${containerId}-box-${i}">${ITEM_ICONS.box}</div>`).join('')}</div>
+    <div class="shipping-container">
+      <div class="ship-container-ridges"></div>
+      <div class="ship-grid" id="${containerId}-ship">${Array.from({length:N}).map((_,i)=>`<div class="ship-slot drop-zone" id="${containerId}-slot-${i}"></div>`).join('')}</div>
+    </div>
+    <div class="bar-col-label" style="text-align:center; margin-top:.5rem;">Loaded: <span id="${containerId}-count">0</span> / ${N}</div>`;
+  let filled=0;
+  function zones(){ return Array.from({length:N}).map((_,i)=>document.getElementById(`${containerId}-slot-${i}`)).filter(z=>z && !z.classList.contains('filled')); }
+  makeDraggablePool(root, '.drag-chip', zones, (zone, el)=>{
+    zone.classList.add('filled'); zone.innerHTML = hippoIcon; el.remove(); playBlip(700,.15);
+    filled++;
+    document.getElementById(`${containerId}-count`).textContent = filled;
+    if(filled===N) activityDone(chKey);
+    return true;
+  });
+}
+function renderSupplyDemand(containerId, chKey){
+  const root = document.getElementById(containerId);
+  root.innerHTML = `<div class="bar-row"><div class="bar-col"><div class="bar-stack" id="${containerId}-stack"><div class="bar-seg" id="${containerId}-seg" style="background:#E8734F;"></div></div><div class="bar-col-label">Price: $<span id="${containerId}-price"></span></div></div></div>
+   <div class="slider-row"><label>Supply</label><input type="range" class="will-slider" min="1" max="5" value="3" id="${containerId}-supply"><span class="slider-val" id="${containerId}-supplyv">3</span></div>
+   <div class="slider-row"><label>Demand</label><input type="range" class="will-slider" min="1" max="5" value="3" id="${containerId}-demand"><span class="slider-val" id="${containerId}-demandv">3</span></div>`;
+  const interacted = new Set();
+  function update(){
+    const s = parseInt(document.getElementById(`${containerId}-supply`).value,10);
+    const d = parseInt(document.getElementById(`${containerId}-demand`).value,10);
+    document.getElementById(`${containerId}-supplyv`).textContent = s;
+    document.getElementById(`${containerId}-demandv`).textContent = d;
+    let price = 5 + (d - s) * 1.5;
+    price = Math.max(1, Math.min(10, price));
+    document.getElementById(`${containerId}-price`).textContent = price.toFixed(2);
+    document.getElementById(`${containerId}-seg`).style.height = (price*16)+'px';
+  }
+  document.getElementById(`${containerId}-supply`).addEventListener('input', ()=>{interacted.add('s'); update(); if(interacted.size===2) activityDone(chKey);});
+  document.getElementById(`${containerId}-demand`).addEventListener('input', ()=>{interacted.add('d'); update(); if(interacted.size===2) activityDone(chKey);});
+  update();
+}
+function renderInflationActivity(containerId, chKey){
+  const root = document.getElementById(containerId);
+  root.innerHTML = `<div class="bar-row"><div class="bar-col"><div class="bar-stack" id="${containerId}-stack"><div class="bar-seg" id="${containerId}-seg" style="background:#D9A544;"></div></div><div class="bar-col-label">Movie ticket: $<span id="${containerId}-price"></span></div></div></div>
+   <div class="slider-row"><label>Year</label><input type="range" class="will-slider" min="1980" max="2025" value="1980" id="${containerId}-year"><span class="slider-val" id="${containerId}-yearv">1980</span></div>`;
+  let interacted=false;
+  function update(){
+    const y = parseInt(document.getElementById(`${containerId}-year`).value,10);
+    document.getElementById(`${containerId}-yearv`).textContent = y;
+    const price = 2.69 + (16.08-2.69) * ((y-1980)/(2025-1980));
+    document.getElementById(`${containerId}-price`).textContent = price.toFixed(2);
+    document.getElementById(`${containerId}-seg`).style.height = (price*10)+'px';
+  }
+  document.getElementById(`${containerId}-year`).addEventListener('input', ()=>{ if(!interacted){interacted=true; activityDone(chKey);} update(); });
+  update();
+}
+
+/* ================= QUIZ FLOW ================= */
+const QUIZ_PASS_THRESHOLD = 2; // need at least 2 of 3 correct to unlock the next chapter
+function initQuizScreen(key){
+  const ch = CHAPTERS_BY_KEY[key];
+  // draw 3 questions at random from the chapter's pool, in a fresh random order, so a
+  // retry never repeats the same set (or the same order) — not a memorization drill.
+  const shuffled = ch.quiz.slice().sort(()=>Math.random()-0.5);
+  const active = shuffled.slice(0, Math.min(3, shuffled.length));
+  quizState[key] = {idx:0, score:0, active};
+  renderQuizQuestion(key);
+}
+function renderQuizQuestion(key){
+  const ch = CHAPTERS_BY_KEY[key];
+  const state = quizState[key];
+  const q = state.active[state.idx];
+  document.getElementById(`quizProgress-${key}`).textContent = `Question ${state.idx+1} of ${state.active.length}`;
+  document.getElementById(`quizNextWrap-${key}`).style.display='none';
+  const revealEl = document.getElementById(`quizReveal-${key}`);
+  revealEl.classList.remove('shown','wrong'); revealEl.textContent='';
+  const optsRoot = document.getElementById(`quizOpts-${key}`);
+
+  function answered(correct, correctLabel, explainText){
+    if(correct){ state.score++; playBlip(700,.15); revealEl.textContent = `That's right! ${explainText||''}`; }
+    else { playBlip(260,.15); revealEl.textContent = `Not quite. The answer is: ${correctLabel}. ${explainText||''}`; revealEl.classList.add('wrong'); }
+    revealEl.classList.add('shown');
+    document.getElementById(`quizNextWrap-${key}`).style.display='';
+  }
+
+  if(q.type === 'tf'){
+    document.getElementById(`quizQ-${key}`).textContent = 'True or False?';
+    optsRoot.innerHTML = `
+      <p class="big-text" style="text-align:center; font-size:1rem;">${q.statement}</p>
+      <div class="lever-track" id="leverTrack-${key}">
+        <div class="lever-zone left drop-zone" id="leverZoneFalse-${key}"></div>
+        <div class="lever-zone right drop-zone" id="leverZoneTrue-${key}"></div>
+        <span class="lever-label left">False</span>
+        <span class="lever-label right">True</span>
+        <div class="lever-knob" id="leverKnob-${key}">?</div>
+      </div>
+      <div class="will-btn-row lever-lockin"><button class="will-btn gold" id="leverLockBtn-${key}">Lock It In</button></div>`;
+
+    const track = document.getElementById(`leverTrack-${key}`);
+    const knob = document.getElementById(`leverKnob-${key}`);
+    const zoneFalse = document.getElementById(`leverZoneFalse-${key}`);
+    const zoneTrue = document.getElementById(`leverZoneTrue-${key}`);
+    const knobWidth = 54;
+    function setKnobValue(isTrue, animate){
+      if(track.dataset.locked) return;
+      knob.dataset.value = isTrue ? 'true' : 'false';
+      knob.textContent = isTrue ? 'T' : 'F';
+      knob.style.transition = animate ? 'left .25s cubic-bezier(.34,1.56,.64,1)' : 'none';
+      const trackWidth = track.clientWidth || 210;
+      knob.style.left = (isTrue ? (trackWidth - knobWidth) : 0) + 'px';
+    }
+    zoneFalse.addEventListener('click', ()=> setKnobValue(false, true));
+    zoneTrue.addEventListener('click', ()=> setKnobValue(true, true));
+    function getX(e){
+      if(e.touches && e.touches.length) return e.touches[0].clientX;
+      if(e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+      return e.clientX;
+    }
+    let dragging = false, trackRect;
+    function onDown(e){
+      if(track.dataset.locked) return;
+      dragging = true; dragActive = true;
+      trackRect = track.getBoundingClientRect();
+      knob.style.transition = 'none';
+      e.preventDefault();
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchmove', onMove, {passive:false});
+      document.addEventListener('touchend', onUp);
+    }
+    function onMove(e){
+      if(!dragging) return;
+      e.preventDefault();
+      const x = getX(e);
+      let left = x - trackRect.left - knobWidth/2;
+      left = Math.max(0, Math.min(trackRect.width - knobWidth, left));
+      knob.style.left = left + 'px';
+      const isTrue = left > (trackRect.width - knobWidth) / 2;
+      knob.textContent = isTrue ? 'T' : 'F';
+      knob.dataset.value = isTrue ? 'true' : 'false';
+    }
+    function onUp(){
+      if(!dragging) return;
+      dragging = false; dragActive = false;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+      setKnobValue(knob.dataset.value === 'true', true);
+    }
+    knob.addEventListener('mousedown', onDown);
+    knob.addEventListener('touchstart', onDown, {passive:false});
+
+    document.getElementById(`leverLockBtn-${key}`).addEventListener('click', ()=>{
+      if(track.dataset.locked) return;
+      if(knob.dataset.value !== 'true' && knob.dataset.value !== 'false') return;
+      track.dataset.locked = 'true';
+      document.getElementById(`leverLockBtn-${key}`).disabled = true;
+      const chosen = knob.dataset.value === 'true';
+      const correct = chosen === q.answer;
+      answered(correct, q.answer ? 'True' : 'False', q.explain);
+    }, {once:true});
+  } else {
+    document.getElementById(`quizQ-${key}`).textContent = q.q;
+    const opts = q.options.slice().sort(()=>Math.random()-0.5);
+    optsRoot.innerHTML = opts.map(o=>`<button class="will-tile" style="display:block;width:100%;" data-correct="${o.correct}">${o.text}</button>`).join('');
+    const correctLabel = q.options.find(o=>o.correct).text;
+    optsRoot.querySelectorAll('.will-tile').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const tiles = optsRoot.querySelectorAll('.will-tile'); tiles.forEach(t=>t.classList.add('disabled'));
+        const correct = btn.dataset.correct==='true';
+        if(correct) btn.classList.add('correct-flash');
+        else { btn.classList.add('wrong-flash'); tiles.forEach(t=>{if(t.dataset.correct==='true')t.classList.add('correct-flash');}); }
+        answered(correct, correctLabel, q.explain);
+      }, {once:true});
+    });
+  }
+}
+function advanceQuiz(key){
+  const state = quizState[key];
+  state.idx++;
+  if(state.idx < state.active.length){ renderQuizQuestion(key); }
+  else { jumpToChapter(`result-${key}`); }
+}
+function fillResult(key){
+  const state = quizState[key];
+  const total = state.active.length;
+  const passed = state.score >= QUIZ_PASS_THRESHOLD;
+  const titleEl = document.getElementById(`resultTitle-${key}`);
+  const continueBtn = document.getElementById(`resultContinueBtn-${key}`);
+  const retryBtn = document.getElementById(`resultRetryBtn-${key}`);
+  const badgeWrap = document.getElementById(`resultBadgeWrap-${key}`);
+  let phrase;
+  if(passed){
+    titleEl.textContent = 'Chapter Complete!';
+    if(state.score === total) phrase = `Perfect score, ${state.score}/${total}! William is proud of you.`;
+    else phrase = `Nice work, ${state.score}/${total}! That's enough to move on.`;
+    continueBtn.style.display = '';
+    retryBtn.style.display = 'none';
+    const alreadyHadBadge = checksDone[CHAPTER_ORDER.indexOf(key)];
+    persistDone(key);
+    const b = CHAPTER_BADGES[key];
+    if(b && badgeWrap){
+      badgeWrap.style.display = '';
+      badgeWrap.innerHTML = `<div class="trail-badge ${b.big?'big':''}" style="background:${b.color}; width:80px; height:80px;"><svg width="44" height="44" viewBox="0 0 44 44">${b.icon}</svg></div>`;
+      if(!alreadyHadBadge){
+        setTimeout(()=>burst(`resultBadgeWrap-${key}`, [b.color,'#FFC93C','#3CAA6B'], 16), 100);
+      }
+    }
+  } else {
+    titleEl.textContent = 'So Close!';
+    phrase = `You got ${state.score}/${total}. You need at least ${QUIZ_PASS_THRESHOLD} correct to move on, let's try the quiz again!`;
+    continueBtn.style.display = 'none';
+    retryBtn.style.display = '';
+    if(badgeWrap) badgeWrap.style.display = 'none';
+  }
+  document.getElementById(`resultText-${key}`).textContent = phrase;
+}
+function retryQuiz(key){
+  // give the retry a fresh mix of questions/order so it's not a memorization drill
+  jumpToChapter(`quiz-${key}`);
+}
+function continueFromResult(key){
+  const idx = CHAPTER_ORDER.indexOf(key);
+  const nextKey = CHAPTER_ORDER[idx+1];
+  if(nextKey) jumpToChapter(nextKey);
+  else jumpToChapter('finale'); // last chapter finished: celebrate!
+}
+
+/* ================= CHAPTER MAP + BADGES ================= */
+const CHAPTER_BADGES = {
+  res:      { color:'#3CAA6B', icon:'<path d="M22 34 V18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M22 18 C14 18 10 12 10 8 C18 8 22 12 22 18 Z" fill="#fff"/><path d="M22 22 C30 22 34 16 34 12 C26 12 22 16 22 22 Z" fill="#fff"/>', stampIcon:'\u{1F331}' },
+  real:     { color:'#D9A544', icon:'<path d="M22 8 L36 34 H8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M16 34 L22 20 L28 34" stroke="#fff" stroke-width="2" fill="none"/>', stampIcon:'\u{1F3DB}\uFE0F' },
+  chain:    { color:'#4FBF8F', icon:'<rect x="10" y="20" width="14" height="12" fill="none" stroke="#fff" stroke-width="3"/><path d="M26 26 h8 M30 22 l4 4 -4 4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F69B}' },
+  labor:    { color:'#5AA9E6', icon:'<circle cx="14" cy="14" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="14" cy="30" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M17 17 L31 31 M17 27 L31 13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F477}' },
+  build:    { color:'#4FBF8F', icon:'<path d="M22 10 L22 34" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-dasharray="4 4"/><circle cx="16" cy="18" r="2" fill="#fff"/><circle cx="28" cy="18" r="2" fill="#fff"/>', stampIcon:'\u{1F9F5}' },
+  cost:     { color:'#E8734F', icon:'<path d="M10 10 h16 l8 8 -16 16 -8 -8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.5" fill="#fff"/>', stampIcon:'\u{1F4B0}' },
+  profit:   { color:'#9B7FD4', icon:'<line x1="12" y1="16" x2="32" y2="16" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="16" x2="22" y2="32" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M8 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M28 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/>', stampIcon:'\u2696\uFE0F' },
+  tax:      { color:'#9B7FD4', icon:'<rect x="10" y="8" width="24" height="30" rx="2" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 16 h16 M14 22 h16 M14 28 h10" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>', stampIcon:'\u{1F3DB}\uFE0F' },
+  ship:     { color:'#2F8FB0', icon:'<path d="M8 24 h28 l-4 10 h-20 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><line x1="22" y1="10" x2="22" y2="24" stroke="#fff" stroke-width="3"/><path d="M22 10 L30 14 L22 17 Z" fill="#fff"/>', stampIcon:'\u{1F6A2}' },
+  trade:    { color:'#3CAA6B', icon:'<circle cx="22" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="22" cy="22" rx="6" ry="13" fill="none" stroke="#fff" stroke-width="2"/><line x1="9" y1="22" x2="35" y2="22" stroke="#fff" stroke-width="2"/>', stampIcon:'\u{1F30D}' },
+  tariff:   { color:'#E85D5D', icon:'<line x1="8" y1="30" x2="36" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="18" y="10" width="8" height="20" fill="#fff"/><circle cx="22" cy="10" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>', stampIcon:'\u{1F6C2}' },
+  currency: { color:'#D9A544', icon:'<circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="3"/><text x="22" y="28" font-size="15" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800">$</text>', stampIcon:'\u{1F4B1}' },
+  sd:       { color:'#9B7FD4', icon:'<line x1="8" y1="22" x2="36" y2="22" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="22" r="3.5" fill="#fff"/><circle cx="32" cy="22" r="3.5" fill="#fff"/>', stampIcon:'\u{1F4CA}' },
+  inflation:{ color:'#E85D5D', icon:'<path d="M8 30 L16 22 L22 26 L34 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 12 h7 v7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F4C8}' },
+  recap:    { color:'#FFC93C', icon:'<path d="M14 12 h16 v8 a8 8 0 0 1 -16 0 Z" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 14 h-4 a4 4 0 0 0 4 7" fill="none" stroke="#fff" stroke-width="2.3"/><path d="M30 14 h4 a4 4 0 0 1 -4 7" fill="none" stroke="#fff" stroke-width="2.3"/><line x1="22" y1="27" x2="22" y2="32" stroke="#fff" stroke-width="2.5"/><line x1="16" y1="34" x2="28" y2="34" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F3C6}', big:true }
+};
+function renderFinale(){
+  const grid = document.getElementById('finaleStampsGrid');
+  if(!grid) return;
+  grid.innerHTML = CHAPTERS.map(ch=>`<div class="passport-stamp stamped">${CHAPTER_BADGES[ch.key].stampIcon}</div>`).join('');
+  burst('finaleWrap', ['#FFC93C','#3CAA6B','#5AA9E6','#E8734F','#9B7FD4'], 30);
+  playBlip(700,0.2);
+  setTimeout(()=>playBlip(900,0.25), 180);
+}
+const JOURNEY_STEP_X = 230;
+const JOURNEY_MARGIN_X = 140;
+const JOURNEY_BELT_H = 26;
+function journeyMapHeight(){
+  const vp = document.getElementById('journeyMapViewport');
+  return (vp && vp.clientHeight) ? vp.clientHeight : 640;
+}
+// side-view Mario-style layout: every stop sits on ONE ground-level conveyor line
+function journeyGroundY(svgH){ return Math.round(svgH*0.64); }
+function journeyPoints(svgH){
+  const groundY = journeyGroundY(svgH);
+  const standY = groundY - 90; // anchor for the stack (post+badge+labels) standing on the belt
+  return CHAPTER_ORDER.map((key,i)=>({ x: JOURNEY_MARGIN_X + i*JOURNEY_STEP_X, y: standY }));
+}
+// ---- factory / shipping-yard scenery, side view (like an old side-scrolling platformer) ----
+function factoryCrateSVG(cx, cy, scale, hue){
+  return `<g transform="translate(${cx},${cy}) scale(${scale})">
+    <ellipse cx="0" cy="21" rx="22" ry="4" fill="rgba(0,0,0,.3)"/>
+    <rect x="-20" y="-16" width="40" height="36" rx="2" fill="${hue}" stroke="#2B2F33" stroke-width="2.4"/>
+    <path d="M-20 2 H20 M-10 -16 V18 M10 -16 V18" stroke="#2B2F33" stroke-width="1.6" opacity=".55"/>
+    <rect x="-20" y="-16" width="40" height="36" rx="2" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>
+  </g>`;
+}
+function factoryDrumSVG(cx, cy, scale){
+  return `<g transform="translate(${cx},${cy}) scale(${scale})">
+    <ellipse cx="0" cy="16" rx="16" ry="3.4" fill="rgba(0,0,0,.3)"/>
+    <rect x="-14" y="-20" width="28" height="36" rx="6" fill="#C1552F" stroke="#2B2F33" stroke-width="2.2"/>
+    <ellipse cx="0" cy="-20" rx="14" ry="4" fill="#E8734F" stroke="#2B2F33" stroke-width="2"/>
+    <path d="M-14 -6 H14 M-14 6 H14" stroke="#2B2F33" stroke-width="1.6" opacity=".5"/>
+  </g>`;
+}
+function factoryBeamSVG(x, wallH){
+  return `<g opacity=".9">
+    <rect x="${x-4}" y="0" width="8" height="${wallH}" fill="#3A4046"/>
+    <rect x="${x-4}" y="0" width="8" height="${wallH}" fill="url(#beamShine)"/>
+  </g>`;
+}
+function factoryWindowSVG(x, y){
+  return `<g transform="translate(${x},${y})">
+    <rect x="0" y="0" width="70" height="86" rx="4" fill="#3A4046" stroke="#202427" stroke-width="3"/>
+    <rect x="7" y="7" width="56" height="72" fill="#BFE3EC" opacity=".22"/>
+    <line x1="35" y1="7" x2="35" y2="79" stroke="#202427" stroke-width="2.5"/>
+    <line x1="7" y1="43" x2="63" y2="43" stroke="#202427" stroke-width="2.5"/>
+  </g>`;
+}
+function factoryPipeSVG(svgW, y){
+  let valves = '';
+  for(let vx=70; vx<svgW; vx+=210){ valves += `<circle cx="${vx}" cy="${y}" r="9" fill="#5A6169" stroke="#202427" stroke-width="2.4"/><rect x="${vx-2}" y="${y-13}" width="4" height="8" fill="#5A6169"/>`; }
+  return `<g opacity=".85"><rect x="0" y="${y-6}" width="${svgW}" height="12" fill="#4A5158" stroke="#202427" stroke-width="2"/>${valves}</g>`;
+}
+function forkliftSVG(x, groundY, scale, flip){
+  return `<g transform="translate(${x},${groundY}) scale(${flip?-scale:scale},${scale})">
+    <ellipse cx="0" cy="2" rx="26" ry="4" fill="rgba(0,0,0,.32)"/>
+    <rect x="-18" y="-24" width="30" height="16" rx="3" fill="#FFCC33" stroke="#2B2F33" stroke-width="2.2"/>
+    <rect x="-14" y="-38" width="18" height="16" rx="2" fill="#FFCC33" stroke="#2B2F33" stroke-width="2.2"/>
+    <rect x="-15" y="-40" width="2" height="32" fill="#5A6169"/>
+    <rect x="6" y="-40" width="2" height="32" fill="#5A6169"/>
+    <rect x="12" y="-14" width="14" height="3" fill="#8a8478"/>
+    <circle cx="-10" cy="-4" r="8" fill="#202427" stroke="#5A6169" stroke-width="2.4"/>
+    <circle cx="10" cy="-4" r="8" fill="#202427" stroke="#5A6169" stroke-width="2.4"/>
+  </g>`;
+}
+function williamTraySVG(){
+  return `<svg width="112" height="112" viewBox="0 0 150 150" style="filter:drop-shadow(0 4px 4px rgba(0,0,0,.45)); display:block;">
+    <use href="#williamArt" x="15" y="2" width="120" height="94"/>
+    <ellipse cx="75" cy="139" rx="42" ry="5" fill="rgba(0,0,0,.3)"/>
+    <rect x="28" y="98" width="94" height="15" rx="3" fill="#8a8478" stroke="#2B2F33" stroke-width="2.6"/>
+    <rect x="28" y="98" width="94" height="6" rx="2" fill="#a8a296"/>
+    <circle cx="46" cy="124" r="13" fill="#202427" stroke="#5A6169" stroke-width="3.2"/>
+    <circle cx="104" cy="124" r="13" fill="#202427" stroke="#5A6169" stroke-width="3.2"/>
+    <circle cx="46" cy="124" r="4.5" fill="#5A6169"/>
+    <circle cx="104" cy="124" r="4.5" fill="#5A6169"/>
+  </svg>`;
+}
+function renderJourneyMap(){
+  const canvas = document.getElementById('journeyMapCanvas');
+  if(!canvas) return;
+  const n = CHAPTER_ORDER.length;
+  const svgW = JOURNEY_MARGIN_X*2 + JOURNEY_STEP_X*(n-1) + 220;
+  const svgH = journeyMapHeight();
+  const groundY = journeyGroundY(svgH);
+  const wallH = groundY - JOURNEY_BELT_H/2;
+  const points = journeyPoints(svgH);
+  canvas.style.width = svgW + 'px';
+  canvas.style.height = svgH + 'px';
+
+  // back wall: support beams, big factory windows, an overhead pipe run
+  let beamsHTML = '';
+  for(let bx=40; bx<svgW; bx+=190) beamsHTML += factoryBeamSVG(bx, wallH);
+  let windowsHTML = '';
+  for(let wx=90; wx<svgW-70; wx+=260) windowsHTML += factoryWindowSVG(wx, wallH*0.18);
+  const pipeHTML = factoryPipeSVG(svgW, Math.max(30, wallH*0.06));
+
+  // crates and drums on the factory floor (below the belt), clear of every stop and the belt band
+  const crateHues = ['#5AA9E6','#4FBF8F','#E8734F','#9B7FD4','#D9A544'];
+  const sceneSpots = [];
+  for(let i=0;i<Math.round(svgW/70);i++){
+    const sx = 24 + (i*151) % (svgW-48);
+    const tooCloseToStop = points.some(p => Math.abs(p.x-sx) < 78);
+    if(tooCloseToStop) continue;
+    const sy = groundY + 34 + ((i*37)%(svgH-groundY-60 > 0 ? svgH-groundY-60 : 20));
+    sceneSpots.push({ x:sx, y:sy, s: 0.7+((i*29)%35)/100, kind: i%3===0 ? 'drum' : 'crate', hue: crateHues[i%crateHues.length] });
+  }
+  const sceneHTML = sceneSpots.map(s => s.kind==='drum' ? factoryDrumSVG(s.x,s.y,s.s) : factoryCrateSVG(s.x,s.y,s.s,s.hue)).join('');
+  // a couple of forklifts parked on the floor for atmosphere
+  const forkliftHTML = [0.14,0.58,0.86].map((f,i)=> forkliftSVG(svgW*f, groundY+64, 1, i%2===0)).join('');
+
+  // the conveyor belt itself: dark band, yellow hazard cleats, support rollers underneath
+  let cleatsHTML = '';
+  for(let cx=0; cx<svgW; cx+=34){ cleatsHTML += `<line x1="${cx}" y1="${groundY-JOURNEY_BELT_H/2}" x2="${cx+14}" y2="${groundY+JOURNEY_BELT_H/2}" stroke="#FFCC33" stroke-width="7"/>`; }
+  let rollersHTML = '';
+  for(let rx=20; rx<svgW; rx+=58){ rollersHTML += `<circle cx="${rx}" cy="${groundY+JOURNEY_BELT_H/2+7}" r="6" fill="#5A6169" stroke="#202427" stroke-width="2"/>`; }
+  const beltHTML = `
+    <rect x="0" y="${groundY-JOURNEY_BELT_H/2}" width="${svgW}" height="${JOURNEY_BELT_H}" fill="#202427" stroke="#000" stroke-width="2"/>
+    <g clip-path="url(#beltClip)">${cleatsHTML}</g>
+    ${rollersHTML}
+    <rect x="0" y="${groundY-JOURNEY_BELT_H/2}" width="${svgW}" height="3" fill="#4A5158"/>`;
+
+  const bgSvg = `<svg class="journey-map-bg-svg" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="beamShine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fff" stop-opacity=".18"/><stop offset="50%" stop-color="#fff" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".18"/></linearGradient>
+      <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6B7278"/><stop offset="100%" stop-color="#4B5157"/></linearGradient>
+      <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5A6169"/><stop offset="100%" stop-color="#3A4046"/></linearGradient>
+      <clipPath id="beltClip"><rect x="0" y="${groundY-JOURNEY_BELT_H/2}" width="${svgW}" height="${JOURNEY_BELT_H}"/></clipPath>
+    </defs>
+    <rect x="0" y="0" width="${svgW}" height="${wallH}" fill="url(#wallGrad)"/>
+    <rect x="0" y="${groundY+JOURNEY_BELT_H/2}" width="${svgW}" height="${svgH-groundY-JOURNEY_BELT_H/2}" fill="url(#floorGrad)"/>
+    ${windowsHTML}
+    ${pipeHTML}
+    ${beamsHTML}
+    ${sceneHTML}
+    ${forkliftHTML}
+    ${beltHTML}
+  </svg>`;
+
+  let nextUnlockedIdx = -1;
+  const stopsHTML = CHAPTERS.map((ch,i)=>{
+    const done = checksDone[i];
+    const unlocked = isChapterUnlocked(i);
+    if(unlocked && !done && nextUnlockedIdx === -1) nextUnlockedIdx = i;
+    const b = CHAPTER_BADGES[ch.key];
+    const delay = (i*0.05).toFixed(2);
+    const p = points[i];
+    if(!unlocked){
+      return `<div class="journey-stop" style="left:${p.x}px; top:${p.y}px;">
+        <div class="journey-flag-pole"></div>
+        <button class="journey-stop-btn" style="animation-delay:${delay}s; cursor:default;">
+          <div class="journey-badge">
+            <svg width="24" height="24" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="9" rx="1.5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M6.5 9 V6 a3.5 3.5 0 0 1 7 0 v3" fill="none" stroke="#fff" stroke-width="1.8"/></svg>
+          </div>
+        </button>
+        <div class="journey-num-pill">Dock ${i+1}</div>
+        <div class="journey-name">${ch.title}</div>
+      </div>`;
+    }
+    return `<div class="journey-stop" style="left:${p.x}px; top:${p.y}px;">
+      <div class="journey-flag-pole"></div>
+      <button class="journey-stop-btn" style="animation-delay:${delay}s" onclick="jumpToChapter('${ch.key}')">
+        <div class="journey-badge ${b.big?'big':''}" style="background:${b.color}">
+          <svg width="${b.big?38:32}" height="${b.big?38:32}" viewBox="0 0 44 44">${b.icon}</svg>
+          ${done ? `<div class="journey-check"><svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 7 L5.5 10.5 L12 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}
+        </div>
+      </button>
+      <div class="journey-num-pill">Dock ${i+1}</div>
+      <div class="journey-name">${ch.title}</div>
+    </div>`;
+  }).join('');
+
+  // William rides a little flatbed tray on the belt, parked just before his next stop
+  let trayX = points[0] ? points[0].x - 90 : 60;
+  if(nextUnlockedIdx >= 0 && points[nextUnlockedIdx]) trayX = points[nextUnlockedIdx].x - 85;
+  const herePin = nextUnlockedIdx >= 0 ? `<div class="journey-here-pin" id="journeyHerePin" style="left:${trayX}px; top:${groundY+JOURNEY_BELT_H/2}px;">
+    ${williamTraySVG()}
+  </div>` : '';
+  canvas.innerHTML = bgSvg + stopsHTML + herePin;
+  canvas.dataset.nextIdx = nextUnlockedIdx;
+}
+function scrollJourneyMap(dir){
+  const vp = document.getElementById('journeyMapViewport');
+  if(!vp) return;
+  if(typeof vp.scrollBy === 'function') vp.scrollBy({ left: dir * 300, behavior:'smooth' });
+  else vp.scrollLeft += dir * 300;
+}
+function recenterJourneyMap(){
+  const vp = document.getElementById('journeyMapViewport');
+  const canvas = document.getElementById('journeyMapCanvas');
+  if(!vp || !canvas) return;
+  const idx = parseInt(canvas.dataset.nextIdx, 10);
+  const points = journeyPoints(journeyMapHeight());
+  const target = idx >= 0 && points[idx] ? points[idx].x : points[0].x;
+  const left = Math.max(0, target - vp.clientWidth/2);
+  if(typeof vp.scrollTo === 'function') vp.scrollTo({ left, behavior:'smooth' });
+  else vp.scrollLeft = left;
+}
+function toggleWillDrawer(show){
+  const overlay = document.getElementById('willDrawerOverlay');
+  if(!overlay) return;
+  overlay.classList.toggle('shown', show);
+}
+// click-and-drag panning for desktop (touch already scrolls natively)
+function initFactoryMapDrag(){
+  const vp = document.getElementById('journeyMapViewport');
+  if(!vp || vp.dataset.dragBound) return;
+  vp.dataset.dragBound = '1';
+  let dragging=false, startX=0, startScroll=0, moved=false;
+  vp.addEventListener('mousedown', e=>{
+    dragging = true; moved = false; startX = e.clientX; startScroll = vp.scrollLeft;
+    vp.classList.add('grabbing');
+  });
+  window.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    const dx = e.clientX - startX;
+    if(Math.abs(dx) > 4) moved = true;
+    vp.scrollLeft = startScroll - dx;
+  });
+  window.addEventListener('mouseup', ()=>{ dragging=false; vp.classList.remove('grabbing'); });
+  // suppress the click-through on a stop button right after a drag
+  vp.addEventListener('click', e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } }, true);
+}
+let _journeyResizeTimer = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(_journeyResizeTimer);
+  _journeyResizeTimer = setTimeout(()=>{ if(document.getElementById('willhubSection') && document.getElementById('willhubSection').classList.contains('active')) renderJourneyMap(); }, 200);
+});
+function renderBadgeCase(){
+  const card = document.getElementById('badgeCaseCard');
+  if(!card) return;
+  const doneCount = checksDone.filter(Boolean).length;
+  const stampsHTML = CHAPTERS.map((ch,i)=>{
+    const done = checksDone[i];
+    return `<div class="passport-stamp ${done?'stamped':''}">${done ? CHAPTER_BADGES[ch.key].stampIcon : ''}</div>`;
+  }).join('');
+  card.innerHTML = `<div class="passport-card"><div class="passport-title">William's Record Book (${doneCount}/${CHAPTERS.length} stamps)</div><div class="passport-stamps-grid">${stampsHTML}</div></div>`;
+}
+
+/* ================= INIT ================= */
+rebuildSessions();
+updateNav();
+renderJourneyMap();
+renderBadgeCase();
+initFactoryMapDrag();
+setTimeout(recenterJourneyMap, 60);
+(function(){ const vp=document.getElementById('journeyMapViewport'); if(vp) vp.addEventListener('scroll', ()=>{ vp.dataset.userScrolled='1'; }, {passive:true}); })();
+</script>
+</body>
+</html>

@@ -49,6 +49,7 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .journey-card.dollhouse-theme{ background:linear-gradient(150deg,#FDEFF5,#FBDCEA); }
 .journey-card.world-theme{ background:linear-gradient(150deg,#EAF5FF,#D6EBFF); }
 .journey-card.orchard-theme{ background:linear-gradient(150deg,#F5EFDC,#E8DEC0); }
+.journey-card.hippo-theme{ background:linear-gradient(150deg,#EAF7FB,#CDEEF8); }
 
 /* ============ ORCHARD JOURNEY: fresh visual identity ============ */
 :root{
@@ -337,6 +338,7 @@ const checksDone = loadChecksDoneFor('melissaMoneyChecksDone_v1', 11);
 const dollhouseChecksDone = loadChecksDoneFor('melissaMoneyDollhouseChecksDone_v1', 10);
 const worldChecksDone = loadChecksDoneFor('melissaMoneyWorldChecksDone_v1', 14);
 const orchardChecksDone = loadChecksDoneFor('melissaMoneyOrchardChecksDone_v1', 13);
+const hippoChecksDone = loadChecksDoneFor('melissaMoneyHippoChecksDone_v1', 15);
 
 function renderJourneyHub(){
   const grid = document.getElementById('journeyHubGrid');
@@ -392,6 +394,26 @@ function renderJourneyHub(){
         </div>
       </div>
       <div class="journey-dots-row">${dotsHTML(orchardChecksDone,'var(--orch-green)')}</div>
+      <div class="journey-play-btn">${playArrow}</div>
+    </div>
+    <div class="journey-card hippo-theme" onclick="window.location.href='money-matters-hippo.html'">
+      <div class="journey-sparkle" style="top:8px; right:65px;">&#127760;</div>
+      <div class="journey-card-top">
+        <div class="journey-icon-badge" style="background:#2F8FB0;">
+          <svg width="32" height="32" viewBox="0 0 44 44">
+            <ellipse cx="22" cy="26" rx="15" ry="12" fill="#fff"/>
+            <path d="M12 20 C9 14 11 8 16 7 C19 12 18 18 14 22 Z" fill="#fff"/>
+            <path d="M32 20 C35 14 33 8 28 7 C25 12 26 18 30 22 Z" fill="#fff"/>
+            <circle cx="17" cy="24" r="2.6" fill="#2F8FB0"/>
+            <circle cx="27" cy="24" r="2.6" fill="#2F8FB0"/>
+          </svg>
+        </div>
+        <div>
+          <div class="journey-card-title">William's Workshop</div>
+          <div class="journey-card-desc">Follow William the hippo around the world: factories, trade, and money.</div>
+        </div>
+      </div>
+      <div class="journey-dots-row">${dotsHTML(hippoChecksDone,'#2F8FB0')}</div>
       <div class="journey-play-btn">${playArrow}</div>
     </div>`;
   renderBadgeCase();
