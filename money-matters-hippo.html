@@ -123,6 +123,10 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .link-match-col{ display:flex; flex-direction:column; gap:.6rem; flex:1; min-width:0; }
 .link-item{ font-family:var(--font-display); font-weight:700; font-size:.8rem; line-height:1.15; background:#fff; border:3px solid var(--will-blue-pale); border-radius:12px; padding:.5rem .5rem; cursor:grab; text-align:center; box-shadow:2px 2px 0 var(--will-blue-pale); touch-action:none; height:5.4rem; box-sizing:border-box; overflow:hidden; display:flex; align-items:center; justify-content:center; transition:background .15s ease, border-color .15s ease; }
 .link-item.matched{ cursor:default; }
+.link-item.icon-item{ flex-direction:column; gap:.3rem; padding:.5rem .3rem .4rem; }
+.link-item-icon{ width:34px; height:34px; flex-shrink:0; }
+.link-item-icon svg{ width:100%; height:100%; display:block; }
+.link-item.icon-item .link-item-label{ font-size:.68rem; line-height:1.1; }
 .link-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
 @keyframes particleFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
 .particle{ position:absolute; border-radius:50%; animation:particleFly 1s ease-out forwards; pointer-events:none; }
@@ -283,7 +287,7 @@ input[type=range].will-slider:focus{ outline:none; }
 
 /* ---------- check your understanding (before every quiz) ---------- */
 .check-box{ background:linear-gradient(160deg,#FFF7E4,#FFEFC9); border:3px solid var(--will-gold); border-radius:20px; padding:1.1rem 1.1rem 1.2rem; margin:.9rem 0; box-shadow:0 6px 0 var(--will-gold-dark); position:relative; }
-.check-box-badge{ width:52px; height:52px; border-radius:50%; background:var(--will-gold); border:4px solid #fff; box-shadow:0 4px 0 rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; margin:-2.4rem auto .5rem; font-size:1.5rem; }
+.check-box-badge{ width:52px; height:52px; border-radius:50%; background:var(--will-gold); border:4px solid #fff; box-shadow:0 4px 0 rgba(0,0,0,.15); display:flex; align-items:center; justify-content:center; margin:-2.4rem auto .5rem; }
 .check-box-title{ font-family:var(--font-display); font-weight:800; color:var(--will-gold-dark); text-align:center; font-size:1rem; margin-bottom:.5rem; }
 .check-box-body{ font-size:.9rem; color:var(--will-ink); text-align:left; }
 .check-box-sentence{ font-family:var(--font-display); font-weight:800; color:var(--will-blue-dark); background:#fff; border:2px dashed var(--will-gold-dark); border-radius:12px; padding:.55rem .7rem; margin-top:.7rem; text-align:center; font-size:.86rem; }
@@ -773,7 +777,7 @@ function burst(wrapId, colors, count){
 }
 function buildLinkMatch(containerId, pairs, onComplete){
   const root = document.getElementById(containerId);
-  const lefts = pairs.map((p,i)=>({id:'L'+i, label:p.left, matchId:'R'+i}));
+  const lefts = pairs.map((p,i)=>({id:'L'+i, label:p.left, matchId:'R'+i, iconKey:p.iconKey}));
   const rights = pairs.map((p,i)=>({id:'R'+i, label:p.right})).sort(()=>Math.random()-0.5);
   const wrapId = `${containerId}-wrap`;
   root.innerHTML = `<div class="link-match-wrap" id="${wrapId}">
@@ -784,7 +788,13 @@ function buildLinkMatch(containerId, pairs, onComplete){
   const wrap = document.getElementById(wrapId);
   const leftsCol = document.getElementById(`${containerId}-lefts`);
   const rightsCol = document.getElementById(`${containerId}-rights`);
-  leftsCol.innerHTML = lefts.map(l=>`<div class="link-item" data-id="${l.id}">${l.label}</div>`).join('');
+  // Left boxes show a purpose-drawn SVG icon (when the pair has one) above the label, so kids
+  // can match by picture as well as by word, rather than reading two blocks of plain text.
+  leftsCol.innerHTML = lefts.map(l=>{
+    const iconSvg = l.iconKey && LINKMATCH_ICONS[l.iconKey];
+    if(iconSvg) return `<div class="link-item icon-item" data-id="${l.id}"><div class="link-item-icon">${iconSvg}</div><span class="link-item-label">${l.label}</span></div>`;
+    return `<div class="link-item" data-id="${l.id}">${l.label}</div>`;
+  }).join('');
   rightsCol.innerHTML = rights.map(r=>`<div class="link-item" data-id="${r.id}">${r.label}</div>`).join('');
 
   let selectedLeftId = null, dragFromId = null, matchedCount = 0, permLines = [];
@@ -1099,9 +1109,9 @@ const CHAPTERS = [
   <div class="fact-box"><b>Real fact:</b> The real William is only about 8 inches long, smaller than your plush hippo!</div>`,
   activityTitle:'Match William to his story',
   activity:{type:'linkmatch', pairs:[
-    {left:'Blue glaze', right:'Made from crushed quartz called faience'},
-    {left:'Lotus flowers', right:'Symbolize rebirth, since they close at night and reopen each morning'},
-    {left:'Three broken legs', right:'Broken on purpose in ancient times, so the statue "couldn\u2019t come to life"'}
+    {left:'Blue glaze', right:'Made from crushed quartz called faience', iconKey:'blueGlaze'},
+    {left:'Lotus flowers', right:'Symbolize rebirth, since they close at night and reopen each morning', iconKey:'lotus'},
+    {left:'Three broken legs', right:'Broken on purpose in ancient times, so the statue "couldn\u2019t come to life"', iconKey:'brokenLeg'}
   ]},
   quiz:[
     {q:'Where does the real William live today?', options:[{text:'The Metropolitan Museum of Art',correct:true},{text:'A zoo in Egypt',correct:false},{text:'A toy factory',correct:false}], explain:'William has lived at The Met in New York City since 1917.'},
@@ -1249,10 +1259,10 @@ const CHAPTERS = [
   intro:`<p>Different countries use different kinds of money, called <b>currency</b>. The United States uses the dollar ($), Japan uses the yen (\u00A5), Egypt (home of the real William!) uses the Egyptian pound (E\u00A3), and many European countries share the euro (\u20AC). When goods cross borders, money often has to be exchanged from one currency into another.</p>`,
   activityTitle:'Match the country to its money',
   activity:{type:'linkmatch', pairs:[
-    {left:'United States', right:'US Dollar ($)'},
-    {left:'Japan', right:'Japanese Yen (\u00A5)'},
-    {left:'Egypt', right:'Egyptian Pound (E\u00A3)'},
-    {left:'France & Germany', right:'Euro (\u20AC)'}
+    {left:'United States', right:'US Dollar ($)', iconKey:'flagUS'},
+    {left:'Japan', right:'Japanese Yen (\u00A5)', iconKey:'flagJapan'},
+    {left:'Egypt', right:'Egyptian Pound (E\u00A3)', iconKey:'flagEgypt'},
+    {left:'France & Germany', right:'Euro (\u20AC)', iconKey:'flagEU'}
   ]},
   quiz:[
     {q:'What do we call the money used in a particular country?', options:[{text:'Currency',correct:true},{text:'Export',correct:false},{text:'Inflation',correct:false}], explain:'Currency is the type of money a country officially uses.'},
@@ -1287,10 +1297,10 @@ const CHAPTERS = [
   intro:`<p>You followed William's whole journey: from raw materials, through a factory full of hardworking people, into a price tag, onto a cargo ship, across a border, through an exchange of currency, and finally into your hands, shaped along the way by supply, demand, and inflation. That's the global economy in action!</p>`,
   activityTitle:'Match the big ideas',
   activity:{type:'linkmatch', pairs:[
-    {left:'Resources', right:'The raw materials something is made from'},
-    {left:'Labor', right:'The work people do to make something'},
-    {left:'Import/Export', right:'Goods crossing borders between countries'},
-    {left:'Inflation', right:'Prices rising slowly over time'}
+    {left:'Resources', right:'The raw materials something is made from', iconKey:'resourcesSack'},
+    {left:'Labor', right:'The work people do to make something', iconKey:'laborWrench'},
+    {left:'Import/Export', right:'Goods crossing borders between countries', iconKey:'importExport'},
+    {left:'Inflation', right:'Prices rising slowly over time', iconKey:'inflationArrow'}
   ]},
   quiz:[
     {q:'What connects a cotton farm, a factory, a cargo ship, and your toy shelf?', options:[{text:'A global supply chain',correct:true},{text:'A single company that does it all alone',correct:false},{text:'Nothing, they\u2019re unrelated',correct:false}], explain:'A supply chain links every step, in every country, that brings a product to you.'},
@@ -1330,6 +1340,46 @@ const ITEM_ICONS = {
   stitch: `<svg viewBox="0 0 24 24"><path d="M3 12 h4 M9 12 h4 M15 12 h4" stroke="#E8734F" stroke-width="2.4" stroke-linecap="round"/><path d="M6 8 v8 M12 8 v8 M18 8 v8" stroke="#E8734F" stroke-width="1.3" stroke-dasharray="1 3"/></svg>`,
   foot: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="8" ry="6" fill="#1E5F78"/><ellipse cx="12" cy="7" rx="4" ry="3" fill="#1E5F78"/></svg>`,
   truck: `<svg viewBox="0 0 24 24"><rect x="1" y="9" width="12" height="8" rx="1" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.1"/><path d="M13 12 h5 l4 4 v1 h-9 Z" fill="#8FDCEF" stroke="#2F8FB0" stroke-width="1.1"/><circle cx="6" cy="18" r="2" fill="#2C2C2C"/><circle cx="18" cy="18" r="2" fill="#2C2C2C"/></svg>`
+};
+
+/* ================= LINK-MATCH ICONS: hand-drawn SVGs for every "match this to that"
+   activity's left-hand boxes, so kids can match by picture as well as by word ================= */
+const LINKMATCH_ICONS = {
+  // -- Meet the Real William --
+  blueGlaze: `<svg viewBox="0 0 24 24"><path d="M12 3c4.2 5 7 8.6 7 12.2A7 7 0 0 1 5 15.2C5 11.6 7.8 8 12 3Z" fill="#3AA2C2" stroke="#175A73" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="9.6" cy="12.4" rx="1.5" ry="2.6" fill="#fff" opacity=".5"/></svg>`,
+  lotus: `<svg viewBox="0 0 24 24"><path d="M12 21c-5-2-7.5-6-7.5-9.3 3 .2 5.3 1.7 7.5 4.3 2.2-2.6 4.5-4.1 7.5-4.3 0 3.3-2.5 7.3-7.5 9.3Z" fill="#F2A6C6" stroke="#B75A8A" stroke-width="1.1" stroke-linejoin="round"/><path d="M12 15.8c-1.7-4-1.7-8.3 0-13 1.7 4.7 1.7 9 0 13Z" fill="#FBD3E4" stroke="#B75A8A" stroke-width="1" stroke-linejoin="round"/></svg>`,
+  brokenLeg: `<svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="10.5" rx="1.3" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.2"/><path d="M9 12.5 L12 14 L9.3 15.3 L12 16.7 L15 15" stroke="#A97C2B" stroke-width="1.1" fill="none" stroke-linejoin="round"/><rect x="6.5" y="16.8" width="11" height="3.6" rx="1" fill="#D9C48E" stroke="#A97C2B" stroke-width="1.1"/><path d="M5.5 21.5 h13" stroke="#A97C2B" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  // -- Money Around the World (country flags) --
+  flagUS: `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="1.6" fill="#fff" stroke="#B9B9B9" stroke-width="1"/><g fill="#B32134"><rect x="2" y="5" width="20" height="1.56" rx=".4"/><rect x="2" y="8.11" width="20" height="1.56" rx=".4"/><rect x="2" y="11.22" width="20" height="1.56" rx=".4"/><rect x="2" y="14.33" width="20" height="1.56" rx=".4"/><rect x="2" y="17.44" width="20" height="1.56" rx=".4"/></g><rect x="2" y="5" width="9.5" height="7.9" fill="#2F4B8F"/><g fill="#fff"><circle cx="4.3" cy="6.8" r=".55"/><circle cx="6.8" cy="6.8" r=".55"/><circle cx="9.3" cy="6.8" r=".55"/><circle cx="4.3" cy="9" r=".55"/><circle cx="6.8" cy="9" r=".55"/><circle cx="9.3" cy="9" r=".55"/><circle cx="4.3" cy="11.2" r=".55"/><circle cx="6.8" cy="11.2" r=".55"/><circle cx="9.3" cy="11.2" r=".55"/></g></svg>`,
+  flagJapan: `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="1.6" fill="#fff" stroke="#B9B9B9" stroke-width="1"/><circle cx="12" cy="12" r="4.3" fill="#BC002D"/></svg>`,
+  flagEgypt: `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="1.6" fill="#fff" stroke="#B9B9B9" stroke-width="1"/><path d="M3.6 5.6h16.8v4.27H3.6Z" fill="#CE1126"/><path d="M3.6 14.13h16.8V18.4H3.6Z" fill="#1a1a1a"/><path d="M12 10.6 l2 1.4 -.8 2.3h-2.4l-.8-2.3Z" fill="#D9A544" stroke="#A97C2B" stroke-width=".5" stroke-linejoin="round"/></svg>`,
+  flagEU: `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="1.6" fill="#1E3A7A" stroke="#16295A" stroke-width="1"/><g fill="#FFD54A"><circle cx="12" cy="8.2" r=".78"/><circle cx="15.2" cy="9.3" r=".78"/><circle cx="16.4" cy="12" r=".78"/><circle cx="15.2" cy="14.7" r=".78"/><circle cx="12" cy="15.8" r=".78"/><circle cx="8.8" cy="14.7" r=".78"/><circle cx="7.6" cy="12" r=".78"/><circle cx="8.8" cy="9.3" r=".78"/></g></svg>`,
+  // -- William's Big Picture --
+  resourcesSack: `<svg viewBox="0 0 24 24"><path d="M7.5 8 L9.3 4 h5.4 l1.8 4" fill="none" stroke="#A97C2B" stroke-width="1.3" stroke-linejoin="round"/><path d="M6.3 8 h11.4 l-1.5 12.4a2 2 0 0 1 -2 1.6H9.8a2 2 0 0 1 -2 -1.6Z" fill="#E8D8A8" stroke="#A97C2B" stroke-width="1.2" stroke-linejoin="round"/><path d="M8.6 12 h6.8 M8.2 16 h7.6" stroke="#A97C2B" stroke-width="1" opacity=".55"/></svg>`,
+  laborWrench: `<svg viewBox="0 0 24 24"><path d="M14.7 3.3a4.6 4.6 0 0 0-6 6.1L3.4 14.7l3 3 5.3-5.4a4.6 4.6 0 0 0 6.1-6l-2.9 2.9-2-2Z" fill="none" stroke="#5E7B85" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`,
+  importExport: `<svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="9.5" rx="1.3" fill="#8FDCEF" stroke="#2F8FB0" stroke-width="1.2"/><path d="M4 14.2 h16" stroke="#2F8FB0" stroke-width="1"/><path d="M2.3 6.6 l2.7 -2.7 2.7 2.7 M5 3.9 v5.6" stroke="#3CAA6B" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.7 6.6 l-2.7 -2.7 -2.7 2.7 M19 3.9 v5.6" stroke="#E8734F" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  inflationArrow: `<svg viewBox="0 0 24 24"><path d="M3 17.5 L9 11.3 L13 14.2 L20.6 5.4" stroke="#E85D5D" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.4 5.2 h5.4 v5.4" stroke="#E85D5D" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+
+// Per-chapter badge: a colored circle plus a hand-drawn white-line SVG icon. Defined here
+// (ahead of buildChapterHTML's call below) so the Check-Your-Understanding badge and the
+// map/passport badges can all share these same well-designed icons instead of emoji.
+const CHAPTER_BADGES = {
+  res:      { color:'#3CAA6B', icon:'<path d="M22 34 V18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M22 18 C14 18 10 12 10 8 C18 8 22 12 22 18 Z" fill="#fff"/><path d="M22 22 C30 22 34 16 34 12 C26 12 22 16 22 22 Z" fill="#fff"/>', stampIcon:'\u{1F331}' },
+  real:     { color:'#D9A544', icon:'<path d="M22 8 L36 34 H8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M16 34 L22 20 L28 34" stroke="#fff" stroke-width="2" fill="none"/>', stampIcon:'\u{1F3DB}️' },
+  chain:    { color:'#4FBF8F', icon:'<rect x="10" y="20" width="14" height="12" fill="none" stroke="#fff" stroke-width="3"/><path d="M26 26 h8 M30 22 l4 4 -4 4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F69B}' },
+  labor:    { color:'#5AA9E6', icon:'<circle cx="14" cy="14" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="14" cy="30" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M17 17 L31 31 M17 27 L31 13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F477}' },
+  build:    { color:'#4FBF8F', icon:'<path d="M22 10 L22 34" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-dasharray="4 4"/><circle cx="16" cy="18" r="2" fill="#fff"/><circle cx="28" cy="18" r="2" fill="#fff"/>', stampIcon:'\u{1F9F5}' },
+  cost:     { color:'#E8734F', icon:'<path d="M10 10 h16 l8 8 -16 16 -8 -8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.5" fill="#fff"/>', stampIcon:'\u{1F4B0}' },
+  profit:   { color:'#9B7FD4', icon:'<line x1="12" y1="16" x2="32" y2="16" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="16" x2="22" y2="32" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M8 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M28 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/>', stampIcon:'⚖️' },
+  tax:      { color:'#9B7FD4', icon:'<rect x="10" y="8" width="24" height="30" rx="2" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 16 h16 M14 22 h16 M14 28 h10" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>', stampIcon:'\u{1F3DB}️' },
+  ship:     { color:'#2F8FB0', icon:'<path d="M8 24 h28 l-4 10 h-20 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><line x1="22" y1="10" x2="22" y2="24" stroke="#fff" stroke-width="3"/><path d="M22 10 L30 14 L22 17 Z" fill="#fff"/>', stampIcon:'\u{1F6A2}' },
+  trade:    { color:'#3CAA6B', icon:'<circle cx="22" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="22" cy="22" rx="6" ry="13" fill="none" stroke="#fff" stroke-width="2"/><line x1="9" y1="22" x2="35" y2="22" stroke="#fff" stroke-width="2"/>', stampIcon:'\u{1F30D}' },
+  tariff:   { color:'#E85D5D', icon:'<line x1="8" y1="30" x2="36" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="18" y="10" width="8" height="20" fill="#fff"/><circle cx="22" cy="10" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>', stampIcon:'\u{1F6C2}' },
+  currency: { color:'#D9A544', icon:'<circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="3"/><text x="22" y="28" font-size="15" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800">$</text>', stampIcon:'\u{1F4B1}' },
+  sd:       { color:'#9B7FD4', icon:'<line x1="8" y1="22" x2="36" y2="22" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="22" r="3.5" fill="#fff"/><circle cx="32" cy="22" r="3.5" fill="#fff"/>', stampIcon:'\u{1F4CA}' },
+  inflation:{ color:'#E85D5D', icon:'<path d="M8 30 L16 22 L22 26 L34 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 12 h7 v7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F4C8}' },
+  recap:    { color:'#FFC93C', icon:'<path d="M14 12 h16 v8 a8 8 0 0 1 -16 0 Z" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 14 h-4 a4 4 0 0 0 4 7" fill="none" stroke="#fff" stroke-width="2.3"/><path d="M30 14 h4 a4 4 0 0 1 -4 7" fill="none" stroke="#fff" stroke-width="2.3"/><line x1="22" y1="27" x2="22" y2="32" stroke="#fff" stroke-width="2.5"/><line x1="16" y1="34" x2="28" y2="34" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F3C6}', big:true }
 };
 
 const CHAPTERS_BY_KEY = {}; CHAPTERS.forEach(c=>CHAPTERS_BY_KEY[c.key]=c);
@@ -1531,11 +1581,12 @@ const CHECK_CONTENT = {
 function checkHTML(ch, num){
   const c = CHECK_CONTENT[ch.key];
   if(!c) return '';
+  const b = CHAPTER_BADGES[ch.key];
   return `
   <section class="session will-scope" data-chapter="check-${ch.key}">
     <div class="will-stage-label">Before the Quick Check</div>
     <div class="check-box">
-      <div class="check-box-badge">${c.icon}</div>
+      <div class="check-box-badge" style="background:${b.color}"><svg width="30" height="30" viewBox="0 0 44 44">${b.icon}</svg></div>
       <div class="check-box-title">Check Your Understanding!</div>
       <div class="check-box-body">${c.body}</div>
       <div class="check-box-sentence">${c.sentence}</div>
@@ -2084,27 +2135,15 @@ function continueFromResult(key){
 }
 
 /* ================= CHAPTER MAP + BADGES ================= */
-const CHAPTER_BADGES = {
-  res:      { color:'#3CAA6B', icon:'<path d="M22 34 V18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M22 18 C14 18 10 12 10 8 C18 8 22 12 22 18 Z" fill="#fff"/><path d="M22 22 C30 22 34 16 34 12 C26 12 22 16 22 22 Z" fill="#fff"/>', stampIcon:'\u{1F331}' },
-  real:     { color:'#D9A544', icon:'<path d="M22 8 L36 34 H8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M16 34 L22 20 L28 34" stroke="#fff" stroke-width="2" fill="none"/>', stampIcon:'\u{1F3DB}\uFE0F' },
-  chain:    { color:'#4FBF8F', icon:'<rect x="10" y="20" width="14" height="12" fill="none" stroke="#fff" stroke-width="3"/><path d="M26 26 h8 M30 22 l4 4 -4 4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F69B}' },
-  labor:    { color:'#5AA9E6', icon:'<circle cx="14" cy="14" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="14" cy="30" r="4" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M17 17 L31 31 M17 27 L31 13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F477}' },
-  build:    { color:'#4FBF8F', icon:'<path d="M22 10 L22 34" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="2.4" stroke-dasharray="4 4"/><circle cx="16" cy="18" r="2" fill="#fff"/><circle cx="28" cy="18" r="2" fill="#fff"/>', stampIcon:'\u{1F9F5}' },
-  cost:     { color:'#E8734F', icon:'<path d="M10 10 h16 l8 8 -16 16 -8 -8 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.5" fill="#fff"/>', stampIcon:'\u{1F4B0}' },
-  profit:   { color:'#9B7FD4', icon:'<line x1="12" y1="16" x2="32" y2="16" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="16" x2="22" y2="32" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M8 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/><path d="M28 16 l4 -8 4 8 Z" fill="none" stroke="#fff" stroke-width="2"/>', stampIcon:'\u2696\uFE0F' },
-  tax:      { color:'#9B7FD4', icon:'<rect x="10" y="8" width="24" height="30" rx="2" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 16 h16 M14 22 h16 M14 28 h10" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/>', stampIcon:'\u{1F3DB}\uFE0F' },
-  ship:     { color:'#2F8FB0', icon:'<path d="M8 24 h28 l-4 10 h-20 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><line x1="22" y1="10" x2="22" y2="24" stroke="#fff" stroke-width="3"/><path d="M22 10 L30 14 L22 17 Z" fill="#fff"/>', stampIcon:'\u{1F6A2}' },
-  trade:    { color:'#3CAA6B', icon:'<circle cx="22" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="22" cy="22" rx="6" ry="13" fill="none" stroke="#fff" stroke-width="2"/><line x1="9" y1="22" x2="35" y2="22" stroke="#fff" stroke-width="2"/>', stampIcon:'\u{1F30D}' },
-  tariff:   { color:'#E85D5D', icon:'<line x1="8" y1="30" x2="36" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="18" y="10" width="8" height="20" fill="#fff"/><circle cx="22" cy="10" r="4" fill="none" stroke="#fff" stroke-width="2.4"/>', stampIcon:'\u{1F6C2}' },
-  currency: { color:'#D9A544', icon:'<circle cx="22" cy="22" r="12" fill="none" stroke="#fff" stroke-width="3"/><text x="22" y="28" font-size="15" fill="#fff" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800">$</text>', stampIcon:'\u{1F4B1}' },
-  sd:       { color:'#9B7FD4', icon:'<line x1="8" y1="22" x2="36" y2="22" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><circle cx="12" cy="22" r="3.5" fill="#fff"/><circle cx="32" cy="22" r="3.5" fill="#fff"/>', stampIcon:'\u{1F4CA}' },
-  inflation:{ color:'#E85D5D', icon:'<path d="M8 30 L16 22 L22 26 L34 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 12 h7 v7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>', stampIcon:'\u{1F4C8}' },
-  recap:    { color:'#FFC93C', icon:'<path d="M14 12 h16 v8 a8 8 0 0 1 -16 0 Z" fill="none" stroke="#fff" stroke-width="3"/><path d="M14 14 h-4 a4 4 0 0 0 4 7" fill="none" stroke="#fff" stroke-width="2.3"/><path d="M30 14 h4 a4 4 0 0 1 -4 7" fill="none" stroke="#fff" stroke-width="2.3"/><line x1="22" y1="27" x2="22" y2="32" stroke="#fff" stroke-width="2.5"/><line x1="16" y1="34" x2="28" y2="34" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>', stampIcon:'\u{1F3C6}', big:true }
-};
+// Small colored stamp using the same hand-drawn badge icon as the map dock, instead of an emoji.
+function stampSVG(key){
+  const b = CHAPTER_BADGES[key];
+  return `<svg width="20" height="20" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="${b.color}"/>${b.icon}</svg>`;
+}
 function renderFinale(){
   const grid = document.getElementById('finaleStampsGrid');
   if(!grid) return;
-  grid.innerHTML = CHAPTERS.map(ch=>`<div class="passport-stamp stamped">${CHAPTER_BADGES[ch.key].stampIcon}</div>`).join('');
+  grid.innerHTML = CHAPTERS.map(ch=>`<div class="passport-stamp stamped">${stampSVG(ch.key)}</div>`).join('');
   const finaleNum = document.getElementById('finaleWilliamsText');
   if(finaleNum) finaleNum.textContent = williamsShipped();
   burst('finaleWrap', ['#FFC93C','#3CAA6B','#5AA9E6','#E8734F','#9B7FD4'], 30);
@@ -2427,7 +2466,7 @@ function renderBadgeCase(){
   const doneCount = checksDone.filter(Boolean).length;
   const stampsHTML = CHAPTERS.map((ch,i)=>{
     const done = checksDone[i];
-    return `<div class="passport-stamp ${done?'stamped':''}">${done ? CHAPTER_BADGES[ch.key].stampIcon : ''}</div>`;
+    return `<div class="passport-stamp ${done?'stamped':''}">${done ? stampSVG(ch.key) : ''}</div>`;
   }).join('');
   card.innerHTML = `<div class="passport-card"><div class="passport-title">William's Record Book (${doneCount}/${CHAPTERS.length} stamps)</div><div class="passport-stamps-grid">${stampsHTML}</div></div>`;
 }
