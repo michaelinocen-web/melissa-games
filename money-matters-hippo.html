@@ -255,6 +255,9 @@ input[type=range].will-slider:focus{ outline:none; }
 .factory-finale-num{ font-family:var(--font-display); font-weight:800; font-size:2.4rem; color:#FFCC33; line-height:1; }
 .factory-finale-label{ font-size:.82rem; color:#DADEE1; margin-top:.3rem; }
 .tut-replay-btn{ display:flex; align-items:center; justify-content:center; gap:.4rem; margin:.3rem auto .2rem; font-family:var(--font-display); font-weight:700; font-size:.72rem; color:#fff; background:var(--will-blue); border:none; border-radius:999px; padding:.4rem .9rem; cursor:pointer; }
+.drawer-btn-row{ display:flex; gap:.5rem; justify-content:center; margin:.3rem auto .2rem; flex-wrap:wrap; }
+.drawer-btn-row .tut-replay-btn{ margin:0; }
+.exit-drawer-btn{ display:flex; align-items:center; justify-content:center; gap:.4rem; font-family:var(--font-display); font-weight:700; font-size:.72rem; color:var(--will-blue-dark); text-decoration:none; background:#fff; border:2px solid var(--will-blue-pale); border-radius:999px; padding:.38rem .9rem; cursor:pointer; }
 
 /* ---------- first-time tutorial (click-through coach marks) ---------- */
 .tut-overlay{ position:fixed; inset:0; z-index:100; background:rgba(20,22,24,.72); display:flex; align-items:center; justify-content:center; padding:1.2rem; opacity:0; pointer-events:none; transition:opacity .25s ease; }
@@ -524,10 +527,16 @@ footer{ text-align:center; padding:1rem 1rem 2rem; font-size:.82rem; color:var(-
     <div class="hi-name">Hi Melissa</div>
     <h1>William's Workshop</h1>
     <p class="big-text">Before William was a soft blue hippo sitting on your shelf, he was an idea, then some materials, then a lot of people's work. Let's follow his whole journey around the world, from raw materials to your room!</p>
-    <button class="tut-replay-btn" onclick="toggleWillDrawer(false); startTutorial(false);">
-      <svg width="15" height="15" viewBox="0 0 20 20"><path d="M4 10a6 6 0 1 1 1.8 4.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M4 14v-4h4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      How to Play
-    </button>
+    <div class="drawer-btn-row">
+      <button class="tut-replay-btn" onclick="toggleWillDrawer(false); startTutorial(false);">
+        <svg width="15" height="15" viewBox="0 0 20 20"><path d="M4 10a6 6 0 1 1 1.8 4.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M4 14v-4h4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        How to Play
+      </button>
+      <a href="money-matters.html" class="exit-drawer-btn">
+        <svg width="15" height="15" viewBox="0 0 20 20"><path d="M7 4H4v12h3" fill="none" stroke="var(--will-blue-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 10h8m0 0-3-3m3 3-3 3" fill="none" stroke="var(--will-blue-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Exit to Hub
+      </a>
+    </div>
     <svg width="160" height="122" viewBox="0 -14 340 274" style="margin:.4rem auto; display:block;"><use href="#williamArt"/></svg>
     <div class="factory-stats-card">
       <div class="factory-stats-title">Your Factory Output</div>
