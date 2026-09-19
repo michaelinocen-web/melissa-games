@@ -94,11 +94,14 @@ svg{ display:block; margin:0 auto; max-width:100%; }
 .drop-zone{ transition:background .2s, transform .2s, border-color .2s; }
 .drop-zone.drag-over{ background:rgba(47,143,176,.18) !important; transform:scale(1.03); border-color:var(--will-blue) !important; }
 .will-bin{ flex:1; background:var(--will-blue-pale); border:2px dashed var(--will-blue); border-radius:14px; padding:.6rem; min-height:120px; }
-.order-row{ display:flex; gap:.6rem; overflow-x:auto; padding:.4rem .2rem 1rem; -webkit-overflow-scrolling:touch; }
-.order-bin{ flex:0 0 auto; width:104px; background:var(--will-blue-pale); border:2px dashed var(--will-blue); border-radius:14px; padding:.5rem .4rem; min-height:100px; text-align:center; }
-.order-bin .will-bin-title{ font-size:.72rem; }
-.order-bin .drag-chip{ display:flex; flex-direction:column; font-size:.66rem; text-align:center; padding:.3rem; }
-.order-bin .drag-chip svg{ width:26px; height:26px; }
+/* Ordered steps stack as slim full-width rows (not side-by-side columns that need
+   horizontal scrolling) so they're easy to drag and read on a phone. */
+.order-row{ display:flex; flex-direction:column; gap:.5rem; padding:.3rem 0 .6rem; }
+.order-bin{ width:100%; box-sizing:border-box; background:var(--will-blue-pale); border:2px dashed var(--will-blue); border-radius:14px; padding:.5rem .6rem; min-height:3.1rem; text-align:left; display:flex; align-items:center; gap:.55rem; }
+.order-bin .will-bin-title{ flex-shrink:0; background:#fff; border:2px solid var(--will-blue); border-radius:999px; padding:.2rem .6rem; font-size:.68rem; color:var(--will-blue-dark); margin-bottom:0; white-space:nowrap; }
+.order-bin .drag-chip{ flex:1; display:flex; flex-direction:row; align-items:center; gap:.4rem; font-size:.78rem; text-align:left; padding:.35rem .55rem; min-width:0; }
+.order-bin .drag-chip span{ overflow-wrap:break-word; }
+.order-bin .drag-chip svg{ width:24px; height:24px; flex-shrink:0; }
 
 /* ---------- true/false lever (matches the other Money Matters journeys) ---------- */
 .lever-track{ width:210px; height:60px; background:var(--will-blue-pale); border:3px solid var(--will-blue); border-radius:999px; margin:1rem auto; position:relative; }
