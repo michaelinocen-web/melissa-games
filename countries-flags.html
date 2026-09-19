@@ -789,13 +789,6 @@ function nextCard(){ goTo(current+1); }
 function prevCard(){ goTo(current-1); }
 updateNav();
 
-let touchStartX = 0;
-document.querySelector('.deck-viewport').addEventListener('touchstart', e=>{ touchStartX = e.changedTouches[0].screenX; }, {passive:true});
-document.querySelector('.deck-viewport').addEventListener('touchend', e=>{
-  const dx = e.changedTouches[0].screenX - touchStartX;
-  if(dx < -50) nextCard();
-  else if(dx > 50) prevCard();
-}, {passive:true});
 document.addEventListener('keydown', e=>{
   if(e.key === 'ArrowRight') nextCard();
   if(e.key === 'ArrowLeft') prevCard();
