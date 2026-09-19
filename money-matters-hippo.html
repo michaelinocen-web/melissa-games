@@ -947,6 +947,8 @@ function goTo(idx){
   current = idx;
   updateNav();
   window.scrollTo({top:0, behavior:'auto'});
+  const enteredKey = chapterKeyForSession(nextEl);
+  if(enteredKey) persistLastDock(enteredKey);
   if(nextEl.dataset.chapter === 'willhub'){ renderJourneyMap(); renderBadgeCase(); initFactoryMapDrag(); setTimeout(()=>{ if(!document.getElementById('journeyMapViewport').dataset.userScrolled) recenterJourneyMap(); }, 60); }
   if(nextEl.dataset.chapter === 'finale') renderFinale();
   if(nextEl.dataset.role === 'activity') activityRender(CHAPTERS_BY_KEY[nextEl.dataset.ckey]);
@@ -982,6 +984,36 @@ function persistDone(key){
   if(idx >= 0){ checksDone[idx] = true; localStorage.setItem('melissaMoneyHippoChecksDone_v1', JSON.stringify(checksDone)); }
 }
 function isChapterUnlocked(i){ return i === 0 || checksDone[i-1]; }
+
+/* ================= LAST VISITED DOCK: William waits wherever you left him ================= */
+// Whichever chapter you most recently entered (new or already-passed), William's tray
+// on the map parks at that dock when you come back — not just at the next unfinished one.
+const LAST_DOCK_KEY = 'melissaMoneyHippoLastDock_v1';
+function loadLastDockIdx(){
+  try{
+    const key = localStorage.getItem(LAST_DOCK_KEY);
+    const idx = CHAPTER_ORDER.indexOf(key);
+    if(idx >= 0) return idx;
+  }catch(e){}
+  return -1;
+}
+let lastVisitedIdx = loadLastDockIdx();
+function persistLastDock(key){
+  const idx = CHAPTER_ORDER.indexOf(key);
+  if(idx < 0) return;
+  lastVisitedIdx = idx;
+  try{ localStorage.setItem(LAST_DOCK_KEY, key); }catch(e){}
+}
+// Works out which chapter (if any) a given session screen belongs to, across every
+// screen shape a chapter has: intro (key), activity/quiz/result (data-ckey), check (check-key).
+function chapterKeyForSession(el){
+  if(!el) return null;
+  if(el.dataset.ckey) return el.dataset.ckey;
+  const ch = el.dataset.chapter || '';
+  if(ch.indexOf('check-') === 0) return ch.slice(6);
+  if(CHAPTER_ORDER.indexOf(ch) >= 0) return ch;
+  return null;
+}
 
 /* ================= FACTORY POINTS: run the factory, ship more Williams ================= */
 // The player is the factory manager: every correct answer and every finished chapter earns
@@ -2247,14 +2279,18 @@ function renderJourneyMap(){
     </div>`;
   }).join('');
 
-  // William rides a little flatbed tray on the belt, parked just before his next stop
+  // William rides a little flatbed tray on the belt, parked at whichever dock you last
+  // entered (even a chapter you'd already passed) — falling back to the next unfinished
+  // dock only if you haven't stepped into any chapter yet this game.
+  const pinIdx = (lastVisitedIdx >= 0 && isChapterUnlocked(lastVisitedIdx)) ? lastVisitedIdx : nextUnlockedIdx;
   let trayX = points[0] ? points[0].x - 90 : 60;
-  if(nextUnlockedIdx >= 0 && points[nextUnlockedIdx]) trayX = points[nextUnlockedIdx].x - 85;
-  const herePin = nextUnlockedIdx >= 0 ? `<div class="journey-here-pin" id="journeyHerePin" style="left:${trayX}px; top:${groundY+JOURNEY_BELT_H/2}px;">
+  if(pinIdx >= 0 && points[pinIdx]) trayX = points[pinIdx].x - 85;
+  const herePin = pinIdx >= 0 ? `<div class="journey-here-pin" id="journeyHerePin" style="left:${trayX}px; top:${groundY+JOURNEY_BELT_H/2}px;">
     ${williamTraySVG()}
   </div>` : '';
   canvas.innerHTML = bgSvg + stopsHTML + herePin;
   canvas.dataset.nextIdx = nextUnlockedIdx;
+  canvas.dataset.pinIdx = pinIdx;
 }
 function scrollJourneyMap(dir){
   const vp = document.getElementById('journeyMapViewport');
@@ -2266,7 +2302,7 @@ function recenterJourneyMap(){
   const vp = document.getElementById('journeyMapViewport');
   const canvas = document.getElementById('journeyMapCanvas');
   if(!vp || !canvas) return;
-  const idx = parseInt(canvas.dataset.nextIdx, 10);
+  const idx = parseInt(canvas.dataset.pinIdx, 10);
   const points = journeyPoints(journeyMapHeight());
   const target = idx >= 0 && points[idx] ? points[idx].x : points[0].x;
   const left = Math.max(0, target - vp.clientWidth/2);
