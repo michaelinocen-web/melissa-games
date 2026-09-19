@@ -2059,6 +2059,10 @@ function renderQuizQuestion(key){
     knob.addEventListener('mousedown', onDown);
     knob.addEventListener('touchstart', onDown, {passive:false});
 
+    // Not {once:true}: the knob can still be sitting unset (in the middle, showing "?") on
+    // the very first click, in which case this returns early without locking anything in.
+    // A one-shot listener would be consumed by that no-op click and silently vanish, so a
+    // second click after actually picking True/False would do nothing — the bug this guards.
     document.getElementById(`leverLockBtn-${key}`).addEventListener('click', ()=>{
       if(track.dataset.locked) return;
       if(knob.dataset.value !== 'true' && knob.dataset.value !== 'false') return;
@@ -2067,7 +2071,7 @@ function renderQuizQuestion(key){
       const chosen = knob.dataset.value === 'true';
       const correct = chosen === q.answer;
       answered(correct, q.answer ? 'True' : 'False', q.explain);
-    }, {once:true});
+    });
   } else {
     document.getElementById(`quizQ-${key}`).textContent = q.q;
     const opts = q.options.slice().sort(()=>Math.random()-0.5);
