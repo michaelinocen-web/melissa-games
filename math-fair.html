@@ -2793,6 +2793,7 @@ function submitLever(key, qIndex, correctAnswer){
   const knob = document.getElementById(`leverKnob-${key}-${qIndex}`);
   const track = document.getElementById(`leverTrack-${key}-${qIndex}`);
   if(track.dataset.locked) return;
+  if(knob.dataset.value !== 'true' && knob.dataset.value !== 'false') return;
   track.dataset.locked = 'true';
   const chosen = knob.dataset.value === 'true';
   const card = knob.closest('.ticket-card');
