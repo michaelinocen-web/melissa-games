@@ -678,6 +678,13 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 .map-v .station .stick{display:none}
 .map-v .tl-iris{width:72px;transition:top .6s cubic-bezier(.3,1.3,.5,1)}
 @media (min-width:601px){.map-v .tl-lane{width:min(100%,680px);margin:0 auto}}
+/* cave handprints */
+.cave-hand{transform-box:view-box;animation:hand-press .35s cubic-bezier(.3,1.5,.5,1)}
+@keyframes hand-press{from{transform:scale(1.35);opacity:0}}
+.cave-dots{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(43,27,18,.55);pointer-events:none;z-index:2}
+.cave-dots[hidden]{display:none}
+.cave-dots i{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.35)}
+.cave-dots i.on{background:#FFD21F;animation:bump .3s}
 </style>
 </head>
 <body>
@@ -705,7 +712,7 @@ const BASE_ERAS = [
       { name: "The El Castillo painters", work: "Red hand stencils", when: "At least 37,000 years ago", place: "El Castillo Cave, Spain", fact: "They sprayed red paint around their hands by blowing it through a hollow bone or straight from their mouths." },
       { name: "The Leang Tedongnge painters", work: "Warty pig painting", when: "At least 45,500 years ago", place: "Sulawesi, Indonesia", fact: "One of the oldest animal paintings ever found, a pig as big as a real one." }
     ],
-    activity: { title: "Make a hand stencil", how: "Tap New hand, then rub all around it to spray paint. Tap Lift hand to see your print!", goal: 3, unit: "handprints" },
+    activity: { title: "Make a hand stencil", how: "Tap the cave wall to put your hand on it. Then tap around your hand 4 times to blow paint. Make 3 handprints!", goal: 3, unit: "handprints" },
     quiz: [
       { q: "What did cave artists use to make black paint?", a: ["Charcoal from the fire", "Black crayons", "Ink from a pen"] },
       { q: "Where is the famous Hall of the Bulls?", a: ["Lascaux Cave in France", "A museum in New York", "On the Moon"] }
@@ -3425,11 +3432,24 @@ function makePaint(board, { bg, onMark } = {}) {
   let down = false, last = null, lastT = 0, moved = 0, acc = 0, sprayTimer = null, lastSnd = 0;
   const pt = e => { const r = pc.getBoundingClientRect(); return [(e.clientX - r.left) * 800 / r.width, (e.clientY - r.top) * 600 / r.height]; };
   const jit = (c, a = 18) => jitter(c, a, R);
+  // the stencil shape is painted once into a pixel map, so checking a dot is instant
+  let maskRef = null, maskPx = null;
+  function inMask(x, y) {
+    if (P.mask !== maskRef) {
+      maskRef = P.mask;
+      const mc = document.createElement("canvas"); mc.width = 800; mc.height = 600;
+      const m = mc.getContext("2d"); m.fill(P.mask); maskPx = m.getImageData(0, 0, 800, 600).data;
+    }
+    const xi = x | 0, yi = y | 0;
+    return xi >= 0 && yi >= 0 && xi < 800 && yi < 600 && maskPx[(yi * 800 + xi) * 4 + 3] > 127;
+  }
+  let lastSpray = 0;
   function sprayAt(x, y) {
+    const t = performance.now(); if (t - lastSpray < 28) return; lastSpray = t;
     const rad = P.size * 2.4;
     for (let k = 0; k < 60; k++) {
       const a = R() * 6.283, r = Math.sqrt(R()) * rad, px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
-      if (P.mask && (P.maskInvert ? !ctx.isPointInPath(P.mask, px, py) : ctx.isPointInPath(P.mask, px, py))) continue;
+      if (P.mask && (P.maskInvert ? !inMask(px, py) : inMask(px, py))) continue;
       ctx.globalAlpha = .45 + R() * .35; ctx.fillStyle = jit(P.color, 14);
       ctx.beginPath(); ctx.arc(px, py, 1.6 + R() * 3, 0, 6.283); ctx.fill();
       P.sprayHit++;
@@ -3541,6 +3561,7 @@ function makePaint(board, { bg, onMark } = {}) {
   };
   pc.addEventListener("pointerup", up); pc.addEventListener("pointercancel", up);
   P.clear = () => { ctx.clearRect(0, 0, 800, 600); };
+  P.inMask = inMask;
   P.snapshot = (after) => {
     const o = document.createElement("canvas"); o.width = 480; o.height = 360; const c = o.getContext("2d");
     c.drawImage(bgc, 0, 0, 480, 360); c.drawImage(pc, 0, 0, 480, 360); if (after) after(c, 480, 360);
@@ -3558,41 +3579,74 @@ function drawSVGOnCanvas(ctx, svgString, done) {
 /* ---------- the 16 activities ---------- */
 const ACTIVITIES = {
 
-  /* 1 Cave: hand stencils */
+  /* 1 Cave: hand stencils. Tap the wall to place a hand, tap around it to blow paint */
   cave(api) {
     const P = makePaint(api.board, {
       bg: c => drawSVGOnCanvas(c, svgWrap(`<defs><radialGradient id="cw" cx="50%" cy="42%" r="75%"><stop offset="0" stop-color="#EAC48E"/><stop offset=".6" stop-color="#C98C4E"/><stop offset="1" stop-color="#6E401C"/></radialGradient></defs><rect width="400" height="300" fill="url(#cw)"/>${Array.from({ length: 22 }, (_, k) => `<ellipse cx="${(k * 73) % 400}" cy="${(k * 47) % 300}" rx="${20 + (k % 5) * 8}" ry="${10 + (k % 4) * 6}" fill="${k % 2 ? "#7A4A22" : "#F0CC98"}" opacity=".12"/>`).join("")}<g transform="translate(150 40) scale(1.1)" opacity=".35"><path d="M20,40 C30,15 100,10 140,25 C150,15 160,10 165,18 L178,28 C180,35 172,42 165,40 C160,55 150,60 140,58 L138,85 L130,85 L128,60 C100,64 70,64 50,60 L48,85 L40,85 L38,58 C25,55 15,50 20,40Z" fill="none" stroke="#2B1B12" stroke-width="4"/></g>`))
     });
-    P.tool = "spray"; P.size = 22; P.color = "#B23A1E";
-    const layer = el(`<svg class="layer" viewBox="0 0 800 600" style="pointer-events:none"></svg>`); api.board.appendChild(layer);
-    let hand = null, made = 0;
+    P.tool = "none"; P.color = "#B23A1E";
+    const layer = el(`<svg class="layer cave-layer" viewBox="0 0 800 600" style="pointer-events:none"></svg>`); api.board.appendChild(layer);
+    const PUFFS = 4;
+    let hand = null, puffs = 0, made = 0, busy = false;
     const handPath = (x, y, rot, s) => {
       const base = new DOMMatrix().translate(x, y).rotate(rot).scale(s), path = new Path2D();
       const part = (cx, cy, rx, ry, deg = 0, px = cx, py = cy) => { const p = new Path2D(); p.ellipse(cx, cy, rx, ry, 0, 0, 6.283); path.addPath(p, base.multiply(new DOMMatrix().translate(px, py).rotate(deg).translate(-px, -py))); };
       part(0, 8, 23, 26); part(-16, -27, 5.5, 19, -10, -16, -8); part(-4, -32, 5.5, 22); part(8, -31, 5.5, 21, 6, 8, -10); part(18.5, -25, 5, 17, 16, 18, -8); part(-35, 10, 5.5, 16, -52, -35, 10);
       return path;
     };
-    function newHand() {
-      const x = 180 + Math.random() * 440, y = 220 + Math.random() * 220, rot = Math.random() * 70 - 35, s = 2 + Math.random() * .6;
-      hand = { x, y, rot, s }; P.mask = handPath(x, y, rot, s); P.sprayHit = 0;
-      layer.innerHTML = `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${handShape("#E9B98E", 'stroke="#8A5A3A" stroke-width="1.5"')}</g>`;
+    // one big puff of paint, drawn in a few batched paths so it stays fast
+    function puff(x, y, rad, n) {
+      const ctx = P.ctx, groups = 4;
+      for (let g = 0; g < groups; g++) {
+        ctx.fillStyle = jitter(P.color, 16, Math.random); ctx.globalAlpha = .5 + g * .1; ctx.beginPath();
+        for (let k = 0; k < n / groups; k++) {
+          const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * rad, px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
+          if (P.mask && P.inMask(px, py)) continue;
+          const d = 1.6 + Math.random() * 3.4; ctx.moveTo(px + d, py); ctx.arc(px, py, d, 0, 6.283);
+        }
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function showPuffs() {
+      $(".cave-dots", api.board).innerHTML = Array.from({ length: PUFFS }, (_, k) => `<i class="${k < puffs ? "on" : ""}"></i>`).join("");
+    }
+    function placeHand(x, y) {
+      x = Math.max(110, Math.min(690, x)); y = Math.max(140, Math.min(500, y));
+      const rot = Math.random() * 50 - 25, s = 2.3;
+      hand = { x, y, rot, s }; puffs = 0; P.mask = handPath(x, y, rot, s);
       layer.style.transition = "none"; layer.style.opacity = "1";
-      lift.disabled = false; FX.pop();
+      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${handShape("#E9B98E", 'stroke="#8A5A3A" stroke-width="1.5"')}</g></g>`;
+      showPuffs(); $(".cave-dots", api.board).hidden = false;
+      FX.pop(); api.speak("Now tap all around your hand to blow paint. Puff, puff!");
     }
-    function liftHand() {
-      if (!hand) return;
-      if (P.sprayHit < 260) { api.speak("Spray more paint all around the hand first!"); FX.soft(); return; }
-      layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; hand = null; lift.disabled = true;
-      made++; api.progress(made); FX.chime();
-      if (made < 3) api.speak(made === 1 ? "Look! Your very first handprint, just like 40,000 years ago! Make another one." : "Beautiful! One more handprint!");
+    function blow(x, y) {
+      // aim each puff at the hand's edge nearest the tap, so every tap paints the outline
+      const dx = x - hand.x, dy = y - hand.y, d = Math.hypot(dx, dy) || 1, reach = 95 * hand.s / 2.3;
+      const tx = d < reach ? hand.x + dx / d * reach : x, ty = d < reach ? hand.y + dy / d * reach : y;
+      puff(tx, ty, 120, 520); FX.spray();
+      puffs++; showPuffs();
+      if (puffs >= PUFFS) lift();
     }
+    function lift() {
+      busy = true;
+      // a last soft ring of paint so the print always looks complete
+      for (let k = 0; k < 10; k++) { const a = k / 10 * 6.283; puff(hand.x + Math.cos(a) * 105, hand.y - 15 + Math.sin(a) * 120, 60, 140); }
+      setTimeout(() => {
+        layer.style.transition = "opacity .6s, transform .6s"; layer.style.opacity = "0";
+        P.mask = null; hand = null; made++; api.progress(made); FX.chime(); confetti(14);
+        $(".cave-dots", api.board).hidden = true;
+        api.speak(made === 1 ? "Look! Your first handprint, just like 40,000 years ago! Tap the wall for another hand." : made === 2 ? "Beautiful! Tap the wall for one more hand!" : "Wow, a whole cave wall of hands! Try other paint colors too.");
+        busy = false;
+      }, 250);
+    }
+    api.board.appendChild(el(`<div class="cave-dots" hidden aria-hidden="true"></div>`));
+    P.canvas.addEventListener("pointerdown", e => {
+      if (busy) return;
+      const r = P.canvas.getBoundingClientRect(), x = (e.clientX - r.left) * 800 / r.width, y = (e.clientY - r.top) * 600 / r.height;
+      if (!hand) placeHand(x, y); else blow(x, y);
+    });
     paletteUI(api.tools, [{ c: "#B23A1E", n: "Red ochre" }, { c: "#D9A33A", n: "Yellow ochre" }, { c: "#2B1B12", n: "Charcoal" }, { c: "#F2E6D0", n: "White chalk" }], "#B23A1E", c => P.color = c, { label: "Cave paints" });
-    chipsUI(api.tools, "Tool", [{ id: "spray", label: "Blow spray" }, { id: "brush", label: "Finger paint" }], "spray", id => { P.tool = id; P.size = id === "spray" ? 22 : 12; });
-    const row = el(`<div class="tool-row"><button class="ag-btn ag-btn--berry ag-btn--sm nh">New hand</button><button class="ag-btn ag-btn--grass ag-btn--sm lh">Lift hand</button></div>`);
-    api.tools.appendChild(row);
-    const lift = $(".lh", row); $(".nh", row).onclick = () => { if (hand) { layer.innerHTML = ""; P.mask = null; } newHand(); };
-    lift.onclick = liftHand;
-    newHand();
     return { snapshot: () => ({ src: P.snapshot(), title: "My cave handprints" }), destroy: P.destroy };
   },
 
