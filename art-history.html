@@ -138,8 +138,8 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 /* ---------- era screen ---------- */
 .era-screen{background:var(--era-tint)}
 .era-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:minmax(0,1fr) auto;gap:var(--space-3) var(--space-5);padding:0 var(--space-5) var(--space-4)}
-.era-body > .stage{grid-row:1 / 3;grid-column:1}
-.era-body > .side{grid-row:1;grid-column:2}
+.era-body .era-scroll > .stage{grid-row:1 / 3;grid-column:1}
+.era-body .era-scroll > .side{grid-row:1;grid-column:2}
 .era-body > .nav-row{grid-row:2;grid-column:2;position:static;padding-top:0;background:none}
 .stage{position:relative;min-height:0;min-width:0;container-type:size;display:flex;align-items:center;justify-content:center}
 .board{position:relative;width:min(100cqw,calc(100cqh * 4 / 3));aspect-ratio:4/3;background:var(--paper);border:6px solid var(--paper);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden;touch-action:none}
@@ -296,6 +296,8 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 .order-slots::after{content:"";position:absolute;left:0;right:0;bottom:12px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--wood-600),var(--sun-400))}
 .slot{aspect-ratio:4/3;border-radius:var(--radius-md);border:4px dashed var(--cloud-300);background:var(--paper);display:grid;place-items:center;cursor:pointer;padding:0;position:relative;overflow:hidden}
 .slot .n{font:800 30px/1 var(--font-display);color:var(--cloud-300)}
+.slot .n:has(+ svg){position:absolute;top:6px;left:6px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--paper);color:var(--ink);font-size:16px;box-shadow:0 2px 0 var(--cloud-300);z-index:1}
+.dir-v{display:none}
 .slot svg{width:100%;height:100%}
 .slot.ok{border:4px solid var(--grass-600)}
 .slot.bad{border:4px solid var(--tomato-500);animation:shake .35s}
@@ -339,8 +341,8 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 .ag-price{display:inline-flex;align-items:center;gap:var(--space-1);height:36px;padding:0 var(--space-3) 0 4px;border-radius:var(--radius-pill);background:var(--sky-600);color:var(--paper);font:800 20px/1 var(--font-body);font-variant-numeric:tabular-nums}
 .ag-price .ic{width:28px;height:28px;background:var(--paper);border-radius:50%;padding:2px}
 .studio-wrap{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:minmax(0,1fr) auto;gap:var(--space-3) var(--space-5);padding:0 var(--space-5) var(--space-4)}
-.studio-wrap > .stage{grid-row:1 / 3;grid-column:1}
-.studio-wrap > .side{grid-row:1;grid-column:2}
+.studio-wrap .era-scroll > .stage{grid-row:1 / 3;grid-column:1}
+.studio-wrap .era-scroll > .side{grid-row:1;grid-column:2}
 .studio-wrap > .nav-row{grid-row:2;grid-column:2;position:static;padding-top:0;background:none}
 .cert{max-width:760px;margin:0 auto;background:var(--paper);border-radius:var(--radius-lg);border:10px solid var(--sun-400);box-shadow:0 0 0 6px var(--paper),0 10px 0 6px var(--sun-600);padding:var(--space-6);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--space-3)}
 .cert h2{margin:0}
@@ -400,10 +402,25 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 .ref-art svg{width:100%;height:100%}
 .ref-cap{font:800 14px/1.25 var(--font-body);color:var(--ink-muted)}
 .opac input{width:100%}
-.ref-pick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:170px;overflow:auto;padding:2px}
-.rp{border:0;padding:0;aspect-ratio:4/3;border-radius:6px;overflow:hidden;cursor:pointer;box-shadow:0 2px 0 var(--cloud-300)}
-.rp svg{width:100%;height:100%}
-.rp[aria-pressed="true"]{box-shadow:0 0 0 3px var(--sky-600)}
+.ref-pick{display:flex;flex-direction:column;gap:8px}
+.ref-pick[hidden]{display:none}
+.rp-row{display:flex;align-items:center;gap:8px}
+.rp-nav{flex:none;width:48px;height:48px;border:0;border-radius:50%;background:var(--paper);display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 3px var(--sky-600),0 4px 0 3px var(--sky-800)}
+.rp-nav:active{transform:translateY(3px);box-shadow:0 0 0 3px var(--sky-600)}
+.rp-nav .ic{width:24px;height:24px}
+.rp-next .ic{transform:scaleX(-1)}
+.rp-card{flex:1;min-width:0;position:relative;border:0;padding:0;aspect-ratio:4/3;border-radius:12px;overflow:hidden;cursor:pointer;background:var(--paper);box-shadow:0 0 0 3px var(--cloud-300);touch-action:pan-y}
+.rp-card.on{box-shadow:0 0 0 4px var(--grass-600),0 4px 0 4px var(--grass-800,#2C6E0D)}
+.rp-art,.rp-art svg{display:block;width:100%;height:100%}
+.rp-badge{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;padding:5px 12px;border-radius:999px;background:rgba(21,36,71,.82);color:#fff;font:800 13px/1 var(--font-body)}
+.rp-card.on .rp-badge{background:var(--grass-600)}
+.rp-badge .ic{width:16px;height:16px}
+.rp-info{display:flex;flex-direction:column;gap:2px;text-align:center}
+.rp-title{font:800 15px/1.2 var(--font-body)}
+.rp-count{font:700 13px/1.2 var(--font-body);color:var(--ink-muted)}
+.tool-row.pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:var(--space-2)}
+.chip-pv{flex-direction:column;justify-content:center;gap:4px;padding:6px 6px 8px;min-height:74px;font-size:14px;line-height:1.1;text-align:center}
+.chip .bp{width:100%;max-width:120px;height:34px;flex:none;background:#fff;border-radius:8px;box-shadow:inset 0 0 0 1.5px var(--cloud-300)}
 .guide svg{display:block}
 
 
@@ -481,37 +498,148 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 @keyframes i-giggle{0%,100%{transform:rotate(0)}50%{transform:rotate(4deg)}}
 .iris.still *{animation:none!important;transition:none!important}
 
-/* narrow / portrait */
-@media (max-width:860px),(max-aspect-ratio:1/1){
-  .era-body{grid-template-columns:1fr;grid-template-rows:min(40vh,70vw) minmax(0,1fr) auto;overflow:hidden;gap:var(--space-3)}
-  .era-body > .stage{grid-row:1;grid-column:1}
-  .era-body > .side{grid-row:2;grid-column:1;overflow:auto}
-  .era-body > .nav-row{grid-row:3;grid-column:1}
+/* desktop: the scroll wrapper is invisible to the grid */
+.era-scroll{display:contents}
+
+/* ---------- portrait tablets and phones: one smooth page scroll ---------- */
+@media (max-width:860px) and (max-aspect-ratio:3/2),(max-aspect-ratio:1/1){
+  .era-body,.studio-wrap{display:flex;flex-direction:column;padding:0;gap:0;overflow:hidden}
+  .era-scroll{display:flex;flex-direction:column;gap:var(--space-4);flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-1) var(--space-4) var(--space-5)}
+  .era-body > .nav-row,.studio-wrap > .nav-row{flex:none;margin:0;padding:var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));background:var(--era-tint);box-shadow:0 -8px 16px rgba(21,36,71,.07);position:relative;z-index:4}
+  .studio-wrap > .nav-row{background:var(--lime-50)}
+  .stage{container-type:inline-size;display:block;flex:none;min-height:0}
+  .board{width:100%;max-width:640px;margin:0 auto}
+  .side{overflow:visible;padding:0;gap:var(--space-3)}
+  .era-body .side{display:contents}
+  .era-body .talk{order:-1}
+  .era-body .stage{order:0}
+  .era-body .reveal-info,.era-body .mission,.era-body .tools{order:1}
+  /* content steps are not squeezed into a picture frame */
+  .board.flow{aspect-ratio:auto;overflow:visible;background:transparent;border:0;box-shadow:none;border-radius:0;max-width:none}
+  .board.flow > .postcard,.board.flow > .artists2,.board.flow > .quiz{position:static;inset:auto;padding:0;background:transparent}
+  .postcard{gap:var(--space-3)}
+  .postcard h2{font-size:34px}
+  .postcard .facts{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)}
+  .fact{padding:var(--space-2) var(--space-3)}
+  .fact span{font-size:15px}
+  .postcard .pc-main{flex-direction:column;gap:var(--space-2)}
+  .postcard .peek{height:auto;width:min(100%,360px)}
+  .postcard .peek-cap{max-width:none;text-align:center;font-size:16px}
+  .artists2{grid-template-columns:1fr;gap:var(--space-3)}
+  .alist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;gap:var(--space-2)}
+  .alist .artist{min-height:56px;padding:var(--space-2)}
+  .alist .artist .face{width:34px;height:34px;font-size:16px}
+  .alist .artist .w{white-space:normal}
+  .ashow{overflow:visible}
+  .quiz{gap:var(--space-4)}
+  .quiz h3{font-size:24px}
+  .answers.pics{gap:var(--space-2)}
   .title-wrap{grid-template-columns:1fr;padding:var(--space-4) var(--space-5);overflow:auto}
   .title-art{height:min(40vh,360px);order:-1}
   .title-art .iris-big{width:min(32vh,260px)}
-  .closet,.studio-wrap,.pz-wrap,.pg-wrap{grid-template-columns:1fr}
-  .pg-wrap{overflow:auto;grid-template-rows:minmax(300px,52vh) auto}
-  .dressing{min-height:320px}
-  .studio-wrap{overflow:hidden;grid-template-rows:min(42vh,72vw) minmax(0,1fr) auto}
-  .studio-wrap > .stage{grid-row:1;grid-column:1}
-  .studio-wrap > .side{grid-row:2;grid-column:1;overflow:auto}
-  .studio-wrap > .nav-row{grid-row:3;grid-column:1}
+  .closet,.pz-wrap{grid-template-columns:1fr}
+  .closet{display:flex;flex-direction:column;overflow-y:auto;padding:0 var(--space-4) var(--space-5)}
+  .dressing{min-height:300px;flex:none}
+  .ag-tray{overflow:visible;flex:none}
+  .pg-wrap{display:flex;flex-direction:column;overflow-y:auto;padding:0 var(--space-4) var(--space-5);gap:var(--space-4)}
+  .pg-main{flex:none}
+  .pg-board{flex:none;container-type:inline-size;overflow:visible}
+  .pg-art{width:100%}
+  .pg-side{overflow:visible;padding:0}
   .tl-bottom{flex-wrap:wrap;justify-content:center}
   .machine{flex-basis:100%}
   .machine output{min-width:0}
   .page{padding:var(--space-2) var(--space-4) var(--space-5)}
   .order-slots,.order-tray{gap:var(--space-2)}
 }
+
+/* ---------- phones ---------- */
 @media (max-width:600px){
-  :root{--bar-h:68px;--tool-size:62px}
-  .topbar .steps{display:none}
-  .artists{grid-template-columns:1fr}
+  :root{--bar-h:60px;--tool-size:56px;--tap-min:48px}
+  .topbar{gap:var(--space-2);padding:var(--space-2) var(--space-3)}
+  .topbar .tg-x{display:none}
+  .topbar .mid{gap:var(--space-2)}
+  .topbar .steps{display:flex;gap:4px}
+  .topbar .steps i{width:9px;height:9px;box-shadow:0 0 0 2px var(--paper)}
+  .topbar .steps i.now{width:18px}
+  .topbar .right{gap:var(--space-2)}
+  .ag-counter{height:40px;font-size:20px;padding:0 var(--space-3) 0 6px}
+  .ag-counter .ic{width:26px;height:26px}
+  .ag-tag{font-size:12px;padding:8px 12px}
+  .talk .iris-mini{width:104px}
+  .ag-bubble{font-size:17px;line-height:25px;padding:var(--space-3) var(--space-4);margin-bottom:16px}
+  .reveal-info h3{font-size:20px}
+  .nav-row .ag-btn{min-height:52px;font-size:19px}
+  .nav-row{flex-wrap:nowrap;gap:var(--space-2)}
+  .nav-row .save-art{order:1;flex:0 0 56px;min-width:56px;padding:0;font-size:0;gap:0;margin:0}
+  .nav-row .save-art .ic{width:30px;height:30px}
+  .nav-row .nav-next{order:2;flex:1.4}
+  .save-final{flex-direction:column}
+  .save-final img{width:160px}
+  .save-final .ag-btn{width:100%}
+  .ag-dialog__body{padding:var(--space-4)}
+  .reward-stars .ic{width:56px;height:56px}
+  .postcard h2{font-size:30px}
   .postcard .facts{grid-template-columns:1fr}
-  .postcard .pc-main{grid-template-columns:1fr}
-  .postcard .pc-iris{display:none}
+  .fact{display:flex;align-items:baseline;gap:var(--space-2)}
+  .fact b{margin:0;flex:none;width:76px}
+  .page h2{font-size:32px}
+  .page .lead{font-size:17px;line-height:25px}
+  .arcade-grid{grid-template-columns:1fr 1fr;gap:var(--space-3)}
+  .game-card{padding:var(--space-4)}
+  .game-card .gi{width:60px;height:60px;padding:10px}
+  .game-card h3{font-size:19px}
+  .game-card p{font-size:14px;line-height:19px}
+  .mem-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-width:100%!important}
+  .mem-card{aspect-ratio:auto;height:min(calc((100dvh - 200px) / 4 - 12px),150px)}
+  .order-card.used{display:none}
+  .dir-h{display:none}.dir-v{display:inline}
+  .order-game{display:flex;flex-direction:column;gap:var(--space-4)}
+  .order-tray{order:-1;margin-top:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-3)}
+  .order-labels{display:none}
+  .order-slots{grid-template-columns:1fr;gap:var(--space-2);padding:0 0 0 26px}
+  .order-slots::after{left:4px;right:auto;top:8px;bottom:8px;width:8px;height:auto;background:linear-gradient(180deg,var(--wood-600),var(--sun-400))}
+  .slot{aspect-ratio:auto;height:78px;display:flex;align-items:center;justify-content:flex-start;gap:var(--space-3);padding:0 var(--space-3) 0 6px;border-width:3px!important}
+  .slot .n,.slot .n:has(+ svg){position:static;flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--cloud-100);color:var(--ink-muted);font-size:18px;box-shadow:none}
+  .slot svg{flex:none;width:92px;height:69px;border-radius:10px}
+  .slot .cap{position:static;flex:1;background:none;color:var(--ink);font-size:14px;text-align:left;padding:0}
+  .museum-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4);padding:var(--space-4)}
+  .sticker-book{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-3)}
+  .sb-item{font-size:12px}
+  .ag-tray{grid-template-columns:repeat(3,minmax(0,1fr));padding:var(--space-3);gap:var(--space-2)}
+  .ag-tile{min-height:132px}
+  .ag-tile .prev{width:64px;height:64px}
+  .machine{padding:var(--space-2) var(--space-4)}
   .machine label{display:none}
+  .machine output{font-size:16px}
+  .map-actions{width:100%;justify-content:space-around}
+  .tl-bottom{padding:var(--space-2) var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom));gap:var(--space-2)}
+  .pg-head{flex-wrap:wrap}
+  .det-grid{grid-template-columns:1fr 1fr}
+  .cert{padding:var(--space-5)}
+  .cert .who{font-size:40px}
+  .cert{border-width:7px;padding:var(--space-4) var(--space-3)}
+  .cert .row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%}
+  .cert .row .sticker{width:auto;border-width:2px;padding:2px;box-shadow:none}
+  .cert .row .sticker figcaption,.cert .row .sticker span{display:none}
+  .cert h2.ag-logo{font-size:32px!important}
+
+  /* vertical timeline */
+  .map-v .tl-track{overflow-x:hidden;overflow-y:auto;scroll-snap-type:none}
+  .map-v .tl-lane{flex-direction:column;height:auto;min-height:0;padding:var(--space-3) var(--space-4) var(--space-6) 76px;gap:var(--space-3)}
+  .map-v .tl-road{left:30px;right:auto;top:0;bottom:0;width:16px;height:auto;background:repeating-linear-gradient(180deg,var(--wood-600) 0 28px,#C97A30 28px 56px);box-shadow:4px 0 0 #8A4A14}
+  .map-v .station{width:auto;flex:none}
+  .map-v .station .card{position:relative;left:auto;top:auto;bottom:auto;transform:none;width:100%;flex-direction:row;align-items:center;gap:var(--space-3);padding:var(--space-2)}
+  .map-v .station .card:active{transform:translateY(3px)}
+  .map-v .station .thumb{width:112px;flex:none;aspect-ratio:4/3}
+  .map-v .station .meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .map-v .station .node{top:50%;left:-61px;transform:translateY(-50%);width:40px;height:40px;font-size:16px}
+  .map-v .station.iris-here .node{visibility:hidden}
+  .map-v .station .stick{display:none}
+  .map-v .tl-iris{width:72px;transition:top .6s cubic-bezier(.3,1.3,.5,1)}
 }
+.station .meta{display:contents}
+
 @media (max-height:620px) and (min-aspect-ratio:1/1){
   :root{--bar-h:64px}
   .ag-bubble{font-size:17px;line-height:24px;padding:var(--space-3) var(--space-4)}
@@ -520,6 +648,35 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+@media (max-width:400px){.topbar .tg-s{display:none}.topbar .ag-tag{padding-left:12px;padding-right:12px}}
+@media (max-height:500px) and (min-aspect-ratio:3/2){
+  .era-body,.studio-wrap{grid-template-columns:minmax(0,1fr) 300px;padding:0 var(--space-4) var(--space-2)}
+  .talk .iris-mini{width:84px}
+  .ag-bubble{font-size:16px;line-height:22px}
+  .nav-row{flex-wrap:nowrap;gap:var(--space-2);padding-top:var(--space-2)}
+  .nav-row .ag-btn{min-height:52px;font-size:18px}
+  .nav-row .save-art{flex:0 0 56px;margin:0;padding:0;font-size:0;order:1}
+  .nav-row .save-art svg,.nav-row .save-art .ic{margin:0;width:26px;height:26px}
+  .nav-row .nav-next{order:2}
+  .artists2{grid-template-columns:minmax(0,46%) minmax(0,1fr);gap:var(--space-2);padding:var(--space-2)}
+  .alist .artist{padding:6px 8px;gap:6px;min-height:52px}
+  .alist .artist .face{width:28px;height:28px;font-size:14px;flex:none}
+  .alist .artist h4{overflow-wrap:break-word;hyphens:auto;font-size:15px}
+}
+/* vertical timeline (phones and short landscape screens) */
+.map-v .tl-track{overflow-x:hidden;overflow-y:auto;scroll-snap-type:none}
+.map-v .tl-lane{flex-direction:column;height:auto;min-height:0;padding:var(--space-3) var(--space-4) var(--space-6) 76px;gap:var(--space-3)}
+.map-v .tl-road{left:30px;right:auto;top:0;bottom:0;width:16px;height:auto;background:repeating-linear-gradient(180deg,var(--wood-600) 0 28px,#C97A30 28px 56px);box-shadow:4px 0 0 #8A4A14}
+.map-v .station{width:auto;flex:none}
+.map-v .station .card{position:relative;left:auto;top:auto;bottom:auto;transform:none;width:100%;flex-direction:row;align-items:center;gap:var(--space-3);padding:var(--space-2)}
+.map-v .station .card:active{transform:translateY(3px)}
+.map-v .station .thumb{width:112px;flex:none;aspect-ratio:4/3}
+.map-v .station .meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.map-v .station .node{top:50%;left:-61px;transform:translateY(-50%);width:40px;height:40px;font-size:16px}
+.map-v .station.iris-here .node{visibility:hidden}
+.map-v .station .stick{display:none}
+.map-v .tl-iris{width:72px;transition:top .6s cubic-bezier(.3,1.3,.5,1)}
+@media (min-width:601px){.map-v .tl-lane{width:min(100%,680px);margin:0 auto}}
 </style>
 </head>
 <body>
@@ -2877,12 +3034,14 @@ function showTitle() {
   };
 }
 
+matchMedia("(max-width: 600px), (max-height: 500px) and (min-aspect-ratio: 3/2)").addEventListener("change", () => { if ($(".map-screen")) showMap(); });
 /* =========================================================
    TIMELINE MAP
    ========================================================= */
 function showMap(greet) {
-  const scr = el(`<div class="screen map-screen"></div>`);
-  scr.appendChild(topbar({ back: showTitle, mid: `<span class="ag-tag">Art timeline · ${ERAS.length} stops · 40,000 years</span>` }));
+  const vertical = matchMedia("(max-width: 600px), (max-height: 500px) and (min-aspect-ratio: 3/2)").matches;
+  const scr = el(`<div class="screen map-screen ${vertical ? "map-v" : ""}"></div>`);
+  scr.appendChild(topbar({ back: showTitle, mid: `<span class="ag-tag">Art timeline<span class="tg-x"> · ${ERAS.length} stops · 40,000 years</span></span>` }));
   const cur = currentStop();
   const stations = ERAS.map((e, i) => {
     const open = isUnlocked(i);
@@ -2891,8 +3050,8 @@ function showMap(greet) {
       <div class="stick"></div>
       <button class="card focusable" data-i="${i}" aria-label="${esc(e.name)}, ${esc(e.when)}${open ? "" : ", locked"}">
         <div class="thumb">${artSVG(e.id).replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}${open ? "" : `<div class="lockcover">${icon("lock")}</div>`}</div>
-        <span class="when">${esc(e.short)}</span><span class="name">${esc(e.name)}</span>
-        <span class="stars">${stars}</span>
+        <span class="meta"><span class="when">${esc(e.short)}</span><span class="name">${esc(e.name)}</span>
+        <span class="stars">${stars}</span></span>
       </button>
       <div class="node">${i + 1}</div></div>`;
   }).join("");
@@ -2909,11 +3068,15 @@ function showMap(greet) {
   mount(scr);
   const track = $(".tl-track", scr), irisEl = $(".tl-iris", scr), range = $("#tm", scr), out = $("#tmo", scr);
   const stEls = $$(".station", scr);
-  const centerOf = i => stEls[i].offsetLeft + stEls[i].offsetWidth / 2;
-  const placeIris = i => { irisEl.style.left = (centerOf(i) + 26) + "px"; irisEl.innerHTML = irisNow("happy", { body: ERAS[i].iris }); };
+  const centerOf = i => vertical ? stEls[i].offsetTop + stEls[i].offsetHeight / 2 : stEls[i].offsetLeft + stEls[i].offsetWidth / 2;
+  const placeIris = i => {
+    if (vertical) { irisEl.style.left = "6px"; irisEl.style.top = (centerOf(i) - 40) + "px"; stEls.forEach((s, k) => s.classList.toggle("iris-here", k === i)); }
+    else irisEl.style.left = (centerOf(i) + 26) + "px";
+    irisEl.innerHTML = irisNow("happy", { body: ERAS[i].iris });
+  };
   const label = i => { out.textContent = ERAS[i].short; };
   let fromRange = false;
-  const goTo = (i, smooth = true) => { fromRange = true; track.scrollTo({ left: centerOf(i) - track.clientWidth / 2, behavior: smooth ? "smooth" : "auto" }); setTimeout(() => fromRange = false, 600); };
+  const goTo = (i, smooth = true) => { fromRange = true; track.scrollTo(vertical ? { top: centerOf(i) - track.clientHeight / 2, behavior: smooth ? "smooth" : "auto" } : { left: centerOf(i) - track.clientWidth / 2, behavior: smooth ? "smooth" : "auto" }); setTimeout(() => fromRange = false, 600); };
   range.style.background = "linear-gradient(90deg," + ERAS.map(e => e.iris).join(",") + ")";
   placeIris(cur); label(cur);
   requestAnimationFrame(() => goTo(cur, false));
@@ -2922,7 +3085,7 @@ function showMap(greet) {
   track.addEventListener("scroll", () => {
     if (fromRange) return;
     clearTimeout(st); st = setTimeout(() => {
-      const mid = track.scrollLeft + track.clientWidth / 2; let best = 0, bd = 1e9;
+      const mid = vertical ? track.scrollTop + track.clientHeight / 2 : track.scrollLeft + track.clientWidth / 2; let best = 0, bd = 1e9;
       stEls.forEach((s, i) => { const d = Math.abs(centerOf(i) - mid); if (d < bd) { bd = d; best = i; } });
       range.value = best; label(best);
     }, 120);
@@ -2949,14 +3112,14 @@ function openEra(i) {
   E = { i, era, step: 0, page: 0, q: 0, firstTry: true, wrongNow: false, actDone: false, revealed: false, opened: new Set(), act: null, snap: null,
     quiz: era.quiz.concat([{ q: `Which masterpiece is from ${era.name}?`, pics: [era.id, others[0].id, others[1].id] }]) };
   const scr = el(`<div class="screen era-screen" style="--era:${era.iris};--era-tint:${era.tint}"></div>`);
-  scr.appendChild(topbar({ back: () => { showMap(false); }, mid: `<span class="ag-tag">Stop ${i + 1} · ${esc(era.name)}</span><div class="steps" aria-hidden="true">${STEP_NAMES.map(() => "<i></i>").join("")}</div>` }));
-  const body = el(`<div class="era-body"><div class="stage"><div class="board"></div></div>
+  scr.appendChild(topbar({ back: () => { showMap(false); }, mid: `<span class="ag-tag"><span class="tg-s">Stop </span>${i + 1}<span class="tg-x"> · ${esc(era.name)}</span></span><div class="steps" aria-hidden="true">${STEP_NAMES.map(() => "<i></i>").join("")}</div>` }));
+  const body = el(`<div class="era-body"><div class="era-scroll"><div class="stage"><div class="board"></div></div>
     <div class="side">
       <div class="talk"><button class="iris-mini focusable" aria-label="Iris" style="border:0;background:none;padding:0">${irisNow("happy", { body: era.iris })}</button>
         <div class="ag-bubble" aria-live="polite"><div class="ag-bubble__name"><span>Iris</span></div><div class="bubble-text"></div><div class="pager"></div></div></div>
       <div class="mission" hidden><div class="goal"><span class="goal-t"></span><b class="goal-n"></b></div><div class="bar"><span></span></div></div>
       <div class="tools"></div>
-    </div>
+    </div></div>
     <div class="nav-row"><button class="ag-btn ag-btn--white ag-btn--sm nav-back">Back</button><button class="ag-btn nav-next">Next</button></div></div>`);
   scr.appendChild(body);
   mount(scr);
@@ -3028,6 +3191,9 @@ function clearStage() {
 function renderStep() {
   stepDots();
   const board = clearStage(), era = E.era;
+  board.classList.toggle("flow", E.step === 0 || E.step === 2 || E.step === 4);
+  const nr = $(".era-body > .nav-row"); if (nr) nr.hidden = E.step === 4;
+  const sc = $(".era-scroll"); if (sc) sc.scrollTop = 0;
   setBack(true);
   if (E.step === 0) {
     const tl = ERAS.map((_, k) => `<i class="${k < E.i ? "past" : k === E.i ? "here" : ""}"></i>`).join("");
@@ -3081,7 +3247,7 @@ function renderStep() {
     mission(era.activity.goal, era.activity.unit);
     E.act = ACTIVITIES[era.id](api) || {};
     if (E.act.snapshot) {
-      const sb = el(`<button class="ag-btn ag-btn--grass ag-btn--block ag-btn--sm save-art">${icon("frame")}Save to My Museum</button>`);
+      const sb = el(`<button class="ag-btn ag-btn--grass ag-btn--block ag-btn--sm save-art" aria-label="Save to My Museum">${icon("frame")}Save to My Museum</button>`);
       $(".nav-row").prepend(sb);
       const ready = () => { sb.disabled = false; sb.innerHTML = `${icon("frame")}Save to My Museum`; };
       sb.onclick = () => { const snap = E.act.snapshot(); if (snap && artKey(snap.src) === E.lastSaved) { toast("This one is already in your museum. Change something to save a new one!"); return; } if (saveArt(snap)) { sb.disabled = true; sb.innerHTML = `${icon("check")}Saved! Keep creating to save another`; } };
@@ -3209,11 +3375,31 @@ function paletteUI(box, colors, initial, onPick, opts = {}) {
   });
   box.appendChild(wrap); return wrap;
 }
+/* little pictures showing what each brush paints */
+const BP = (inner, defs = "") => `<svg class="bp" viewBox="0 0 60 34" aria-hidden="true">${defs}${inner}</svg>`;
+const BRUSH_PREVIEW = {
+  brush: BP('<path d="M6 24 C16 6 26 30 36 14 S50 8 54 12" fill="none" stroke="#D93A3F" stroke-width="6" stroke-linecap="round"/>'),
+  dab: BP([[8,22,"#36ACF8"],[16,12,"#8FD3FF"],[24,22,"#B5E83A"],[32,12,"#36ACF8"],[40,22,"#F57EBF"],[48,13,"#8FD3FF"],[52,24,"#B5E83A"]].map(([x,y,c],i)=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="${c}" transform="rotate(${i%2?-25:20} ${x} ${y})"/>`).join("")),
+  swirl: BP('<path d="M30 17 m-2 0 a2 2 0 1 1 4 0 a5 5 0 1 1 -10 0 a8 8 0 1 1 16 0 a11 11 0 1 1 -22 0 a14 14 0 1 1 28 0" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round"/><path d="M34 17 a11 11 0 0 1 -12 10" fill="none" stroke="#FFD21F" stroke-width="2.5" stroke-linecap="round"/>'),
+  dots: BP(Array.from({length:21},(_,i)=>`<circle cx="${8+(i%7)*7.4}" cy="${8+Math.floor(i/7)*9}" r="2.6" fill="${["#D93A3F","#FFD21F","#36ACF8","#3B9512"][i%4]}"/>`).join("")),
+  splat: BP('<path d="M6 20 Q18 4 28 20 T52 14" fill="none" stroke="#151515" stroke-width="2"/><path d="M10 26 Q24 12 36 26 T56 22" fill="none" stroke="#D93A3F" stroke-width="1.6"/><circle cx="20" cy="9" r="3" fill="#FFD21F"/><circle cx="44" cy="27" r="2.4" fill="#36ACF8"/><circle cx="50" cy="7" r="1.6" fill="#151515"/><circle cx="12" cy="10" r="1.4" fill="#D93A3F"/><circle cx="33" cy="6" r="1.2" fill="#151515"/>'),
+  spray: BP('<circle cx="30" cy="17" r="15" fill="url(#bpg)"/>', '<defs><radialGradient id="bpg"><stop offset="0" stop-color="#B0562B"/><stop offset=".55" stop-color="#B0562B" stop-opacity=".55"/><stop offset="1" stop-color="#B0562B" stop-opacity="0"/></radialGradient></defs>'),
+  stamp: BP('<path d="M18 4 l3.5 7.5 8 1-6 5.5 1.6 8-7.1-4-7.1 4 1.6-8-6-5.5 8-1z" fill="#FFD21F" stroke="#E0A800" stroke-width="1"/><path d="M44 28 C30 19 34 9 40 10 C42 10.5 43.5 12 44 14 C44.5 12 46 10.5 48 10 C54 9 58 19 44 28z" fill="#F57EBF"/>'),
+  eraser: BP('<path d="M8 22 Q22 8 34 20" fill="none" stroke="#D7DCE4" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 7"/><g transform="rotate(-30 44 17)"><rect x="34" y="11" width="22" height="12" rx="3" fill="#F57EBF"/><rect x="34" y="11" width="9" height="12" rx="3" fill="#36ACF8"/></g>'),
+  ink: BP('<path d="M6 26 C14 22 18 8 30 10 C40 12 44 24 54 8" fill="none" stroke="#151515" stroke-width="5" stroke-linecap="round"/><path d="M30 10 C40 12 44 24 54 8" fill="none" stroke="#151515" stroke-width="2" stroke-linecap="round"/>'),
+  leaf: BP('<path d="M8 26 C20 8 36 6 54 8 C40 14 26 22 8 26z" fill="#2F6B3A"/><path d="M14 30 C24 22 34 20 46 20" fill="none" stroke="#2F6B3A" stroke-width="2.5" stroke-linecap="round"/>'),
+  seal: BP('<rect x="18" y="5" width="24" height="24" rx="3" fill="#C8102E"/><path d="M24 12h12M24 17h12M30 12v12M24 23h12" stroke="#fff" stroke-width="2"/>'),
+  star: BP('<path d="M30 3 l4.2 8.6 9.5 1.4-6.9 6.7 1.6 9.4-8.4-4.4-8.4 4.4 1.6-9.4-6.9-6.7 9.5-1.4z" fill="#FFD21F" stroke="#E0A800"/>'),
+  heart: BP('<path d="M30 30 C12 18 16 4 25 5 C27.5 5.4 29.3 7 30 9.5 C30.7 7 32.5 5.4 35 5 C44 4 48 18 30 30z" fill="#F57EBF"/>'),
+  flower: BP('<g fill="#F57EBF">' + [0,72,144,216,288].map(a=>`<ellipse cx="30" cy="9" rx="5" ry="7" transform="rotate(${a} 30 17)"/>`).join("") + '</g><circle cx="30" cy="17" r="4.5" fill="#FFD21F"/>'),
+  circle: BP('<circle cx="30" cy="17" r="11" fill="#36ACF8"/>'),
+};
 function chipsUI(box, label, items, selected, onPick, opts = {}) {
   const wrap = el(`<div><div class="tool-label" style="margin-bottom:8px">${esc(label)}</div><div class="tool-row"></div></div>`);
   const row = $(".tool-row", wrap);
   items.forEach(it => {
-    const b = el(`<button class="chip" ${opts.toggle || opts.action ? "" : `aria-pressed="${it.id === selected}"`} data-id="${it.id}">${it.icon ? icon(it.icon) : ""}${it.dot ? `<span style="width:20px;height:20px;border-radius:50%;background:${it.dot};box-shadow:0 0 0 2px #fff,0 0 0 3px #D7DCE4"></span>` : ""}${esc(it.label)}</button>`);
+    const pv = !opts.noPreview && BRUSH_PREVIEW[it.id];
+    const b = el(`<button class="chip${pv ? " chip-pv" : ""}" ${opts.toggle || opts.action ? "" : `aria-pressed="${it.id === selected}"`} data-id="${it.id}">${pv || (it.icon ? icon(it.icon) : "")}${it.dot ? `<span style="width:20px;height:20px;border-radius:50%;background:${it.dot};box-shadow:0 0 0 2px #fff,0 0 0 3px #D7DCE4"></span>` : ""}${esc(it.label)}</button>`);
     if (opts.toggle) b.setAttribute("aria-pressed", "false");
     b.onclick = () => {
       if (opts.toggle) { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); onPick(it.id, on, b); }
@@ -3223,6 +3409,7 @@ function chipsUI(box, label, items, selected, onPick, opts = {}) {
     };
     row.appendChild(b);
   });
+  if ($(".chip-pv", row)) row.classList.add("pv-grid");
   box.appendChild(wrap); return wrap;
 }
 const SIZES = [{ id: "s", label: "Small" }, { id: "m", label: "Medium" }, { id: "l", label: "Big" }];
@@ -4566,21 +4753,41 @@ function addStudioHelper(board, tools) {
   const box = el(`<div class="helper"><div class="tool-label" style="margin-bottom:8px">Paint a masterpiece</div><div class="tool-row hm"></div>
     <div class="ref" hidden><button class="ref-art focusable" aria-label="See the masterpiece bigger"></button><div class="ref-cap"></div></div>
     <div class="opac" hidden><label for="opac" class="tool-label">How faint</label><input id="opac" type="range" min="10" max="60" value="30"></div>
-    <div class="ref-pick" hidden></div></div>`);
+    <div class="ref-pick" hidden><div class="tool-label">Pick a painting</div>
+      <div class="rp-row"><button class="rp-nav rp-prev" aria-label="Previous painting">${icon("back")}</button>
+        <button class="rp-card" aria-label="Choose this painting"><span class="rp-art"></span><span class="rp-badge"></span></button>
+        <button class="rp-nav rp-next" aria-label="Next painting">${icon("back")}</button></div>
+      <div class="rp-info"><b class="rp-title"></b><span class="rp-count"></span></div></div></div>`);
   tools.prepend(box);
   const ref = $(".ref", box), opac = $(".opac", box), pickBox = $(".ref-pick", box);
+  let view = ERAS.findIndex(x => x.id === pick);
+  function showCard() {
+    const e = ERAS[view], chosen = e.id === pick;
+    $(".rp-art", pickBox).innerHTML = artSVG(e.id);
+    $(".rp-card", pickBox).classList.toggle("on", chosen);
+    $(".rp-card", pickBox).setAttribute("aria-label", chosen ? `${e.work.title}, chosen` : `Choose ${e.work.title}`);
+    $(".rp-badge", pickBox).innerHTML = chosen ? `${icon("check")}Chosen` : "Tap to choose";
+    $(".rp-title", pickBox).textContent = e.work.title;
+    $(".rp-count", pickBox).textContent = `${view + 1} of ${ERAS.length} · ${e.name}`;
+  }
   function update() {
     const e = ERAS.find(x => x.id === pick);
     guide.innerHTML = artSVG(pick).replace("<svg ", '<svg preserveAspectRatio="none" style="width:100%;height:100%" ');
     guide.style.opacity = mode === "trace" ? opacity : 0;
     ref.hidden = mode !== "beside"; opac.hidden = mode !== "trace"; pickBox.hidden = mode === "none";
     $(".ref-art", box).innerHTML = artSVG(pick); $(".ref-cap", box).textContent = `${e.work.title} · ${e.work.artist}`;
-    $$(".rp", pickBox).forEach(b => b.setAttribute("aria-pressed", b.dataset.id === pick));
+    showCard();
   }
   chipsUI($(".hm", box), "", [{ id: "none", label: "Blank paper" }, { id: "beside", label: "Look and copy" }, { id: "trace", label: "Trace on top" }], mode, id => { mode = id; update(); if (id === "trace") toast("The faint picture won't be saved, only your painting!"); });
   $(".hm .tool-label", box).remove();
-  pickBox.innerHTML = ERAS.map(e => `<button class="rp" data-id="${e.id}" aria-label="${esc(e.work.title)}">${artSVG(e.id)}</button>`).join("");
-  $$(".rp", pickBox).forEach(b => b.onclick = () => { pick = b.dataset.id; FX.tap(); update(); });
+  const go = d => { view = (view + d + ERAS.length) % ERAS.length; FX.tap(); showCard(); };
+  $(".rp-prev", pickBox).onclick = () => go(-1);
+  $(".rp-next", pickBox).onclick = () => go(1);
+  $(".rp-card", pickBox).onclick = () => { const id = ERAS[view].id; if (id === pick) return; pick = id; FX.pop(); update(); toast(mode === "trace" ? "Now trace it on your paper!" : "Now copy it on your paper!", 1600); };
+  let sx = null;
+  $(".rp-card", pickBox).addEventListener("pointerdown", e => sx = e.clientX);
+  $(".rp-card", pickBox).addEventListener("pointerup", e => { if (sx !== null && Math.abs(e.clientX - sx) > 40) { e.preventDefault(); go(e.clientX < sx ? 1 : -1); $(".rp-card", pickBox).dataset.swiped = "1"; } sx = null; });
+  $(".rp-card", pickBox).addEventListener("click", e => { if ($(".rp-card", pickBox).dataset.swiped) { e.stopImmediatePropagation(); delete $(".rp-card", pickBox).dataset.swiped; } }, true);
   $("#opac", box).oninput = e => { opacity = e.target.value / 100; update(); };
   $(".ref-art", box).onclick = () => { const e = ERAS.find(x => x.id === pick); modal({ title: e.work.title, body: `<div style="width:100%;border-radius:12px;overflow:hidden">${artSVG(pick)}</div><p><b>${esc(e.work.artist)}</b> · ${esc(e.work.year)}</p>`, buttons: [{ label: "Back to painting", cls: "ag-btn--sky" }] }); };
   update();
@@ -4646,6 +4853,7 @@ function showMemory() {
       return `<button class="mem-card" data-k="${k}" aria-label="Card ${k + 1}"><div class="mem-inner"><div class="mem-face mem-back">${icon("palette")}</div><div class="mem-face mem-front">${c.kind === "art" ? artSVG(e.id) : `<div class="txt">${esc(e.work.title)}<small>${esc(e.work.artist.replace("Our drawing, in the style of ", ""))}</small></div>`}</div></div></button>`;
     }).join("")}</div></div>`);
   scr.appendChild(page); mount(scr);
+  $$(".mem-front svg", page).forEach(s => s.setAttribute("preserveAspectRatio", "xMidYMid slice"));
   let open = [], moves = 0, matched = 0, busy = false;
   $$(".mem-card", scr).forEach(b => b.onclick = () => {
     if (busy || b.classList.contains("flip") || b.classList.contains("match")) return;
@@ -4706,13 +4914,13 @@ function showOrder() {
   const ids = shuffle(ERAS.map((_, i) => i)).slice(0, 5).sort((a, b) => a - b);
   const tray = shuffle(ids.slice()), slots = [null, null, null, null, null];
   const page = el(`<div class="page"><div class="game-head"><h2>Timeline Challenge</h2><button class="ag-btn ag-btn--sun ag-btn--sm chk" disabled>Check my timeline</button></div>
-    <p class="lead" style="margin-bottom:16px">Tap a painting, then tap a box. Put them in order, from the oldest on the left to the newest on the right!</p>
-    <div class="order-slots"></div><div class="order-labels"><span>Oldest</span><span>Newest</span></div><div class="order-tray"></div></div>`);
+    <p class="lead" style="margin-bottom:16px">Tap a painting, then tap a box. Put them in order, from the oldest <span class="dir-h">on the left to the newest on the right!</span><span class="dir-v">at the top to the newest at the bottom!</span></p>
+    <div class="order-game"><div class="order-slots"></div><div class="order-labels"><span>Oldest</span><span>Newest</span></div><div class="order-tray"></div></div></div>`);
   scr.appendChild(page); mount(scr);
   let pick = null;
   const slotsEl = $(".order-slots", page), trayEl = $(".order-tray", page), chk = $(".chk", page);
   function render() {
-    slotsEl.innerHTML = slots.map((v, k) => `<button class="slot" data-s="${k}" aria-label="Box ${k + 1}">${v === null ? `<span class="n">${k + 1}</span>` : artSVG(ERAS[v].id)}</button>`).join("");
+    slotsEl.innerHTML = slots.map((v, k) => `<button class="slot" data-s="${k}" aria-label="Box ${k + 1}"><span class="n">${k + 1}</span>${v === null ? "" : artSVG(ERAS[v].id)}</button>`).join("");
     trayEl.innerHTML = tray.map(v => `<button class="order-card ${slots.includes(v) ? "used" : ""} ${pick === v ? "sel" : ""}" data-v="${v}" aria-label="${esc(ERAS[v].work.title)}">${artSVG(ERAS[v].id)}</button>`).join("");
     chk.disabled = slots.some(v => v === null);
     $$(".order-card", trayEl).forEach(b => b.onclick = () => { pick = +b.dataset.v; FX.tap(); render(); toast(ERAS[pick].work.title, 1400); });
@@ -4739,7 +4947,7 @@ function showOrder() {
 /* ---------- Free paint studio ---------- */
 function showStudio() {
   const scr = pageScreen("Free Paint Studio", () => showMap(false));
-  const wrap = el(`<div class="studio-wrap"><div class="stage"><div class="board"></div></div><div class="side"><div class="tools"></div></div>
+  const wrap = el(`<div class="studio-wrap"><div class="era-scroll"><div class="stage"><div class="board"></div></div><div class="side"><div class="tools"></div></div></div>
     <div class="nav-row"><button class="ag-btn ag-btn--white ag-btn--sm clr">${icon("trash")}Clear</button><button class="ag-btn ag-btn--grass sv">${icon("frame")}Save</button></div></div>`);
   scr.appendChild(wrap); mount(scr);
   const board = $(".board", wrap), tools = $(".tools", wrap);
