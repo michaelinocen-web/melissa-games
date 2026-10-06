@@ -1,6 +1,7 @@
-const CACHE_NAME = 'melissa-games-v3';
+const CACHE_NAME = 'melissa-games-v10';
 const ASSETS = [
   './index.html',
+  './art-history.html',
   './kids.html',
   './countries-flags.html',
   './universe.html',
