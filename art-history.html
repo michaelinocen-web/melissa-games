@@ -811,6 +811,74 @@ img,svg{-webkit-touch-callout:none}
   .ag-dialog:has(.reward-top) .dlg-btns{gap:10px}
   .ag-dialog:has(.reward-top) .dlg-btns .ag-btn{min-height:50px;font-size:18px}
 }
+/* ---------- first-time tutorial ---------- */
+.tb-help{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--grape-500);color:var(--paper);font:800 22px/1 var(--font-display);box-shadow:0 4px 0 var(--grape-700);cursor:pointer;padding:0}
+.tb-help:active{transform:translateY(3px);box-shadow:0 1px 0 var(--grape-700)}
+.tut{position:fixed;inset:0;z-index:80;background:var(--backdrop);display:grid;place-items:center;padding:16px;animation:fade .2s}
+.tut-card{position:relative;width:100%;max-width:440px;max-height:calc(100dvh - 32px);overflow:auto;background:var(--paper);border-radius:var(--radius-lg);box-shadow:0 8px 0 var(--cloud-300),var(--shadow-card);padding:22px 22px 20px;text-align:center;animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+.tut-card.tut-turn .tut-art,.tut-card.tut-turn .tut-title,.tut-card.tut-turn .tut-body{animation:rise .35s cubic-bezier(.3,1.4,.5,1)}
+.tut-skip{position:absolute;top:12px;right:12px;border:0;background:var(--cloud-100);color:var(--ink-muted);font:800 14px/1 var(--font-body);padding:9px 14px;border-radius:999px;cursor:pointer;z-index:2}
+.tut-art{min-height:150px;display:grid;place-items:center;margin:6px 0 10px;background:var(--lime-50);border-radius:var(--radius-md);padding:14px}
+.tut-title{margin:0 0 6px;font:800 26px/1.1 var(--font-display);color:var(--ink)}
+.tut-body{margin:0;font:700 17px/25px var(--font-body);color:var(--ink);min-height:75px}
+.tut-body b{color:var(--grape-500)}
+.tut-dots{display:flex;justify-content:center;gap:6px;margin:14px 0 4px}
+.tut-dots i{width:9px;height:9px;border-radius:50%;background:var(--cloud-300);transition:all .2s}
+.tut-dots i.on{width:24px;border-radius:5px;background:var(--grape-500)}
+.tut-nav{display:flex;gap:12px;margin-top:12px}
+.tut-nav .ag-btn{flex:1;min-height:54px}
+.tut-iris{width:130px}
+.tut-iris--sm{width:96px}
+.tut-frame{width:96px;aspect-ratio:4/3;border:6px solid var(--wood-600);border-radius:6px;overflow:hidden;background:var(--paper);box-shadow:0 5px 0 var(--ink-shadow);flex:none}
+.tut-frame svg{display:block;width:100%;height:100%}
+.tut-road{position:relative;display:flex;gap:10px;align-items:center;justify-content:center;padding:10px 0}
+.tut-road > i{position:absolute;left:-6px;right:-6px;top:50%;height:12px;margin-top:-6px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--wood-600) 0 22px,#C97A30 22px 44px)}
+.tut-road .tut-frame{position:relative;width:84px}
+.tut-machine{width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;font:900 13px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--grape-500);text-align:left}
+.tut-slider{position:relative;height:14px;border-radius:7px}
+.tut-slider b{position:absolute;top:50%;left:38%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 5px var(--sky-600),0 4px 8px rgba(0,0,0,.2);animation:tut-slide 2.4s ease-in-out infinite alternate}
+@keyframes tut-slide{from{left:12%}to{left:82%}}
+.tut-steps{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tut-steps span{display:flex;flex-direction:column;align-items:center;gap:5px;font:800 12px/1 var(--font-body);color:var(--ink)}
+.tut-steps b{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;box-shadow:0 4px 0 rgba(21,36,71,.18)}
+.tut-steps b .ic{width:28px;height:28px;filter:brightness(0) invert(1)}
+.tut-scratch{position:relative}
+.tut-scratch .tut-frame{width:170px}
+.tut-dust{position:absolute;inset:6px 6px 6px 45%;background:linear-gradient(135deg,#C7B79C,#8F7E68);border-radius:0 2px 2px 0;-webkit-mask:radial-gradient(circle at 0% 50%,transparent 22px,#000 23px);mask:radial-gradient(circle at 0% 50%,transparent 22px,#000 23px)}
+.tut-hand{position:absolute;right:-14px;bottom:-14px;width:64px;height:64px;animation:rub 1.2s ease-in-out infinite}
+.tut-row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+.tut-tool{display:flex;flex-direction:column;align-items:center;gap:6px;font:800 13px/1 var(--font-body);color:var(--ink)}
+.tut-stars .ic{width:52px;height:52px}
+.tut-drops{display:flex;align-items:center;gap:4px;font:800 26px/1 var(--font-display);color:var(--sky-600);margin-left:6px}
+.tut-drops .ic{width:32px;height:32px}
+@media (max-width:600px),(max-height:640px){
+  .tb-help{width:36px;height:36px;font-size:20px}
+  .tut-card{padding:18px 16px 16px}
+  .tut-art{min-height:120px;padding:10px}
+  .tut-title{font-size:22px}
+  .tut-body{font-size:15.5px;line-height:22px;min-height:66px}
+  .tut-iris{width:104px}
+  .tut-road .tut-frame{width:74px}
+  .tut-steps{gap:6px}
+  .tut-steps b{width:42px;height:42px}
+  .tut-steps b .ic{width:24px;height:24px}
+  .tut-scratch .tut-frame{width:150px}
+  .tut-nav .ag-btn{min-height:50px}
+}
+
+/* ---------- title screen fits a phone without scrolling ---------- */
+@media (max-width:600px){
+  .title-wrap{gap:var(--space-2);padding:var(--space-2) var(--space-4) var(--space-4);align-content:center}
+  .title-art{height:min(33vh,300px)}
+  .title-art .iris-big{width:min(27vh,220px)}
+  .title-art .frame{border-width:6px}
+  .title-copy{gap:var(--space-2);align-items:center;text-align:center}
+  .title-copy .ag-logo{font-size:36px;-webkit-text-stroke-width:9px}
+  .title-copy .ag-pill{font-size:15px;padding:7px 18px}
+  .title-copy p{font-size:15px;line-height:21px;text-align:center}
+  .title-btns{margin-top:var(--space-2);gap:var(--space-3);justify-content:center;width:100%}
+  .title-btns .ag-btn{flex:1;min-width:0;min-height:52px;font-size:17px;padding-left:10px;padding-right:10px}
+}
 </style>
 </head>
 <body>
@@ -3175,7 +3243,7 @@ matchMedia("(max-width: 600px), (max-height: 500px) and (min-aspect-ratio: 3/2)"
 function showMap(greet) {
   const vertical = matchMedia("(max-width: 600px), (max-height: 500px) and (min-aspect-ratio: 3/2)").matches;
   const scr = el(`<div class="screen map-screen ${vertical ? "map-v" : ""}"></div>`);
-  scr.appendChild(topbar({ back: showTitle, mid: `<span class="ag-tag">Art timeline<span class="tg-x"> · ${ERAS.length} stops · 40,000 years</span></span>` }));
+  scr.appendChild(topbar({ back: showTitle, mid: `<span class="ag-tag"><span class="tg-s">Art </span>timeline<span class="tg-x"> · ${ERAS.length} stops · 40,000 years</span></span><button class="tb-help" aria-label="How to play">?</button>` }));
   const cur = currentStop();
   const stations = ERAS.map((e, i) => {
     const open = isUnlocked(i);
@@ -3233,6 +3301,8 @@ function showMap(greet) {
   $(".go-studio", scr).onclick = () => { FX.pop(); showStudio(); };
   $(".go-museum", scr).onclick = () => { FX.pop(); showMuseum(); };
   $(".go-closet", scr).onclick = () => { FX.pop(); showCloset(); };
+  $(".tb-help", scr).onclick = () => { FX.tap(); startTutorial(false); };
+  setTimeout(() => { if ($(".map-screen")) maybeStartTutorial(); }, 450);
 }
 
 /* =========================================================
@@ -5041,6 +5111,107 @@ function addStudioHelper(board, tools) {
   $("#opac", box).oninput = e => { opacity = e.target.value / 100; update(); };
   $(".ref-art", box).onclick = () => { const e = ERAS.find(x => x.id === pick); modal({ title: e.work.title, body: `<div style="width:100%;border-radius:12px;overflow:hidden">${artSVG(pick)}</div><p><b>${esc(e.work.artist)}</b> · ${esc(e.work.year)}</p>`, buttons: [{ label: "Back to painting", cls: "ag-btn--sky" }] }); };
   update();
+}
+/* =========================================================
+   FIRST-TIME TUTORIAL: click-through cards over the map,
+   shown once, replayable from the "?" button on the map
+   ========================================================= */
+const TUT_SEEN_KEY = "melissaArtTutorialSeen_v1";
+const tutFrame = (id, rot = 0, color = "var(--wood-600)") => `<div class="tut-frame" style="transform:rotate(${rot}deg);border-color:${color}">${artSVG(id).replace("<svg ", '<svg preserveAspectRatio="xMidYMid slice" ')}</div>`;
+const tutRound = (cls, ic, label) => `<span class="tut-tool"><span class="ag-round ${cls}">${icon(ic)}</span>${label}</span>`;
+const TUT_BOOK = `<svg class="ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 12 C13 8 19 9 23 13 V38 C19 34 13 33 6 37Z M42 12 C35 8 29 9 25 13 V38 C29 34 35 33 42 37Z" fill="#fff"/></svg>`;
+const TUT_STEPS = [
+  {
+    title: "Hi, I'm Iris!",
+    body: "I'm a chameleon who loves art. Let's travel through <b>40,000 years</b> of art together, all around the world!",
+    art: () => `<div class="tut-iris">${irisNow("cheer")}</div>`
+  },
+  {
+    title: "The Art Timeline",
+    body: `This road is the story of art. It has <b>${ERAS.length} stops</b>, from cave paintings long ago to street art today. Scroll to explore and tap a stop to visit it.`,
+    art: () => `<div class="tut-road"><i></i>${tutFrame("cave", -5)}${tutFrame("renaissance", 3, "#7A4BE0")}${tutFrame("pop", -3, "#E0A800")}</div>`
+  },
+  {
+    title: "The Time Machine",
+    body: "Slide the <b>time machine</b> to zoom through the years and jump to any stop on the road.",
+    art: () => `<div class="tut-machine"><span>Time machine</span><div class="tut-slider" style="background:linear-gradient(90deg,${ERAS.map(e => e.iris).join(",")})"><b></b></div></div>`
+  },
+  {
+    title: "5 Steps At Every Stop",
+    body: "Each stop has a <b>Story</b>, a masterpiece to <b>Discover</b>, famous <b>Artists</b> to meet, something to <b>Create</b>, and a short <b>Quiz</b>.",
+    art: () => `<div class="tut-steps">${[["book", "Story", "#36ACF8"], ["sparkle", "Discover", "#FFB238"], ["palette", "Artists", "#7A4BE0"], ["brush", "Create", "#D63F8C"], ["star", "Quiz", "#3B9512"]].map(([ic, l, c]) => `<span><b style="background:${c}">${ic === "book" ? TUT_BOOK : icon(ic)}</b>${l}</span>`).join("")}</div>`
+  },
+  {
+    title: "Scratch To Discover",
+    body: "A famous masterpiece is hiding under the dust. <b>Rub it with your finger</b> to find it!",
+    art: () => `<div class="tut-scratch">${tutFrame("japan")}<div class="tut-dust"></div><svg class="tut-hand" viewBox="-60 -70 120 120">${handShape("#FFFFFF", 'stroke="#8A5A3A" stroke-width="3"')}</svg></div>`
+  },
+  {
+    title: "Create Like The Artists",
+    body: "Paint, stamp, weave and build just like real artists did. Love what you made? Tap the <b>picture button</b> to save it in your museum.",
+    art: () => `<div class="tut-row">${tutRound("ag-round--berry", "brush", "Paint")}${tutRound("ag-round--sun", "palette", "Colors")}${tutRound("ag-round--grass", "frame", "Save")}</div>`
+  },
+  {
+    title: "Quiz, Stars And Paint Drops",
+    body: "Answer 3 questions at the end of each stop to win up to <b>3 stars</b> and <b>paint drops</b>.",
+    art: () => `<div class="tut-row tut-stars">${icon("star")}${icon("star")}${icon("star")}<span class="tut-drops">${icon("drop")}+30</span></div>`
+  },
+  {
+    title: "Dress Up Iris",
+    body: "Spend your paint drops in the <b>Closet</b> on hats, glasses and smocks. Iris wears them everywhere, even on the map!",
+    art: () => `<div class="tut-row"><div class="tut-iris tut-iris--sm">${irisNow("grin")}</div>${tutRound("ag-round--sun", "closet", "Closet")}</div>`
+  },
+  {
+    title: "More Fun Below The Road",
+    body: "At the bottom of the map: <b>Arcade</b> games, a free <b>Paint</b> studio, your <b>Museum</b> and Iris's <b>Closet</b>.",
+    art: () => `<div class="tut-row">${tutRound("ag-round--grass", "arcade", "Arcade")}${tutRound("ag-round--berry", "brush", "Paint")}${tutRound("", "museum", "Museum")}${tutRound("ag-round--sun", "closet", "Closet")}</div>`
+  },
+  {
+    title: "Ready To Explore?",
+    body: "Tap <b>Stop 1, Cave Art</b>, to start the adventure. Tap the <b>?</b> button on the map any time to see this again. Have fun!",
+    art: () => `<div class="tut-iris">${irisNow("wow")}</div>`
+  }
+];
+let tutIdx = 0;
+function tutSeen() { try { return localStorage.getItem(TUT_SEEN_KEY) === "1"; } catch (e) { return false; } }
+function tutMarkSeen() { try { localStorage.setItem(TUT_SEEN_KEY, "1"); } catch (e) {} }
+function maybeStartTutorial() { if (!tutSeen()) startTutorial(true); }
+function startTutorial(firstTime) {
+  $$(".tut").forEach(t => t.remove());
+  tutIdx = 0;
+  const t = el(`<div class="tut" role="dialog" aria-modal="true" aria-label="How to play"><div class="tut-card">
+    <button class="tut-skip">${firstTime ? "Skip" : "Close"}</button>
+    <div class="tut-art"></div><h2 class="tut-title"></h2><p class="tut-body"></p>
+    <div class="tut-dots"></div>
+    <div class="tut-nav"><button class="ag-btn ag-btn--white ag-btn--sm tut-back">Back</button><button class="ag-btn ag-btn--sun tut-next">Next</button></div>
+  </div></div>`);
+  document.body.appendChild(t);
+  $(".tut-skip", t).onclick = () => { FX.tap(); closeTutorial(); };
+  $(".tut-back", t).onclick = () => { FX.tap(); tutGo(-1); };
+  $(".tut-next", t).onclick = () => { FX.tap(); tutGo(1); };
+  renderTutorial();
+}
+function renderTutorial() {
+  const t = $(".tut"); if (!t) return;
+  const s = TUT_STEPS[tutIdx];
+  $(".tut-art", t).innerHTML = s.art();
+  $(".tut-title", t).textContent = s.title;
+  $(".tut-body", t).innerHTML = s.body;
+  $(".tut-dots", t).innerHTML = TUT_STEPS.map((_, k) => `<i class="${k === tutIdx ? "on" : ""}"></i>`).join("");
+  $(".tut-back", t).style.visibility = tutIdx === 0 ? "hidden" : "visible";
+  $(".tut-next", t).textContent = tutIdx === TUT_STEPS.length - 1 ? "Let's go!" : "Next";
+  const card = $(".tut-card", t);
+  card.classList.remove("tut-turn"); void card.offsetWidth; card.classList.add("tut-turn");
+}
+function tutGo(dir) {
+  const n = tutIdx + dir;
+  if (n < 0) return;
+  if (n >= TUT_STEPS.length) { closeTutorial(); FX.chime(); return; }
+  tutIdx = n; renderTutorial();
+}
+function closeTutorial() {
+  $$(".tut").forEach(t => t.remove());
+  tutMarkSeen();
 }
 /* =========================================================
    EXTRAS: Art Arcade (memory, puzzle, timeline challenge),
