@@ -914,6 +914,12 @@ img,svg{-webkit-touch-callout:none}
 .st-lift.ready .st-fill{display:none}
 .st-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
 @media (min-width:601px){.st-btn{min-height:42px;min-width:100px;font-size:16px;padding:0 16px 0 13px}.st-ic{width:17px;height:17px}.st-ctl{right:12px;bottom:12px}}
+/* phones: picture buttons (stencils, brushes, stamps...) are compact, small picture on the left of the word */
+@media (max-width:600px){
+  .tools .tool-row.pv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .tools .tool-row .chip.chip-pv{flex-direction:row;justify-content:flex-start;align-items:center;gap:8px;min-height:42px;padding:0 10px 0 6px;font-size:14px;line-height:1.1;text-align:left}
+  .tools .tool-row .chip.chip-pv .bp{width:32px;height:22px;max-width:none;flex:none;border-radius:6px}
+}
 </style>
 </head>
 <body>
