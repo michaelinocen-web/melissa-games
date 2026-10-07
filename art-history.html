@@ -902,6 +902,22 @@ img,svg{-webkit-touch-callout:none}
 /* long stop names end with … instead of being cut */
 .topbar .mid{min-width:0}
 .topbar .mid .ag-tag{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* street art: Place and Lift buttons right on the wall */
+.st-ctl{position:absolute;left:8px;right:8px;bottom:8px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:3}
+.st-btn{pointer-events:auto;position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border:0;border-radius:999px;font:800 16px/1 var(--font-body);cursor:pointer;touch-action:manipulation;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+.st-btn .ic{width:22px;height:22px}
+.st-btn span{position:relative}
+.st-place{background:var(--berry-500);color:#fff}
+.st-place .ic{filter:brightness(0) invert(1)}
+.st-lift{background:rgba(255,255,255,.92);color:var(--ink);min-width:104px;justify-content:center}
+.st-lift:disabled{opacity:.55;cursor:default}
+.st-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lime-300);transition:width .15s}
+.st-lift.ready{background:var(--grass-600);color:#fff;animation:pulse 1s ease-in-out infinite}
+.st-lift.ready .st-fill{display:none}
+.st-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+.pulse-soft{animation:pulse 1.2s ease-in-out infinite}
+@media (max-width:600px){.st-btn{min-height:40px;padding:0 12px;font-size:14px}.st-lift{min-width:88px}.st-ctl{left:6px;right:6px;bottom:6px}}
+@media (min-width:601px){.st-btn{min-height:54px;padding:0 22px;font-size:19px}.st-btn .ic{width:26px;height:26px}.st-lift{min-width:130px}.st-ctl{left:12px;right:12px;bottom:12px}}
 </style>
 </head>
 <body>
@@ -1760,7 +1776,7 @@ Object.assign(NEW_ERAS, {
       { name: "Banksy", work: "Love is in the Bin", when: "2018", place: "Private collection", fact: "The half-shredded picture later sold for even more money!" },
       { name: "Os Gêmeos", work: "Murals with yellow characters", when: "2000s to today", place: "São Paulo, Brazil, and cities worldwide", fact: "They are twin brothers who paint giant yellow people." }
     ],
-    activity: { title: "Spray a stencil wall", how: "Pick a stencil and tap the wall to stick it there. Spray over the hole, and it lifts off by itself to show your art!", goal: 5, unit: "stencils" },
+    activity: { title: "Spray a stencil wall", how: "Pick a stencil and tap Place. Rub over the hole to spray paint until the Lift button turns green, then tap Lift to see your art!", goal: 5, unit: "stencils" },
     quiz: [
       { q: "How does a stencil artist make a picture?", a: ["Sprays paint over a cut-out shape", "Carves stone", "Weaves thread"] },
       { q: "Who drew dancing figures in the New York subway?", a: ["Keith Haring", "Leonardo da Vinci", "Hokusai"] }
@@ -4967,45 +4983,62 @@ Object.assign(ACTIVITIES, {
   /* Street art: stencil spray */
   street(api) {
     const P = makePaint(api.board, { bg: c => drawSVGOnCanvas(c, svgWrap(brickWall(7))) });
-    P.tool = "spray"; P.size = 22; P.color = "#FF4FA3"; P.maskInvert = true;
+    P.tool = "spray"; P.size = 24; P.color = "#FF4FA3"; P.maskInvert = true;
     const layer = el(`<svg class="layer" viewBox="0 0 800 600" style="pointer-events:none"></svg>`); api.board.appendChild(layer);
-    let shape = "heart", on = null, made = 0, free = false, lifting = false;
-    const NEED = 200;
-    // tap the wall to stick a stencil there
-    function place(x, y) {
-      x = Math.max(170, Math.min(630, x)); y = Math.max(160, Math.min(440, y));
-      const s = 2.6, rot = Math.random() * 30 - 15;
-      const path = new Path2D(); path.addPath(new Path2D(STENCILS[shape]), new DOMMatrix().translate(x, y).rotate(rot).scale(s));
-      P.mask = path; P.sprayHit = 0; on = true;
-      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><rect x="-60" y="-60" width="120" height="120" rx="6" fill="#E8DCC4" opacity=".93"/><path d="${STENCILS[shape]}" fill="#8A4A36" opacity=".55" fill-rule="evenodd"/></g></g>`;
-      layer.style.transition = "none"; layer.style.opacity = "1"; FX.pop();
-      if (made === 0) api.speak("Now spray over the hole! Rub your finger on it.");
+    // the two buttons sit right on the wall, so kids never have to look away from their art
+    const ctl = el(`<div class="st-ctl"><button class="st-btn st-place">${icon("sparkle")}<span>Place</span></button><button class="st-btn st-lift" disabled><i class="st-fill"></i><span>Lift</span></button></div>`);
+    api.board.appendChild(ctl);
+    const placeBtn = $(".st-place", ctl), liftBtn = $(".st-lift", ctl), fill = $(".st-fill", ctl);
+    // six spots on the wall, used in a random order, so stencils never land on top of each other
+    const SPOTS = [[160, 170], [400, 170], [640, 170], [160, 395], [400, 395], [640, 395]];
+    let spots = shuffle(SPOTS.slice()), shape = "heart", on = null, made = 0, free = false, meter = 0;
+    const NEED = 520, SCALE = 1.7;
+    function nextSpot() {
+      if (!spots.length) spots = shuffle(SPOTS.slice());
+      const [x, y] = spots.shift();
+      return [x + (Math.random() * 30 - 15), y + (Math.random() * 20 - 10)];
     }
-    // it peels off by itself once there is enough paint
+    function setMeter() {
+      const k = on ? Math.min(1, P.sprayHit / NEED) : 0;
+      if (Math.abs(k - meter) >= .02 || k === 0 || k === 1) { meter = k; fill.style.width = (k * 100) + "%"; }
+      liftBtn.disabled = !on; liftBtn.classList.toggle("ready", on && k >= 1);
+      placeBtn.classList.toggle("pulse-soft", !on && !free);
+    }
+    function place() {
+      if (on) { // a stencil with no paint yet just moves to another spot
+        if (P.sprayHit > 25) { api.speak("Lift this stencil first, then place a new one!"); FX.soft(); return; }
+      }
+      free = false; freeChip && freeChip.setAttribute("aria-pressed", "false");
+      const [x, y] = nextSpot(), rot = Math.random() * 20 - 10;
+      const path = new Path2D(); path.addPath(new Path2D(STENCILS[shape]), new DOMMatrix().translate(x, y).rotate(rot).scale(SCALE));
+      P.mask = path; P.sprayHit = 0; on = { x, y };
+      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${SCALE})"><rect x="-60" y="-60" width="120" height="120" rx="6" fill="#E8DCC4" opacity=".93"/><path d="${STENCILS[shape]}" fill="#8A4A36" opacity=".55" fill-rule="evenodd"/></g></g>`;
+      layer.style.transition = "none"; layer.style.opacity = "1"; FX.pop(); setMeter();
+      if (made === 0) api.speak("Now rub over the hole to spray! When the Lift button turns green, tap it.");
+    }
     function lift() {
-      if (!on || lifting) return;
-      lifting = true;
-      layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; on = null; made++; api.progress(made); FX.chime();
-      api.speak(made === 1 ? "Ta-da! That's how stencil artists like Banksy work: quick and sharp! Tap the wall for another one." : made < 5 ? "Cool! Pick another stencil and tap the wall." : "What a wall! Try free spraying your own tag too.");
-      setTimeout(() => lifting = false, 500);
+      if (!on) return;
+      if (P.sprayHit < NEED) { api.speak("Spray a little more over the hole, until the Lift button is green!"); FX.soft(); return; }
+      layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; on = null; made++; api.progress(made); FX.chime(); setMeter();
+      api.speak(made === 1 ? "Ta-da! That's how stencil artists like Banksy work! Pick another stencil and tap Place." : made < 5 ? "Cool! Pick another stencil and tap Place." : "What a wall! Try Spray anywhere to write your own tag.");
     }
-    // the first touch places the stencil; spraying over it fills it
-    P.canvas.addEventListener("pointerdown", e => {
-      if (on || free) return;
-      const r = P.canvas.getBoundingClientRect();
-      place((e.clientX - r.left) * 800 / r.width, (e.clientY - r.top) * 600 / r.height);
-    }, true);
-    const check = () => { if (on && P.sprayHit >= NEED) lift(); };
-    P.canvas.addEventListener("pointermove", check);
-    P.canvas.addEventListener("pointerup", check);
-    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => { shape = id; if (on && P.sprayHit < 20) { layer.innerHTML = ""; P.mask = null; on = null; } });
+    placeBtn.onclick = () => { FX.tap(); place(); };
+    liftBtn.onclick = () => { FX.tap(); lift(); };
+    P.canvas.addEventListener("pointermove", setMeter);
+    P.canvas.addEventListener("pointerup", setMeter);
+    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => {
+      shape = id;
+      if (on && P.sprayHit <= 25) { const { x, y } = on; spots.unshift([x, y]); on = null; place(); } // swap the shape in the same spot
+    });
     paletteUI(api.tools, [{ c: "#FF4FA3", n: "Hot pink" }, { c: "#151515", n: "Black" }, { c: "#FFD21F", n: "Yellow" }, { c: "#36ACF8", n: "Blue" }, { c: "#6CCB2C", n: "Green" }, { c: "#FFFFFF", n: "White" }, { c: "#FF8C1A", n: "Orange" }], P.color, c => P.color = c, { label: "Spray cans" });
-    chipsUI(api.tools, "Free spray", [{ id: "free", label: "Spray anywhere" }], null, (id, isOn) => {
+    const freeRow = chipsUI(api.tools, "Free spray", [{ id: "free", label: "Spray anywhere" }], null, (id, isOn) => {
       free = isOn;
       if (isOn) { layer.innerHTML = ""; P.mask = null; on = null; api.speak("Free spraying! Write your tag or make big shapes."); }
-      else api.speak("Stencils are back! Tap the wall to stick one on.");
+      else api.speak("Stencils are back! Tap Place to put one on the wall.");
+      setMeter();
     }, { toggle: true });
-    api.speak("Pick a stencil, then tap the wall to stick it on!");
+    const freeChip = $(".chip", freeRow);
+    place();
     return { snapshot: () => ({ src: P.snapshot(), title: "My stencil wall" }), destroy: P.destroy };
   }
 });
