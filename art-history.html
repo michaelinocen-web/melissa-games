@@ -727,6 +727,52 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
   .era-scroll{padding-left:12px;padding-right:12px;gap:var(--space-3)}
   .era-scroll > .stage .board:not(.flow){width:calc(100% - 24px)}
 }
+/* phones, round 3: lesson pictures and canvases 20% smaller, lesson text 10% smaller */
+@media (max-width:600px){
+  .era-body .era-scroll > .stage .board:not(.flow){width:calc((100% - 24px) * .8)}
+  .era-body .era-scroll > .stage .board.fine{width:calc(100% - 24px)}
+  .era-body .talk .ag-bubble{font-size:14.5px;line-height:21px}
+  .era-body .talk .ag-bubble__name{font-size:11px;line-height:14px}
+  .era-body .postcard h2{font-size:27px}
+  .era-body .fact b{font-size:11px;line-height:14px}
+  .era-body .fact span{font-size:13.5px}
+  .era-body .postcard .peek{width:min(80%,290px)}
+  .era-body .postcard .peek-cap{font-size:14.5px}
+  .era-body .alist .artist h4{font-size:14.5px}
+  .era-body .alist .artist .w{font-size:12.5px}
+  .era-body .alist .artist .face{width:30px;height:30px;font-size:14px}
+  .era-body .aframe{width:80%;margin:0 auto;border-width:7px}
+  .era-body .acap h4{font-size:15px}
+  .era-body .acap .w{font-size:12px}
+  .era-body .acap p{font-size:13.5px}
+  .era-body .quiz h3{font-size:21.5px}
+  .era-body .quiz .qn{font-size:12.5px}
+  .era-body .answer{font-size:16px;min-height:56px;padding:var(--space-2) var(--space-4)}
+  .era-body .reveal-info h3{font-size:18px}
+  .era-body .reveal-info p{font-size:14.5px;line-height:20px}
+  .era-body .reveal-info .where{font-size:13.5px}
+  .era-body .mission .goal{font-size:15.5px}
+  .era-body .mission .goal b{font-size:18px}
+  .era-body .tool-label{font-size:12.5px}
+  .era-body .chip{font-size:14.5px;min-height:46px}
+  .era-body .chip-pv{font-size:13px}
+  .era-body .nav-row .ag-btn{font-size:17px}
+  .scratch-hint{font-size:22px}
+  /* the 35-stop mini timeline must fit across a phone */
+  .mini-tl i{min-width:0}
+  .mini-tl i::after{width:7px;height:7px;box-shadow:0 0 0 2px var(--cloud-300)}
+  .mini-tl i.past::after{box-shadow:0 0 0 2px var(--grass-600)}
+  .mini-tl i.here::after{width:16px;height:16px;box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--ink)}
+  .era-body .nav-row .save-art{font-size:0;overflow:hidden}
+}
+/* messages never block taps, and on phones they float above the bottom buttons */
+.toast{pointer-events:none}
+@media (max-width:600px){
+  .toast{bottom:calc(108px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100vw - 32px);text-align:center;font-size:15px;border-radius:var(--radius-md);padding:var(--space-2) var(--space-4)}
+}
+/* touch polish for every screen: no double-tap zoom delay on buttons, no long-press picture menus */
+button,.ag-btn,.chip,.ag-paint,a{touch-action:manipulation}
+img,svg{-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -3184,7 +3230,7 @@ function speak(text, opts = {}) {
   const t = $(".bubble-text"); if (!t) return;
   const changed = t.textContent !== text;
   t.textContent = text;
-  if (changed) highlightBubble(t.closest(".ag-bubble"));
+  if (changed) highlightBubble(t.closest(".ag-bubble"), opts.pages ? "scroll" : "toast", text);
   const pg = $(".pager");
   if (pg) pg.innerHTML = opts.pages ? Array.from({ length: opts.pages }, (_, k) => `<i class="${k === opts.page ? "on" : ""}"></i>`).join("") : "";
   t.animate([{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: 260 });
@@ -3192,16 +3238,20 @@ function speak(text, opts = {}) {
   if (sv && !/mood-(cheer|wow|oops|think|grin)/.test(sv.getAttribute("class"))) { sv.classList.add("talking"); clearTimeout(sv._tt); sv._tt = setTimeout(() => sv.classList.remove("talking"), Math.min(3200, 700 + text.length * 22)); }
 }
 // make new words in Iris's bubble easy to notice: a glow, a little bounce and a sparkle
-function highlightBubble(b) {
+function highlightBubble(b, offscreen = "toast", text = "") {
   if (!b) return;
   b.classList.remove("bubble-new"); void b.offsetWidth; b.classList.add("bubble-new");
   clearTimeout(b._hl); b._hl = setTimeout(() => b.classList.remove("bubble-new"), 1600);
   const iris = $(".iris-mini"); if (iris) { iris.classList.remove("iris-hop"); void iris.offsetWidth; iris.classList.add("iris-hop"); }
-  // on phones the bubble can be scrolled out of sight: bring it back into view
+  // on phones the bubble can be scrolled out of sight. When the story moves on, scroll back to it;
+  // during an activity never move the page under the child's finger, show the words as a toast instead
   const sc = b.closest(".era-scroll");
   if (sc && getComputedStyle(sc).overflowY !== "visible") {
     const r = b.getBoundingClientRect(), sr = sc.getBoundingClientRect();
-    if (r.top < sr.top || r.top > sr.bottom - 40) sc.scrollTo({ top: Math.max(0, sc.scrollTop + r.top - sr.top - 8), behavior: "smooth" });
+    if (r.bottom < sr.top + 30 || r.top > sr.bottom - 40) {
+      if (offscreen === "scroll") sc.scrollTo({ top: Math.max(0, sc.scrollTop + r.top - sr.top - 8), behavior: "smooth" });
+      else if (text) toast(text, 2600);
+    }
   }
 }
 function setNext(label, { cls = "", disabled = false, pulse = false, hidden = false } = {}) {
@@ -3257,6 +3307,8 @@ function renderStep() {
   stepDots();
   const board = clearStage(), era = E.era;
   board.classList.toggle("flow", E.step === 0 || E.step === 2 || E.step === 4);
+  // activities with many small pieces to tap keep the full width on phones
+  board.classList.toggle("fine", E.step === 3 && ["greece", "middle", "nouveau", "islamic"].includes(era.id));
   const nr = $(".era-body > .nav-row"); if (nr) nr.hidden = E.step === 4;
   const sc = $(".era-scroll"); if (sc) sc.scrollTop = 0;
   setBack(true);
@@ -4187,7 +4239,9 @@ Object.assign(ACTIVITIES, {
     const tryAt = (p, tapped) => {
       if (done) return;
       const [x, y] = P[n];
-      if (Math.hypot(p.x - x, p.y - y) < 18) {
+      // at least a fingertip (about 24 screen px) around each dot, even on a small phone
+      const hit = Math.max(18, 24 * 400 / (svg.getBoundingClientRect().width || 400));
+      if (Math.hypot(p.x - x, p.y - y) < hit) {
         n++; FX.tone(300 + n * 18, .12, "triangle", .1); api.progress(n);
         if (n === P.length) {
           done = true; draw(); FX.win();
