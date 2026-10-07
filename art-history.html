@@ -729,19 +729,19 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 }
 /* phones, round 3: lesson pictures and canvases 20% smaller, lesson text 10% smaller */
 @media (max-width:600px){
-  .era-body .era-scroll > .stage .board:not(.flow){width:calc((100% - 24px) * .8)}
+  .era-body .era-scroll > .stage .board:not(.flow){width:calc((100% - 24px) * .85)}
   .era-body .era-scroll > .stage .board.fine{width:calc(100% - 24px)}
   .era-body .talk .ag-bubble{font-size:14.5px;line-height:21px}
   .era-body .talk .ag-bubble__name{font-size:11px;line-height:14px}
   .era-body .postcard h2{font-size:27px}
   .era-body .fact b{font-size:11px;line-height:14px}
   .era-body .fact span{font-size:13.5px}
-  .era-body .postcard .peek{width:min(80%,290px)}
+  .era-body .postcard .peek{width:min(85%,310px)}
   .era-body .postcard .peek-cap{font-size:14.5px}
   .era-body .alist .artist h4{font-size:14.5px}
   .era-body .alist .artist .w{font-size:12.5px}
   .era-body .alist .artist .face{width:30px;height:30px;font-size:14px}
-  .era-body .aframe{width:80%;margin:0 auto;border-width:7px}
+  .era-body .aframe{width:85%;margin:0 auto;border-width:7px}
   .era-body .acap h4{font-size:15px}
   .era-body .acap .w{font-size:12px}
   .era-body .acap p{font-size:13.5px}
@@ -3307,8 +3307,8 @@ function renderStep() {
   stepDots();
   const board = clearStage(), era = E.era;
   board.classList.toggle("flow", E.step === 0 || E.step === 2 || E.step === 4);
-  // activities with many small pieces to tap keep the full width on phones
-  board.classList.toggle("fine", E.step === 3 && ["greece", "middle", "nouveau", "islamic"].includes(era.id));
+  // the "Let's create" activities keep the full width on phones
+  board.classList.toggle("fine", E.step === 3);
   const nr = $(".era-body > .nav-row"); if (nr) nr.hidden = E.step === 4;
   const sc = $(".era-scroll"); if (sc) sc.scrollTop = 0;
   setBack(true);
