@@ -27,6 +27,7 @@
   --bar-h:76px; --era:#36ACF8; --era-tint:#E3F4FE;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%} /* no double-tap zoom anywhere */
 html,body{margin:0;height:100%;background:var(--lime-50);color:var(--ink);font-family:var(--font-body);-webkit-user-select:none;user-select:none;overscroll-behavior:none}
 body{overflow:hidden}
 button{font-family:inherit}
@@ -3112,6 +3113,23 @@ function artistArt(eraId, i) {
    the timeline map, and the 5-step lesson for each era.
    ========================================================= */
 const SKEY = "melissaArtGame_v2", HUBKEY = "melissaArtStars_v1";
+// no zooming in the game: quick taps (adding dots, stamping) must never double-tap zoom, and pinching stays off.
+// iPhones ignore "user-scalable=no", so the second quick tap's zoom is cancelled here instead.
+(function noZoom() {
+  let lastEnd = 0;
+  document.addEventListener("touchend", e => {
+    const now = Date.now();
+    if (now - lastEnd < 350 && e.touches.length === 0) {
+      e.preventDefault(); // stops the zoom
+      // cancelling the touch also cancels its click, so give buttons their tap back
+      const t = e.target.closest && e.target.closest("button, [role=tab], [role=option], label, input, select, a");
+      if (t && !t.disabled) t.click();
+    }
+    lastEnd = now;
+  }, { passive: false });
+  document.addEventListener("dblclick", e => e.preventDefault(), { passive: false });
+  ["gesturestart", "gesturechange", "gestureend"].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+})();
 // capturing a finger can fail on some phones (a touch cancelled mid-tap); never let that stop a drawing
 (function safeCapture() {
   const sp = Element.prototype.setPointerCapture, rp = Element.prototype.releasePointerCapture;
