@@ -783,6 +783,34 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 /* touch polish for every screen: no double-tap zoom delay on buttons, no long-press picture menus */
 button,.ag-btn,.chip,.ag-paint,a{touch-action:manipulation}
 img,svg{-webkit-touch-callout:none}
+/* reward pop-up */
+.reward-top{display:flex;flex-direction:column;align-items:center;gap:var(--space-4)}
+.reward-iris{width:110px;margin:-8px 0 -12px}
+.reward-drops{display:flex;align-items:center;gap:6px;justify-content:center;font:800 18px/1 var(--font-body)}
+.reward-drops span{width:32px;height:32px;display:block}
+.reward-drops .ic{width:100%;height:100%}
+/* phones and short screens: everything fits without scrolling */
+@media (max-width:600px),(max-height:700px){
+  .ag-dialog:has(.reward-top){max-height:calc(100dvh - 24px)}
+  .modal:has(.reward-top){padding:12px}
+  .ag-dialog:has(.reward-top) .ag-dialog__head{font-size:20px;padding:12px 16px}
+  .ag-dialog:has(.reward-top) .ag-dialog__body{padding:12px 14px 14px;gap:10px}
+  .reward-top{flex-direction:row;justify-content:center;gap:10px}
+  .reward-iris{width:66px;margin:0}
+  .reward-stars{gap:6px}
+  .reward-stars .ic{width:42px;height:42px}
+  .reward-row{flex-wrap:nowrap;gap:14px}
+  .reward-row .sticker{width:104px;border-width:4px}
+  .big-num{font-size:30px}
+  .reward-drops{font-size:15px}
+  .reward-drops span{width:24px;height:24px}
+  .ag-dialog__body p.reward-msg{font-size:14.5px;line-height:20px}
+  .ag-dialog:has(.reward-top) .save-final{flex-direction:row;padding:8px;gap:10px}
+  .ag-dialog:has(.reward-top) .save-final img{width:84px;border-width:4px}
+  .ag-dialog:has(.reward-top) .save-final .ag-btn{width:auto;flex:1;min-height:48px;font-size:15px;line-height:1.15;padding:6px 10px;white-space:normal}
+  .ag-dialog:has(.reward-top) .dlg-btns{gap:10px}
+  .ag-dialog:has(.reward-top) .dlg-btns .ag-btn{min-height:50px;font-size:18px}
+}
 </style>
 </head>
 <body>
@@ -3436,9 +3464,9 @@ function finishEra() {
   FX.win(); confetti(110);
   const m = modal({
     title: `${era.name} complete!`, closable: false,
-    body: `<div style="width:110px;margin:-8px 0 -12px">${irisNow("cheer")}</div><div class="reward-stars">${[0, 1, 2].map(k => icon(k < stars ? "star" : "starIdle", "pop")).join("")}</div>
-      <div class="reward-row"><div class="sticker">${artSVG(era.id)}</div><div><div class="big-num">+${drops}</div><div style="display:flex;align-items:center;gap:6px;justify-content:center;font:800 18px/1 var(--font-body)"><span style="width:32px;height:32px">${icon("drop")}</span>paint drops</div></div></div>
-      <p>New sticker: <b>${esc(era.work.title)}</b>!${stars < 3 ? " Replay this stop to win all 3 stars." : ""}</p>
+    body: `<div class="reward-top"><div class="reward-iris">${irisNow("cheer")}</div><div class="reward-stars">${[0, 1, 2].map(k => icon(k < stars ? "star" : "starIdle", "pop")).join("")}</div></div>
+      <div class="reward-row"><div class="sticker">${artSVG(era.id)}</div><div><div class="big-num">+${drops}</div><div class="reward-drops"><span>${icon("drop")}</span>paint drops</div></div></div>
+      <p class="reward-msg">New sticker: <b>${esc(era.work.title)}</b>!${stars < 3 ? " Replay this stop to win all 3 stars." : ""}</p>
       ${canSave ? `<div class="save-final"><img src="${E.snap.src}" alt="Your artwork"><button class="ag-btn ag-btn--grape ag-btn--sm sf-btn" ${already ? "disabled" : ""}>${already ? "Already in My Museum" : "Save my art to My Museum"}</button></div>` : ""}`,
     buttons: [
       { label: "Timeline", cls: "ag-btn--white", onClick: () => showMap(false) },
@@ -3524,12 +3552,55 @@ const BRUSH_PREVIEW = {
   flower: BP('<g fill="#F57EBF">' + [0,72,144,216,288].map(a=>`<ellipse cx="30" cy="9" rx="5" ry="7" transform="rotate(${a} 30 17)"/>`).join("") + '</g><circle cx="30" cy="17" r="4.5" fill="#FFD21F"/>'),
   circle: BP('<circle cx="30" cy="17" r="11" fill="#36ACF8"/>'),
 };
+/* pictures for rows where some items had one and others not (attached per row with withPv) */
+function shapePv(t, c) {
+  const s = { circle: `<circle cx="30" cy="17" r="11" fill="${c}"/>`, triangle: `<path d="M30 5 L43 29 L17 29Z" fill="${c}"/>`, square: `<rect x="19" y="6" width="22" height="22" rx="2" fill="${c}"/>`,
+    line: `<path d="M12 26 L48 8" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`, arc: `<path d="M14 27 A16 16 0 0 1 46 27" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/>` }[t];
+  return s ? BP(s) : "";
+}
+const EXTRA_PV = {
+  // Pacific tapa stamps
+  triangles: BP('<path d="M7 26 L15 9 L23 26Z M22 26 L30 9 L38 26Z M37 26 L45 9 L53 26Z" fill="#6B3A1F"/>'),
+  zigzag: BP('<path d="M6 13 L14 7 L22 13 L30 7 L38 13 L46 7 L54 13 M6 25 L14 19 L22 25 L30 19 L38 25 L46 19 L54 25" fill="none" stroke="#6B3A1F" stroke-width="3" stroke-linejoin="round"/>'),
+  turtle: BP('<ellipse cx="30" cy="18" rx="12" ry="9" fill="#6B3A1F"/><circle cx="44" cy="17" r="4" fill="#6B3A1F"/><g fill="#6B3A1F"><ellipse cx="21" cy="9" rx="4" ry="2.5" transform="rotate(-35 21 9)"/><ellipse cx="38" cy="9" rx="4" ry="2.5" transform="rotate(35 38 9)"/><ellipse cx="21" cy="27" rx="4" ry="2.5" transform="rotate(35 21 27)"/><ellipse cx="38" cy="27" rx="4" ry="2.5" transform="rotate(-35 38 27)"/></g><path d="M24 18 h12 M30 12 v12" stroke="#E9D5B0" stroke-width="1.5"/>'),
+  fish: BP('<path d="M14 17 C22 6 36 6 42 17 C36 28 22 28 14 17Z M42 17 L52 9 L52 25Z" fill="#6B3A1F"/><circle cx="21" cy="15" r="1.8" fill="#E9D5B0"/>'),
+  fern: BP('<path d="M10 28 C22 22 36 14 52 6" fill="none" stroke="#6B3A1F" stroke-width="2"/>' + [0,1,2,3,4,5].map(k => { const x = 14 + k * 6.5, y = 25.5 - k * 3.4; return `<path d="M${x} ${y} q-1 -7 -5 -9 M${x} ${y} q6 1 8 5" fill="none" stroke="#6B3A1F" stroke-width="2" stroke-linecap="round"/>`; }).join("")),
+  // Matisse cut-outs
+  wave: BP('<path d="M8 22 C14 10 20 10 24 18 C28 26 34 26 38 16 C42 8 48 8 52 14 L52 26 L8 26Z" fill="#1D4ED8"/>'),
+  blob: BP('<path d="M20 8 C30 2 44 6 46 15 C48 24 40 30 30 28 C20 30 10 26 12 17 C13 12 16 10 20 8Z" fill="#3B9512"/>'),
+  bird: BP('<path d="M8 20 C18 8 24 10 30 18 C36 10 42 8 52 20 C42 16 36 18 30 26 C24 18 18 16 8 20Z" fill="#151515"/>'),
+  spiral: BP('<path d="M30 17 m-2 0 a2 2 0 1 1 4 0 a5 5 0 1 1 -10 0 a8 8 0 1 1 16 0 a11 11 0 1 1 -22 0" fill="none" stroke="#D93A3F" stroke-width="4" stroke-linecap="round"/>'),
+  // Bauhaus poster pieces
+  bar: BP('<rect x="10" y="13" width="40" height="8" fill="#151515"/>'),
+  half: BP('<path d="M16 25 A14 14 0 0 1 44 25Z" fill="#D93A3F"/>'),
+  B: BP('<text x="30" y="27" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="24" fill="#151515">B</text>'),
+  A: BP('<text x="30" y="27" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="24" fill="#D93A3F">A</text>'),
+  // street-art stencils
+  crown: BP('<path d="M16 26 L13 10 L22 17 L30 7 L38 17 L47 10 L44 26Z" fill="#FFD21F" stroke="#E0A800"/>'),
+  bolt: BP('<path d="M34 3 L20 19 L29 19 L25 31 L41 13 L32 13Z" fill="#FFB238" stroke="#E07B00" stroke-width="1"/>'),
+  smile: BP('<circle cx="30" cy="17" r="13" fill="#FFD21F"/><circle cx="25" cy="14" r="2" fill="#151515"/><circle cx="35" cy="14" r="2" fill="#151515"/><path d="M23 20 Q30 27 37 20" fill="none" stroke="#151515" stroke-width="2.2" stroke-linecap="round"/>'),
+  // Frankenthaler pour
+  pour: BP('<path d="M10 22 C14 12 26 10 34 14 C44 10 52 16 50 23 C48 30 30 30 22 28 C14 30 8 27 10 22Z" fill="#7A4BE0" opacity=".35"/><path d="M18 21 C24 15 34 15 40 20 C38 25 26 26 18 21Z" fill="#36ACF8" opacity=".45"/>'),
+  // Dada chance
+  drop: BP('<rect x="10" y="20" width="10" height="10" fill="#D93A3F" transform="rotate(-12 15 25)"/><rect x="26" y="16" width="10" height="10" fill="#1D4ED8" transform="rotate(18 31 21)"/><rect x="42" y="21" width="10" height="10" fill="#FFD21F" transform="rotate(-6 47 26)"/><path d="M15 6 v8 M31 3 v8 M47 7 v8" stroke="#8C95A8" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3"/>'),
+  shake: BP('<path d="M22 12 h16 l3 18 h-22z" fill="#B5651D"/><path d="M24 12 q6 -6 12 0" fill="none" stroke="#B5651D" stroke-width="2"/><path d="M12 12 l-4 4 l4 4 M48 12 l4 4 l-4 4" fill="none" stroke="#8C95A8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'),
+  clear: BP('<path d="M20 26 h20" stroke="#D7DCE4" stroke-width="3" stroke-linecap="round"/><path d="M38 6 l-10 14" stroke="#B5651D" stroke-width="3" stroke-linecap="round"/><path d="M22 18 l10 4 l-3 8 l-12 -2z" fill="#FFD21F"/><path d="M46 8 l2 2 M50 14 l3 0 M44 4 l0 -2" stroke="#FFD21F" stroke-width="2" stroke-linecap="round"/>'),
+  // Surrealist dream spells
+  melt: BP('<path d="M16 8 h28 v8 c0 6 -4 4 -5 10 c-1 5 -5 5 -5 0 c0 -4 -4 -3 -5 2 c-1 4 -5 3 -5 -2 c0 -6 -8 -6 -8 -12z" fill="#FFD21F" stroke="#E0A800"/><path d="M30 11 v5 l4 2" stroke="#151515" stroke-width="1.6" stroke-linecap="round" fill="none"/>'),
+  float: BP('<circle cx="30" cy="12" r="7" fill="#F57EBF"/><path d="M30 19 v10" stroke="#8C95A8" stroke-width="1.5"/><path d="M14 22 l4 -5 l4 5 M38 22 l4 -5 l4 5" fill="none" stroke="#36ACF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'),
+  giant: BP('<circle cx="34" cy="17" r="13" fill="#3B9512"/><circle cx="12" cy="24" r="4" fill="#3B9512" opacity=".45"/><path d="M17 13 l6 -4 M20 9 h3 v3" fill="none" stroke="#8C95A8" stroke-width="2" stroke-linecap="round"/>'),
+  tiny: BP('<circle cx="30" cy="17" r="4" fill="#3B9512"/><path d="M12 6 l9 6 M48 6 l-9 6 M12 28 l9 -6 M48 28 l-9 -6" stroke="#8C95A8" stroke-width="2" stroke-linecap="round"/>'),
+  flip: BP('<path d="M20 8 h14 l-7 9z" fill="#7A4BE0"/><path d="M27 26 h14 l-7 -9z" fill="#7A4BE0" opacity=".45"/><path d="M48 9 a8 8 0 0 1 0 16 M48 25 l-3 -1 M48 25 l1 -3" fill="none" stroke="#8C95A8" stroke-width="2" stroke-linecap="round"/>'),
+  wings: BP('<path d="M30 20 C22 8 10 8 6 14 C12 14 14 18 10 22 C18 22 24 24 30 20Z M30 20 C38 8 50 8 54 14 C48 14 46 18 50 22 C42 22 36 24 30 20Z" fill="#FFFFFF" stroke="#8C95A8" stroke-width="1.5"/><circle cx="30" cy="20" r="3" fill="#F57EBF"/>'),
+};
+// give every item in a row its picture (only for the rows that ask for it)
+const withPv = items => items.map(it => EXTRA_PV[it.id] ? Object.assign({}, it, { pv: EXTRA_PV[it.id], icon: null }) : it);
 function chipsUI(box, label, items, selected, onPick, opts = {}) {
   const wrap = el(`<div><div class="tool-label" style="margin-bottom:8px">${esc(label)}</div><div class="tool-row"></div></div>`);
   const row = $(".tool-row", wrap);
   items.forEach(it => {
-    const pv = !opts.noPreview && BRUSH_PREVIEW[it.id];
-    const b = el(`<button class="chip${pv ? " chip-pv" : ""}" ${opts.toggle || opts.action ? "" : `aria-pressed="${it.id === selected}"`} data-id="${it.id}">${pv || (it.icon ? icon(it.icon) : "")}${it.dot ? `<span style="width:20px;height:20px;border-radius:50%;background:${it.dot};box-shadow:0 0 0 2px #fff,0 0 0 3px #D7DCE4"></span>` : ""}${esc(it.label)}</button>`);
+    const pv = !opts.noPreview && (it.pv || BRUSH_PREVIEW[it.id]);
+    const b = el(`<button class="chip${pv ? " chip-pv" : ""}" ${opts.toggle || opts.action ? "" : `aria-pressed="${it.id === selected}"`} data-id="${it.id}">${pv || (it.icon ? icon(it.icon) : "")}${it.dot && !pv ? `<span style="width:20px;height:20px;border-radius:50%;background:${it.dot};box-shadow:0 0 0 2px #fff,0 0 0 3px #D7DCE4"></span>` : ""}${esc(it.label)}</button>`);
     if (opts.toggle) b.setAttribute("aria-pressed", "false");
     b.onclick = () => {
       if (opts.toggle) { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); onPick(it.id, on, b); }
@@ -4100,7 +4171,7 @@ const ACTIVITIES = {
       api.speak(id === "kandinsky" ? "Tap the dark canvas to place shapes. High shapes sing high notes, low shapes sing low notes!" : "Tap the boxes to fill them with red, yellow, blue, white or black, just like Mondrian.");
     });
     api.tools.appendChild(kBox); api.tools.appendChild(mBox);
-    chipsUI(kBox, "Shape", Object.keys(SH).map(k => ({ id: k, label: SH[k].label, dot: SH[k].c })), shape, id => shape = id);
+    chipsUI(kBox, "Shape", Object.keys(SH).map(k => ({ id: k, label: SH[k].label, pv: shapePv(k, SH[k].c) || BRUSH_PREVIEW[k] })), shape, id => shape = id);
     const playBtn = el(`<button class="ag-btn ag-btn--grape ag-btn--sm" style="margin-top:12px">${icon("play")}Play my painting</button>`);
     playBtn.onclick = () => {
       if (!shapes.length) { api.speak("Place some shapes first, then press play!"); return; }
@@ -4138,7 +4209,7 @@ const ACTIVITIES = {
     svg.addEventListener("pointerdown", e => { const g = e.target.closest("[data-o]"); if (!g) return; sel = g.dataset.o; FX.tap(); draw(); api.speak(`You picked the ${sel}. Now cast a dream spell on it!`); });
     const SP = [{ id: "melt", label: "Melt", icon: "sparkle" }, { id: "float", label: "Float" }, { id: "giant", label: "Giant" }, { id: "tiny", label: "Tiny" }, { id: "flip", label: "Upside down" }, { id: "wings", label: "Wings" }];
     const say = { melt: "It's melting, like Dalí's soft clocks!", float: "Floating in the air, like Magritte's apples and men!", giant: "Giant! Surrealists loved changing sizes.", tiny: "So tiny! Dreams play with size.", flip: "Upside down! Nothing is normal in a dream.", wings: "Now it can fly! Anything is possible in Surrealism." };
-    chipsUI(api.tools, "Dream spells", SP, null, id => {
+    chipsUI(api.tools, "Dream spells", withPv(SP), null, id => {
       const sp = O[sel].spells;
       if (sp.has(id)) sp.delete(id); else { sp.add(id); if (id === "giant") sp.delete("tiny"); if (id === "tiny") sp.delete("giant"); count++; api.progress(count); api.speak(say[id]); }
       FX.tone(880, .3, "sine", .08); FX.tone(1320, .3, "sine", .05, .08); draw();
@@ -4150,7 +4221,7 @@ const ACTIVITIES = {
   action(api) {
     const P = makePaint(api.board, { bg: c => { c.fillStyle = "#E9E1CF"; c.fillRect(0, 0, 800, 600); c.fillStyle = "rgba(120,100,70,.06)"; for (let k = 0; k < 900; k++) c.fillRect(Math.random() * 800, Math.random() * 600, 2, 2); }, onMark: (t, n) => api.progress(n) });
     P.tool = "splat"; P.size = 10; P.color = "#1B1B1B";
-    chipsUI(api.tools, "How to paint", [{ id: "splat", label: "Drip and flick (Pollock)" }, { id: "pour", label: "Soak and pour (Frankenthaler)" }], "splat", id => { P.tool = id; P.size = id === "pour" ? 22 : 10; api.speak(id === "splat" ? "Swish fast to fling thin lines, go slow to pour thick puddles!" : "Pour thin paint that soaks in softly, like Helen Frankenthaler."); });
+    chipsUI(api.tools, "How to paint", withPv([{ id: "splat", label: "Drip and flick (Pollock)" }, { id: "pour", label: "Soak and pour (Frankenthaler)" }]), "splat", id => { P.tool = id; P.size = id === "pour" ? 22 : 10; api.speak(id === "splat" ? "Swish fast to fling thin lines, go slow to pour thick puddles!" : "Pour thin paint that soaks in softly, like Helen Frankenthaler."); });
     paletteUI(api.tools, [{ c: "#1B1B1B", n: "Black" }, { c: "#F5F2EA", n: "White" }, { c: "#B8BCC6", n: "Silver" }, { c: "#C9972E", n: "Ochre" }, { c: "#D93A3F", n: "Red" }, { c: "#17BEBB", n: "Teal" }, { c: "#36ACF8", n: "Sky blue" }, { c: "#F57EBF", n: "Pink" }], P.color, c => P.color = c, { label: "Paint cans" });
     chipsUI(api.tools, "Start over", [{ id: "clear", label: "New canvas" }], null, () => { P.clear(); FX.swoosh(); }, { action: true });
     return { snapshot: () => ({ src: P.snapshot(), title: "My action painting" }), destroy: P.destroy };
@@ -4435,7 +4506,7 @@ Object.assign(ACTIVITIES, {
       draw: () => ({ svg: shape === "spiral" ? `<g stroke="${col}" fill="none">${CUTOUTS[shape]}</g>` : `<g fill="${col}">${CUTOUTS[shape]}</g>` }),
       onPlace: n => { api.progress(n); if (n === 3) api.speak("Lovely! Drag a shape to move it, or tap it to turn it."); }
     });
-    chipsUI(api.tools, "Cut a shape", [{ id: "leaf", label: "Seaweed" }, { id: "star", label: "Star" }, { id: "wave", label: "Wave" }, { id: "blob", label: "Blob" }, { id: "bird", label: "Swallow" }, { id: "spiral", label: "Spiral" }], shape, id => shape = id);
+    chipsUI(api.tools, "Cut a shape", withPv([{ id: "leaf", label: "Seaweed" }, { id: "star", label: "Star" }, { id: "wave", label: "Wave" }, { id: "blob", label: "Blob" }, { id: "bird", label: "Swallow" }, { id: "spiral", label: "Spiral" }]), shape, id => shape = id);
     paletteUI(api.tools, [{ c: "#1D4ED8", n: "Blue" }, { c: "#D93A3F", n: "Red" }, { c: "#FFD21F", n: "Yellow" }, { c: "#3B9512", n: "Green" }, { c: "#FF4FA3", n: "Pink" }, { c: "#7A4BE0", n: "Purple" }, { c: "#151515", n: "Black" }, { c: "#FF8C1A", n: "Orange" }], col, c => col = c, { label: "Painted paper" });
     chipsUI(api.tools, "Start over", [{ id: "clear", label: "Clear the wall" }], null, () => { P.clear(); FX.swoosh(); }, { action: true });
     return { snapshot: () => ({ src: svgSnap(P.svg), title: "My Matisse cut-outs" }) };
@@ -4650,7 +4721,7 @@ Object.assign(ACTIVITIES, {
       n++; api.progress(n);
       api.speak("Your Dada poem says: " + words.join(" ") + "!");
     }
-    chipsUI(api.tools, "Chance", [{ id: "drop", label: "Drop!", icon: "sparkle" }, { id: "shake", label: "Shake the word bag!" }, { id: "clear", label: "Clear" }], null, id => {
+    chipsUI(api.tools, "Chance", withPv([{ id: "drop", label: "Drop!", icon: "sparkle" }, { id: "shake", label: "Shake the word bag!" }, { id: "clear", label: "Clear" }]), null, id => {
       if (id === "drop") drop(); else if (id === "shake") shake(); else { sq.innerHTML = ""; poem.innerHTML = ""; }
     }, { action: true });
     return { snapshot: () => ({ src: svgSnap(svg), title: "My chance collage" }) };
@@ -4694,7 +4765,7 @@ Object.assign(ACTIVITIES, {
       FX.tone(300 + Math.random() * 200, .1, "square", .04); count++; api.progress(count);
     });
     paletteUI(api.tools, [{ c: "#FFD21F", n: "Yellow" }, { c: "#D93A3F", n: "Red" }, { c: "#1D4ED8", n: "Blue" }, { c: "#151515", n: "Black" }, { c: "#FFFFFF", n: "White" }, { c: "#8C95A8", n: "Gray" }], col, c => col = c, { label: "Colors" });
-    chipsUI(api.tools, "Poster pieces", [{ id: "circle", label: "Circle" }, { id: "square", label: "Square" }, { id: "triangle", label: "Triangle" }, { id: "bar", label: "Bar" }, { id: "half", label: "Half circle" }, { id: "B", label: "Letter B" }, { id: "A", label: "Letter A" }], piece, id => piece = id);
+    chipsUI(api.tools, "Poster pieces", withPv([{ id: "circle", label: "Circle", pv: shapePv("circle", "#1D4ED8") }, { id: "square", label: "Square", pv: shapePv("square", "#D93A3F") }, { id: "triangle", label: "Triangle", pv: shapePv("triangle", "#FFD21F") }, { id: "bar", label: "Bar" }, { id: "half", label: "Half circle" }, { id: "B", label: "Letter B" }, { id: "A", label: "Letter A" }]), piece, id => piece = id);
     return { snapshot: () => ({ src: svgSnap(svg), title: "My Bauhaus poster" }) };
   },
 
@@ -4721,7 +4792,7 @@ Object.assign(ACTIVITIES, {
       if (!done.has(k)) { done.add(k); api.progress(done.size); }
       if (done.size === 6) api.speak("Beautiful tapa! Patterns like turtles and fish remind people of the ocean and their islands.");
     });
-    chipsUI(api.tools, "Stamp", [{ id: "triangles", label: "Triangles" }, { id: "zigzag", label: "Waves" }, { id: "star", label: "Star" }, { id: "turtle", label: "Turtle" }, { id: "fish", label: "Fish" }, { id: "fern", label: "Fern" }], st, id => st = id);
+    chipsUI(api.tools, "Stamp", withPv([{ id: "triangles", label: "Triangles" }, { id: "zigzag", label: "Waves" }, { id: "star", label: "Star" }, { id: "turtle", label: "Turtle" }, { id: "fish", label: "Fish" }, { id: "fern", label: "Fern" }]), st, id => st = id);
     paletteUI(api.tools, [{ c: "#6E3B1E", n: "Bark brown" }, { c: "#2A1A10", n: "Black" }, { c: "#A0402A", n: "Red earth" }], col, c => col = c, { label: "Natural dyes" });
     return { snapshot: () => ({ src: svgSnap(svg), title: "My tapa cloth" }) };
   },
@@ -4778,7 +4849,7 @@ Object.assign(ACTIVITIES, {
       layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; on = null; made++; api.progress(made); FX.chime();
       if (made === 1) api.speak("Ta-da! That's how stencil artists like Banksy work: quick and sharp!");
     }
-    chipsUI(api.tools, "Stencil", [{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }], shape, id => shape = id);
+    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => shape = id);
     paletteUI(api.tools, [{ c: "#FF4FA3", n: "Hot pink" }, { c: "#151515", n: "Black" }, { c: "#FFD21F", n: "Yellow" }, { c: "#36ACF8", n: "Blue" }, { c: "#6CCB2C", n: "Green" }, { c: "#FFFFFF", n: "White" }, { c: "#FF8C1A", n: "Orange" }], P.color, c => P.color = c, { label: "Spray cans" });
     const row = el(`<div class="tool-row"><button class="ag-btn ag-btn--berry ag-btn--sm ns">Place stencil</button><button class="ag-btn ag-btn--grass ag-btn--sm ls">Lift stencil</button></div>`);
     api.tools.appendChild(row);
