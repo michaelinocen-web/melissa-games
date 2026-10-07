@@ -902,22 +902,18 @@ img,svg{-webkit-touch-callout:none}
 /* long stop names end with … instead of being cut */
 .topbar .mid{min-width:0}
 .topbar .mid .ag-tag{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* street art: Place and Lift buttons right on the wall */
-.st-ctl{position:absolute;left:8px;right:8px;bottom:8px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:3}
-.st-btn{pointer-events:auto;position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border:0;border-radius:999px;font:800 16px/1 var(--font-body);cursor:pointer;touch-action:manipulation;box-shadow:0 4px 0 rgba(0,0,0,.28)}
-.st-btn .ic{width:22px;height:22px}
+/* street art: a small Lift button right on the wall */
+.st-ctl{position:absolute;right:8px;bottom:8px;display:flex;pointer-events:none;z-index:3}
+.st-btn{pointer-events:auto;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:36px;min-width:84px;padding:0 14px 0 11px;border:0;border-radius:999px;font:800 14px/1 var(--font-body);cursor:pointer;touch-action:manipulation;box-shadow:0 3px 0 rgba(0,0,0,.28)}
+.st-ic{position:relative;width:15px;height:15px;flex:none}
 .st-btn span{position:relative}
-.st-place{background:var(--berry-500);color:#fff}
-.st-place .ic{filter:brightness(0) invert(1)}
-.st-lift{background:rgba(255,255,255,.92);color:var(--ink);min-width:104px;justify-content:center}
+.st-lift{background:rgba(255,255,255,.94);color:var(--ink)}
 .st-lift:disabled{opacity:.55;cursor:default}
 .st-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lime-300);transition:width .15s}
 .st-lift.ready{background:var(--grass-600);color:#fff;animation:pulse 1s ease-in-out infinite}
 .st-lift.ready .st-fill{display:none}
-.st-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
-.pulse-soft{animation:pulse 1.2s ease-in-out infinite}
-@media (max-width:600px){.st-btn{min-height:40px;padding:0 12px;font-size:14px}.st-lift{min-width:88px}.st-ctl{left:6px;right:6px;bottom:6px}}
-@media (min-width:601px){.st-btn{min-height:54px;padding:0 22px;font-size:19px}.st-btn .ic{width:26px;height:26px}.st-lift{min-width:130px}.st-ctl{left:12px;right:12px;bottom:12px}}
+.st-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+@media (min-width:601px){.st-btn{min-height:42px;min-width:100px;font-size:16px;padding:0 16px 0 13px}.st-ic{width:17px;height:17px}.st-ctl{right:12px;bottom:12px}}
 </style>
 </head>
 <body>
@@ -1776,7 +1772,7 @@ Object.assign(NEW_ERAS, {
       { name: "Banksy", work: "Love is in the Bin", when: "2018", place: "Private collection", fact: "The half-shredded picture later sold for even more money!" },
       { name: "Os Gêmeos", work: "Murals with yellow characters", when: "2000s to today", place: "São Paulo, Brazil, and cities worldwide", fact: "They are twin brothers who paint giant yellow people." }
     ],
-    activity: { title: "Spray a stencil wall", how: "Pick a stencil and tap Place. Rub over the hole to spray paint until the Lift button turns green, then tap Lift to see your art!", goal: 5, unit: "stencils" },
+    activity: { title: "Spray a stencil wall", how: "Tap a stencil to stick it on the wall. Rub over the hole to spray paint until the Lift button turns green, then tap Lift to see your art!", goal: 5, unit: "stencils" },
     quiz: [
       { q: "How does a stencil artist make a picture?", a: ["Sprays paint over a cut-out shape", "Carves stone", "Weaves thread"] },
       { q: "Who drew dancing figures in the New York subway?", a: ["Keith Haring", "Leonardo da Vinci", "Hokusai"] }
@@ -3781,7 +3777,7 @@ function makePaint(board, { bg, onMark } = {}) {
     if (P.mask !== maskRef) {
       maskRef = P.mask;
       const mc = document.createElement("canvas"); mc.width = 800; mc.height = 600;
-      const m = mc.getContext("2d"); m.fill(P.mask); maskPx = m.getImageData(0, 0, 800, 600).data;
+      const m = mc.getContext("2d"); m.fill(P.mask, P.maskRule || "nonzero"); maskPx = m.getImageData(0, 0, 800, 600).data;
     }
     const xi = x | 0, yi = y | 0;
     return xi >= 0 && yi >= 0 && xi < 800 && yi < 600 && maskPx[(yi * 800 + xi) * 4 + 3] > 127;
@@ -4983,12 +4979,12 @@ Object.assign(ACTIVITIES, {
   /* Street art: stencil spray */
   street(api) {
     const P = makePaint(api.board, { bg: c => drawSVGOnCanvas(c, svgWrap(brickWall(7))) });
-    P.tool = "spray"; P.size = 24; P.color = "#FF4FA3"; P.maskInvert = true;
+    P.tool = "spray"; P.size = 24; P.color = "#FF4FA3"; P.maskInvert = true; P.maskRule = "evenodd"; // the smiley keeps its eyes and mouth
     const layer = el(`<svg class="layer" viewBox="0 0 800 600" style="pointer-events:none"></svg>`); api.board.appendChild(layer);
-    // the two buttons sit right on the wall, so kids never have to look away from their art
-    const ctl = el(`<div class="st-ctl"><button class="st-btn st-place">${icon("sparkle")}<span>Place</span></button><button class="st-btn st-lift" disabled><i class="st-fill"></i><span>Lift</span></button></div>`);
+    // the Lift button sits right on the wall, so kids never have to look away from their art
+    const ctl = el(`<div class="st-ctl"><button class="st-btn st-lift" disabled><i class="st-fill"></i><svg class="st-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L5 11 H9.5 V20 H14.5 V11 H19Z" fill="currentColor"/></svg><span>Lift</span></button></div>`);
     api.board.appendChild(ctl);
-    const placeBtn = $(".st-place", ctl), liftBtn = $(".st-lift", ctl), fill = $(".st-fill", ctl);
+    const liftBtn = $(".st-lift", ctl), fill = $(".st-fill", ctl);
     // six spots on the wall, used in a random order, so stencils never land on top of each other
     const SPOTS = [[160, 170], [400, 170], [640, 170], [160, 395], [400, 395], [640, 395]];
     let spots = shuffle(SPOTS.slice()), shape = "heart", on = null, made = 0, free = false, meter = 0;
@@ -5002,39 +4998,40 @@ Object.assign(ACTIVITIES, {
       const k = on ? Math.min(1, P.sprayHit / NEED) : 0;
       if (Math.abs(k - meter) >= .02 || k === 0 || k === 1) { meter = k; fill.style.width = (k * 100) + "%"; }
       liftBtn.disabled = !on; liftBtn.classList.toggle("ready", on && k >= 1);
-      placeBtn.classList.toggle("pulse-soft", !on && !free);
     }
     function place() {
-      if (on) { // a stencil with no paint yet just moves to another spot
-        if (P.sprayHit > 25) { api.speak("Lift this stencil first, then place a new one!"); FX.soft(); return; }
+      if (on) {
+        if (P.sprayHit >= NEED) lift(); // a finished stencil lifts by itself when you pick the next one
+        else if (P.sprayHit > 25) { api.speak("Spray this stencil until Lift turns green, then lift it before picking a new one!"); FX.soft(); return false; }
+        else { const { x, y } = on; spots.unshift([x, y]); on = null; } // no paint yet: swap the shape in the same spot
       }
       free = false; freeChip && freeChip.setAttribute("aria-pressed", "false");
       const [x, y] = nextSpot(), rot = Math.random() * 20 - 10;
       const path = new Path2D(); path.addPath(new Path2D(STENCILS[shape]), new DOMMatrix().translate(x, y).rotate(rot).scale(SCALE));
       P.mask = path; P.sprayHit = 0; on = { x, y };
-      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${SCALE})"><rect x="-60" y="-60" width="120" height="120" rx="6" fill="#E8DCC4" opacity=".93"/><path d="${STENCILS[shape]}" fill="#8A4A36" opacity=".55" fill-rule="evenodd"/></g></g>`;
+      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${SCALE})"><path d="M-60,-54 Q-60,-60 -54,-60 H54 Q60,-60 60,-54 V54 Q60,60 54,60 H-54 Q-60,60 -60,54Z ${STENCILS[shape]}" fill="#E8DCC4" fill-rule="evenodd" stroke="#B9A27E" stroke-width="1.2"/><path d="${STENCILS[shape]}" fill="none" stroke="#6E4A30" stroke-width="1.4" stroke-dasharray="4 3" opacity=".7"/></g></g>`;
       layer.style.transition = "none"; layer.style.opacity = "1"; FX.pop(); setMeter();
       if (made === 0) api.speak("Now rub over the hole to spray! When the Lift button turns green, tap it.");
+      return true;
     }
     function lift() {
       if (!on) return;
       if (P.sprayHit < NEED) { api.speak("Spray a little more over the hole, until the Lift button is green!"); FX.soft(); return; }
       layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; on = null; made++; api.progress(made); FX.chime(); setMeter();
-      api.speak(made === 1 ? "Ta-da! That's how stencil artists like Banksy work! Pick another stencil and tap Place." : made < 5 ? "Cool! Pick another stencil and tap Place." : "What a wall! Try Spray anywhere to write your own tag.");
+      api.speak(made === 1 ? "Ta-da! That's how stencil artists like Banksy work! Tap another stencil to put it on the wall." : made < 5 ? "Cool! Tap another stencil to put it on the wall." : "What a wall! Try Spray anywhere to write your own tag.");
     }
-    placeBtn.onclick = () => { FX.tap(); place(); };
     liftBtn.onclick = () => { FX.tap(); lift(); };
     P.canvas.addEventListener("pointermove", setMeter);
     P.canvas.addEventListener("pointerup", setMeter);
-    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => {
-      shape = id;
-      if (on && P.sprayHit <= 25) { const { x, y } = on; spots.unshift([x, y]); on = null; place(); } // swap the shape in the same spot
+    const stencilRow = chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => {
+      const prev = shape; shape = id;
+      if (place() === false) { shape = prev; $$(".chip", stencilRow).forEach(c => c.setAttribute("aria-pressed", c.dataset.id === prev)); } // tapping a stencil puts it straight on the wall
     });
     paletteUI(api.tools, [{ c: "#FF4FA3", n: "Hot pink" }, { c: "#151515", n: "Black" }, { c: "#FFD21F", n: "Yellow" }, { c: "#36ACF8", n: "Blue" }, { c: "#6CCB2C", n: "Green" }, { c: "#FFFFFF", n: "White" }, { c: "#FF8C1A", n: "Orange" }], P.color, c => P.color = c, { label: "Spray cans" });
     const freeRow = chipsUI(api.tools, "Free spray", [{ id: "free", label: "Spray anywhere" }], null, (id, isOn) => {
       free = isOn;
       if (isOn) { layer.innerHTML = ""; P.mask = null; on = null; api.speak("Free spraying! Write your tag or make big shapes."); }
-      else api.speak("Stencils are back! Tap Place to put one on the wall.");
+      else api.speak("Stencils are back! Tap a stencil to put it on the wall.");
       setMeter();
     }, { toggle: true });
     const freeChip = $(".chip", freeRow);

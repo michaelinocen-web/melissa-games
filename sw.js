@@ -1,4 +1,4 @@
-const CACHE_NAME = 'melissa-games-v24';
+const CACHE_NAME = 'melissa-games-v26';
 const ASSETS = [
   './index.html',
   './art-history.html',
