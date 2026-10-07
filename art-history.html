@@ -196,7 +196,17 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
 .mini-tl i::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 3px var(--cloud-300)}
 .mini-tl i.past::after{box-shadow:0 0 0 3px var(--grass-600);background:var(--grass-400)}
 .mini-tl i.here::after{width:24px;height:24px;background:var(--era);box-shadow:0 0 0 4px var(--paper),0 0 0 6px var(--ink)}
-.mini-tl-labels{display:flex;justify-content:space-between;font:900 11px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted)}
+.mini-tl-labels{display:flex;justify-content:space-between;font:800 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--slate-400);margin-top:6px}
+/* journey line: a slim track that fills up to the current stop, fine ticks, one pin */
+.journey{position:relative;padding:40px 10px 8px}
+.jr-track{position:relative;height:4px;border-radius:2px;background:rgba(21,36,71,.12)}
+.jr-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p);border-radius:2px;background:linear-gradient(90deg,var(--wood-600),var(--era))}
+.jr-track i{position:absolute;top:50%;width:1.5px;height:8px;margin:-4px 0 0 -.75px;border-radius:1px;background:rgba(21,36,71,.14)}
+.jr-track i.past{display:none}
+.jr-pin{position:absolute;left:var(--p);top:50%;width:0;height:0}
+.jr-pin b{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--era);box-shadow:0 0 0 3px var(--paper),0 2px 6px 3px rgba(21,36,71,.18)}
+.jr-flag{position:absolute;bottom:14px;left:0;transform:translateX(calc(-1 * var(--p)));white-space:nowrap;background:var(--ink);color:var(--paper);font:800 11px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border-radius:999px}
+.jr-flag::after{content:"";position:absolute;left:clamp(10px,var(--p),calc(100% - 10px));bottom:-4px;width:8px;height:8px;margin-left:-4px;background:var(--ink);transform:rotate(45deg);border-radius:1px}
 
 /* scratch + reveal */
 .scratch-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:8px;font:800 26px/1 var(--font-display);color:var(--paper);text-shadow:0 3px 0 rgba(0,0,0,.25);transition:opacity .3s}
@@ -3313,12 +3323,15 @@ function renderStep() {
   const sc = $(".era-scroll"); if (sc) sc.scrollTop = 0;
   setBack(true);
   if (E.step === 0) {
-    const tl = ERAS.map((_, k) => `<i class="${k < E.i ? "past" : k === E.i ? "here" : ""}"></i>`).join("");
+    const pos = k => (k / (ERAS.length - 1) * 100).toFixed(2) + "%";
+    const tl = `<div class="journey" style="--p:${pos(E.i)}" aria-label="Stop ${E.i + 1} of ${ERAS.length} on the art timeline">
+      <div class="jr-track"><div class="jr-fill"></div>${ERAS.map((_, k) => k === E.i ? "" : `<i class="${k < E.i ? "past" : ""}" style="left:${pos(k)}"></i>`).join("")}
+        <div class="jr-pin"><span class="jr-flag">Stop ${E.i + 1} of ${ERAS.length}</span><b></b></div></div></div>`;
     board.innerHTML = `<div class="postcard">
       <h2>${esc(era.name)}</h2>
       <div class="facts"><div class="fact"><b>When</b><span>${esc(era.when)}</span></div><div class="fact"><b>Where</b><span>${esc(era.where)}</span></div><div class="fact"><b>Made with</b><span>${esc(era.madeWith)}</span></div></div>
       <div class="pc-main"><div class="peek">${artSVG(era.id)}<div class="q">?</div></div><div class="peek-cap">A famous masterpiece is hiding here. Read the story to find it!</div></div>
-      <div><div class="mini-tl">${tl}</div><div class="mini-tl-labels"><span>40,000 years ago</span><span>Today</span></div></div></div>`;
+      <div>${tl}<div class="mini-tl-labels"><span>40,000 years ago</span><span>Today</span></div></div></div>`;
     speak(era.story[E.page], { pages: era.story.length, page: E.page });
     setBack(E.page > 0);
     setNext(E.page < era.story.length - 1 ? "Next" : "Find the masterpiece!", { cls: E.page < era.story.length - 1 ? "" : "ag-btn--sun" });
