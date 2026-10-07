@@ -816,7 +816,8 @@ img,svg{-webkit-touch-callout:none}
 .tb-help:active{transform:translateY(3px);box-shadow:0 1px 0 var(--grape-700)}
 .tut{position:fixed;inset:0;z-index:80;background:var(--backdrop);display:grid;place-items:center;padding:16px;animation:fade .2s}
 .tut-card{position:relative;width:100%;max-width:440px;max-height:calc(100dvh - 32px);overflow:auto;background:var(--paper);border-radius:var(--radius-lg);box-shadow:0 8px 0 var(--cloud-300),var(--shadow-card);padding:22px 22px 20px;text-align:center;animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
-.tut-card.tut-turn .tut-art,.tut-card.tut-turn .tut-title,.tut-card.tut-turn .tut-body{animation:rise .35s cubic-bezier(.3,1.4,.5,1)}
+.tut-card.tut-turn .tut-art,.tut-card.tut-turn .tut-title,.tut-card.tut-turn .tut-body{animation:tut-in .3s ease-out}
+@keyframes tut-in{from{opacity:0;transform:translateY(8px)}}
 .tut-skip{position:absolute;top:12px;right:12px;border:0;background:var(--cloud-100);color:var(--ink-muted);font:800 14px/1 var(--font-body);padding:9px 14px;border-radius:999px;cursor:pointer;z-index:2}
 .tut-art{min-height:150px;display:grid;place-items:center;margin:6px 0 10px;background:var(--lime-50);border-radius:var(--radius-md);padding:14px}
 .tut-title{margin:0 0 6px;font:800 26px/1.1 var(--font-display);color:var(--ink)}
@@ -879,6 +880,28 @@ img,svg{-webkit-touch-callout:none}
   .title-btns{margin-top:var(--space-2);gap:var(--space-3);justify-content:center;width:100%}
   .title-btns .ag-btn{flex:1;min-width:0;min-height:52px;font-size:17px;padding-left:10px;padding-right:10px}
 }
+.art-img{display:block;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none;pointer-events:none}
+/* tutorial on short, wide screens (phones turned sideways): picture beside the words */
+@media (max-height:500px) and (min-aspect-ratio:3/2){
+  .tut{padding:10px}
+  .tut-card{max-width:660px;display:grid;grid-template-columns:210px minmax(0,1fr);grid-template-rows:auto auto 1fr auto auto;column-gap:18px;text-align:left;padding:14px 16px}
+  .tut-art{grid-column:1;grid-row:1/6;margin:0;min-height:0;align-self:stretch}
+  .tut-title,.tut-body,.tut-dots,.tut-nav{grid-column:2}
+  .tut-title{font-size:21px;margin:30px 0 4px}
+  .tut-body{font-size:15px;line-height:21px;min-height:0}
+  .tut-dots{justify-content:flex-start;margin:10px 0 0}
+  .tut-nav{margin-top:10px}
+  .tut-nav .ag-btn{min-height:48px}
+  .tut-iris{width:110px}
+  .tut-road .tut-frame{width:58px;border-width:4px}
+  .tut-scratch .tut-frame{width:150px}
+  .tut-row{gap:8px}
+  .tut-tool .ag-round{transform:scale(.85)}
+  .tut-stars .ic{width:40px;height:40px}
+}
+/* long stop names end with … instead of being cut */
+.topbar .mid{min-width:0}
+.topbar .mid .ag-tag{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1737,7 +1760,7 @@ Object.assign(NEW_ERAS, {
       { name: "Banksy", work: "Love is in the Bin", when: "2018", place: "Private collection", fact: "The half-shredded picture later sold for even more money!" },
       { name: "Os Gêmeos", work: "Murals with yellow characters", when: "2000s to today", place: "São Paulo, Brazil, and cities worldwide", fact: "They are twin brothers who paint giant yellow people." }
     ],
-    activity: { title: "Spray a stencil wall", how: "Pick a stencil, rub around it with the spray can, then lift it to see your art!", goal: 5, unit: "stencils" },
+    activity: { title: "Spray a stencil wall", how: "Pick a stencil and tap the wall to stick it there. Spray over the hole, and it lifts off by itself to show your art!", goal: 5, unit: "stencils" },
     quiz: [
       { q: "How does a stencil artist make a picture?", a: ["Sprays paint over a cut-out shape", "Carves stone", "Weaves thread"] },
       { q: "Who drew dancing figures in the New York subway?", a: ["Keith Haring", "Leonardo da Vinci", "Hokusai"] }
@@ -2282,6 +2305,8 @@ function artToday() {
 const ART = { cave: artCave, egypt: artEgypt, greece: artGreece, middle: artMiddle, renaissance: artRenaissance, baroque: artBaroque, japan: artJapan, impressionism: artImpressionism, post: artPost, expressionism: artExpressionism, cubism: artCubism, abstract: artAbstract, surrealism: artSurrealism, action: artAction, pop: artPop, today: artToday };
 const ART_CACHE = {};
 function artSVG(id) { return ART[id](); }
+// small thumbnails as ready-made images: the browser draws each painting once instead of thousands of live shapes
+const artImg = id => `<img class="art-img" src="${artDataURL(id)}" alt="" decoding="async" draggable="false">`;
 function artDataURL(id) { if (!ART_CACHE[id]) ART_CACHE[id] = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(ART[id]()); return ART_CACHE[id]; }
 
 /* ---------- Icons (flat, 48 grid) ---------- */
@@ -2420,7 +2445,8 @@ function irisMood(target, mood, ms = 1300) {
       t.style.transform = `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px)`;
     });
   };
-  document.addEventListener("pointermove", e => { px = e.clientX; py = e.clientY; if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  // skip while a finger is painting on the board: no layout work during strokes
+  document.addEventListener("pointermove", e => { if (e.buttons && e.target.closest && e.target.closest(".board, .pz-board")) return; px = e.clientX; py = e.clientY; if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   document.addEventListener("pointerdown", e => { px = e.clientX; py = e.clientY; if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
 })();
 
@@ -3068,6 +3094,12 @@ function artistArt(eraId, i) {
    the timeline map, and the 5-step lesson for each era.
    ========================================================= */
 const SKEY = "melissaArtGame_v2", HUBKEY = "melissaArtStars_v1";
+// capturing a finger can fail on some phones (a touch cancelled mid-tap); never let that stop a drawing
+(function safeCapture() {
+  const sp = Element.prototype.setPointerCapture, rp = Element.prototype.releasePointerCapture;
+  Element.prototype.setPointerCapture = function (id) { try { return sp.call(this, id); } catch (e) {} };
+  Element.prototype.releasePointerCapture = function (id) { try { return rp.call(this, id); } catch (e) {} };
+})();
 const S = (() => {
   const def = {
     stars: ERAS.map(() => 0), drops: 0, best: {},
@@ -3077,6 +3109,21 @@ const S = (() => {
   };
   try { const r = JSON.parse(localStorage.getItem(SKEY)); if (r && typeof r === "object") { const m = Object.assign(def, r); if (!Array.isArray(m.stars) || m.stars.length !== ERAS.length) m.stars = ERAS.map((_, i) => (r.stars && r.stars[i]) || 0); return m; } } catch (e) { }
   return def;
+})();
+// repair saved progress from older versions: every closet category exists and Iris only wears real items she owns
+(function repairSave() {
+  if (!S.owned || typeof S.owned !== "object") S.owned = {};
+  if (!S.wear || typeof S.wear !== "object") S.wear = {};
+  Object.keys(CLOSET).forEach(cat => {
+    const ids = CLOSET[cat].map(x => x.id), first = cat === "hats" ? "beret-berry" : "none";
+    if (!Array.isArray(S.owned[cat])) S.owned[cat] = [];
+    S.owned[cat] = S.owned[cat].filter(id => ids.includes(id));
+    [first, "none"].forEach(id => { if (ids.includes(id) && !S.owned[cat].includes(id)) S.owned[cat].push(id); });
+    if (!ids.includes(S.wear[cat]) || !S.owned[cat].includes(S.wear[cat])) S.wear[cat] = ids.includes(first) ? first : ids[0];
+  });
+  if (!Array.isArray(S.gallery)) S.gallery = [];
+  S.gallery = S.gallery.filter(g => g && typeof g.src === "string");
+  if (typeof S.drops !== "number" || !isFinite(S.drops) || S.drops < 0) S.drops = 0;
 })();
 function save() {
   for (let tries = 0; tries < 30; tries++) {
@@ -3251,7 +3298,7 @@ function showMap(greet) {
     return `<div class="station ${open ? "" : "locked"} ${i === cur ? "is-current" : ""}" data-i="${i}" style="--era:${e.iris}">
       <div class="stick"></div>
       <button class="card focusable" data-i="${i}" aria-label="${esc(e.name)}, ${esc(e.when)}${open ? "" : ", locked"}">
-        <div class="thumb">${artSVG(e.id).replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}${open ? "" : `<div class="lockcover">${icon("lock")}</div>`}</div>
+        <div class="thumb">${artImg(e.id)}${open ? "" : `<div class="lockcover">${icon("lock")}</div>`}</div>
         <span class="meta"><span class="when">${esc(e.short)}</span><span class="name">${esc(e.name)}</span>
         <span class="stars">${stars}</span></span>
       </button>
@@ -3397,10 +3444,27 @@ function showRevealInfo(w) {
 const artKey = src => src ? src.replace(/u\d+/g, "u") : src; // ignore auto-made ids when comparing pictures
 function saveArt(snap) {
   if (!snap || !snap.src) return false;
-  S.gallery.push({ id: Date.now(), era: E.era.id, title: snap.title || E.era.activity.title, when: E.era.name, src: snap.src });
+  const item = { id: Date.now(), era: E.era.id, title: snap.title || E.era.activity.title, when: E.era.name, src: snap.src };
+  S.gallery.push(item);
   if (S.gallery.length > 40) S.gallery.shift();
   save(); E.lastSaved = artKey(snap.src); FX.chime(); confetti(30); toast("Saved to My Museum!");
+  compactArt(item);
   return true;
+}
+// sticker and dot pictures are saved as drawings that grow with every sticker; turn them into a small photo
+// so the museum stays fast and the phone's storage never fills up
+function compactArt(item) {
+  if (!item || !/^data:image\/svg/.test(item.src)) return;
+  const img = new Image();
+  img.onload = () => {
+    try {
+      const c = document.createElement("canvas"); c.width = 480; c.height = 360;
+      const x = c.getContext("2d"); x.fillStyle = "#FFFFFF"; x.fillRect(0, 0, 480, 360); x.drawImage(img, 0, 0, 480, 360);
+      const jpg = c.toDataURL("image/jpeg", .8);
+      if (jpg.length < item.src.length && S.gallery.includes(item)) { item.src = jpg; save(); }
+    } catch (e) { /* keep the drawing version */ }
+  };
+  img.src = item.src;
 }
 function clearStage() {
   $$(".reveal-info, .save-art").forEach(x => x.remove());
@@ -4905,27 +4969,43 @@ Object.assign(ACTIVITIES, {
     const P = makePaint(api.board, { bg: c => drawSVGOnCanvas(c, svgWrap(brickWall(7))) });
     P.tool = "spray"; P.size = 22; P.color = "#FF4FA3"; P.maskInvert = true;
     const layer = el(`<svg class="layer" viewBox="0 0 800 600" style="pointer-events:none"></svg>`); api.board.appendChild(layer);
-    let shape = "heart", on = null, made = 0;
-    function place() {
-      const x = 180 + Math.random() * 440, y = 170 + Math.random() * 260, s = 2.6, rot = Math.random() * 30 - 15;
+    let shape = "heart", on = null, made = 0, free = false, lifting = false;
+    const NEED = 200;
+    // tap the wall to stick a stencil there
+    function place(x, y) {
+      x = Math.max(170, Math.min(630, x)); y = Math.max(160, Math.min(440, y));
+      const s = 2.6, rot = Math.random() * 30 - 15;
       const path = new Path2D(); path.addPath(new Path2D(STENCILS[shape]), new DOMMatrix().translate(x, y).rotate(rot).scale(s));
       P.mask = path; P.sprayHit = 0; on = true;
-      layer.innerHTML = `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><rect x="-60" y="-60" width="120" height="120" rx="6" fill="#E8DCC4" opacity=".93"/><path d="${STENCILS[shape]}" fill="#8A4A36" opacity=".55" fill-rule="evenodd"/></g>`;
+      layer.innerHTML = `<g class="cave-hand" style="transform-origin:${x}px ${y}px"><g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><rect x="-60" y="-60" width="120" height="120" rx="6" fill="#E8DCC4" opacity=".93"/><path d="${STENCILS[shape]}" fill="#8A4A36" opacity=".55" fill-rule="evenodd"/></g></g>`;
       layer.style.transition = "none"; layer.style.opacity = "1"; FX.pop();
+      if (made === 0) api.speak("Now spray over the hole! Rub your finger on it.");
     }
+    // it peels off by itself once there is enough paint
     function lift() {
-      if (!on) return;
-      if (P.sprayHit < 220) { api.speak("Spray more paint over the hole first!"); FX.soft(); return; }
+      if (!on || lifting) return;
+      lifting = true;
       layer.style.transition = "opacity .5s"; layer.style.opacity = "0"; P.mask = null; on = null; made++; api.progress(made); FX.chime();
-      if (made === 1) api.speak("Ta-da! That's how stencil artists like Banksy work: quick and sharp!");
+      api.speak(made === 1 ? "Ta-da! That's how stencil artists like Banksy work: quick and sharp! Tap the wall for another one." : made < 5 ? "Cool! Pick another stencil and tap the wall." : "What a wall! Try free spraying your own tag too.");
+      setTimeout(() => lifting = false, 500);
     }
-    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => shape = id);
+    // the first touch places the stencil; spraying over it fills it
+    P.canvas.addEventListener("pointerdown", e => {
+      if (on || free) return;
+      const r = P.canvas.getBoundingClientRect();
+      place((e.clientX - r.left) * 800 / r.width, (e.clientY - r.top) * 600 / r.height);
+    }, true);
+    const check = () => { if (on && P.sprayHit >= NEED) lift(); };
+    P.canvas.addEventListener("pointermove", check);
+    P.canvas.addEventListener("pointerup", check);
+    chipsUI(api.tools, "Stencil", withPv([{ id: "heart", label: "Heart" }, { id: "star", label: "Star" }, { id: "crown", label: "Crown" }, { id: "bird", label: "Bird" }, { id: "bolt", label: "Lightning" }, { id: "smile", label: "Smiley" }]), shape, id => { shape = id; if (on && P.sprayHit < 20) { layer.innerHTML = ""; P.mask = null; on = null; } });
     paletteUI(api.tools, [{ c: "#FF4FA3", n: "Hot pink" }, { c: "#151515", n: "Black" }, { c: "#FFD21F", n: "Yellow" }, { c: "#36ACF8", n: "Blue" }, { c: "#6CCB2C", n: "Green" }, { c: "#FFFFFF", n: "White" }, { c: "#FF8C1A", n: "Orange" }], P.color, c => P.color = c, { label: "Spray cans" });
-    const row = el(`<div class="tool-row"><button class="ag-btn ag-btn--berry ag-btn--sm ns">Place stencil</button><button class="ag-btn ag-btn--grass ag-btn--sm ls">Lift stencil</button></div>`);
-    api.tools.appendChild(row);
-    $(".ns", row).onclick = () => place(); $(".ls", row).onclick = lift;
-    chipsUI(api.tools, "Free spray", [{ id: "free", label: "Spray anywhere" }], null, () => { layer.innerHTML = ""; P.mask = null; on = null; api.speak("Free spraying! Write your tag or make big shapes."); }, { action: true });
-    place();
+    chipsUI(api.tools, "Free spray", [{ id: "free", label: "Spray anywhere" }], null, (id, isOn) => {
+      free = isOn;
+      if (isOn) { layer.innerHTML = ""; P.mask = null; on = null; api.speak("Free spraying! Write your tag or make big shapes."); }
+      else api.speak("Stencils are back! Tap the wall to stick one on.");
+    }, { toggle: true });
+    api.speak("Pick a stencil, then tap the wall to stick it on!");
     return { snapshot: () => ({ src: P.snapshot(), title: "My stencil wall" }), destroy: P.destroy };
   }
 });
@@ -5303,7 +5383,7 @@ function showPuzzle(eraIdx, n = 3) {
   const scr = pageScreen("Masterpiece Puzzle", showArcade);
   const page = el(`<div class="page"><div class="pz-wrap"><div><div class="pz-board" style="grid-template-columns:repeat(${n},1fr);grid-template-rows:repeat(${n},1fr)"></div></div>
     <div class="pz-side"><div class="mission"><div class="goal"><span>${esc(e.work.title)}</span></div><span style="font:700 15px/20px var(--font-body);color:var(--ink-muted)">${esc(e.work.artist)}</span></div>
-    <div class="tools"></div><div><div class="tool-label" style="margin-bottom:8px">Pick a painting</div><div class="pz-pick">${list.map(x => `<button aria-pressed="${x.i === eraIdx}" data-i="${x.i}" aria-label="${esc(x.e.work.title)}">${artSVG(x.e.id)}</button>`).join("")}</div></div></div></div></div>`);
+    <div class="tools"></div><div><div class="tool-label" style="margin-bottom:8px">Pick a painting</div><div class="pz-pick">${list.map(x => `<button aria-pressed="${x.i === eraIdx}" data-i="${x.i}" aria-label="${esc(x.e.work.title)}">${artImg(x.e.id)}</button>`).join("")}</div></div></div></div></div>`);
   scr.appendChild(page); mount(scr);
   chipsUI($(".tools", page), "Pieces", [{ id: "2", label: "4 easy" }, { id: "3", label: "9 medium" }, { id: "4", label: "16 hard" }], String(n), id => showPuzzle(eraIdx, +id));
   $$(".pz-pick button", page).forEach(b => b.onclick = () => { FX.tap(); showPuzzle(+b.dataset.i, n); });
@@ -5399,7 +5479,7 @@ function showMuseum() {
   const page = el(`<div class="page"><div class="page-hero"><div class="hero-iris">${irisNow("happy")}</div><h2>My Museum</h2></div><p class="lead">Every artwork you make is hung here. Tap one to look closer.</p>
     ${items.length ? `<div class="museum-wall">${items.map(g => `<button class="museum-item" data-id="${g.id}"><div class="fr"><img src="${g.src}" alt="${esc(g.title)}"></div><b>${esc(g.title)}</b><small>${esc(g.when)}</small></button>`).join("")}</div>` : `<div class="empty">Your walls are empty for now. Finish a stop on the timeline or paint in the studio, and your art will appear here!</div>`}
     <div class="section-title">Masterpiece sticker book · ${S.stars.filter(s => s > 0).length} of ${ERAS.length}</div>
-    <div class="sticker-book">${ERAS.map((e, i) => `<button class="sb-item ${S.stars[i] ? "" : "locked"}" data-i="${i}" style="border:0;background:none;cursor:pointer;--r:${(i % 3 - 1) * 3}deg"><div class="sticker">${artSVG(e.id)}</div>${S.stars[i] ? esc(e.work.title) : "?"}</button>`).join("")}</div></div>`);
+    <div class="sticker-book">${ERAS.map((e, i) => `<button class="sb-item ${S.stars[i] ? "" : "locked"}" data-i="${i}" style="border:0;background:none;cursor:pointer;--r:${(i % 3 - 1) * 3}deg"><div class="sticker">${artImg(e.id)}</div>${S.stars[i] ? esc(e.work.title) : "?"}</button>`).join("")}</div></div>`);
   scr.appendChild(page); mount(scr);
   $$(".museum-item", page).forEach(b => b.onclick = () => {
     const g = S.gallery.find(x => String(x.id) === b.dataset.id); if (!g) return;
@@ -5433,12 +5513,12 @@ function showCloset(tab = "hats") {
       return `<button class="ag-tile ${wearing ? "is-selected" : ""}" role="option" aria-selected="${wearing}" data-id="${it.id}"><span class="prev">${irisSVG({ outfit: prevOutfit, still: true })}</span><span class="nm">${esc(it.name)}</span>${own ? `<span class="ck">${icon(wearing ? "check" : "checkIdle")}</span>` : `<span class="ag-price">${icon("drop")}${it.price}</span>`}</button>`;
     }).join("");
     $$(".ag-tile", tray).forEach(b => b.onclick = () => {
-      const it = CLOSET[tab].find(x => x.id === b.dataset.id);
-      if (S.owned[tab].includes(it.id)) { S.wear[tab] = it.id; save(); FX.pop(); $(".iris-dress", wrap).innerHTML = irisNow("wow"); setTimeout(() => { const d = $(".iris-dress", wrap); if (d) d.innerHTML = irisNow("happy"); }, 500); render(); if (it.era)return; }
+      const cat = tab, it = CLOSET[cat].find(x => x.id === b.dataset.id);
+      if (S.owned[cat].includes(it.id)) { S.wear[cat] = it.id; save(); FX.pop(); $(".iris-dress", wrap).innerHTML = irisNow("wow"); setTimeout(() => { const d = $(".iris-dress", wrap); if (d) d.innerHTML = irisNow("happy"); }, 500); render(); return; }
       if (S.drops < it.price) { FX.soft();toast(`You need ${it.price - S.drops} more paint drops`); return; }
       modal({
-        title: "Buy " + it.name + "?", body: `<div style="width:160px">${irisSVG({ outfit: Object.assign({}, S.wear, { [tab]: it.id }), mood: "grin" })}</div><p>It costs ${it.price} paint drops. You have ${S.drops}.</p>`,
-        buttons: [{ label: "Not now", cls: "ag-btn--white" }, { label: "Buy it!", cls: "ag-btn--sun", onClick: () => { S.drops -= it.price; S.owned[tab].push(it.id); S.wear[tab] = it.id; save(); FX.coin(); confetti(40); toast("Iris will wear it everywhere: on the map, in every lesson and in the games!", 3000); $$(".ag-counter.drops").forEach(c => $("b", c).textContent = S.drops); $(".iris-dress", wrap).innerHTML = irisNow("wow"); render();} }]
+        title: "Buy " + it.name + "?", body: `<div style="width:160px">${irisSVG({ outfit: Object.assign({}, S.wear, { [cat]: it.id }), mood: "grin" })}</div><p>It costs ${it.price} paint drops. You have ${S.drops}.</p>`,
+        buttons: [{ label: "Not now", cls: "ag-btn--white" }, { label: "Buy it!", cls: "ag-btn--sun", onClick: () => { S.drops -= it.price; S.owned[cat].push(it.id); S.wear[cat] = it.id; save(); FX.coin(); confetti(40); toast("Iris will wear it everywhere: on the map, in every lesson and in the games!", 3000); $$(".ag-counter.drops").forEach(c => $("b", c).textContent = S.drops); $(".iris-dress", wrap).innerHTML = irisNow("wow"); render();} }]
       });
     });
   }
@@ -5455,7 +5535,7 @@ function showCertificate() {
     <span class="hello">Certificate</span><h2 class="ag-logo" style="font-size:44px">Young Art Historian</h2>
     <p class="lead" style="margin:0">This is to say that</p><div class="who">Melissa</div>
     <p class="lead" style="margin:0">traveled 40,000 years through art history with Iris the chameleon, visited all ${ERAS.length} stops and earned ${total} stars!</p>
-    <div class="row">${ERAS.map(e => `<div class="sticker">${artSVG(e.id)}</div>`).join("")}</div>
+    <div class="row">${ERAS.map(e => `<div class="sticker">${artImg(e.id)}</div>`).join("")}</div>
     <div style="width:140px">${irisNow("cheer")}</div>
     <div class="dlg-btns" style="max-width:520px"><button class="ag-btn ag-btn--white go-m">${icon("museum")}My Museum</button><button class="ag-btn ag-btn--sun go-a">${icon("arcade")}Art Arcade</button></div>
   </div></div>`);
@@ -5468,6 +5548,7 @@ function showCertificate() {
 
 /* ---------- boot ---------- */
 save();
+S.gallery.forEach(compactArt); // shrink pictures saved by older versions
 showTitle();
 document.addEventListener("pointerdown", () => FX.get(), { once: true });
 </script>
