@@ -708,6 +708,25 @@ input[type=range].tm::-moz-range-thumb{width:34px;height:34px;border-radius:50%;
   /* leave a strip on each side of paint and scratch boards so kids can still swipe to scroll */
   .era-scroll > .stage .board:not(.flow){width:calc(100% - 28px);margin:0 auto}
 }
+/* phones: bigger small labels, compact Iris, more room for the art */
+@media (max-width:600px){
+  .tool-label{font-size:14px}
+  .alist .artist .w{font-size:14px}
+  .alist .artist h4{font-size:16px}
+  .rp-count{font-size:14px}
+  .rp-title{font-size:16px}
+  .reveal-info p{font-size:16px;line-height:22px}
+  .topbar .steps{gap:5px}
+  .topbar .steps i{width:12px;height:12px}
+  .topbar .steps i.now{width:24px}
+  .era-body .talk{align-items:flex-start;gap:6px}
+  .era-body .talk .iris-mini{width:80px;margin-top:6px}
+  .era-body .talk .ag-bubble{font-size:16px;line-height:23px;padding:10px 14px 12px 16px;margin-bottom:0}
+  .era-body .talk .ag-bubble::after{top:34px;bottom:auto}
+  .era-body .talk .ag-bubble__name{font-size:12px;line-height:16px;margin-bottom:2px}
+  .era-scroll{padding-left:12px;padding-right:12px;gap:var(--space-3)}
+  .era-scroll > .stage .board:not(.flow){width:calc(100% - 24px)}
+}
 </style>
 </head>
 <body>
